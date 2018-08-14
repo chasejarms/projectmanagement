@@ -1,12 +1,12 @@
 import { RouteComponentProps } from 'react-router';
 
-export interface AdminRoutePresentationProps extends RouteComponentProps<{}> {
+export interface IAdminRoutePresentationProps extends RouteComponentProps<{}> {
   isAdmin: boolean;
   path: string;
   component: React.ComponentClass;
   setIsAdmin: (isAdmin: boolean) => void;
 }
 
-export interface AdminRoutePresentationState {
+export interface IAdminRoutePresentationState {
   userHasAdminRight: boolean | undefined;
 }

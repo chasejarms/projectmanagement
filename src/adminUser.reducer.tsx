@@ -6,11 +6,11 @@ export const CLEAR_ADMIN_STATE = 'CLEAR_ADMIN_STATE';
 
 type UserActionType = typeof SET_ADMIN | typeof CLEAR_ADMIN_STATE;
 
-interface UserAction extends Action<UserActionType> {
+interface IUserAction extends Action<UserActionType> {
   isAdmin: boolean;
 }
 
-export const adminUserReducer = (state: User | null = null, action: UserAction) => {
+export const adminUserReducer = (state: User | null = null, action: IUserAction) => {
   switch (action.type) {
     case SET_ADMIN:
       return action.isAdmin;

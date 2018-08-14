@@ -1,17 +1,21 @@
 import * as React from 'react';
-import { AppState } from '../../App';
 import { connect, Dispatch } from 'react-redux';
-import { withRouter, Route, Redirect } from 'react-router';
-import firebase, { db } from '../../firebase';
+import { Redirect, Route, withRouter } from 'react-router';
 import { SET_ADMIN } from '../../adminUser.reducer';
-import { AdminRoutePresentationProps, AdminRoutePresentationState } from './AdminRoute.ias';
+import { IAppState } from '../../App';
+import firebase, { db } from '../../firebase';
+import { IAdminRoutePresentationProps, IAdminRoutePresentationState } from './AdminRoute.ias';
 
-class AdminRoutePresentation extends React.Component<AdminRoutePresentationProps, AdminRoutePresentationState> {
-  state = {
+class AdminRoutePresentation extends React.Component<IAdminRoutePresentationProps, IAdminRoutePresentationState> {
+  public state = {
     userHasAdminRight: undefined,
   };
 
-  componentWillMount(): void {
+  constructor(props: IAdminRoutePresentationProps) {
+    super(props);
+  }
+
+  public componentWillMount(): void {
     if (this.props.isAdmin) {
       this.setState({
         userHasAdminRight: true,
@@ -22,11 +26,7 @@ class AdminRoutePresentation extends React.Component<AdminRoutePresentationProps
     this.verifyUserIsAdmin();
   }
 
-  constructor(props: AdminRoutePresentationProps) {
-    super(props);
-  }
-
-  render() {
+  public render() {
     const { component: Component, path, ...rest } = this.props;
     const { userHasAdminRight }  = this.state;
     if (userHasAdminRight  === undefined) {
@@ -35,6 +35,7 @@ class AdminRoutePresentation extends React.Component<AdminRoutePresentationProps
       return (
         <Route
           {...rest}
+          // tslint:disable-next-line:jsx-no-lambda
           render={(props) => (
             userHasAdminRight
               ? <Component {...props} />
@@ -65,15 +66,15 @@ class AdminRoutePresentation extends React.Component<AdminRoutePresentationProps
   }
 }
 
-const mapStateToProps = ({ isAdmin }: AppState) => ({
+const mapStateToProps = ({ isAdmin }: IAppState) => ({
   isAdmin
 });
 
-const mapDispatchToProps = (dispatch: Dispatch<AppState>) => ({
+const mapDispatchToProps = (dispatch: Dispatch<IAppState>) => ({
   setIsAdmin: (isAdmin: boolean) => {
     dispatch({
-      type: SET_ADMIN,
       isAdmin,
+      type: SET_ADMIN,
     });
   },
 });

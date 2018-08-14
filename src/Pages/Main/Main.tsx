@@ -1,41 +1,27 @@
 import * as React from 'react';
-import { Switch, Route, withRouter } from 'react-router-dom';
+import { Route, Switch, withRouter } from 'react-router-dom';
 import { Authentication } from '../Authentication/Authentication';
-import { AdminRoute } from '../../Components/AdminRoute/AdminRoute';
+// import { AdminRoute } from '../../Components/AdminRoute/AdminRoute';
 
 import {
-  createMainClasses,
-  MainPresentationProps,
-  MainPresentationState,
+  IMainPresentationProps,
+  IMainPresentationState,
 } from './Main.ias';
 
-class MainPresentation extends React.Component<MainPresentationProps, MainPresentationState> {
-
-  render() {
-    const {
-      appContainer,
-    } = createMainClasses(this.props, this.state);
-
+class MainPresentation extends React.Component<IMainPresentationProps, IMainPresentationState> {
+  public render() {
     return (
-      <div className={appContainer}>
-        {GA.init() && <GA.RouteTracker />}
+      <div>
+        {/* {GA.init() && <GA.RouteTracker />} */}
         <Switch>
           <Route
-            exact={true}
-            path="/"
-            component={Posts}
-          />
-          <Route
-            path="/admin"
+            path="/signup"
             component={Authentication}
           />
-          <AdminRoute
-            path="/new"
-            component={Post}
-          />
           <Route
-            path="/posts/:lowercasePostTitle"
-            component={Post}
+            path="/login"
+            component={Authentication}
+          />
           />
         </Switch>
       </div>

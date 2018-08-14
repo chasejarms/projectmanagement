@@ -1,73 +1,108 @@
-import * as React from 'react';
-import { handleChange } from '../../Utils/handleChange';
+import { Button, TextField } from '@material-ui/core';
 import { User } from 'firebase';
-import firebase from '../../firebase';
-import { Dispatch } from 'redux';
+import * as React from 'react';
 import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 import { CLEAR_ADMIN_STATE } from '../../adminUser.reducer';
-import { AuthenticationPresentationProps, AuthenticationPresentationState } from './Authentication.ias';
+import firebase from '../../firebase';
+import { handleChange } from '../../Utils/handleChange';
+import { createAuthenticationClasses, IAuthenticationPresentationProps, IAuthenticationPresentationState } from './Authentication.ias';
 
 export class AuthenticationPresentation extends React.Component<
-    AuthenticationPresentationProps,
-    AuthenticationPresentationState
+    IAuthenticationPresentationProps,
+    IAuthenticationPresentationState
     > {
-    state: AuthenticationPresentationState = {
+    public state: IAuthenticationPresentationState = {
         email: '',
         password: ''
     };
 
-    signUpFunctionName = 'createUserWithEmailAndPassword';
-    loginFunctionName = 'signInWithEmailAndPassword';
+    private signUpFunctionName = 'createUserWithEmailAndPassword';
+    private loginFunctionName = 'signInWithEmailAndPassword';
 
-    handleChange = handleChange(this);
+    private handleChange = handleChange(this);
 
-    constructor(props: AuthenticationPresentationProps) {
-        super(props);
-    }
-
-    login = () => {
-        this.sharedAuthFunctionality(true);
-    }
-
-    signup = () => {
-        this.sharedAuthFunctionality(false);
-    }
-
-    render() {
+    public render() {
         const authenticationText = this.isLoginUrl() ? 'Login' : 'Sign Up';
         const authenticationAction = this.isLoginUrl() ? this.login : this.signup;
 
+        const {
+            authenticationContainer,
+            authenticationRow,
+            textField,
+            actionContainer,
+            actionButton,
+        } = createAuthenticationClasses(this.props, this.state);
+
+        const companyNameField = this.isLoginUrl() ? undefined : (
+            <TextField
+                className={textField}
+                autoFocus={true}
+                label="Company Name"
+                value={this.state.companyName}
+                onChange={this.handleChange}
+            />
+        )
+
         return (
-            <div>
-                <input
-                    name="email"
-                    value={this.state.email}
-                    onChange={this.handleChange}
-                    placeholder="email"
-                />
-                <input
-                    type="password"
-                    name="password"
-                    value={this.state.password}
-                    onChange={this.handleChange}
-                    placeholder="password"
-                />
-                <button onClick={authenticationAction}>{authenticationText}</button>
-                <button onClick={this.logout}>Log out</button>
+            <div className={authenticationContainer}>
+                <div className={authenticationRow}>
+                    { companyNameField }
+                </div>
+                <div className={authenticationRow}>
+                    <TextField
+                        className={textField}
+                        autoFocus={this.isLoginUrl()}
+                        label="Email"
+                        name="email"
+                        value={this.state.email}
+                        onChange={this.handleChange}
+                        margin="normal"
+                    />
+                </div>
+                <div className={authenticationRow}>
+                    <TextField
+                        className={textField}
+                        type="password"
+                        name="password"
+                        value={this.state.password}
+                        onChange={this.handleChange}
+                        label="Password"
+                        margin="normal"
+                    />
+                </div>
+                <div className={`${authenticationRow} ${actionContainer}`}>
+                    <Button
+                        className={actionButton}
+                        variant="contained"
+                        onClick={authenticationAction}
+                        color="primary">{authenticationText}
+                    </Button>
+                </div>
             </div>
         );
     }
 
-    private logout(): void {
-          firebase.auth().signOut().then(() => {
-            console.log('successfully signed out');
-          }).catch((error) => {
-            console.log(error);
-          });
+    private login = () => {
+        this.sharedAuthFunctionality(true);
     }
 
+    private signup = () => {
+        this.sharedAuthFunctionality(false);
+    }
+
+    // private logout(): void {
+    //       firebase.auth().signOut().then(() => {
+    //         // tslint:disable-next-line:no-console
+    //         console.log('successfully signed out');
+    //       }).catch((error) => {
+    //         // tslint:disable-next-line:no-console
+    //         console.log(error);
+    //       });
+    // }
+
     private isLoginUrl(): boolean {
-        return this.props.match.path === '/admin';
+        return this.props.match.path === '/login';
     }
 
     private sharedAuthFunctionality(isLogin: boolean) {
@@ -83,6 +118,7 @@ export class AuthenticationPresentation extends React.Component<
             });
         })
         .catch((error: any) => {
+            // tslint:disable-next-line:no-console
             console.log(error);
         });
     }

@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { BrowserRouter } from 'react-router-dom';
-import { Main } from './Pages/Main/Main';
-import { createStore } from 'redux';
 import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
+import { createStore } from 'redux';
+import { Main } from './Pages/Main/Main';
 
 import { reducer } from './reducer';
 
-export interface AppState {
+export interface IAppState {
   isAdmin: boolean;
 }
 
@@ -16,7 +16,7 @@ const store = createStore(
 );
 
 class App extends React.Component {
-  render() {
+  public render() {
     return (
       <Provider store={store}>
         <BrowserRouter>
