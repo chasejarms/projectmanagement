@@ -1,20 +1,28 @@
 import * as React from 'react';
-import './App.css';
+import { BrowserRouter } from 'react-router-dom';
+import { Main } from './Pages/Main/Main';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
 
-import logo from './logo.svg';
+import { reducer } from './reducer';
+
+export interface AppState {
+  isAdmin: boolean;
+}
+
+const store = createStore(
+  reducer,
+  (window as any).__REDUX_DEVTOOLS_EXTENSION__ && (window as any).__REDUX_DEVTOOLS_EXTENSION__(),
+);
 
 class App extends React.Component {
-  public render() {
+  render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.tsx</code> and save to reload.
-        </p>
-      </div>
+      <Provider store={store}>
+        <BrowserRouter>
+          <Main/>
+        </BrowserRouter>
+      </Provider>
     );
   }
 }
