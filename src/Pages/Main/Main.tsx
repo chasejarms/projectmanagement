@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Route, Switch, withRouter } from 'react-router-dom';
 import { Authentication } from '../Authentication/Authentication';
+import { Project } from '../Project/Project';
+import { Projects } from '../Projects/Projects';
 // import { AdminRoute } from '../../Components/AdminRoute/AdminRoute';
 
 import {
@@ -22,7 +24,14 @@ class MainPresentation extends React.Component<IMainPresentationProps, IMainPres
             path="/login"
             component={Authentication}
           />
+          <Route
+            path="/company/:companyName"
+            exact={true}
+            component={Projects}
           />
+          <Route
+            path="/company/:companyName/project/:projectId"
+            component={Project}/>
         </Switch>
       </div>
     );

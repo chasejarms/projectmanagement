@@ -1,4 +1,4 @@
-import { createCompanyLocal } from './createCompany';
+// import { createCompanyLocal } from './createCompany';
 import * as admin from 'firebase-admin';
 
 admin.initializeApp({
@@ -6,7 +6,7 @@ admin.initializeApp({
     databaseURL: 'https://project-management-develop.firebaseio.com',
 })
 
-export const createCompany = createCompanyLocal(admin as any);
+// export const createCompany = createCompanyLocal(admin as any);
 
 // // Start writing Firebase Functions
 // // https://firebase.google.com/docs/functions/typescript

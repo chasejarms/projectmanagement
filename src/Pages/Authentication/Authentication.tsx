@@ -1,10 +1,10 @@
 import { Button, TextField } from '@material-ui/core';
-import { User } from 'firebase';
+// import { User } from 'firebase';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { CLEAR_ADMIN_STATE } from '../../adminUser.reducer';
-import firebase from '../../firebase';
+// import firebase from '../../firebase';
 import { handleChange } from '../../Utils/handleChange';
 import { createAuthenticationClasses, IAuthenticationPresentationProps, IAuthenticationPresentationState } from './Authentication.ias';
 
@@ -14,11 +14,12 @@ export class AuthenticationPresentation extends React.Component<
     > {
     public state: IAuthenticationPresentationState = {
         email: '',
-        password: ''
+        password: '',
+        companyName: '',
     };
 
-    private signUpFunctionName = 'createUserWithEmailAndPassword';
-    private loginFunctionName = 'signInWithEmailAndPassword';
+    // private signUpFunctionName = 'createUserWithEmailAndPassword';
+    // private loginFunctionName = 'signInWithEmailAndPassword';
 
     private handleChange = handleChange(this);
 
@@ -39,6 +40,7 @@ export class AuthenticationPresentation extends React.Component<
                 className={textField}
                 autoFocus={true}
                 label="Company Name"
+                name="companyName"
                 value={this.state.companyName}
                 onChange={this.handleChange}
             />
@@ -84,11 +86,13 @@ export class AuthenticationPresentation extends React.Component<
     }
 
     private login = () => {
-        this.sharedAuthFunctionality(true);
+        // this.redirectToCompanyPage();
+        // this.sharedAuthFunctionality(true);
     }
 
     private signup = () => {
-        this.sharedAuthFunctionality(false);
+        this.redirectToCompanyPage();
+        // this.sharedAuthFunctionality(false);
     }
 
     // private logout(): void {
@@ -105,22 +109,29 @@ export class AuthenticationPresentation extends React.Component<
         return this.props.match.path === '/login';
     }
 
-    private sharedAuthFunctionality(isLogin: boolean) {
-        const authFunctionName = isLogin ? this.loginFunctionName : this.signUpFunctionName;
-        firebase.auth()[authFunctionName](
-            this.state.email,
-            this.state.password,
-        ).then((userInfo: User) => {
-            // this.potentiallySetUserRole(authFunctionName, userInfo.uid);
-            this.setState({
-                email: '',
-                password: '',
-            });
-        })
-        .catch((error: any) => {
-            // tslint:disable-next-line:no-console
-            console.log(error);
-        });
+    // private sharedAuthFunctionality(isLogin: boolean) {
+    //     const authFunctionName = isLogin ? this.loginFunctionName : this.signUpFunctionName;
+    //     firebase.auth()[authFunctionName](
+    //         this.state.email,
+    //         this.state.password,
+    //     ).then((userInfo: User) => {
+    //         // this.potentiallySetUserRole(authFunctionName, userInfo.uid);
+    //         this.setState({
+    //             email: '',
+    //             password: '',
+    //         });
+    //     })
+    //     .catch((error: any) => {
+    //         // tslint:disable-next-line:no-console
+    //         console.log(error);
+    //     });
+    // }
+
+    private redirectToCompanyPage(): void {
+        // tslint:disable-next-line:no-console
+        console.log(this.state);
+        const company = this.state.companyName || 'xactware';
+        this.props.history.push(`company/${company}`);
     }
 
     // private potentiallySetUserRole(authFunctionName: string, userId: string): void {
