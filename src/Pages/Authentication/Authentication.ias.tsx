@@ -1,3 +1,4 @@
+import { WithTheme } from '@material-ui/core';
 import { css } from 'emotion'
 import { RouteComponentProps } from 'react-router';
 
@@ -7,7 +8,7 @@ export interface IAuthenticationPresentationState {
     password: string;
 }
 
-export interface IAuthenticationPresentationProps extends RouteComponentProps<{}> {
+export interface IAuthenticationPresentationProps extends RouteComponentProps<{}>, WithTheme {
   clearAdminState: () => void;
 }
 

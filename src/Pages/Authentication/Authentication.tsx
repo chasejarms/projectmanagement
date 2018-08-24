@@ -1,4 +1,5 @@
 import { Button, TextField } from '@material-ui/core';
+import { withTheme } from '@material-ui/core/styles';
 // import { User } from 'firebase';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -128,8 +129,6 @@ export class AuthenticationPresentation extends React.Component<
     // }
 
     private redirectToCompanyPage(): void {
-        // tslint:disable-next-line:no-console
-        console.log(this.state);
         const company = this.state.companyName || 'xactware';
         this.props.history.push(`company/${company}`);
     }
@@ -149,4 +148,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
   }
 });
 
-export const Authentication = connect(undefined, mapDispatchToProps)(AuthenticationPresentation);
+export const Authentication = connect(undefined, mapDispatchToProps)(withTheme()(AuthenticationPresentation));
