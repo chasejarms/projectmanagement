@@ -24,9 +24,10 @@ export const createChatClasses = (
         flexShrink: 1,
         marginRight: 40,
         marginLeft: 40,
+        overflowY: 'auto',
     });
     const newMessageContainer = css({
-
+        boxSizing: 'border-box',
         flexBasis: '200px',
         backgroundColor: CssVariables.lightGray,
         display: 'flex',
@@ -38,9 +39,12 @@ export const createChatClasses = (
         backgroundColor: CssVariables.lightGray,
         border: 'none',
         flexGrow: 1,
+        flexShrink: 0,
         '&:focus': {
             outline: 'none',
         },
+        fontFamily: props.theme.typography.body1.fontFamily,
+        fontSize: props.theme.typography.body1.fontSize,
     })
     const fabButton = css({
         position: 'absolute',

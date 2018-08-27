@@ -4,6 +4,7 @@ import Tabs from '@material-ui/core/Tabs';
 import * as React from 'react';
 import { withRouter } from 'react-router';
 import { Chat } from '../../Components/Chat/Chat';
+import { ProjectProgress } from '../../Components/ProjectProgress/ProjectProgress';
 import { createProjectPresentationClasses, IProjectPresentationProps, IProjectPresentationState } from './Project.ias';
 
 class ProjectPresentation extends React.Component<IProjectPresentationProps, IProjectPresentationState> {
@@ -13,9 +14,9 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
 
     public tabComponents = {
         0: undefined,
-        1: <Chat theme={this.props.theme}/>,
-        2: <Chat theme={this.props.theme}/>,
-        3: <Chat theme={this.props.theme}/>,
+        1: <ProjectProgress key={1}/>,
+        2: <Chat theme={this.props.theme} key={2}/>,
+        3: <Chat theme={this.props.theme} key={3}/>,
     }
 
     constructor(props: IProjectPresentationProps) {
@@ -50,7 +51,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                         onClick={this.navigateBackToProjectsPage}
                         classes={tabClasses}/>
                     <Tab
-                        label="Checkpoints"
+                        label="Project Overview"
                         classes={tabClasses}/>
                     <Tab
                         label="Staff Chat"
