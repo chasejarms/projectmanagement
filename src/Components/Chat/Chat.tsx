@@ -49,8 +49,9 @@ export class ChatPresentation extends React.Component<IChatProps, IChatState> {
                             name="message"
                             value={this.state.message}
                             onChange={this.handleChange}
+                            onDoubleClick={this.handleDoubleClick}
                             className={messageInput}
-                            placeholder="Start typing your message here"/>
+                            placeholder="Start typing or double click to add an attachment"/>
                     </form>
                 </div>
             </div>
@@ -71,6 +72,11 @@ export class ChatPresentation extends React.Component<IChatProps, IChatState> {
             message: '',
             messages: newMessages,
         })
+    }
+
+    private handleDoubleClick = (event: any): void => {
+        // tslint:disable-next-line:no-console
+        console.log('double click just happened');
     }
 }
 

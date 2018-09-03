@@ -1,10 +1,8 @@
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
 import * as React from 'react';
 import { Route, Switch, withRouter } from 'react-router-dom';
+import { Authenticated } from '../Authenticated/Authenticated';
 import { Authentication } from '../Authentication/Authentication';
-import { Project } from '../Project/Project';
-import { Projects } from '../Projects/Projects';
-// import { AdminRoute } from '../../Components/AdminRoute/AdminRoute';
 
 import {
   IMainPresentationProps,
@@ -30,12 +28,8 @@ class MainPresentation extends React.Component<IMainPresentationProps, IMainPres
             />
             <Route
               path="/company/:companyName"
-              exact={true}
-              component={Projects}
+              component={Authenticated}
             />
-            <Route
-              path="/company/:companyName/project/:projectId"
-              component={Project}/>
           </Switch>
         </div>
       </MuiThemeProvider>

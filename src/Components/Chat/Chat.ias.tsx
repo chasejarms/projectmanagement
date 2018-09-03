@@ -22,8 +22,8 @@ export const createChatClasses = (
     const messagesContainer = css({
         flexGrow: 1,
         flexShrink: 1,
-        marginRight: 40,
-        marginLeft: 40,
+        paddingRight: 40,
+        paddingLeft: 40,
         overflowY: 'auto',
     });
     const newMessageContainer = css({
@@ -34,6 +34,7 @@ export const createChatClasses = (
         flexDirection: 'row',
         padding: '16px',
         position: 'relative',
+        flexShrink: 0,
     });
     const messageInput = css({
         backgroundColor: CssVariables.lightGray,

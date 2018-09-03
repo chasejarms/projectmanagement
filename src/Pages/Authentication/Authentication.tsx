@@ -87,6 +87,7 @@ export class AuthenticationPresentation extends React.Component<
     }
 
     private login = () => {
+        this.redirectToCompanyPage();
         // this.redirectToCompanyPage();
         // this.sharedAuthFunctionality(true);
     }

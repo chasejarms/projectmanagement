@@ -43,7 +43,7 @@ export class Message extends React.Component<IMessageProps, IMessageState> {
     }
 
     private prettyPrintDate(date: Date): string {
-        const day = date.getDay();
+        const day = date.getDate();
         const month = date.getMonth() + 1;
         const year = date.getFullYear();
 

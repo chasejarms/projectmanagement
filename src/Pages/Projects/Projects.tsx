@@ -11,8 +11,6 @@ import { IProjectsPresentationProps, IProjectsPresentationState } from './Projec
 
 export class ProjectsPresentation extends React.Component<IProjectsPresentationProps, IProjectsPresentationState> {
     public render() {
-        // tslint:disable-next-line:no-console
-        console.log(this.props);
         const mappedProjects = slimProjects.map(project => (
                 <TableRow key={project.id} onClick={this.navigateToProject(project.id)}>
                     <TableCell>{project.projectName}</TableCell>

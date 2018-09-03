@@ -14,7 +14,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
 
     public tabComponents = {
         0: undefined,
-        1: <ProjectProgress key={1}/>,
+        1: <ProjectProgress key={1} theme={this.props.theme}/>,
         2: <Chat theme={this.props.theme} key={2}/>,
         3: <Chat theme={this.props.theme} key={3}/>,
     }
@@ -47,8 +47,8 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             <div className={projectContainer}>
                 <Tabs value={this.state.tabValue} onChange={this.handleChange} className={tabs}>
                     <Tab
-                        label="Back To Projects"
-                        onClick={this.navigateBackToProjectsPage}
+                        disabled={true}
+                        label="Project Name"
                         classes={tabClasses}/>
                     <Tab
                         label="Project Overview"
@@ -67,10 +67,10 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         );
     }
 
-    private navigateBackToProjectsPage = (): void => {
-        const splitPath = this.props.location.pathname.split('/');
-        this.props.history.push(`/${splitPath[1]}/${splitPath[2]}`);
-    }
+    // private navigateBackToProjectsPage = (): void => {
+    //     const splitPath = this.props.location.pathname.split('/');
+    //     this.props.history.push(`/${splitPath[1]}/${splitPath[2]}`);
+    // }
 }
 
 export const Project = withRouter(withTheme()(ProjectPresentation));

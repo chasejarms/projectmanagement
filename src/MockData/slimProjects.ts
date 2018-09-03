@@ -7,7 +7,7 @@ export const slimProjects = [
         deadline: new Date(),
         id: '4234',
         projectId: '23423',
-        deadlinePretty: `${today.getDay()}/${today.getMonth() + 1}/${today.getFullYear()}`
+        deadlinePretty: `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear()}`
     },
     {
         projectName: 'Aptive Summer Contest',
@@ -16,7 +16,7 @@ export const slimProjects = [
         deadline: new Date(),
         id: '45234',
         projectId: '45slkj',
-        deadlinePretty: `${today.getDay() + 4}/${today.getMonth() + 1}/${today.getFullYear()}`
+        deadlinePretty: `${today.getMonth() + 1}/${today.getDate() + 4}/${today.getFullYear()}`
     },
     {
         projectName: 'Aptive Team Gear',
@@ -25,7 +25,7 @@ export const slimProjects = [
         deadline: new Date(),
         id: 'ser2',
         projectId: '234l3asd',
-        deadlinePretty: `${today.getDay() + 2}/${today.getMonth() + 1}/${today.getFullYear()}`
+        deadlinePretty: `${today.getMonth() + 1}/${today.getDate() + 2}/${today.getFullYear()}`
     },
     {
         projectName: 'Hawks Executive Branding',
@@ -34,6 +34,6 @@ export const slimProjects = [
         deadline: new Date(),
         id: '34lks',
         projectId: 'wxcvaelj',
-        deadlinePretty: `${today.getDay() + 1}/${today.getMonth() + 1}/${today.getFullYear()}`
+        deadlinePretty: `${today.getMonth() + 1}/${today.getDate() + 1}/${today.getFullYear()}`
     },
 ]
