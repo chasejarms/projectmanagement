@@ -1,18 +1,28 @@
+import {
+    Button,
+} from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import AddIcon from '@material-ui/icons/Add';
 import * as React from 'react';
 import { withRouter } from 'react-router';
 import { slimProjects } from '../../MockData/slimProjects';
-import { IProjectsPresentationProps, IProjectsPresentationState } from './Projects.ias';
+import { createProjectsPresentationClasses, IProjectsPresentationProps, IProjectsPresentationState } from './Projects.ias';
 
 export class ProjectsPresentation extends React.Component<IProjectsPresentationProps, IProjectsPresentationState> {
     public render() {
+        const {
+            rowStyling,
+            projectsContainer,
+            fabButton,
+        } = createProjectsPresentationClasses(this.props, this.state);
+
         const mappedProjects = slimProjects.map(project => (
-                <TableRow key={project.id} onClick={this.navigateToProject(project.id)}>
+                <TableRow key={project.id} onClick={this.navigateToProject(project.id)} className={rowStyling}>
                     <TableCell>{project.projectName}</TableCell>
                     <TableCell>{project.deadlinePretty}</TableCell>
                     <TableCell>{project.currentCheckpoint}</TableCell>
@@ -22,7 +32,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         )
 
         return (
-            <div>
+            <div className={projectsContainer}>
                 <Paper>
                     <Table>
                         <TableHead>
@@ -33,20 +43,32 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                                 <TableCell numeric={true}>Completion (%)</TableCell>
                             </TableRow>
                         </TableHead>
-                        <TableBody>
+                        <TableBody >
                             {mappedProjects}
                         </TableBody>
                     </Table>
                 </Paper>
+                <Button
+                    type="button'"
+                    onClick={this.navigateToCreateProjectPage}
+                    variant="fab"
+                    color="primary"
+                    className={fabButton}>
+                    <AddIcon/>
+                </Button>
             </div>
         )
     }
 
     private navigateToProject(projectId: string): () => void{
         return () => {
-            const postRoute = `/${this.props.location.pathname}/project/${projectId}`.slice(1);
+            const postRoute = `${this.props.location.pathname}/project/${projectId}`;
             this.props.history.push(postRoute);
         }
+    }
+
+    private navigateToCreateProjectPage = () => {
+        this.props.history.push(`${this.props.location.pathname}/createProject`);
     }
 }
 

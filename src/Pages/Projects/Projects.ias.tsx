@@ -1,3 +1,4 @@
+import { css } from 'emotion';
 import { RouteComponentProps } from "react-router";
 
 export interface IProjectsPresentationProps extends RouteComponentProps<{}> {}
@@ -9,5 +10,24 @@ export const createProjectsPresentationClasses = (
     props: IProjectsPresentationProps,
     state: IProjectsPresentationState,
 ) => {
-    return {};
+    const rowStyling = css({
+        cursor: 'pointer',
+        flexShrink: 0,
+    });
+
+    const projectsContainer = css({
+        height: '100vh',
+    });
+
+    const fabButton = css({
+        position: 'absolute',
+        bottom: 8,
+        right: 8,
+    })
+
+    return {
+        rowStyling,
+        projectsContainer,
+        fabButton,
+    };
 }
