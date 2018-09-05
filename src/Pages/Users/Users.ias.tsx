@@ -13,8 +13,8 @@ export const createUsersPresentationClasses = (
 ) => {
     const fabButton = css({
         position: 'absolute',
-        bottom: 8,
-        right: 8,
+        bottom: 16,
+        right: 16,
     })
 
     return {

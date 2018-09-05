@@ -9,6 +9,7 @@ import { withTheme } from '@material-ui/core';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import ListIcon from '@material-ui/icons/List';
 import PeopleIcon from '@material-ui/icons/People';
 import * as React from 'react';
 import { withRouter } from 'react-router';
@@ -16,6 +17,7 @@ import { Route, Switch } from 'react-router-dom';
 import { Project } from '../Project/Project';
 import { Projects } from '../Projects/Projects';
 import { Users } from '../Users/Users';
+import { Workflow } from '../Workflow/Workflow';
 import { createAuthenticatedClasses, IAuthenticatedProps, IAuthenticatedState } from './Authenticated.ias';
 
 export class AuthenticatedPresentation extends React.Component<IAuthenticatedProps, IAuthenticatedState> {
@@ -54,6 +56,15 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                                 >
                                     <ListItemIcon>
                                         <PeopleIcon className={iconStyling}/>
+                                    </ListItemIcon>
+                                </ListItem>
+                                <ListItem
+                                    button={true}
+                                    className={iconContainer}
+                                    onClick={this.navigateToWorkflow}
+                                >
+                                    <ListItemIcon>
+                                        <ListIcon className={iconStyling}/>
                                     </ListItemIcon>
                                 </ListItem>
                             </div>
@@ -98,6 +109,11 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                             exact={true}
                             component={Users}
                         />
+                        <Route
+                            path={this.props.match.url + '/workflow'}
+                            exact={true}
+                            component={Workflow}
+                        />
                     </Switch>
                 </div>
             </div>
@@ -121,6 +137,11 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
 
     private logout = () => {
         this.props.history.push('/login');
+    }
+
+    private navigateToWorkflow = () => {
+        const { companyName } = this.props.match.params as any;
+        this.props.history.push(`/company/${companyName}/workflow`);
     }
 }
 
