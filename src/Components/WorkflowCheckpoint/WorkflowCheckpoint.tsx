@@ -3,13 +3,15 @@ import {
     TextField,
     Tooltip,
     Typography,
+    withTheme,
 } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
 import * as React from 'react';
 import { handleChange } from '../../Utils/handleChange';
 import { createWorkflowCheckpointClasses, IWorkflowCheckpointProps, IWorkflowCheckpointState } from './WorkflowCheckpoint.ias';
 
-export class WorkflowCheckpoint extends React.Component<IWorkflowCheckpointProps, IWorkflowCheckpointState> {
+export class WorkflowCheckpointPresentation extends React.Component<IWorkflowCheckpointProps, IWorkflowCheckpointState> {
     public handleChange = handleChange(this);
     
     public render() {
@@ -22,35 +24,39 @@ export class WorkflowCheckpoint extends React.Component<IWorkflowCheckpointProps
             deleteIcon,
             nameAndDescriptionRow,
             customVisibilityAndDeadlineContainer,
-            nonTrashContainer,
+            daysToCompleteStying,
+            actionsContainer,
+            nonActionButtonContainer,
+            newCheckpointAfterIcon,
+            newCheckpointBeforeIcon,
+            // nonTrashContainer,
         } = createWorkflowCheckpointClasses(this.props, this.state);
 
         const {
             name,
             description,
             publicCheckpoint,
+            deadlineFromLastCheckpoint,
         } = this.props.workflowCheckpoint;
+
+        const daysToCompleteText = this.props.isFirstCheckpoint ?
+            'Days to complete from project creation' :
+            'Days to complete from last checkpoint';
 
         return (
             <div className={workflowCheckpointContainer}>
-                <Tooltip
-                    title="Delete this checkpoint?"
-                    placement="right">
-                    <DeleteIcon className={deleteIcon}/>
-                </Tooltip>
-                <div className={nonTrashContainer}>
+                <div className={`${nonActionButtonContainer} non-action-buttons`}>
                     <div className={nameAndDescriptionRow}>
                         <TextField
                             className={checkpointName}
-                            autoFocus={true}
-                            label="Checkpoint Name"
+                            label="Name"
                             name="checkpointName"
                             value={name}
                             onChange={this.handleChange}
                         />
                         <TextField
                             className={checkpointDescription}
-                            label="Checkpoint Description"
+                            label="Description"
                             name="checkpointDescription"
                             value={description}
                             onChange={this.handleChange}
@@ -58,11 +64,11 @@ export class WorkflowCheckpoint extends React.Component<IWorkflowCheckpointProps
                     </div>
                     <div className={customVisibilityAndDeadlineContainer}>
                         <TextField
-                            className={checkpointName}
-                            label="Days to complete"
+                            className={daysToCompleteStying}
+                            label={daysToCompleteText}
                             name="daysToComplete"
                             type="number"
-                            value={1}
+                            value={deadlineFromLastCheckpoint}
                             onChange={this.handleChange}
                         />
                         <div className={publicCheckpointContainer}>
@@ -71,7 +77,26 @@ export class WorkflowCheckpoint extends React.Component<IWorkflowCheckpointProps
                         </div>
                     </div>
                 </div>
+                <div className={`${actionsContainer} action-buttons`}>
+                    <Tooltip
+                        title="Add checkpoint before"
+                        placement="left">
+                        <AddIcon className={newCheckpointBeforeIcon}/>
+                    </Tooltip>
+                    <Tooltip
+                        title="Delete this checkpoint"
+                        placement="left">
+                        <DeleteIcon className={deleteIcon}/>
+                    </Tooltip>
+                    <Tooltip
+                        title="Add checkpoint after"
+                        placement="left">
+                        <AddIcon className={newCheckpointAfterIcon}/>
+                    </Tooltip>
+                </div>
             </div>
         )
     }
 }
+
+export const WorkflowCheckpoint = withTheme()(WorkflowCheckpointPresentation);

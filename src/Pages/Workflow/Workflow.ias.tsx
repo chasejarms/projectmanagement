@@ -1,7 +1,10 @@
+import { WithTheme } from '@material-ui/core';
 import { css } from 'emotion';
 import { RouteComponentProps } from "react-router";
 
-export interface IWorkflowPresentationProps extends RouteComponentProps<{}> {}
+export interface IWorkflowPresentationProps extends RouteComponentProps<{}>, WithTheme {
+
+}
 
 // tslint:disable-next-line:no-empty-interface
 export interface IWorkflowPresentationState {}
@@ -11,14 +14,22 @@ export const createWorkflowPresentationClasses = (
     state: IWorkflowPresentationState,
 ) => {
     const workflowContainer = css({
-        height: '100vh',
+        minHeight: '100vh',
+        boxSizing: 'content-box',
+        paddingTop: 48,
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
+        backgroundColor: '#f5f5f5'
+    });
+
+    const workflowCheckpointContainer = css({
+        marginBottom: 48,
+        marginRight: 48,
+        marginLeft: 48,
     });
 
     return {
         workflowContainer,
+        workflowCheckpointContainer,
     }
 }
