@@ -1,4 +1,15 @@
-import { Button } from '@material-ui/core';
+import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
+    TextField,
+} from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -11,9 +22,15 @@ import { users } from '../../MockData/users';
 import { createUsersPresentationClasses, IUsersPresentationProps, IUsersPresentationState } from './Users.ias';
 
 export class Users extends React.Component<IUsersPresentationProps, IUsersPresentationState> {
+    public state = {
+        open: false,
+    };
+
     public render() {
         const {
             fabButton,
+            dialogContent,
+            dialogControl,
         } = createUsersPresentationClasses(this.props, this.state);
 
         const mappedUsers = users.map(user => (
@@ -43,17 +60,63 @@ export class Users extends React.Component<IUsersPresentationProps, IUsersPresen
                 </Paper>
                 <Button
                     type="button'"
-                    onClick={this.navigateToCreateUserPage}
+                    onClick={this.openNewUserDialog}
                     variant="fab"
                     color="primary"
                     className={fabButton}>
                     <AddIcon/>
                 </Button>
+                <Dialog
+                    open={this.state.open}
+                    onClose={this.handleClose}
+                >
+                    <DialogTitle>Create New User</DialogTitle>
+                    <DialogContent className={dialogContent}>
+                        <TextField
+                            label="Full Name"
+                            name="fullName"
+                            value={''}
+                            className={dialogControl}
+                        />
+                        <TextField
+                            label="Email"
+                            name="email"
+                            value={''}
+                            className={dialogControl}
+                        />
+                        <FormControl>
+                            <InputLabel htmlFor="role">Role</InputLabel>
+                            <Select
+                                className={dialogControl}
+                                inputProps={{
+                                    id: 'role',
+                                }}
+                            >
+                                <MenuItem value={'Admin'}>Admin</MenuItem>
+                                <MenuItem value={'Staff'}>Staff</MenuItem>
+                                <MenuItem value={'Customer'}>Customer</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button color="secondary" onClick={this.handleClose}>Cancel</Button>
+                        <Button color="primary" onClick={this.handleSave}>Add User</Button>
+                    </DialogActions>
+                </Dialog>
             </div>
         )
     }
 
-    private navigateToCreateUserPage = () => {
-        this.props.history.push(`${this.props.location.pathname}/createUser`);
+    private openNewUserDialog = () => {
+        this.setState({ open: true });
+    }
+
+    private handleClose = () => {
+        this.setState({ open: false });
+    }
+
+    private handleSave = () => {
+        // do some saving
+        this.setState({ open: false });
     }
 }
