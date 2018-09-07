@@ -15,6 +15,7 @@ import * as React from 'react';
 import { withRouter } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
 import { Project } from '../Project/Project';
+import { ProjectCreation } from '../ProjectCreation/ProjectCreation';
 import { Projects } from '../Projects/Projects';
 import { Users } from '../Users/Users';
 import { Workflow } from '../Workflow/Workflow';
@@ -113,6 +114,11 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                             path={this.props.match.url + '/workflow'}
                             exact={true}
                             component={Workflow}
+                        />
+                        <Route
+                            path={this.props.match.url + '/createProject'}
+                            exact={true}
+                            component={ProjectCreation}
                         />
                     </Switch>
                 </div>
