@@ -58,15 +58,13 @@ export const createWorkflowCheckpointClasses = (
     const checkpointName = css({
         boxSizing: 'border-box',
         marginRight: 32,
-        flexBasis: 240,
-        flexShrink: 0,
+        flexGrow: 1,
     });
 
     const daysToCompleteStying = css({
         boxSizing: 'border-box',
         marginRight: 32,
-        flexGrow: 1,
-        flexBasis: 200,
+        flexBasis: 320,
         flexShrink: 0,
     });
 

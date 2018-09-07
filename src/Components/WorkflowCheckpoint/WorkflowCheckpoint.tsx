@@ -54,16 +54,7 @@ export class WorkflowCheckpointPresentation extends React.Component<IWorkflowChe
                             value={name}
                             onChange={this.handleChange}
                         />
-                        <TextField
-                            className={checkpointDescription}
-                            label="Description"
-                            name="checkpointDescription"
-                            value={description}
-                            onChange={this.handleChange}
-                        />
-                    </div>
-                    <div className={customVisibilityAndDeadlineContainer}>
-                        <TextField
+                         <TextField
                             className={daysToCompleteStying}
                             label={daysToCompleteText}
                             name="daysToComplete"
@@ -75,6 +66,15 @@ export class WorkflowCheckpointPresentation extends React.Component<IWorkflowChe
                             <Typography variant="body1" className={publicText}>Visible To Customer: </Typography>
                             <Checkbox checked={publicCheckpoint}/>
                         </div>
+                    </div>
+                    <div className={customVisibilityAndDeadlineContainer}>
+                        <TextField
+                            className={checkpointDescription}
+                            label="Description"
+                            name="checkpointDescription"
+                            value={description}
+                            onChange={this.handleChange}
+                        />
                     </div>
                 </div>
                 <div className={`${actionsContainer} action-buttons`}>
