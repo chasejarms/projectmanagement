@@ -25,25 +25,27 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         const {
             projectCreationContainer,
             stepperContainer,
+            topBar,
         } = createProjectCreationClasses(this.props, this.state);
 
         return (
             <div className={projectCreationContainer}>
-                <Stepper activeStep={this.state.activeStep} className={stepperContainer}>
-                    <Step>
-                        <StepLabel>Project Name</StepLabel>
-                    </Step>
-                    <Step>
-                        <StepLabel>Add Checkpoints</StepLabel>
-                    </Step>
-                    <Step>
-                        <StepLabel>Add Users</StepLabel>
-                    </Step>
-                </Stepper>
+                <div className={topBar}>
+                    <Stepper activeStep={this.state.activeStep} className={stepperContainer}>
+                        <Step>
+                            <StepLabel>Project Name</StepLabel>
+                        </Step>
+                        <Step>
+                            <StepLabel>Add Checkpoints</StepLabel>
+                        </Step>
+                        <Step>
+                            <StepLabel>Add Users</StepLabel>
+                        </Step>
+                    </Stepper>
+                    {this.createActionButtons()}
+                </div>
                 <Divider/>
                 {this.getStepActiveContent()}
-                <Divider/>
-                {this.createActionButtons()}
             </div>
         )
     }
@@ -76,7 +78,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                 className={baseActionButton}
                 variant="contained"
                 onClick={this.onBackClick}
-                color="primary">
+                color="secondary">
                 Back
             </Button>
         ) : undefined;
@@ -86,7 +88,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                 className={baseActionButton}
                 variant="contained"
                 onClick={this.onNextClick}
-                color="primary">
+                color="secondary">
                 Next
             </Button>
         ) : undefined;
@@ -154,7 +156,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         } else if (this.state.activeStep === 2) {
             return (
                 <div className={`${stepperContent}`}>
-                    <p>The last step</p>
+                    <p>The users add page</p>
                 </div>
             )
         }

@@ -24,7 +24,7 @@ export const createProjectCreationClasses = (
     });
 
     const stepperContainer = css({
-        flexShrink: 0,
+        flexGrow: 1,
     });
 
     const actionButtonContainer = css({
@@ -33,10 +33,13 @@ export const createProjectCreationClasses = (
         flexDirection: 'row',
         justifyContent: 'flex-end',
         padding: 16,
+        flexBasis: 300,
     });
 
     const baseActionButton = css({
         marginLeft: 16,
+        paddingLeft: 24,
+        paddingRight: 24,
     });
 
     const projectNameContainer = css({
@@ -62,6 +65,12 @@ export const createProjectCreationClasses = (
         marginLeft: 48,
     });
 
+    const topBar = css({
+        display: 'flex',
+        flexDirection: 'row',
+        flexShrink: 0,
+    });
+
     return {
         projectCreationContainer,
         stepperContainer,
@@ -72,5 +81,6 @@ export const createProjectCreationClasses = (
         projectName,
         multipleCheckpointsContainer,
         singleCheckpointContainer,
+        topBar,
     };
 }
