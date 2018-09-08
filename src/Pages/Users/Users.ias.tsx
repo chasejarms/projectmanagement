@@ -1,4 +1,5 @@
 import { css } from 'emotion';
+import { IUser } from '../../Models/user';
 
 // tslint:disable-next-line:no-empty-interface
 export interface IUsersPresentationProps {}
@@ -9,6 +10,7 @@ export interface IUsersPresentationState {
     newUserFullName: string;
     newUserEmail: string;
     newUserRole: string;
+    users: IUser[];
 }
 
 export const createUsersPresentationClasses = (

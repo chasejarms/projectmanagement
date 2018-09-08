@@ -18,7 +18,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import AddIcon from '@material-ui/icons/Add';
 import * as React from 'react';
-import { users } from '../../MockData/users';
+import { MockUsersApi } from '../../Api/Users/mockUsers';
+import { IUser } from '../../Models/user';
 import { handleChange } from '../../Utils/handleChange';
 import { createUsersPresentationClasses, IUsersPresentationProps, IUsersPresentationState } from './Users.ias';
 
@@ -28,9 +29,17 @@ export class Users extends React.Component<IUsersPresentationProps, IUsersPresen
         newUserFullName: '',
         newUserEmail: '',
         newUserRole: 'Staff',
+        users: [],
     };
 
     public handleChange = handleChange(this);
+
+    public componentWillMount(): void {
+        const users = new MockUsersApi().getUsers();
+        this.setState({
+            users,
+        });
+    }
 
     public render() {
         const {
@@ -39,7 +48,7 @@ export class Users extends React.Component<IUsersPresentationProps, IUsersPresen
             dialogControl,
         } = createUsersPresentationClasses(this.props, this.state);
 
-        const mappedUsers = users.map(user => (
+        const mappedUsers = this.state.users.map((user: IUser) => (
                 <TableRow key={user.id}>
                     <TableCell>{user.name}</TableCell>
                     <TableCell>{user.email}</TableCell>
@@ -132,12 +141,20 @@ export class Users extends React.Component<IUsersPresentationProps, IUsersPresen
     }
 
     private handleSave = () => {
-        // do some saving
+        new MockUsersApi().addUser({
+            name: this.state.newUserFullName,
+            email: this.state.newUserEmail,
+            type: this.state.newUserRole as any,
+            id: '1',
+            added: new Date(),
+        })
+
         this.setState({
             open: false,
             newUserFullName: '',
             newUserEmail: '',
             newUserRole: 'Staff',
+            users: new MockUsersApi().getUsers(),
         });
     }
 }

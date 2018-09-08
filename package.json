@@ -7,6 +7,7 @@
     "@material-ui/icons": "^2.0.3",
     "emotion": "^9.2.6",
     "firebase": "^5.3.1",
+    "lodash": "^4.17.10",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
     "react-redux": "^5.0.7",
@@ -24,6 +25,7 @@
   "devDependencies": {
     "@types/firebase": "^3.2.1",
     "@types/jest": "^23.3.1",
+    "@types/lodash": "^4.14.116",
     "@types/node": "^10.7.0",
     "@types/react": "^16.4.10",
     "@types/react-dom": "^16.0.7",
