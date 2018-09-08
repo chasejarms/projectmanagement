@@ -1,14 +1,24 @@
 import {
     Button,
     Divider,
+    Paper,
     Step,
     StepLabel,
     Stepper,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableRow,
     TextField,
+    Typography,
     withTheme,
 } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
+import ClearIcon from '@material-ui/icons/Clear';
 import * as React from 'react';
 import { WorkflowCheckpoint } from '../../Components/WorkflowCheckpoint/WorkflowCheckpoint';
+import { users } from '../../MockData/users';
 import { workflow } from '../../MockData/workflow';
 import {
     createProjectCreationClasses,
@@ -119,6 +129,13 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             projectName,
             multipleCheckpointsContainer,
             singleCheckpointContainer,
+            userSearchContainer,
+            addUsersContainer,
+            textFieldContainer,
+            paper,
+            searchTextField,
+            addedUsersText,
+            icon,
         } = createProjectCreationClasses(this.props, this.state);
 
         if (this.state.activeStep === 0) {
@@ -154,9 +171,72 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                 </div>
             )
         } else if (this.state.activeStep === 2) {
+            const mappedUsers = users.map(user => (
+                    <TableRow key={user.id}>
+                        <TableCell>{user.name}</TableCell>
+                        <TableCell>{user.email}</TableCell>
+                        <TableCell>{user.type}</TableCell>
+                        <TableCell>
+                            <AddIcon className={icon}/>
+                        </TableCell>
+                    </TableRow>
+                )
+            )
+
+            const addedUsers = ([] as any).map((user: any) => (
+                <TableRow key={user.id}>
+                    <TableCell>{user.name}</TableCell>
+                    <TableCell>{user.email}</TableCell>
+                    <TableCell>{user.type}</TableCell>
+                    <TableCell>
+                        <ClearIcon className={icon}/>
+                    </TableCell>
+                </TableRow>
+            ))
+
             return (
-                <div className={`${stepperContent}`}>
-                    <p>The users add page</p>
+                <div className={`${stepperContent} ${addUsersContainer}`}>
+                    <div className={userSearchContainer}>
+                        <div className={textFieldContainer}>
+                            <TextField
+                                label="Search Users"
+                                name="searchUsers"
+                                value={''}
+                                className={searchTextField}
+                            />
+                        </div>
+                        <Paper className={paper}>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Full Name</TableCell>
+                                        <TableCell>Email</TableCell>
+                                        <TableCell>User Type</TableCell>
+                                        <TableCell/>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {mappedUsers}
+                                </TableBody>
+                            </Table>
+                        </Paper>
+                        <Typography variant={"display1"} className={addedUsersText}>Added Users</Typography>
+                        <Paper className={paper}>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Full Name</TableCell>
+                                        <TableCell>Email</TableCell>
+                                        <TableCell>User Type</TableCell>
+                                        <TableCell/>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {addedUsers}
+                                </TableBody>
+                            </Table>
+                        </Paper>
+                    </div>
                 </div>
             )
         }

@@ -71,6 +71,45 @@ export const createProjectCreationClasses = (
         flexShrink: 0,
     });
 
+    const addUsersContainer = css({
+        display: 'flex',
+        flexDirection: 'column',
+    });
+
+    const userSearchContainer = css({
+        display: 'flex',
+        flexDirection: 'column',
+        flexShrink: 0,
+        padding: 32,
+    });
+
+    const addedUsersContainer = css({
+        paddingLeft: 32,
+        paddingRight: 32,
+        paddingBottom: 32,
+        flexShrink: 0,
+    });
+
+    const textFieldContainer = css({
+        paddingBottom: 32,
+    });
+
+    const paper = css({
+        marginBottom: 32,
+    });
+
+    const searchTextField = css({
+        width: '400px',
+    });
+
+    const addedUsersText = css({
+        marginBottom: 32,
+    });
+
+    const icon = css({
+        cursor: 'pointer',
+    })
+
     return {
         projectCreationContainer,
         stepperContainer,
@@ -82,5 +121,13 @@ export const createProjectCreationClasses = (
         multipleCheckpointsContainer,
         singleCheckpointContainer,
         topBar,
+        userSearchContainer,
+        addedUsersContainer,
+        addUsersContainer,
+        textFieldContainer,
+        paper,
+        searchTextField,
+        addedUsersText,
+        icon,
     };
 }

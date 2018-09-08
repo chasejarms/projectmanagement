@@ -1,8 +1,7 @@
 import { css } from 'emotion';
-import { RouteComponentProps } from "react-router";
 
 // tslint:disable-next-line:no-empty-interface
-export interface IUsersPresentationProps extends RouteComponentProps<{}> {}
+export interface IUsersPresentationProps {}
 
 // tslint:disable-next-line:no-empty-interface
 export interface IUsersPresentationState {
