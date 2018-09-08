@@ -6,6 +6,9 @@ export interface IUsersPresentationProps {}
 // tslint:disable-next-line:no-empty-interface
 export interface IUsersPresentationState {
     open: boolean;
+    newUserFullName: string;
+    newUserEmail: string;
+    newUserRole: string;
 }
 
 export const createUsersPresentationClasses = (

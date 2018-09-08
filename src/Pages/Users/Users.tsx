@@ -19,12 +19,18 @@ import TableRow from '@material-ui/core/TableRow';
 import AddIcon from '@material-ui/icons/Add';
 import * as React from 'react';
 import { users } from '../../MockData/users';
+import { handleChange } from '../../Utils/handleChange';
 import { createUsersPresentationClasses, IUsersPresentationProps, IUsersPresentationState } from './Users.ias';
 
 export class Users extends React.Component<IUsersPresentationProps, IUsersPresentationState> {
     public state = {
         open: false,
+        newUserFullName: '',
+        newUserEmail: '',
+        newUserRole: 'Staff',
     };
+
+    public handleChange = handleChange(this);
 
     public render() {
         const {
@@ -74,23 +80,28 @@ export class Users extends React.Component<IUsersPresentationProps, IUsersPresen
                     <DialogContent className={dialogContent}>
                         <TextField
                             label="Full Name"
-                            name="fullName"
-                            value={''}
+                            name="newUserFullName"
+                            value={this.state.newUserFullName}
                             className={dialogControl}
+                            onChange={this.handleChange}
                         />
                         <TextField
                             label="Email"
-                            name="email"
-                            value={''}
+                            name="newUserEmail"
+                            value={this.state.newUserEmail}
                             className={dialogControl}
+                            onChange={this.handleChange}
                         />
                         <FormControl>
                             <InputLabel htmlFor="role">Role</InputLabel>
                             <Select
+                                name="newUserRole"
                                 className={dialogControl}
                                 inputProps={{
                                     id: 'role',
                                 }}
+                                value={this.state.newUserRole}
+                                onChange={this.handleChange}
                             >
                                 <MenuItem value={'Admin'}>Admin</MenuItem>
                                 <MenuItem value={'Staff'}>Staff</MenuItem>
@@ -112,11 +123,21 @@ export class Users extends React.Component<IUsersPresentationProps, IUsersPresen
     }
 
     private handleClose = () => {
-        this.setState({ open: false });
+        this.setState({
+            open: false,
+            newUserFullName: '',
+            newUserEmail: '',
+            newUserRole: 'Staff',
+        });
     }
 
     private handleSave = () => {
         // do some saving
-        this.setState({ open: false });
+        this.setState({
+            open: false,
+            newUserFullName: '',
+            newUserEmail: '',
+            newUserRole: 'Staff',
+        });
     }
 }

@@ -1,11 +1,14 @@
 import { WithTheme } from '@material-ui/core';
 import { css } from 'emotion';
+import { IWorkflowCheckpoint } from '../../Models/workflow';
 
 // tslint:disable-next-line:no-empty-interface
 export interface IProjectCreationProps extends WithTheme {}
 // tslint:disable-next-line:no-empty-interface
 export interface IProjectCreationState {
     activeStep: number;
+    projectName: string;
+    checkpoints: IWorkflowCheckpoint[];
 }
 
 export const createProjectCreationClasses = (

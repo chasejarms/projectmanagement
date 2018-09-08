@@ -20,6 +20,7 @@ import * as React from 'react';
 import { WorkflowCheckpoint } from '../../Components/WorkflowCheckpoint/WorkflowCheckpoint';
 import { users } from '../../MockData/users';
 import { workflow } from '../../MockData/workflow';
+import { handleChange } from '../../Utils/handleChange';
 import {
     createProjectCreationClasses,
     IProjectCreationProps,
@@ -29,7 +30,11 @@ import {
 export class ProjectCreationPresentation extends React.Component<IProjectCreationProps, IProjectCreationState> {
     public state = {
         activeStep: 0,
+        projectName: '',
+        checkpoints: [],
     }
+
+    public handleChange = handleChange(this);
 
     public render() {
         const {
@@ -144,8 +149,9 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                     <TextField
                         className={projectName}
                         label="Project Name"
-                        name="checkpointName"
-                        value={''}
+                        name="projectName"
+                        value={this.state.projectName}
+                        onChange={this.handleChange}
                     />
                 </div>
             )
