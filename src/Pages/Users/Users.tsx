@@ -18,12 +18,13 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import AddIcon from '@material-ui/icons/Add';
 import * as React from 'react';
-import { MockUsersApi } from '../../Api/Users/mockUsers';
+import { withRouter } from 'react-router';
+import Api from '../../Api/api';
 import { IUser } from '../../Models/user';
 import { handleChange } from '../../Utils/handleChange';
 import { createUsersPresentationClasses, IUsersPresentationProps, IUsersPresentationState } from './Users.ias';
 
-export class Users extends React.Component<IUsersPresentationProps, IUsersPresentationState> {
+export class UsersPresentation extends React.Component<IUsersPresentationProps, IUsersPresentationState> {
     public state = {
         open: false,
         newUserFullName: '',
@@ -35,7 +36,10 @@ export class Users extends React.Component<IUsersPresentationProps, IUsersPresen
     public handleChange = handleChange(this);
 
     public componentWillMount(): void {
-        const users = new MockUsersApi().getUsers();
+        const companyName = this.props.match.path.split('/')[2];
+        // tslint:disable-next-line:no-console
+        console.log(companyName);
+        const users = Api.userApi.getUsers(companyName);
         this.setState({
             users,
         });
@@ -141,7 +145,9 @@ export class Users extends React.Component<IUsersPresentationProps, IUsersPresen
     }
 
     private handleSave = () => {
-        new MockUsersApi().addUser({
+        const companyName = this.props.match.path.split('/')[2];
+
+        Api.userApi.addUser(companyName, {
             name: this.state.newUserFullName,
             email: this.state.newUserEmail,
             type: this.state.newUserRole as any,
@@ -154,7 +160,9 @@ export class Users extends React.Component<IUsersPresentationProps, IUsersPresen
             newUserFullName: '',
             newUserEmail: '',
             newUserRole: 'Staff',
-            users: new MockUsersApi().getUsers(),
+            users: Api.userApi.getUsers(companyName),
         });
     }
 }
+
+export const Users = withRouter(UsersPresentation);

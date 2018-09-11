@@ -12,7 +12,7 @@ export const users: IUser[] = [
         id: '2',
         name: 'Christian Eaton',
         email: 'christian12@yahoo.com',
-        type: 'Staff',
+        type: 'Admin',
         added: new Date(),
     },
     {

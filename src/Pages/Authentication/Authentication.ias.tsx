@@ -4,6 +4,7 @@ import { RouteComponentProps } from 'react-router';
 
 export interface IAuthenticationPresentationState {
     companyName?: string;
+    fullName?: string;
     email: string;
     password: string;
 }

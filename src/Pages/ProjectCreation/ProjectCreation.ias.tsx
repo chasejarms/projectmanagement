@@ -9,6 +9,11 @@ export interface IProjectCreationState {
     activeStep: number;
     projectName: string;
     checkpoints: IWorkflowCheckpoint[];
+    open: boolean;
+    user: any;
+    checkpointStatus: any;
+    role: any;
+    additionalCheckpoints: Set<string>;
 }
 
 export const createProjectCreationClasses = (
@@ -74,44 +79,64 @@ export const createProjectCreationClasses = (
         flexShrink: 0,
     });
 
-    const addUsersContainer = css({
-        display: 'flex',
-        flexDirection: 'column',
-    });
-
-    const userSearchContainer = css({
-        display: 'flex',
-        flexDirection: 'column',
-        flexShrink: 0,
-        padding: 32,
-    });
-
-    const addedUsersContainer = css({
-        paddingLeft: 32,
-        paddingRight: 32,
-        paddingBottom: 32,
-        flexShrink: 0,
-    });
-
-    const textFieldContainer = css({
-        paddingBottom: 32,
-    });
-
     const paper = css({
         marginBottom: 32,
     });
 
-    const searchTextField = css({
-        width: '400px',
+    const usersContainer = css({
+        padding: 32,
     });
 
-    const addedUsersText = css({
-        marginBottom: 32,
-    });
-
-    const icon = css({
+    const addedUserRow = css({
         cursor: 'pointer',
+        '&:hover': {
+            backgroundColor: '#f5f5f5'
+        },
     })
+
+    const fabButton = css({
+        position: 'absolute',
+        bottom: 16,
+        right: 16,
+    });
+
+    const dialogControl = css({
+        marginBottom: 16,
+        minWidth: 500,
+    });
+
+    const dialogContent = css({
+        display: 'flex',
+        flexDirection: 'column',
+        width: 'auto',
+    });
+
+    const dialogRow = css({
+        display: 'flex',
+        flexDirection: 'row',
+        marginBottom: 16,
+    });
+
+    const dialogRowFirstItem = css({
+        width: 'calc(50% - 8px)',
+        marginRight: 16,
+        display: 'inline-block',
+    })
+
+    const dialogRowSecondItem = css({
+        width: 'calc(50% - 8px)',
+        display: 'inline-block',
+    });
+
+    const selectControl = css({
+        width: '100%',
+    });
+
+    const addedItemContainer = css({
+        height: 32,
+        display: 'flex',
+        flexDirection: 'row',
+    });
 
     return {
         projectCreationContainer,
@@ -124,13 +149,16 @@ export const createProjectCreationClasses = (
         multipleCheckpointsContainer,
         singleCheckpointContainer,
         topBar,
-        userSearchContainer,
-        addedUsersContainer,
-        addUsersContainer,
-        textFieldContainer,
         paper,
-        searchTextField,
-        addedUsersText,
-        icon,
+        usersContainer,
+        addedUserRow,
+        fabButton,
+        dialogControl,
+        dialogContent,
+        dialogRow,
+        dialogRowFirstItem,
+        dialogRowSecondItem,
+        selectControl,
+        addedItemContainer,
     };
 }

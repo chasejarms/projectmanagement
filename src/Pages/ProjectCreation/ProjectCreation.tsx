@@ -1,7 +1,15 @@
 import {
     Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
     Divider,
+    FormControl,
+    InputLabel,
+    MenuItem,
     Paper,
+    Select,
     Step,
     StepLabel,
     Stepper,
@@ -15,7 +23,6 @@ import {
     withTheme,
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
-import ClearIcon from '@material-ui/icons/Clear';
 import * as React from 'react';
 import { WorkflowCheckpoint } from '../../Components/WorkflowCheckpoint/WorkflowCheckpoint';
 import { users } from '../../MockData/users';
@@ -29,9 +36,14 @@ import {
 
 export class ProjectCreationPresentation extends React.Component<IProjectCreationProps, IProjectCreationState> {
     public state = {
-        activeStep: 0,
+        open: false,
+        activeStep: 2,
         projectName: '',
         checkpoints: [],
+        user: '',
+        checkpointStatus: '',
+        role: '',
+        additionalCheckpoints: new Set<string>([]),
     }
 
     public handleChange = handleChange(this);
@@ -127,6 +139,35 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         )
     }
 
+    private handleClose = (): void => {
+        this.setState({
+            open: false,
+        });
+    }
+
+    private openUserDialog = (): void => {
+        this.setState({
+            open: true,
+        });
+    }
+
+    private addUserToProject = (): void => {
+        // add user to project
+        this.setState({
+            open: false,
+        })
+    }
+
+    private handleAdditionalCheckpoint = (event: any): any => {
+        const clonedSet = new Set(this.state.additionalCheckpoints);
+        clonedSet.add(event.target.value);
+        // tslint:disable-next-line:no-console
+        console.log(event.target.value);
+        this.setState({
+            additionalCheckpoints: clonedSet as any,
+        });
+    }
+
     private getStepActiveContent(): any {
         const {
             stepperContent,
@@ -134,13 +175,17 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             projectName,
             multipleCheckpointsContainer,
             singleCheckpointContainer,
-            userSearchContainer,
-            addUsersContainer,
-            textFieldContainer,
+            usersContainer,
             paper,
-            searchTextField,
-            addedUsersText,
-            icon,
+            addedUserRow,
+            fabButton,
+            dialogControl,
+            dialogContent,
+            dialogRow,
+            dialogRowFirstItem,
+            dialogRowSecondItem,
+            selectControl,
+            addedItemContainer,
         } = createProjectCreationClasses(this.props, this.state);
 
         if (this.state.activeStep === 0) {
@@ -178,71 +223,139 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             )
         } else if (this.state.activeStep === 2) {
             const mappedUsers = users.map(user => (
-                    <TableRow key={user.id}>
+                    <TableRow key={user.id} className={addedUserRow} onClick={this.openUserDialog}>
                         <TableCell>{user.name}</TableCell>
                         <TableCell>{user.email}</TableCell>
+                        <TableCell>All</TableCell>
                         <TableCell>{user.type}</TableCell>
-                        <TableCell>
-                            <AddIcon className={icon}/>
-                        </TableCell>
                     </TableRow>
                 )
             )
 
-            const addedUsers = ([] as any).map((user: any) => (
-                <TableRow key={user.id}>
-                    <TableCell>{user.name}</TableCell>
-                    <TableCell>{user.email}</TableCell>
-                    <TableCell>{user.type}</TableCell>
-                    <TableCell>
-                        <ClearIcon className={icon}/>
-                    </TableCell>
-                </TableRow>
-            ))
+            const showOtherCheckpointField = this.state.checkpointStatus === 'AllCheckpointsExcept' || this.state.checkpointStatus === 'SomeCheckpoints';
+            const otherCheckpointText = this.state.checkpointStatus === 'AllCheckpointsExcept' ? 'To Remove' : 'To Add';
+            const text = `Select Checkpoints ${otherCheckpointText}`;
+            const checkpointItems = workflow.checkpoints.filter((checkpoint) => {
+                return !this.state.additionalCheckpoints.has(checkpoint.name);
+            }).map((checkpoint, index) => {
+                return (
+                    <MenuItem
+                        value={checkpoint.name}
+                        key={index}>
+                        {checkpoint.name}
+                    </MenuItem>
+
+                )
+            });
+            const addedItems: any[] = [];
+            this.state.additionalCheckpoints.forEach((checkpoint) => {
+                addedItems.push(checkpoint);
+            });
+            const addedItemsWithElement = addedItems.map((addedItem, index) => {
+                return (
+                    <div className={addedItemContainer} key={index}>
+                        <Typography>{addedItem}</Typography>
+                    </div>
+                )
+            });
+            const otherCheckpointsField = showOtherCheckpointField && checkpointItems.length? (
+                <div className={dialogRow}>
+                    <div className={dialogRowFirstItem}>
+                        <FormControl className={selectControl}>
+                            <InputLabel htmlFor="role">{text}</InputLabel>
+                            <Select
+                                name=""
+                                inputProps={{
+                                    id: 'role',
+                                }}
+                                value={''}
+                                onChange={this.handleAdditionalCheckpoint}
+                            >
+                                {checkpointItems}
+                            </Select>
+                        </FormControl>
+                    </div>
+                    <div className={dialogRowSecondItem}>
+                        {addedItemsWithElement}
+                    </div>
+                </div>
+            ) : undefined;
 
             return (
-                <div className={`${stepperContent} ${addUsersContainer}`}>
-                    <div className={userSearchContainer}>
-                        <div className={textFieldContainer}>
+                <div className={`${stepperContent} ${usersContainer}`}>
+                    <Paper className={paper}>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Name</TableCell>
+                                    <TableCell>Email</TableCell>
+                                    <TableCell>Checkpoints</TableCell>
+                                    <TableCell>Role</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {mappedUsers}
+                            </TableBody>
+                        </Table>
+                    </Paper>
+                    <Button
+                        type="button"
+                        variant="fab"
+                        color="primary"
+                        className={fabButton}
+                        onClick={this.openUserDialog}>
+                        <AddIcon/>
+                    </Button>
+                    <Dialog
+                        open={this.state.open}
+                        onClose={this.handleClose}
+                    >
+                        <DialogTitle>Add User To Project</DialogTitle>
+                        <DialogContent className={dialogContent}>
                             <TextField
-                                label="Search Users"
-                                name="searchUsers"
-                                value={''}
-                                className={searchTextField}
+                                label="User"
+                                name="user"
+                                value={this.state.user}
+                                className={dialogControl}
+                                onChange={this.handleChange}
                             />
-                        </div>
-                        <Paper className={paper}>
-                            <Table>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Full Name</TableCell>
-                                        <TableCell>Email</TableCell>
-                                        <TableCell>User Type</TableCell>
-                                        <TableCell/>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {mappedUsers}
-                                </TableBody>
-                            </Table>
-                        </Paper>
-                        <Typography variant={"display1"} className={addedUsersText}>Added Users</Typography>
-                        <Paper className={paper}>
-                            <Table>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Full Name</TableCell>
-                                        <TableCell>Email</TableCell>
-                                        <TableCell>User Type</TableCell>
-                                        <TableCell/>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {addedUsers}
-                                </TableBody>
-                            </Table>
-                        </Paper>
-                    </div>
+                            <FormControl className={dialogControl}>
+                                <InputLabel htmlFor="role">Role</InputLabel>
+                                <Select
+                                    name="role"
+                                    inputProps={{
+                                        id: 'role',
+                                    }}
+                                    value={this.state.role}
+                                    onChange={this.handleChange}
+                                >
+                                    <MenuItem value={'Staff'}>Staff</MenuItem>
+                                    <MenuItem value={'Customer'}>Customer</MenuItem>
+                                </Select>
+                            </FormControl>
+                            <FormControl>
+                                <InputLabel htmlFor="role">Checkpoints</InputLabel>
+                                <Select
+                                    name="checkpointStatus"
+                                    className={dialogControl}
+                                    inputProps={{
+                                        id: 'role',
+                                    }}
+                                    value={this.state.checkpointStatus}
+                                    onChange={this.handleChange}
+                                >
+                                    <MenuItem value={'AllCheckpoints'}>Add User To All Checkpoints</MenuItem>
+                                    <MenuItem value={'AllCheckpointsExcept'}>Add User To All Checkpoints Except For</MenuItem>
+                                    <MenuItem value={'SomeCheckpoints'}>Add User To Some Checkpoints</MenuItem>
+                                </Select>
+                            </FormControl>
+                            {otherCheckpointsField}
+                        </DialogContent>
+                        <DialogActions>
+                            <Button color="secondary" onClick={this.handleClose}>Cancel</Button>
+                            <Button color="primary" onClick={this.addUserToProject}>Add User</Button>
+                        </DialogActions>
+                    </Dialog>
                 </div>
             )
         }

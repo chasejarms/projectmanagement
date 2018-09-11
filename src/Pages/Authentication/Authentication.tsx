@@ -5,6 +5,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { CLEAR_ADMIN_STATE } from '../../adminUser.reducer';
+import Api from '../../Api/api';
 // import firebase from '../../firebase';
 import { handleChange } from '../../Utils/handleChange';
 import { createAuthenticationClasses, IAuthenticationPresentationProps, IAuthenticationPresentationState } from './Authentication.ias';
@@ -17,6 +18,7 @@ export class AuthenticationPresentation extends React.Component<
         email: '',
         password: '',
         companyName: '',
+        fullName: '',
     };
 
     // private signUpFunctionName = 'createUserWithEmailAndPassword';
@@ -44,6 +46,18 @@ export class AuthenticationPresentation extends React.Component<
                 name="companyName"
                 value={this.state.companyName}
                 onChange={this.handleChange}
+                margin="normal"
+            />
+        )
+
+        const fullNameField = this.isLoginUrl() ? undefined : (
+            <TextField
+                className={textField}
+                label="Full Name"
+                name="fullName"
+                value={this.state.fullName}
+                onChange={this.handleChange}
+                margin="normal"
             />
         )
 
@@ -51,6 +65,9 @@ export class AuthenticationPresentation extends React.Component<
             <div className={authenticationContainer}>
                 <div className={authenticationRow}>
                     { companyNameField }
+                </div>
+                <div className={authenticationRow}>
+                    { fullNameField }
                 </div>
                 <div className={authenticationRow}>
                     <TextField
@@ -87,14 +104,20 @@ export class AuthenticationPresentation extends React.Component<
     }
 
     private login = () => {
+
         this.redirectToCompanyPage();
         // this.redirectToCompanyPage();
         // this.sharedAuthFunctionality(true);
     }
 
     private signup = () => {
+        Api.authenticationApi.signUp(
+            this.state.companyName!,
+            this.state.fullName!,
+            this.state.email,
+            this.state.password,
+        );
         this.redirectToCompanyPage();
-        // this.sharedAuthFunctionality(false);
     }
 
     // private logout(): void {
@@ -130,6 +153,7 @@ export class AuthenticationPresentation extends React.Component<
     // }
 
     private redirectToCompanyPage(): void {
+        
         const company = this.state.companyName || 'xactware';
         this.props.history.push(`company/${company}`);
     }

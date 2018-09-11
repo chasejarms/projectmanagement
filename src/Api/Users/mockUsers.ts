@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import { users as mockUsers } from '../../MockData/users';
 import { IUser } from './../../Models/user';
 import { IUsersApi } from './usersApiInterface';
 
@@ -12,15 +11,15 @@ export class MockUsersApi implements IUsersApi {
         if (users) {
             window['users'] = users
         } else {
-            window['users'] = _.cloneDeep(mockUsers);
+            window['users'] = [];
         }
     }
 
-    public getUsers(): IUser[] {
+    public getUsers(companyName: string): IUser[] {
         return _.cloneDeep(window['users']);
     }
 
-    public addUser(user: IUser): IUser {
+    public addUser(companyName: string, user: IUser): IUser {
         window['users'].push({
             ...user,
             id: Date.now(),
@@ -28,12 +27,12 @@ export class MockUsersApi implements IUsersApi {
         return user;
     }
 
-    public deleteUser(userId: string): boolean {
+    public deleteUser(companyName: string, userId: string): boolean {
         window['users'] = window['users'].filter((user: IUser) => user.id !== userId);
         return true;
     }
 
-    public updateUser(user: IUser): IUser {
+    public updateUser(companyName: string, user: IUser): IUser {
         window['users'] = window['users'].map((compareUser: IUser) => {
             if (compareUser.id !== user.id) {
                 return compareUser;
