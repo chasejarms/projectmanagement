@@ -12,11 +12,7 @@ export const projectProgressClasses = (
     state: IProjectProgressState,
 ) => {
     const checkpointsContainer = css({
-        display: 'flex',
-        flexDirection: 'column',
-        marginRight: 'auto',
-        marginLeft: 'auto',
-        paddingTop: 32,
+        padding: 32,
     });
 
     const checkpointStyling = css({

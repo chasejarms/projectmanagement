@@ -51,7 +51,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                         label="Project Name"
                         classes={tabClasses}/>
                     <Tab
-                        label="Project Overview"
+                        label="Checkpoints"
                         classes={tabClasses}/>
                     <Tab
                         label="Staff Chat"

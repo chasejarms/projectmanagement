@@ -25,7 +25,7 @@ import {
 import AddIcon from '@material-ui/icons/Add';
 import ClearIcon from '@material-ui/icons/Clear';
 import * as React from 'react';
-import { WorkflowCheckpoint } from '../../Components/WorkflowCheckpoint/WorkflowCheckpoint';
+import { Checkpoints } from '../../Components/Checkpoints/Checkpoints';
 import { users } from '../../MockData/users';
 import { workflow } from '../../MockData/workflow';
 import { handleChange } from '../../Utils/handleChange';
@@ -38,7 +38,7 @@ import {
 export class ProjectCreationPresentation extends React.Component<IProjectCreationProps, IProjectCreationState> {
     public state = {
         open: false,
-        activeStep: 2,
+        activeStep: 1,
         projectName: '',
         checkpoints: [],
         user: '',
@@ -193,8 +193,6 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             stepperContent,
             projectNameContainer,
             projectName,
-            multipleCheckpointsContainer,
-            singleCheckpointContainer,
             usersContainer,
             paper,
             addedUserRow,
@@ -222,24 +220,24 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                 </div>
             )
         } else if (this.state.activeStep === 1) {
-            const workflowCheckpoints = workflow.checkpoints.map((workflowCheckpoint, index) => {
-                const isOddCheckpoint = index % 2 === 0;
+            // const workflowCheckpoints = workflow.checkpoints.map((workflowCheckpoint, index) => {
+            //     const isOddCheckpoint = index % 2 === 0;
     
-                return (
-                    <div key={index} className={singleCheckpointContainer}>
-                        <WorkflowCheckpoint
-                            theme={this.props.theme}
-                            workflowCheckpoint={workflowCheckpoint}
-                            greyBackground={isOddCheckpoint}
-                            isFirstCheckpoint={index === 0}
-                            />
-                    </div>
-                )
-            });
+            //     return (
+            //         <div key={index} className={singleCheckpointContainer}>
+            //             <WorkflowCheckpoint
+            //                 theme={this.props.theme}
+            //                 workflowCheckpoint={workflowCheckpoint}
+            //                 greyBackground={isOddCheckpoint}
+            //                 isFirstCheckpoint={index === 0}
+            //                 />
+            //         </div>
+            //     )
+            // });
 
             return (
-                <div className={`${stepperContent} ${multipleCheckpointsContainer}`}>
-                    {workflowCheckpoints}
+                <div className={`${stepperContent}`}>
+                    <Checkpoints/>
                 </div>
             )
         } else if (this.state.activeStep === 2) {
