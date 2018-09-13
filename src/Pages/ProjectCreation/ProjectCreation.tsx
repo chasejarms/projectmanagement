@@ -23,6 +23,7 @@ import {
     withTheme,
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
+import ClearIcon from '@material-ui/icons/Clear';
 import * as React from 'react';
 import { WorkflowCheckpoint } from '../../Components/WorkflowCheckpoint/WorkflowCheckpoint';
 import { users } from '../../MockData/users';
@@ -143,6 +144,15 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         this.setState({
             open: false,
         });
+
+        setTimeout(() => {
+            this.setState({
+                checkpoints: [],
+                user: '',
+                checkpointStatus: '',
+                role: '',
+            });
+        });
     }
 
     private openUserDialog = (): void => {
@@ -168,6 +178,16 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         });
     }
 
+    private removeCheckpointItem = (checkpointName: string) => {
+        const clonedSet = new Set(this.state.additionalCheckpoints);
+        clonedSet.delete(checkpointName);
+        return () => {
+            this.setState({
+                additionalCheckpoints: clonedSet as any,
+            });
+        }
+    }
+
     private getStepActiveContent(): any {
         const {
             stepperContent,
@@ -186,6 +206,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             dialogRowSecondItem,
             selectControl,
             addedItemContainer,
+            clearCheckpointIcon,
         } = createProjectCreationClasses(this.props, this.state);
 
         if (this.state.activeStep === 0) {
@@ -233,8 +254,6 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             )
 
             const showOtherCheckpointField = this.state.checkpointStatus === 'AllCheckpointsExcept' || this.state.checkpointStatus === 'SomeCheckpoints';
-            const otherCheckpointText = this.state.checkpointStatus === 'AllCheckpointsExcept' ? 'To Remove' : 'To Add';
-            const text = `Select Checkpoints ${otherCheckpointText}`;
             const checkpointItems = workflow.checkpoints.filter((checkpoint) => {
                 return !this.state.additionalCheckpoints.has(checkpoint.name);
             }).map((checkpoint, index) => {
@@ -255,14 +274,15 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                 return (
                     <div className={addedItemContainer} key={index}>
                         <Typography>{addedItem}</Typography>
+                        <ClearIcon onClick={this.removeCheckpointItem(addedItem)} className={clearCheckpointIcon}/>
                     </div>
                 )
             });
-            const otherCheckpointsField = showOtherCheckpointField && checkpointItems.length? (
+            const otherCheckpointsField = showOtherCheckpointField ? (
                 <div className={dialogRow}>
                     <div className={dialogRowFirstItem}>
-                        <FormControl className={selectControl}>
-                            <InputLabel htmlFor="role">{text}</InputLabel>
+                        <FormControl className={selectControl} disabled={checkpointItems.length <= 1}>
+                            <InputLabel htmlFor="role">Select Checkpoints</InputLabel>
                             <Select
                                 name=""
                                 inputProps={{
@@ -319,20 +339,6 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                                 className={dialogControl}
                                 onChange={this.handleChange}
                             />
-                            <FormControl className={dialogControl}>
-                                <InputLabel htmlFor="role">Role</InputLabel>
-                                <Select
-                                    name="role"
-                                    inputProps={{
-                                        id: 'role',
-                                    }}
-                                    value={this.state.role}
-                                    onChange={this.handleChange}
-                                >
-                                    <MenuItem value={'Staff'}>Staff</MenuItem>
-                                    <MenuItem value={'Customer'}>Customer</MenuItem>
-                                </Select>
-                            </FormControl>
                             <FormControl>
                                 <InputLabel htmlFor="role">Checkpoints</InputLabel>
                                 <Select

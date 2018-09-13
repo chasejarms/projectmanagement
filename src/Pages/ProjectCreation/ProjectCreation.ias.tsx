@@ -124,6 +124,7 @@ export const createProjectCreationClasses = (
     })
 
     const dialogRowSecondItem = css({
+        marginTop: 24,
         width: 'calc(50% - 8px)',
         display: 'inline-block',
     });
@@ -133,9 +134,15 @@ export const createProjectCreationClasses = (
     });
 
     const addedItemContainer = css({
+        paddingLeft: 8,
         height: 32,
         display: 'flex',
         flexDirection: 'row',
+        justifyContent: 'space-between',
+    });
+
+    const clearCheckpointIcon = css({
+        cursor: 'pointer',
     });
 
     return {
@@ -160,5 +167,6 @@ export const createProjectCreationClasses = (
         dialogRowSecondItem,
         selectControl,
         addedItemContainer,
+        clearCheckpointIcon,
     };
 }

@@ -7,7 +7,12 @@ export interface IWorkflowPresentationProps extends RouteComponentProps<{}>, Wit
 }
 
 // tslint:disable-next-line:no-empty-interface
-export interface IWorkflowPresentationState {}
+export interface IWorkflowPresentationState {
+    open: boolean;
+    checkpointName: string;
+    checkpointDescription: string;
+    checkpointDays: number;
+}
 
 export const createWorkflowPresentationClasses = (
     props: IWorkflowPresentationProps,
@@ -28,8 +33,28 @@ export const createWorkflowPresentationClasses = (
         marginLeft: 48,
     });
 
+    const fabButton = css({
+        position: 'absolute',
+        bottom: 16,
+        right: 16,
+    });
+
+    const dialogContent = css({
+        display: 'flex',
+        flexDirection: 'column',
+        width: 'auto',
+    });
+
+    const dialogControl = css({
+        marginBottom: 16,
+        minWidth: 500,
+    });
+
     return {
         workflowContainer,
         workflowCheckpointContainer,
+        fabButton,
+        dialogContent,
+        dialogControl,
     }
 }
