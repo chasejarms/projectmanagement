@@ -17,6 +17,8 @@ export const createProjectsPresentationClasses = (
 
     const projectsContainer = css({
         height: '100vh',
+        padding: 32,
+        boxSizing: 'border-box',
     });
 
     const fabButton = css({
@@ -25,9 +27,16 @@ export const createProjectsPresentationClasses = (
         right: 16,
     })
 
+    const projectsToolbarContainer = css({
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    })
+
     return {
         rowStyling,
         projectsContainer,
         fabButton,
+        projectsToolbarContainer,
     };
 }
