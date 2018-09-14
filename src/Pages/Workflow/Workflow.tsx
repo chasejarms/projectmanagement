@@ -11,6 +11,8 @@ import {
     TableHead,
     TableRow,
     TextField,
+    Toolbar,
+    Typography,
     withTheme,
 
 } from '@material-ui/core';
@@ -36,6 +38,8 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
             fabButton,
             dialogContent,
             dialogControl,
+            workflowToolbar,
+            workflowContainer,
         } = createWorkflowPresentationClasses(this.props, this.state);
 
         const mappedCheckpoints = workflow.checkpoints.map((checkpoint, index) => (
@@ -51,8 +55,18 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
             // <div className={workflowContainer}>
             //     {workflowCheckpoints}
             // </div>
-            <div>
+            <div className={workflowContainer}>
                 <Paper>
+                    <Toolbar className={workflowToolbar}>
+                        <Typography variant="title">
+                            Workflow
+                        </Typography>
+                        {/* <Tooltip title="Filter list">
+                            <IconButton aria-label="Filter list">
+                                <FilterListIcon />
+                            </IconButton>
+                        </Tooltip> */}
+                    </Toolbar>
                     <Table>
                         <TableHead>
                             <TableRow>

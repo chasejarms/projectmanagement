@@ -19,12 +19,13 @@ export const createWorkflowPresentationClasses = (
     state: IWorkflowPresentationState,
 ) => {
     const workflowContainer = css({
-        minHeight: '100vh',
-        boxSizing: 'content-box',
-        paddingTop: 48,
-        display: 'flex',
-        flexDirection: 'column',
-        backgroundColor: '#f5f5f5'
+        // minHeight: '100vh',
+        // boxSizing: 'content-box',
+        // paddingTop: 48,
+        // display: 'flex',
+        // flexDirection: 'column',
+        // backgroundColor: '#f5f5f5'
+        padding: 32,
     });
 
     const workflowCheckpointContainer = css({
@@ -50,11 +51,18 @@ export const createWorkflowPresentationClasses = (
         minWidth: 500,
     });
 
+    const workflowToolbar = css({
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    })
+
     return {
         workflowContainer,
         workflowCheckpointContainer,
         fabButton,
         dialogContent,
         dialogControl,
+        workflowToolbar,
     }
 }
