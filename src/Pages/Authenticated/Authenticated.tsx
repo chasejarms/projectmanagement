@@ -14,6 +14,7 @@ import PeopleIcon from '@material-ui/icons/People';
 import * as React from 'react';
 import { withRouter } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
+import { MyProjects } from '../MyProjects/MyProjects'
 import { Project } from '../Project/Project';
 import { ProjectCreation } from '../ProjectCreation/ProjectCreation';
 import { Projects } from '../Projects/Projects';
@@ -119,6 +120,11 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                             path={this.props.match.url + '/createProject'}
                             exact={true}
                             component={ProjectCreation}
+                        />
+                        <Route
+                            path={this.props.match.url + '/myProjects'}
+                            exact={true}
+                            component={MyProjects}
                         />
                     </Switch>
                 </div>

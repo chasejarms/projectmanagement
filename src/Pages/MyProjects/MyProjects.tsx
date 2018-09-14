@@ -4,6 +4,7 @@ import {
     Toolbar,
     // Tooltip,
     Typography,
+    withTheme,
 } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
@@ -16,18 +17,19 @@ import AddIcon from '@material-ui/icons/Add';
 import * as React from 'react';
 import { withRouter } from 'react-router';
 import { slimProjects } from '../../MockData/slimProjects';
-import { createProjectsPresentationClasses, IProjectsPresentationProps, IProjectsPresentationState } from './Projects.ias';
+import { createMyProjectsPresentationClasses, IMyProjectsPresentationProps, IMyProjectsPresentationState } from './MyProjects.ias';
 
-export class ProjectsPresentation extends React.Component<IProjectsPresentationProps, IProjectsPresentationState> {
+export class MyProjectsPresentation extends React.Component<IMyProjectsPresentationProps, IMyProjectsPresentationState> {
     public render() {
         const {
             rowStyling,
-            projectsContainer,
+            myProjectsContainer,
             fabButton,
-            projectsToolbarContainer,
-        } = createProjectsPresentationClasses(this.props, this.state);
+            myProjectsToolbarContainer,
+            projectsTypography,
+        } = createMyProjectsPresentationClasses(this.props, this.state);
 
-        const mappedProjects = slimProjects.map(project => (
+        const mappedMyProjects = slimProjects.map(project => (
                 <TableRow key={project.id} onClick={this.navigateToProject(project.id)} className={rowStyling}>
                     <TableCell>{project.projectName}</TableCell>
                     <TableCell>{project.currentCheckpoint}</TableCell>
@@ -37,11 +39,11 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         )
 
         return (
-            <div className={projectsContainer}>
+            <div className={myProjectsContainer}>
                 <Paper>
-                    <Toolbar className={projectsToolbarContainer}>
-                        <Typography variant="title">
-                            All Projects
+                    <Toolbar className={myProjectsToolbarContainer}>
+                        <Typography variant="title" className={projectsTypography}>
+                            My Projects
                         </Typography>
                         {/* <Tooltip title="Filter list">
                             <IconButton aria-label="Filter list">
@@ -58,7 +60,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                             </TableRow>
                         </TableHead>
                         <TableBody >
-                            {mappedProjects}
+                            {mappedMyProjects}
                         </TableBody>
                     </Table>
                 </Paper>
@@ -76,7 +78,8 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
 
     private navigateToProject(projectId: string): () => void{
         return () => {
-            const postRoute = `${this.props.location.pathname}/project/${projectId}`;
+            const pathWithoutMyProject = `${this.props.location.pathname}`.replace('myProjects', '');
+            const postRoute = `${pathWithoutMyProject}project/${projectId}`;
             this.props.history.push(postRoute);
         }
     }
@@ -86,4 +89,4 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
     }
 }
 
-export const Projects = withRouter(ProjectsPresentation);
+export const MyProjects = withTheme()(withRouter(MyProjectsPresentation));
