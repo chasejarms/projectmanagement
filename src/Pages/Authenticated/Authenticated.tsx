@@ -8,6 +8,7 @@ import {
 import { withTheme } from '@material-ui/core';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import AssignmentIcon from '@material-ui/icons/Assignment';
+import DashboardIcon from '@material-ui/icons/Dashboard';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import ListIcon from '@material-ui/icons/List';
 import PeopleIcon from '@material-ui/icons/People';
@@ -42,6 +43,15 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                     >
                         <List className={list}>
                             <div>
+                                <ListItem
+                                    button={true}
+                                    className={iconContainer}
+                                    onClick={this.navigateToMyProjects}
+                                >
+                                    <ListItemIcon>
+                                        <DashboardIcon className={iconStyling}/>
+                                    </ListItemIcon>
+                                </ListItem>
                                 <ListItem
                                     button={true}
                                     className={iconContainer}
@@ -135,6 +145,11 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
     private navigateToProjects = () => {
         const { companyName } = this.props.match.params as any;
         this.props.history.push(`/company/${companyName}`);
+    }
+
+    private navigateToMyProjects = () => {
+        const { companyName } = this.props.match.params as any;
+        this.props.history.push(`/company/${companyName}/myProjects`);
     }
 
     private navigateToUsers = () => {

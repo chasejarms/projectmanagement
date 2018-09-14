@@ -9,6 +9,8 @@ import {
     MenuItem,
     Select,
     TextField,
+    Toolbar,
+    Typography,
 } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
@@ -50,6 +52,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
             fabButton,
             dialogContent,
             dialogControl,
+            usersContainer,
         } = createUsersPresentationClasses(this.props, this.state);
 
         const mappedUsers = this.state.users.map((user: IUser) => (
@@ -62,8 +65,18 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
         )
 
         return (
-            <div>
+            <div className={usersContainer}>
                 <Paper>
+                    <Toolbar>
+                        <Typography variant="title">
+                            Users
+                        </Typography>
+                        {/* <Tooltip title="Filter list">
+                            <IconButton aria-label="Filter list">
+                                <FilterListIcon />
+                            </IconButton>
+                        </Tooltip> */}
+                    </Toolbar>
                     <Table>
                         <TableHead>
                             <TableRow>

@@ -34,9 +34,16 @@ export const createUsersPresentationClasses = (
         marginBottom: 16,
     });
 
+    const usersContainer = css({
+        height: '100vh',
+        padding: 32,
+        boxSizing: 'border-box',
+    });
+
     return {
         fabButton,
         dialogContent,
         dialogControl,
+        usersContainer,
     };
 }
