@@ -55,6 +55,14 @@ export const createWorkflowPresentationClasses = (
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
+        paddingRight: 10,
+    })
+
+    const workflowRow = css({
+        cursor: 'pointer',
+        '&:hover': {
+            backgroundColor: '#f5f5f5'
+        },
     })
 
     return {
@@ -64,5 +72,6 @@ export const createWorkflowPresentationClasses = (
         dialogContent,
         dialogControl,
         workflowToolbar,
+        workflowRow,
     }
 }

@@ -4,6 +4,7 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
+    IconButton,
     Paper,
     Table,
     TableBody,
@@ -12,6 +13,7 @@ import {
     TableRow,
     TextField,
     Toolbar,
+    Tooltip,
     Typography,
     withTheme,
 
@@ -35,15 +37,15 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
 
     public render() {
         const {
-            fabButton,
             dialogContent,
             dialogControl,
             workflowToolbar,
             workflowContainer,
+            workflowRow,
         } = createWorkflowPresentationClasses(this.props, this.state);
 
         const mappedCheckpoints = workflow.checkpoints.map((checkpoint, index) => (
-                <TableRow key={index} onClick={this.openCheckpointDialog}>
+                <TableRow key={index} onClick={this.openCheckpointDialog} className={workflowRow}>
                     <TableCell>{checkpoint.name}</TableCell>
                     <TableCell>{checkpoint.deadlineFromLastCheckpoint}</TableCell>
                     <TableCell>{checkpoint.description}</TableCell>
@@ -61,6 +63,15 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
                         <Typography variant="title">
                             Workflow
                         </Typography>
+                        <Tooltip title="New Checkpoint" placement="left">
+                            <IconButton
+                                aria-label="New Checkpoint"
+                                onClick={this.openCheckpointDialog}
+                                color="primary"
+                            >
+                                <AddIcon />
+                            </IconButton>
+                        </Tooltip>
                         {/* <Tooltip title="Filter list">
                             <IconButton aria-label="Filter list">
                                 <FilterListIcon />
@@ -71,7 +82,7 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
                         <TableHead>
                             <TableRow>
                                 <TableCell>Checkpoint Name</TableCell>
-                                <TableCell>Days to complete from previous checkpoint</TableCell>
+                                <TableCell>Days to complete from previous checkpoint (or from project creation for first checkpoint)</TableCell>
                                 <TableCell>Checkpoint Description</TableCell>
                             </TableRow>
                         </TableHead>
@@ -80,14 +91,6 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
                         </TableBody>
                     </Table>
                 </Paper>
-                <Button
-                    type="button'"
-                    onClick={this.openCheckpointDialog}
-                    variant="fab"
-                    color="primary"
-                    className={fabButton}>
-                    <AddIcon/>
-                </Button>
                 <Dialog
                     open={this.state.open}
                     onClose={this.handleClose}

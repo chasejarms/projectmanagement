@@ -4,6 +4,7 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
+    IconButton,
     Paper,
     Table,
     TableBody,
@@ -11,6 +12,9 @@ import {
     TableHead,
     TableRow,
     TextField,
+    Toolbar,
+    Tooltip,
+    Typography,
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import * as React from 'react';
@@ -75,13 +79,15 @@ export class Checkpoints extends React.Component<ICheckpointsProps, ICheckpoints
 
     public render() {
         const {
-            fabButton,
+            // fabButton,
             dialogContent,
             dialogControl,
+            checkpointsToolbarContainer,
+            checkpointRow,
         } = createCheckpointsClasses(this.props, this.state);
 
         const mappedCheckpoints = checkpoints.map((checkpoint, index) => (
-                <TableRow key={index} onClick={this.openCheckpointDialog}>
+                <TableRow key={index} onClick={this.openCheckpointDialog} className={checkpointRow}>
                     <TableCell>{checkpoint.name}</TableCell>
                     <TableCell>{'9/12/2018'}</TableCell>
                     <TableCell>{checkpoint.complete ? 'true' : 'false'}</TableCell>
@@ -92,6 +98,25 @@ export class Checkpoints extends React.Component<ICheckpointsProps, ICheckpoints
         return (
             <div>
                 <Paper>
+                    <Toolbar className={checkpointsToolbarContainer}>
+                        <Typography variant="title">
+                            Checkpoints
+                        </Typography>
+                        <Tooltip title="New Project Checkpoint" placement="left">
+                            <IconButton
+                                aria-label="New Project Checkpoint"
+                                onClick={this.openCheckpointDialog}
+                                color="primary"
+                            >
+                                <AddIcon />
+                            </IconButton>
+                        </Tooltip>
+                        {/* <Tooltip title="Filter list">
+                            <IconButton aria-label="Filter list">
+                                <FilterListIcon />
+                            </IconButton>
+                        </Tooltip> */}
+                    </Toolbar>
                     <Table>
                         <TableHead>
                             <TableRow>
@@ -105,14 +130,6 @@ export class Checkpoints extends React.Component<ICheckpointsProps, ICheckpoints
                         </TableBody>
                     </Table>
                 </Paper>
-                <Button
-                    type="button'"
-                    onClick={this.openCheckpointDialog}
-                    variant="fab"
-                    color="primary"
-                    className={fabButton}>
-                    <AddIcon/>
-                </Button>
                 <Dialog
                     open={this.state.open}
                     onClose={this.handleClose}

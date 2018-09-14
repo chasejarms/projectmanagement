@@ -145,6 +145,17 @@ export const createProjectCreationClasses = (
         cursor: 'pointer',
     });
 
+    const checkpointContainer = css({
+        padding: 32,
+    });
+
+    const projectUsersToolbarContainer = css({
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingRight: 10,
+    });
+
     return {
         projectCreationContainer,
         stepperContainer,
@@ -168,5 +179,7 @@ export const createProjectCreationClasses = (
         selectControl,
         addedItemContainer,
         clearCheckpointIcon,
+        checkpointContainer,
+        projectUsersToolbarContainer,
     };
 }

@@ -31,9 +31,25 @@ export const createCheckpointsClasses = (
         marginBottom: 16,
     });
 
+    const checkpointsToolbarContainer = css({
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingRight: 10,
+    });
+
+    const checkpointRow = css({
+        cursor: 'pointer',
+        '&:hover': {
+            backgroundColor: '#f5f5f5'
+        },
+    });
+
     return {
         fabButton,
         dialogContent,
         dialogControl,
+        checkpointsToolbarContainer,
+        checkpointRow,
     };
 }

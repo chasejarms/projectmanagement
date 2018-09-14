@@ -6,6 +6,7 @@ import {
     DialogTitle,
     Divider,
     FormControl,
+    IconButton,
     InputLabel,
     MenuItem,
     Paper,
@@ -19,6 +20,8 @@ import {
     TableHead,
     TableRow,
     TextField,
+    Toolbar,
+    Tooltip,
     Typography,
     withTheme,
 } from '@material-ui/core';
@@ -196,7 +199,6 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             usersContainer,
             paper,
             addedUserRow,
-            fabButton,
             dialogControl,
             dialogContent,
             dialogRow,
@@ -205,6 +207,8 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             selectControl,
             addedItemContainer,
             clearCheckpointIcon,
+            checkpointContainer,
+            projectUsersToolbarContainer,
         } = createProjectCreationClasses(this.props, this.state);
 
         if (this.state.activeStep === 0) {
@@ -236,7 +240,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             // });
 
             return (
-                <div className={`${stepperContent}`}>
+                <div className={`${stepperContent} ${checkpointContainer}`}>
                     <Checkpoints/>
                 </div>
             )
@@ -302,6 +306,26 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             return (
                 <div className={`${stepperContent} ${usersContainer}`}>
                     <Paper className={paper}>
+                        <Toolbar className={projectUsersToolbarContainer}>
+                            <Typography variant="title">
+                                Users
+                            </Typography>
+                            <Tooltip title="Add A User" placement="left">
+                                <IconButton
+                                    aria-label="Add A User"
+                                    onClick={this.openUserDialog}
+                                    color="primary"
+                                    type="button"
+                                >
+                                    <AddIcon />
+                                </IconButton>
+                            </Tooltip>
+                            {/* <Tooltip title="Filter list">
+                                <IconButton aria-label="Filter list">
+                                    <FilterListIcon />
+                                </IconButton>
+                            </Tooltip> */}
+                        </Toolbar>
                         <Table>
                             <TableHead>
                                 <TableRow>
@@ -316,14 +340,6 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                             </TableBody>
                         </Table>
                     </Paper>
-                    <Button
-                        type="button"
-                        variant="fab"
-                        color="primary"
-                        className={fabButton}
-                        onClick={this.openUserDialog}>
-                        <AddIcon/>
-                    </Button>
                     <Dialog
                         open={this.state.open}
                         onClose={this.handleClose}

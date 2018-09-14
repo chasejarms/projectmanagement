@@ -1,8 +1,7 @@
 import {
-    Button,
-    // IconButton,
+    IconButton,
     Toolbar,
-    // Tooltip,
+    Tooltip,
     Typography,
 } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
@@ -23,7 +22,6 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         const {
             rowStyling,
             projectsContainer,
-            fabButton,
             projectsToolbarContainer,
         } = createProjectsPresentationClasses(this.props, this.state);
 
@@ -43,6 +41,15 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                         <Typography variant="title">
                             All Projects
                         </Typography>
+                        <Tooltip title="New Project" placement="left">
+                            <IconButton
+                                aria-label="New Project"
+                                onClick={this.navigateToCreateProjectPage}
+                                color="primary"
+                            >
+                                <AddIcon />
+                            </IconButton>
+                        </Tooltip>
                         {/* <Tooltip title="Filter list">
                             <IconButton aria-label="Filter list">
                                 <FilterListIcon />
@@ -62,14 +69,6 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                         </TableBody>
                     </Table>
                 </Paper>
-                <Button
-                    type="button'"
-                    onClick={this.navigateToCreateProjectPage}
-                    variant="fab"
-                    color="primary"
-                    className={fabButton}>
-                    <AddIcon/>
-                </Button>
             </div>
         )
     }

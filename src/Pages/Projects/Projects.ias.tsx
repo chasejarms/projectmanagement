@@ -13,6 +13,9 @@ export const createProjectsPresentationClasses = (
     const rowStyling = css({
         cursor: 'pointer',
         flexShrink: 0,
+        '&:hover': {
+            backgroundColor: '#f5f5f5'
+        },
     });
 
     const projectsContainer = css({
@@ -31,6 +34,7 @@ export const createProjectsPresentationClasses = (
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
+        paddingRight: 10,
     })
 
     return {

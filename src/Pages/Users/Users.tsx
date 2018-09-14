@@ -5,11 +5,13 @@ import {
     DialogContent,
     DialogTitle,
     FormControl,
+    IconButton,
     InputLabel,
     MenuItem,
     Select,
     TextField,
     Toolbar,
+    Tooltip,
     Typography,
 } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
@@ -49,14 +51,15 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
 
     public render() {
         const {
-            fabButton,
             dialogContent,
             dialogControl,
             usersContainer,
+            usersToolbarContainer,
+            userRow,
         } = createUsersPresentationClasses(this.props, this.state);
 
         const mappedUsers = this.state.users.map((user: IUser) => (
-                <TableRow key={user.id}>
+                <TableRow key={user.id} className={userRow}>
                     <TableCell>{user.name}</TableCell>
                     <TableCell>{user.email}</TableCell>
                     <TableCell>{user.type}</TableCell>
@@ -67,10 +70,20 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
         return (
             <div className={usersContainer}>
                 <Paper>
-                    <Toolbar>
+                    <Toolbar className={usersToolbarContainer}>
                         <Typography variant="title">
                             Users
                         </Typography>
+                        <Tooltip title="New User" placement="left">
+                            <IconButton
+                                aria-label="New User"
+                                onClick={this.openNewUserDialog}
+                                color="primary"
+                                type="button"
+                            >
+                                <AddIcon />
+                            </IconButton>
+                        </Tooltip>
                         {/* <Tooltip title="Filter list">
                             <IconButton aria-label="Filter list">
                                 <FilterListIcon />
@@ -90,14 +103,6 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                         </TableBody>
                     </Table>
                 </Paper>
-                <Button
-                    type="button'"
-                    onClick={this.openNewUserDialog}
-                    variant="fab"
-                    color="primary"
-                    className={fabButton}>
-                    <AddIcon/>
-                </Button>
                 <Dialog
                     open={this.state.open}
                     onClose={this.handleClose}

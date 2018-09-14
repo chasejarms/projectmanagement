@@ -1,8 +1,8 @@
 import {
-    Button,
-    // IconButton,
+    // Button,
+    IconButton,
     Toolbar,
-    // Tooltip,
+    Tooltip,
     Typography,
     withTheme,
 } from '@material-ui/core';
@@ -24,7 +24,7 @@ export class MyProjectsPresentation extends React.Component<IMyProjectsPresentat
         const {
             rowStyling,
             myProjectsContainer,
-            fabButton,
+            // fabButton,
             myProjectsToolbarContainer,
             projectsTypography,
         } = createMyProjectsPresentationClasses(this.props, this.state);
@@ -45,6 +45,22 @@ export class MyProjectsPresentation extends React.Component<IMyProjectsPresentat
                         <Typography variant="title" className={projectsTypography}>
                             My Projects
                         </Typography>
+                        <Tooltip title="New Project" placement="left">
+                            <IconButton
+                                aria-label="New Project"
+                                onClick={this.navigateToCreateProjectPage}
+                                color="primary"
+                            >
+                                <AddIcon />
+                            </IconButton>
+                        </Tooltip>
+                        {/* <Button
+                            type="button'"
+                            onClick={this.navigateToCreateProjectPage}
+                            // variant="fab"
+                            color="primary">
+                            Create Project
+                        </Button> */}
                         {/* <Tooltip title="Filter list">
                             <IconButton aria-label="Filter list">
                                 <FilterListIcon />
@@ -64,28 +80,22 @@ export class MyProjectsPresentation extends React.Component<IMyProjectsPresentat
                         </TableBody>
                     </Table>
                 </Paper>
-                <Button
-                    type="button'"
-                    onClick={this.navigateToCreateProjectPage}
-                    variant="fab"
-                    color="primary"
-                    className={fabButton}>
-                    <AddIcon/>
-                </Button>
             </div>
         )
     }
 
     private navigateToProject(projectId: string): () => void{
         return () => {
-            const pathWithoutMyProject = `${this.props.location.pathname}`.replace('myProjects', '');
-            const postRoute = `${pathWithoutMyProject}project/${projectId}`;
+            const pathWithoutMyProject = `${this.props.location.pathname}`.replace('/myProjects', '');
+            const postRoute = `${pathWithoutMyProject}/project/${projectId}`;
             this.props.history.push(postRoute);
         }
     }
 
     private navigateToCreateProjectPage = () => {
-        this.props.history.push(`${this.props.location.pathname}/createProject`);
+        const pathWithoutMyProject = `${this.props.location.pathname}`.replace('/myProjects', '');
+        const newPath = `${pathWithoutMyProject}/createProject`;
+        this.props.history.push(newPath);
     }
 }
 

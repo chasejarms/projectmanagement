@@ -40,10 +40,26 @@ export const createUsersPresentationClasses = (
         boxSizing: 'border-box',
     });
 
+    const usersToolbarContainer = css({
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingRight: 10,
+    });
+
+    const userRow = css({
+        cursor: 'pointer',
+        '&:hover': {
+            backgroundColor: '#f5f5f5'
+        },
+    });
+
     return {
         fabButton,
         dialogContent,
         dialogControl,
         usersContainer,
+        usersToolbarContainer,
+        userRow,
     };
 }
