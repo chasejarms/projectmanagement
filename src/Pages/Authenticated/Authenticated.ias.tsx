@@ -20,14 +20,12 @@ export const createAuthenticatedClasses = (
     const iconContainer = css({
         paddingLeft: '12px !important',
         paddingRight: '12px !important',
-        // '&:hover': {
-        //     [`svg.${iconStyling}`]: {
-        //         color: `${props.theme.palette.primary.main} !important`
-        //     },
-        //     'span': {
-        //         backgroundColor: 'rgba(63, 81, 181, 0.08)',
-        //     },
-        // }
+        '&:hover': {
+            [`svg.${iconStyling}`]: {
+                color: `${props.theme.palette.secondary.main} !important`
+            },
+            backgroundColor: `rgba(245, 0, 87, 0.08) !important`,
+        }
     })
 
     const list = css({

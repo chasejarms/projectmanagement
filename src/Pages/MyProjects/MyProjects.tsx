@@ -49,7 +49,7 @@ export class MyProjectsPresentation extends React.Component<IMyProjectsPresentat
                             <IconButton
                                 aria-label="New Project"
                                 onClick={this.navigateToCreateProjectPage}
-                                color="primary"
+                                color="secondary"
                             >
                                 <AddIcon />
                             </IconButton>

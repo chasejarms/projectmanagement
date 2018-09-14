@@ -171,6 +171,10 @@ export const createProjectCreationClasses = (
         justifyContent: 'space-between',
     });
 
+    const rootStyling = css({
+        color: props.theme.palette.secondary.main,
+    });
+
     return {
         projectCreationContainer,
         stepperContainer,
@@ -198,5 +202,6 @@ export const createProjectCreationClasses = (
         projectUsersToolbarContainer,
         topBarContainer,
         fullWidthPaper,
+        rootStyling,
     };
 }

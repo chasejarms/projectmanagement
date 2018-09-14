@@ -106,7 +106,7 @@ export class Checkpoints extends React.Component<ICheckpointsProps, ICheckpoints
                             <IconButton
                                 aria-label="New Project Checkpoint"
                                 onClick={this.openCheckpointDialog}
-                                color="primary"
+                                color="secondary"
                             >
                                 <AddIcon />
                             </IconButton>
@@ -160,8 +160,8 @@ export class Checkpoints extends React.Component<ICheckpointsProps, ICheckpoints
                         />
                     </DialogContent>
                     <DialogActions>
-                        <Button color="secondary" onClick={this.handleClose}>Cancel</Button>
-                        <Button color="primary" onClick={this.handleSave}>Add Checkpoint</Button>
+                        <Button color="primary" onClick={this.handleClose}>Cancel</Button>
+                        <Button color="secondary" onClick={this.handleSave}>Add Checkpoint</Button>
                     </DialogActions>
                 </Dialog>
             </div>

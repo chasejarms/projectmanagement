@@ -40,7 +40,7 @@ import {
 export class ProjectCreationPresentation extends React.Component<IProjectCreationProps, IProjectCreationState> {
     public state = {
         open: false,
-        activeStep: 1,
+        activeStep: 0,
         projectName: '',
         checkpoints: [],
         user: '',
@@ -135,7 +135,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                 className={baseActionButton}
                 variant="contained"
                 onClick={this.onSaveClick}
-                color="primary">
+                color="secondary">
                 Create Project
             </Button>
         ) : undefined;
@@ -320,7 +320,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                                 <IconButton
                                     aria-label="Add A User"
                                     onClick={this.openUserDialog}
-                                    color="primary"
+                                    color="secondary"
                                     type="button"
                                 >
                                     <AddIcon />
@@ -378,8 +378,8 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                             {otherCheckpointsField}
                         </DialogContent>
                         <DialogActions>
-                            <Button color="secondary" onClick={this.handleClose}>Cancel</Button>
-                            <Button color="primary" onClick={this.addUserToProject}>Add User</Button>
+                            <Button color="primary" onClick={this.handleClose}>Cancel</Button>
+                            <Button color="secondary" onClick={this.addUserToProject}>Add User</Button>
                         </DialogActions>
                     </Dialog>
                 </div>

@@ -41,7 +41,7 @@ export class ChatPresentation extends React.Component<IChatProps, IChatState> {
                             type="button'"
                             onClick={this.submitMessage}
                             variant="fab"
-                            color="primary"
+                            color="secondary"
                             className={fabButton}>
                             <AddIcon/>
                         </Button>

@@ -78,7 +78,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                             <IconButton
                                 aria-label="New User"
                                 onClick={this.openNewUserDialog}
-                                color="primary"
+                                color="secondary"
                                 type="button"
                             >
                                 <AddIcon />
@@ -141,8 +141,8 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                         </FormControl>
                     </DialogContent>
                     <DialogActions>
-                        <Button color="secondary" onClick={this.handleClose}>Cancel</Button>
-                        <Button color="primary" onClick={this.handleSave}>Add User</Button>
+                        <Button color="primary" onClick={this.handleClose}>Cancel</Button>
+                        <Button color="secondary" onClick={this.handleSave}>Add User</Button>
                     </DialogActions>
                 </Dialog>
             </div>
