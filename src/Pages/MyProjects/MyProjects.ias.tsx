@@ -23,6 +23,8 @@ export const createMyProjectsPresentationClasses = (
         height: '100vh',
         padding: 32,
         boxSizing: 'border-box',
+        // backgroundColor: 'blue',
+        // backgroundClip: 'polygon(100% 0, 0% 100%, 100% 100%)',
     });
 
     const fabButton = css({

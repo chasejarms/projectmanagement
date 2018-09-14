@@ -4,6 +4,7 @@ import {
     List,
     ListItem,
     ListItemIcon,
+    Tooltip,
 } from '@material-ui/core';
 import { withTheme } from '@material-ui/core';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
@@ -32,6 +33,8 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
             drawerContainer,
             pageContainer,
             authenticatedContainer,
+            pageBackgroundLayerTwo,
+            pageBackgroundLayerThree,
         } = createAuthenticatedClasses(this.props, this.state);
 
         return (
@@ -43,67 +46,81 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                     >
                         <List className={list}>
                             <div>
-                                <ListItem
-                                    button={true}
-                                    className={iconContainer}
-                                    onClick={this.navigateToMyProjects}
-                                >
-                                    <ListItemIcon>
-                                        <DashboardIcon className={iconStyling}/>
-                                    </ListItemIcon>
-                                </ListItem>
-                                <ListItem
-                                    button={true}
-                                    className={iconContainer}
-                                    onClick={this.navigateToProjects}
-                                >
-                                    <ListItemIcon>
-                                        <AssignmentIcon className={iconStyling}/>
-                                    </ListItemIcon>
-                                </ListItem>
-                                <ListItem
-                                    button={true}
-                                    className={iconContainer}
-                                    onClick={this.navigateToUsers}
-                                >
-                                    <ListItemIcon>
-                                        <PeopleIcon className={iconStyling}/>
-                                    </ListItemIcon>
-                                </ListItem>
-                                <ListItem
-                                    button={true}
-                                    className={iconContainer}
-                                    onClick={this.navigateToWorkflow}
-                                >
-                                    <ListItemIcon>
-                                        <ListIcon className={iconStyling}/>
-                                    </ListItemIcon>
-                                </ListItem>
+                                <Tooltip title="My Projects" placement="right">
+                                    <ListItem
+                                        button={true}
+                                        className={iconContainer}
+                                        onClick={this.navigateToMyProjects}
+                                    >
+                                        <ListItemIcon>
+                                            <DashboardIcon className={iconStyling}/>
+                                        </ListItemIcon>
+                                    </ListItem>
+                                </Tooltip>
+                                <Tooltip title="All Projects" placement="right">
+                                    <ListItem
+                                        button={true}
+                                        className={iconContainer}
+                                        onClick={this.navigateToProjects}
+                                    >
+                                        <ListItemIcon>
+                                            <AssignmentIcon className={iconStyling}/>
+                                        </ListItemIcon>
+                                    </ListItem>
+                                </Tooltip>
+                                <Tooltip title="Users" placement="right">
+                                    <ListItem
+                                        button={true}
+                                        className={iconContainer}
+                                        onClick={this.navigateToUsers}
+                                    >
+                                        <ListItemIcon>
+                                            <PeopleIcon className={iconStyling}/>
+                                        </ListItemIcon>
+                                    </ListItem>
+                                </Tooltip>
+                                <Tooltip title="Workflow" placement="right">
+                                    <ListItem
+                                        button={true}
+                                        className={iconContainer}
+                                        onClick={this.navigateToWorkflow}
+                                    >
+                                        <ListItemIcon>
+                                            <ListIcon className={iconStyling}/>
+                                        </ListItemIcon>
+                                    </ListItem>
+                                </Tooltip>
                             </div>
                             <div>
                                 <Divider/>
-                                <ListItem
-                                    button={true}
-                                    className={iconContainer}
-                                    onClick={this.navigateToUserSettings}
-                                >
-                                    <ListItemIcon>
-                                        <AccountBoxIcon className={iconStyling}/>
-                                    </ListItemIcon>
-                                </ListItem>
-                                <ListItem
-                                    button={true}
-                                    className={iconContainer}
-                                    onClick={this.logout}
-                                >
-                                    <ListItemIcon>
-                                        <ExitToAppIcon className={iconStyling}/>
-                                    </ListItemIcon>
-                                </ListItem>
+                                <Tooltip title="User Settings" placement="right">
+                                    <ListItem
+                                        button={true}
+                                        className={iconContainer}
+                                        onClick={this.navigateToUserSettings}
+                                    >
+                                        <ListItemIcon>
+                                            <AccountBoxIcon className={iconStyling}/>
+                                        </ListItemIcon>
+                                    </ListItem>
+                                </Tooltip>
+                                <Tooltip title="Logout" placement="right">
+                                    <ListItem
+                                        button={true}
+                                        className={iconContainer}
+                                        onClick={this.logout}
+                                    >
+                                        <ListItemIcon>
+                                            <ExitToAppIcon className={iconStyling}/>
+                                        </ListItemIcon>
+                                    </ListItem>
+                                </Tooltip>
                             </div>
                         </List>
                     </Drawer>
                 </div>
+                <div className={pageBackgroundLayerTwo}/>
+                <div className={pageBackgroundLayerThree}/>
                 <div className={pageContainer}>
                     <Switch>
                         <Route

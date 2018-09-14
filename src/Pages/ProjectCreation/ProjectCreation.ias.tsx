@@ -29,6 +29,7 @@ export const createProjectCreationClasses = (
     const stepperContent = css({
         flexGrow: 1,
         overflowY: 'auto',
+        // backgroundColor: '#fefefe'
     });
 
     const stepperContainer = css({
@@ -77,6 +78,13 @@ export const createProjectCreationClasses = (
         display: 'flex',
         flexDirection: 'row',
         flexShrink: 0,
+        width: '100%',
+    });
+    
+    const topBarContainer = css({
+        paddingTop: 32,
+        paddingLeft: 32,
+        paddingRight: 32,
     });
 
     const paper = css({
@@ -156,6 +164,13 @@ export const createProjectCreationClasses = (
         paddingRight: 10,
     });
 
+    const fullWidthPaper = css({
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    });
+
     return {
         projectCreationContainer,
         stepperContainer,
@@ -181,5 +196,7 @@ export const createProjectCreationClasses = (
         clearCheckpointIcon,
         checkpointContainer,
         projectUsersToolbarContainer,
+        topBarContainer,
+        fullWidthPaper,
     };
 }

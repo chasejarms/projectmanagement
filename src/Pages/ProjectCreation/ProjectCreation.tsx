@@ -4,7 +4,6 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
-    Divider,
     FormControl,
     IconButton,
     InputLabel,
@@ -57,25 +56,32 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             projectCreationContainer,
             stepperContainer,
             topBar,
+            topBarContainer,
+            fullWidthPaper,
         } = createProjectCreationClasses(this.props, this.state);
 
         return (
             <div className={projectCreationContainer}>
-                <div className={topBar}>
-                    <Stepper activeStep={this.state.activeStep} className={stepperContainer}>
-                        <Step>
-                            <StepLabel>Project Name</StepLabel>
-                        </Step>
-                        <Step>
-                            <StepLabel>Add Checkpoints</StepLabel>
-                        </Step>
-                        <Step>
-                            <StepLabel>Add Users</StepLabel>
-                        </Step>
-                    </Stepper>
-                    {this.createActionButtons()}
+                <div className={topBarContainer}>
+                    <div className={topBar}>
+                        <Paper className={fullWidthPaper}>
+                            <Stepper activeStep={this.state.activeStep} className={stepperContainer}>
+                                <Step>
+                                    <StepLabel>Project Name</StepLabel>
+                                </Step>
+                                <Step>
+                                    <StepLabel>Add Checkpoints</StepLabel>
+                                </Step>
+                                <Step>
+                                    <StepLabel>Add Users</StepLabel>
+                                </Step>
+                            </Stepper>
+                            <div>
+                                {this.createActionButtons()}
+                            </div>
+                        </Paper>
+                    </div>
                 </div>
-                <Divider/>
                 {this.getStepActiveContent()}
             </div>
         )

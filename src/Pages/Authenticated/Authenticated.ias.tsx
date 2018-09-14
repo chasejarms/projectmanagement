@@ -12,15 +12,23 @@ export const createAuthenticatedClasses = (
     state: IAuthenticatedState,
 ) => {
 
-    const iconContainer = css({
-        paddingLeft: '12px !important',
-        paddingRight: '12px !important',
-    })
-
     const iconStyling = css({
         marginRight: '0px !important',
         fontSize: '32px !important',
     });
+
+    const iconContainer = css({
+        paddingLeft: '12px !important',
+        paddingRight: '12px !important',
+        // '&:hover': {
+        //     [`svg.${iconStyling}`]: {
+        //         color: `${props.theme.palette.primary.main} !important`
+        //     },
+        //     'span': {
+        //         backgroundColor: 'rgba(63, 81, 181, 0.08)',
+        //     },
+        // }
+    })
 
     const list = css({
         padding: '0 !important',
@@ -45,6 +53,26 @@ export const createAuthenticatedClasses = (
         flexDirection: 'row',
     });
 
+    const pageBackgroundLayerTwo = css({
+        position: 'absolute',
+        minHeight: '100vh',
+        height: '100%',
+        width: '100%',
+        clipPath: 'polygon(100% 100%, 0% 100%, 0% 90, 100% 10%, 100% 100%);',
+        backgroundColor: props.theme.palette.primary.main,
+        zIndex: -3,
+    });
+
+    const pageBackgroundLayerThree = css({
+        position: 'absolute',
+        minHeight: '100vh',
+        height: '100%',
+        width: '100%',
+        clipPath: 'polygon(100% 100%, 0% 100%, 0% 70%, 100% 10%, 100% 100%);',
+        backgroundColor: props.theme.palette.primary.dark,
+        zIndex: -1,
+    })
+
     return {
         iconContainer,
         iconStyling,
@@ -52,5 +80,7 @@ export const createAuthenticatedClasses = (
         drawerContainer,
         pageContainer,
         authenticatedContainer,
+        pageBackgroundLayerTwo,
+        pageBackgroundLayerThree,
     }
 }
