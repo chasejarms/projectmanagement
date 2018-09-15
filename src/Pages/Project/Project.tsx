@@ -16,9 +16,9 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
     public tabComponents = {
         0: undefined,
         1: <ProjectProgress key={1} theme={this.props.theme}/>,
-        2: <Chat theme={this.props.theme} key={2}/>,
+        2: <ProjectUsers key={2}/>,
         3: <Chat theme={this.props.theme} key={3}/>,
-        4: <ProjectUsers key={4}/>
+        4: <Chat theme={this.props.theme} key={4}/>,
     }
 
     constructor(props: IProjectPresentationProps) {
@@ -56,15 +56,15 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                         label="Checkpoints"
                         classes={tabClasses}/>
                     <Tab
+                        label="Users"
+                        classes={tabClasses}
+                    />
+                    <Tab
                         label="Staff Chat"
                         classes={tabClasses}/>
                     <Tab
                         label="Customer Chat"
                         classes={tabClasses}/>
-                    <Tab
-                        label="Users"
-                        classes={tabClasses}
-                    />
                 </Tabs>
                 <div className={tabsContentContainer}>
                     {this.tabComponents[this.state.tabValue]}
