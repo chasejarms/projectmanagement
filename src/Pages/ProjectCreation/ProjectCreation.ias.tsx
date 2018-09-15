@@ -96,6 +96,7 @@ export const createProjectCreationClasses = (
 
     const paper = css({
         marginBottom: 32,
+        overflow: 'hidden',
     });
 
     const usersContainer = css({
@@ -176,6 +177,7 @@ export const createProjectCreationClasses = (
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
+        overflow: 'hidden',
     });
 
     const underline = css({

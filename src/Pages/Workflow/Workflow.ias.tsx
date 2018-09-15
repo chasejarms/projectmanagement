@@ -63,6 +63,10 @@ export const createWorkflowPresentationClasses = (
         '&:hover': {
             backgroundColor: '#f5f5f5'
         },
+    });
+
+    const workflowPaper = css({
+        overflow: 'hidden',
     })
 
     return {
@@ -73,5 +77,6 @@ export const createWorkflowPresentationClasses = (
         dialogControl,
         workflowToolbar,
         workflowRow,
+        workflowPaper,
     }
 }

@@ -54,6 +54,10 @@ export const createUsersPresentationClasses = (
         },
     });
 
+    const usersPaper = css({
+        overflow: 'hidden',
+    });
+
     return {
         fabButton,
         dialogContent,
@@ -61,5 +65,6 @@ export const createUsersPresentationClasses = (
         usersContainer,
         usersToolbarContainer,
         userRow,
+        usersPaper,
     };
 }

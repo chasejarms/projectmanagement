@@ -42,6 +42,7 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
             workflowToolbar,
             workflowContainer,
             workflowRow,
+            workflowPaper,
         } = createWorkflowPresentationClasses(this.props, this.state);
 
         const mappedCheckpoints = workflow.checkpoints.map((checkpoint, index) => (
@@ -58,7 +59,7 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
             //     {workflowCheckpoints}
             // </div>
             <div className={workflowContainer}>
-                <Paper>
+                <Paper className={workflowPaper}>
                     <Toolbar className={workflowToolbar}>
                         <Typography variant="title">
                             Workflow

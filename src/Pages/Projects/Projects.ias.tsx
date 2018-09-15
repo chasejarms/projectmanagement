@@ -28,19 +28,24 @@ export const createProjectsPresentationClasses = (
         position: 'absolute',
         bottom: 16,
         right: 16,
-    })
+    });
 
     const projectsToolbarContainer = css({
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
         paddingRight: 10,
-    })
+    });
+
+    const projectsPaper = css({
+        overflow: 'hidden',
+    });
 
     return {
         rowStyling,
         projectsContainer,
         fabButton,
         projectsToolbarContainer,
+        projectsPaper,
     };
 }

@@ -45,11 +45,16 @@ export const createCheckpointsClasses = (
         },
     });
 
+    const checkpointsPaper = css({
+        overflow: 'hidden',
+    })
+
     return {
         fabButton,
         dialogContent,
         dialogControl,
         checkpointsToolbarContainer,
         checkpointRow,
+        checkpointsPaper,
     };
 }

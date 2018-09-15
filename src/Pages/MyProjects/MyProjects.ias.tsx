@@ -42,7 +42,11 @@ export const createMyProjectsPresentationClasses = (
 
     const projectsTypography = css({
         color: 'black',
-    })
+    });
+
+    const projectsPaper = css({
+        overflow: 'hidden',
+    });
 
     return {
         rowStyling,
@@ -50,5 +54,6 @@ export const createMyProjectsPresentationClasses = (
         fabButton,
         myProjectsToolbarContainer,
         projectsTypography,
+        projectsPaper,
     };
 }

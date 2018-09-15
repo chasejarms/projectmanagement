@@ -23,6 +23,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
             rowStyling,
             projectsContainer,
             projectsToolbarContainer,
+            projectsPaper,
         } = createProjectsPresentationClasses(this.props, this.state);
 
         const mappedProjects = slimProjects.map(project => (
@@ -36,7 +37,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
 
         return (
             <div className={projectsContainer}>
-                <Paper>
+                <Paper className={projectsPaper}>
                     <Toolbar className={projectsToolbarContainer}>
                         <Typography variant="title">
                             All Projects

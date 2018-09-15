@@ -84,6 +84,7 @@ export class Checkpoints extends React.Component<ICheckpointsProps, ICheckpoints
             dialogControl,
             checkpointsToolbarContainer,
             checkpointRow,
+            checkpointsPaper
         } = createCheckpointsClasses(this.props, this.state);
 
         const mappedCheckpoints = checkpoints.map((checkpoint, index) => (
@@ -97,7 +98,7 @@ export class Checkpoints extends React.Component<ICheckpointsProps, ICheckpoints
 
         return (
             <div>
-                <Paper>
+                <Paper className={checkpointsPaper}>
                     <Toolbar className={checkpointsToolbarContainer}>
                         <Typography variant="title">
                             Checkpoints

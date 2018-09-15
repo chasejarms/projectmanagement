@@ -56,6 +56,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
             usersContainer,
             usersToolbarContainer,
             userRow,
+            usersPaper,
         } = createUsersPresentationClasses(this.props, this.state);
 
         const mappedUsers = this.state.users.map((user: IUser) => (
@@ -69,7 +70,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
 
         return (
             <div className={usersContainer}>
-                <Paper>
+                <Paper className={usersPaper}>
                     <Toolbar className={usersToolbarContainer}>
                         <Typography variant="title">
                             Users
