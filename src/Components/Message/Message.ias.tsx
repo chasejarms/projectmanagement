@@ -19,9 +19,11 @@ export const createMessageClasses = (
     })
     const avatar = css({
         flexBasis: 'auto',
-        marginTop: 40,
-        width: 50,
-        height: 50,
+        flexShrink: 0,
+        marginRight: 32,
+        boxSizing: 'border-box',
+        width: 48,
+        height: 48,
     })
     const messageAndNameContainer = css({
         display: 'flex',
@@ -55,7 +57,46 @@ export const createMessageClasses = (
     })
     const dateTypography = css({
         color: CssVariables.slightlyLightGray,
-    })
+    });
+
+    const myMessageContainer = css({
+        display: 'flex',
+        flexDirection: 'row',
+    });
+
+    const paper = css({
+        padding: 16,
+        flexGrow: 1,
+        position: 'relative',
+        overflow: 'hidden',
+    });
+
+    const messageAndArrowContainer = css({
+        display: 'flex',
+        flexDirection: 'row',
+        flexGrow: 1,
+        position: 'relative',
+    });
+
+    const myMessageArrow = css({
+        width: 0,
+        height: 0,
+        borderTop: '8px solid transparent',
+        borderBottom: '8px solid transparent',
+        borderRight: '10px solid #fff',
+        position: 'relative',
+        right: -2,
+        top: 19,
+        zIndex: 1,
+    });
+
+    const date = css({
+        position: 'absolute',
+        color: 'white',
+        bottom: -23,
+        right: 0,
+        fontSize: 12,
+    });
 
     return {
         messageContainer,
@@ -67,5 +108,10 @@ export const createMessageClasses = (
         nonImageMetadataContainer,
         dateMessageNameContainer,
         dateTypography,
+        myMessageContainer,
+        paper,
+        myMessageArrow,
+        messageAndArrowContainer,
+        date,
     }
 }

@@ -7,7 +7,7 @@ import {
     Tooltip,
 } from '@material-ui/core';
 import { withTheme } from '@material-ui/core';
-import AccountBoxIcon from '@material-ui/icons/AccountBox';
+// import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
@@ -93,7 +93,7 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                             </div>
                             <div>
                                 <Divider/>
-                                <Tooltip title="User Settings" placement="right">
+                                {/* <Tooltip title="User Settings" placement="right">
                                     <ListItem
                                         button={true}
                                         className={iconContainer}
@@ -103,7 +103,7 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                                             <AccountBoxIcon className={iconStyling}/>
                                         </ListItemIcon>
                                     </ListItem>
-                                </Tooltip>
+                                </Tooltip> */}
                                 <Tooltip title="Logout" placement="right">
                                     <ListItem
                                         button={true}
@@ -174,10 +174,10 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
         this.props.history.push(`/company/${companyName}/users`);
     }
 
-    private navigateToUserSettings = () => {
-        const { companyName } = this.props.match.params as any;
-        this.props.history.push(`/company/${companyName}/userSettings`);
-    }
+    // private navigateToUserSettings = () => {
+    //     const { companyName } = this.props.match.params as any;
+    //     this.props.history.push(`/company/${companyName}/userSettings`);
+    // }
 
     private logout = () => {
         this.props.history.push('/login');

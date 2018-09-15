@@ -23,8 +23,13 @@ export const createChatClasses = (
         flexGrow: 1,
         flexShrink: 1,
         paddingRight: 40,
-        paddingLeft: 40,
+        paddingLeft: 24,
         overflowY: 'auto',
+        display: 'grid',
+        gridTemplateRows: '1fr 1fr 1fr',
+        gridRowGap: 40,
+        paddingTop: 24,
+        paddingBottom: 40,
     });
     const newMessageContainer = css({
         boxSizing: 'border-box',
