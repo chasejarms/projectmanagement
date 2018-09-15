@@ -220,13 +220,15 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         if (this.state.activeStep === 0) {
             return (
                 <div className={`${stepperContent} ${projectNameContainer}`}>
-                    <TextField
-                        className={projectName}
-                        label="Project Name"
-                        name="projectName"
-                        value={this.state.projectName}
-                        onChange={this.handleChange}
-                    />
+                    <Paper>
+                        <TextField
+                            className={projectName}
+                            label="Project Name"
+                            name="projectName"
+                            value={this.state.projectName}
+                            onChange={this.handleChange}
+                        />
+                    </Paper>
                 </div>
             )
         } else if (this.state.activeStep === 1) {

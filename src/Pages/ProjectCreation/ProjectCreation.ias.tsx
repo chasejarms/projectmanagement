@@ -59,6 +59,13 @@ export const createProjectCreationClasses = (
 
     const projectName = css({
         width: 400,
+        // '& > label': {
+        //     color: 'white',
+        // },
+        // '& > label:focused': {
+        //     color: props.theme.palette.primary.main,
+        // },
+        margin: 16,
     });
 
     const multipleCheckpointsContainer = css({
@@ -171,9 +178,38 @@ export const createProjectCreationClasses = (
         justifyContent: 'space-between',
     });
 
-    const rootStyling = css({
-        color: props.theme.palette.secondary.main,
+    const underline = css({
+        // // '&:focus': {
+        // //     borderColor: props.theme.palette.secondary.main,
+        // // },
+        // '&::after': {
+        //     borderColor: props.theme.palette.secondary.main,
+        // },
+
+        // '&::before': {
+        //     borderColor: 'white',
+        // }
+        '&::before': {
+            borderColor: 'white !important',
+        },
+        '&::after': {
+            borderColor: props.theme.palette.secondary.main,
+        }
     });
+
+    const root = css({
+        color: 'white',
+        'div > label + &': {
+            color: 'white',
+        }
+        // 'label': {
+        //     color: 'white',
+        // }
+    });
+
+    const focused = css({
+        color: `${props.theme.palette.secondary.main} !important`,
+    })
 
     return {
         projectCreationContainer,
@@ -202,6 +238,8 @@ export const createProjectCreationClasses = (
         projectUsersToolbarContainer,
         topBarContainer,
         fullWidthPaper,
-        rootStyling,
+        underline,
+        root,
+        focused,
     };
 }
