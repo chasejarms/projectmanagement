@@ -5,6 +5,7 @@ import * as React from 'react';
 import { withRouter } from 'react-router';
 import { Chat } from '../../Components/Chat/Chat';
 import { ProjectProgress } from '../../Components/ProjectProgress/ProjectProgress';
+import { ProjectUsers } from '../ProjectUsers/ProjectUsers';
 import { createProjectPresentationClasses, IProjectPresentationProps, IProjectPresentationState } from './Project.ias';
 
 class ProjectPresentation extends React.Component<IProjectPresentationProps, IProjectPresentationState> {
@@ -17,6 +18,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         1: <ProjectProgress key={1} theme={this.props.theme}/>,
         2: <Chat theme={this.props.theme} key={2}/>,
         3: <Chat theme={this.props.theme} key={3}/>,
+        4: <ProjectUsers key={4}/>
     }
 
     constructor(props: IProjectPresentationProps) {
@@ -59,6 +61,10 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                     <Tab
                         label="Customer Chat"
                         classes={tabClasses}/>
+                    <Tab
+                        label="Users"
+                        classes={tabClasses}
+                    />
                 </Tabs>
                 <div className={tabsContentContainer}>
                     {this.tabComponents[this.state.tabValue]}
