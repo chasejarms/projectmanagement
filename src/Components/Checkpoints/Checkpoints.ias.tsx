@@ -8,7 +8,9 @@ export interface ICheckpointsState {
     open: boolean;
     checkpointName: string;
     checkpointDescription: string;
-    checkpointDeadline: Date;
+    checkpointDeadline: string;
+    isUpdate: boolean;
+    index?: number;
 }
 
 export const createCheckpointsClasses = (

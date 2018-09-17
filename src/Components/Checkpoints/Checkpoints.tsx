@@ -1,5 +1,6 @@
 import {
     Button,
+    Checkbox,
     Dialog,
     DialogActions,
     DialogContent,
@@ -72,7 +73,8 @@ export class Checkpoints extends React.Component<ICheckpointsProps, ICheckpoints
         open: false,
         checkpointName: '',
         checkpointDescription: '',
-        checkpointDeadline: new Date(),
+        checkpointDeadline: '',
+        isUpdate: false,
     }
 
     public handleChange = handleChange(this);
@@ -88,10 +90,14 @@ export class Checkpoints extends React.Component<ICheckpointsProps, ICheckpoints
         } = createCheckpointsClasses(this.props, this.state);
 
         const mappedCheckpoints = checkpoints.map((checkpoint, index) => (
-                <TableRow key={index} onClick={this.openCheckpointDialog} className={checkpointRow}>
+                <TableRow key={index} onClick={this.openCheckpointDialog(checkpoint, index)} className={checkpointRow}>
                     <TableCell>{checkpoint.name}</TableCell>
-                    <TableCell>{'9/12/2018'}</TableCell>
-                    <TableCell>{checkpoint.complete ? 'true' : 'false'}</TableCell>
+                    <TableCell>{this.formatDateForGrid(checkpoint.deadline!)}</TableCell>
+                    <TableCell>
+                        <Checkbox
+                            checked={checkpoint.complete}
+                        />
+                    </TableCell>
                 </TableRow>
             )
         )
@@ -106,7 +112,7 @@ export class Checkpoints extends React.Component<ICheckpointsProps, ICheckpoints
                         <Tooltip title="New Project Checkpoint" placement="left">
                             <IconButton
                                 aria-label="New Project Checkpoint"
-                                onClick={this.openCheckpointDialog}
+                                onClick={this.openNewCheckpointDialog}
                                 color="secondary"
                             >
                                 <AddIcon />
@@ -135,7 +141,9 @@ export class Checkpoints extends React.Component<ICheckpointsProps, ICheckpoints
                     open={this.state.open}
                     onClose={this.handleClose}
                 >
-                    <DialogTitle>Create New Checkpoint</DialogTitle>
+                    <DialogTitle>
+                        {this.state.isUpdate ? 'Update Existing Checkpoint' : 'Create New Checkpoint' }
+                    </DialogTitle>
                     <DialogContent className={dialogContent}>
                         <TextField
                             label="Checkpoint Name"
@@ -145,10 +153,10 @@ export class Checkpoints extends React.Component<ICheckpointsProps, ICheckpoints
                             onChange={this.handleChange}
                         />
                         <TextField
-                            type="number"
-                            label="Days To Complete from last checkpoint"
+                            type="date"
+                            label="Deadline"
                             name="checkpointDeadline"
-                            value={'9/12/2018'}
+                            defaultValue={this.state.checkpointDeadline}
                             className={dialogControl}
                             onChange={this.handleChange}
                         />
@@ -162,17 +170,48 @@ export class Checkpoints extends React.Component<ICheckpointsProps, ICheckpoints
                     </DialogContent>
                     <DialogActions>
                         <Button color="primary" onClick={this.handleClose}>Cancel</Button>
-                        <Button color="secondary" onClick={this.handleSave}>Add Checkpoint</Button>
+                        <Button color="secondary" onClick={this.handleSave}>
+                            {this.state.isUpdate ? 'Update Checkpoint' : 'Add Checkpoint'}
+                        </Button>
                     </DialogActions>
                 </Dialog>
             </div>
         )
     }
 
-    private openCheckpointDialog = () => {
-        this.setState({
-            open: true,
-        })
+    private formatDateForPicker(date: Date): string {
+        let day = date.getDate().toString();
+        let month = (date.getMonth() + 1).toString();
+        if (day.length === 1) {
+            day = `0${day}`;
+        }
+
+        if (month.length === 1) {
+            month = `0${month}`;
+        }
+        const year = date.getFullYear();
+
+        return `${year}-${month}-${day}`;
+    }
+
+    private formatDateForGrid(date: Date): string {
+        const day = date.getDate().toString();
+        const month = (date.getMonth() + 1).toString();
+        const year = date.getFullYear().toString().slice(2);
+
+        return `${month}/${day}/${year}`;
+    }
+
+    private openCheckpointDialog = (checkpoint: ICheckpoint, index: number) => {
+        return () => {
+            this.setState({
+                open: true,
+                checkpointName: checkpoint.name,
+                checkpointDescription: checkpoint.description!,
+                checkpointDeadline: this.formatDateForPicker(checkpoint.deadline!),
+                isUpdate: true,
+            })
+        }
     }
 
     private handleClose = () => {
@@ -184,10 +223,23 @@ export class Checkpoints extends React.Component<ICheckpointsProps, ICheckpoints
     }
 
     private handleSave = () => {
+        // if (this.state.isUpdate) {
+
+        // }
         this.setState({
             open: false,
             checkpointName: '',
             checkpointDescription: ''
+        })
+    }
+
+    private openNewCheckpointDialog = () => {
+        this.setState({
+            open: true,
+            checkpointName: '',
+            checkpointDescription: '',
+            checkpointDeadline: this.formatDateForPicker(new Date()),
+            isUpdate: false,
         })
     }
 
