@@ -20,22 +20,37 @@ import {
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import * as React from 'react';
+import Api from '../../Api/api';
+import { IWorkflowCheckpoint } from '../../Models/workflow';
 // import { WorkflowCheckpoint } from '../../Components/WorkflowCheckpoint/WorkflowCheckpoint';
-import { workflow } from '../../MockData/workflow';
 import { handleChange } from '../../Utils/handleChange';
 import { createWorkflowPresentationClasses, IWorkflowPresentationProps, IWorkflowPresentationState } from './Workflow.ias';
 
 export class WorkflowPresentation extends React.Component<IWorkflowPresentationProps, IWorkflowPresentationState> {
-    public state = {
+    public state: IWorkflowPresentationState = {
         open: false,
         checkpointName: '',
         checkpointDescription: '',
         checkpointDays: 0,
+        workflow: undefined,
+        isUpdate: false,
+        index: 0,
     }
 
     public handleChange = handleChange(this);
 
+    public componentWillMount(): void {
+        const workflow = Api.workflowApi.getWorkflow('any name');
+        this.setState({
+            workflow,
+        })
+    }
+
     public render() {
+        if (!this.state.workflow) {
+            return '<div></div>'
+        }
+
         const {
             dialogContent,
             dialogControl,
@@ -45,8 +60,8 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
             workflowPaper,
         } = createWorkflowPresentationClasses(this.props, this.state);
 
-        const mappedCheckpoints = workflow.checkpoints.map((checkpoint, index) => (
-                <TableRow key={index} onClick={this.openCheckpointDialog} className={workflowRow}>
+        const mappedCheckpoints = this.state.workflow.checkpoints.map((checkpoint, index) => (
+                <TableRow key={index} onClick={this.openCheckpointDialog(checkpoint, index)} className={workflowRow}>
                     <TableCell>{checkpoint.name}</TableCell>
                     <TableCell>{checkpoint.deadlineFromLastCheckpoint}</TableCell>
                     <TableCell>{checkpoint.description}</TableCell>
@@ -67,7 +82,7 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
                         <Tooltip title="New Checkpoint" placement="left">
                             <IconButton
                                 aria-label="New Checkpoint"
-                                onClick={this.openCheckpointDialog}
+                                onClick={this.openNewCheckpointDialog}
                                 color="secondary"
                             >
                                 <AddIcon />
@@ -96,7 +111,9 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
                     open={this.state.open}
                     onClose={this.handleClose}
                 >
-                    <DialogTitle>Create New Checkpoint</DialogTitle>
+                    <DialogTitle>
+                        { this.state.isUpdate ? 'Update Checkpoint' : 'Create New Checkpoint' }
+                    </DialogTitle>
                     <DialogContent className={dialogContent}>
                         <TextField
                             label="Checkpoint Name"
@@ -117,41 +134,81 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
                             label="Description"
                             name="checkpointDescription"
                             value={this.state.checkpointDescription}
+                            multiline={true}
                             className={dialogControl}
                             onChange={this.handleChange}
                         />
                     </DialogContent>
                     <DialogActions>
                         <Button color="primary" onClick={this.handleClose}>Cancel</Button>
-                        <Button color="secondary" onClick={this.handleSave}>Add Checkpoint</Button>
+                        <Button color="secondary" onClick={this.handleSave}>
+                            {this.state.isUpdate ? 'Update Checkpoint' : 'Add Checkpoint' }
+                        </Button>
                     </DialogActions>
                 </Dialog>
             </div>
         );
     }
 
-    private openCheckpointDialog = () => {
+    private openNewCheckpointDialog = () => {
         this.setState({
             open: true,
+            checkpointDays: 0,
+            checkpointDescription: '',
+            checkpointName: '',
+            isUpdate: false,
         })
+    }
+
+    private openCheckpointDialog = (checkpoint: IWorkflowCheckpoint, index: number) => {
+        return () => {
+            this.setState({
+                open: true,
+                checkpointDays: checkpoint.deadlineFromLastCheckpoint!,
+                checkpointDescription: checkpoint.description || '',
+                checkpointName: checkpoint.name,
+                isUpdate: true,
+                index,
+            })
+        }
     }
 
     private handleClose = () => {
         this.setState({
             open: false,
-            checkpointName: '',
-            checkpointDescription: '',
-            checkpointDays: 0,
         })
     }
 
     private handleSave = () => {
+        let newCheckpoints: IWorkflowCheckpoint[];
+        const newCheckpoint: IWorkflowCheckpoint = {
+            name: this.state.checkpointName,
+            description: this.state.checkpointDescription,
+            deadlineFromLastCheckpoint: this.state.checkpointDays,
+        }
+        if (this.state.isUpdate) {
+            newCheckpoints = this.state.workflow!.checkpoints.map((checkpoint, compareIndex) => {
+                if (compareIndex === this.state.index) {
+                    return newCheckpoint;
+                } else {
+                    return checkpoint;
+                }
+            });
+        } else {
+            newCheckpoints = this.state.workflow!.checkpoints.concat([newCheckpoint])
+        }
+        
+        Api.workflowApi.updateWorkflow('does not matter', {
+            id: '',
+            checkpoints: newCheckpoints,
+        })
+
+        const workflow = Api.workflowApi.getWorkflow('does not matter');
+
         this.setState({
             open: false,
-            checkpointName: '',
-            checkpointDescription: '',
-            checkpointDays: 0,
-        })
+            workflow,
+        });
     }
 }
 

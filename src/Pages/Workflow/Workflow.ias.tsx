@@ -1,6 +1,7 @@
 import { WithTheme } from '@material-ui/core';
 import { css } from 'emotion';
 import { RouteComponentProps } from "react-router";
+import { IWorkflow } from '../../Models/workflow';
 
 export interface IWorkflowPresentationProps extends RouteComponentProps<{}>, WithTheme {
 
@@ -12,6 +13,9 @@ export interface IWorkflowPresentationState {
     checkpointName: string;
     checkpointDescription: string;
     checkpointDays: number;
+    workflow: IWorkflow | undefined;
+    isUpdate: boolean;
+    index: number;
 }
 
 export const createWorkflowPresentationClasses = (

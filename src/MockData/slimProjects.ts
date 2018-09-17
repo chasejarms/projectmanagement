@@ -1,5 +1,6 @@
+import { ISlimProjects } from './../Models/slimProject';
 const today = new Date();
-export const slimProjects = [
+export const slimProjects: ISlimProjects[] = [
     {
         projectName: 'Podium Grand Opening',
         completionPercentage: 70,

@@ -11,14 +11,26 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import AddIcon from '@material-ui/icons/Add';
-// import FilterListIcon from '@material-ui/icons/FilterList';
 import * as React from 'react';
 import { withRouter } from 'react-router';
-import { slimProjects } from '../../MockData/slimProjects';
+import Api from '../../Api/api';
 import { createProjectsPresentationClasses, IProjectsPresentationProps, IProjectsPresentationState } from './Projects.ias';
 
 export class ProjectsPresentation extends React.Component<IProjectsPresentationProps, IProjectsPresentationState> {
+    public state: IProjectsPresentationState = {}
+
+    public componentWillMount(): void {
+        const slimProjects = Api.projectsApi.getSlimProjects('does not matter');
+        this.setState({
+            slimProjects,
+        });
+    }
+
     public render() {
+        if (!this.state.slimProjects) {
+            return <div/>;
+        }
+
         const {
             rowStyling,
             projectsContainer,
@@ -26,11 +38,11 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
             projectsPaper,
         } = createProjectsPresentationClasses(this.props, this.state);
 
-        const mappedProjects = slimProjects.map(project => (
-                <TableRow key={project.id} onClick={this.navigateToProject(project.id)} className={rowStyling}>
-                    <TableCell>{project.projectName}</TableCell>
-                    <TableCell>{project.currentCheckpoint}</TableCell>
-                    <TableCell>{project.deadlinePretty}</TableCell>
+        const mappedProjects = this.state.slimProjects.map(slimProject => (
+                <TableRow key={slimProject.id} onClick={this.navigateToProject(slimProject.id)} className={rowStyling}>
+                    <TableCell>{slimProject.projectName}</TableCell>
+                    <TableCell>{slimProject.currentCheckpoint}</TableCell>
+                    <TableCell>{slimProject.deadlinePretty}</TableCell>
                 </TableRow>
             )
         )

@@ -5,7 +5,6 @@ export interface IWorkflow {
 
 export interface IWorkflowCheckpoint {
     name: string;
-    description?: string;
-    deadlineFromLastCheckpoint?: number;
-    publicCheckpoint: boolean;
+    description: string;
+    deadlineFromLastCheckpoint: number;
 }
