@@ -27,9 +27,11 @@ import {
 import AddIcon from '@material-ui/icons/Add';
 import ClearIcon from '@material-ui/icons/Clear';
 import * as React from 'react';
+import Api from '../../Api/api';
 import { Checkpoints } from '../../Components/Checkpoints/Checkpoints';
 import { users } from '../../MockData/users';
 import { workflow } from '../../MockData/workflow';
+import { IProject } from '../../Models/project';
 import { handleChange } from '../../Utils/handleChange';
 import {
     createProjectCreationClasses,
@@ -99,9 +101,15 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         })
     }
 
-    private onSaveClick = () => {
-        // tslint:disable-next-line:no-console
-        console.log('saving');
+    private createProject = () => {
+        const projectToCreate: IProject = {
+            id: Date.now().toString(),
+            name: this.state.projectName,
+            checkpoints: this.state.checkpoints,
+            users: [],
+            complete: false,
+        };
+        Api.projectsApi.createProject('does not matter', projectToCreate);
     }
 
     private createActionButtons(): any {
@@ -134,7 +142,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             <Button
                 className={baseActionButton}
                 variant="contained"
-                onClick={this.onSaveClick}
+                onClick={this.createProject}
                 color="secondary">
                 Create Project
             </Button>
