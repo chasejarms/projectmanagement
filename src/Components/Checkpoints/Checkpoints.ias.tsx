@@ -49,7 +49,18 @@ export const createCheckpointsClasses = (
 
     const checkpointsPaper = css({
         overflow: 'hidden',
-    })
+    });
+
+    const nameAndDescription = css({
+        display: 'flex',
+        flexDirection: 'row',
+    });
+
+    const infoIcon = css({
+        position: 'relative',
+        top: -4,
+        marginLeft: 8,
+    });
 
     return {
         fabButton,
@@ -58,5 +69,7 @@ export const createCheckpointsClasses = (
         checkpointsToolbarContainer,
         checkpointRow,
         checkpointsPaper,
+        nameAndDescription,
+        infoIcon,
     };
 }

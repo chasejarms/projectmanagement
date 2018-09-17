@@ -18,6 +18,7 @@ import {
     Typography,
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
+import InfoOutlineIcon from '@material-ui/icons/InfoOutlined';
 import * as React from 'react';
 import { ICheckpoint } from '../../Models/checkpoint';
 import { handleChange } from '../../Utils/handleChange';
@@ -86,20 +87,34 @@ export class Checkpoints extends React.Component<ICheckpointsProps, ICheckpoints
             dialogControl,
             checkpointsToolbarContainer,
             checkpointRow,
-            checkpointsPaper
+            checkpointsPaper,
+            nameAndDescription,
+            infoIcon,
         } = createCheckpointsClasses(this.props, this.state);
 
-        const mappedCheckpoints = checkpoints.map((checkpoint, index) => (
-                <TableRow key={index} onClick={this.openCheckpointDialog(checkpoint, index)} className={checkpointRow}>
-                    <TableCell>{checkpoint.name}</TableCell>
-                    <TableCell>{this.formatDateForGrid(checkpoint.deadline!)}</TableCell>
-                    <TableCell>
-                        <Checkbox
-                            checked={checkpoint.complete}
-                        />
-                    </TableCell>
-                </TableRow>
-            )
+        const mappedCheckpoints = checkpoints.map((checkpoint, index) => {
+                const infoOutline = !checkpoint.description ? undefined : (
+                    <Tooltip title={checkpoint.description} placement="left">
+                        <InfoOutlineIcon className={infoIcon}/>
+                    </Tooltip>
+                );
+                return (
+                    <TableRow key={index} onClick={this.openCheckpointDialog(checkpoint, index)} className={checkpointRow}>
+                        <TableCell>
+                            <div className={nameAndDescription}>
+                                {checkpoint.name}
+                                {infoOutline}
+                            </div>
+                        </TableCell>
+                        <TableCell>{this.formatDateForGrid(checkpoint.deadline!)}</TableCell>
+                        <TableCell>
+                            <Checkbox
+                                checked={checkpoint.complete}
+                            />
+                        </TableCell>
+                    </TableRow>
+                )
+            }
         )
 
         return (
