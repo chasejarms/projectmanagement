@@ -98,7 +98,7 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
                         <TableHead>
                             <TableRow>
                                 <TableCell>Checkpoint Name</TableCell>
-                                <TableCell>Days to complete from previous checkpoint (or from project creation for first checkpoint)</TableCell>
+                                <TableCell>Completion Days</TableCell>
                                 <TableCell>Checkpoint Description</TableCell>
                             </TableRow>
                         </TableHead>

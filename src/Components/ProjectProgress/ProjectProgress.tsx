@@ -19,7 +19,7 @@ class PresentationProjectProgress extends React.Component<IProjectProgressProps,
                     <CompletionBar percentComplete={75} theme={this.props.theme}/>
                 </div>
                 <Typography variant="display1" className={sectionHeader}>Project Checkpoints</Typography> */}
-                <Checkpoints/>
+                <Checkpoints checkpoints={[]} projectCreation={false}/>
             </div>
         )
     }

@@ -257,7 +257,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
 
             return (
                 <div className={`${stepperContent} ${checkpointContainer}`}>
-                    <Checkpoints/>
+                    <Checkpoints checkpoints={[]} projectCreation={true}/>
                 </div>
             )
         } else if (this.state.activeStep === 2) {

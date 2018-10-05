@@ -19,6 +19,7 @@ import {
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import InfoOutlineIcon from '@material-ui/icons/InfoOutlined';
+import * as _ from 'lodash';
 import * as React from 'react';
 import { ICheckpoint } from '../../Models/checkpoint';
 import { handleChange } from '../../Utils/handleChange';
@@ -29,7 +30,6 @@ const checkpoints: ICheckpoint[] = [
         name: 'Finalize Contract',
         deadline: new Date(),
         complete: true,
-        public: true,
         projectId: '2',
         id: '1',
     },
@@ -37,7 +37,6 @@ const checkpoints: ICheckpoint[] = [
         name: 'Initial Design Specs',
         deadline: new Date(),
         complete: false,
-        public: true,
         projectId: '2',
         id: '2',
     },
@@ -46,7 +45,6 @@ const checkpoints: ICheckpoint[] = [
         description: 'Working with our designers, we create tech packs and finalize art work',
         deadline: new Date(),
         complete: false,
-        public: true,
         projectId: '2',
         id: '3',
     },
@@ -55,7 +53,6 @@ const checkpoints: ICheckpoint[] = [
         description: 'The manufacturer will give us back an exact duplicate of what we can expect the product to look like',
         deadline: new Date(),
         complete: false,
-        public: true,
         projectId: '2',
         id: '4',
     },
@@ -63,7 +60,6 @@ const checkpoints: ICheckpoint[] = [
         name: 'Delivery',
         deadline: new Date(),
         complete: false,
-        public: true,
         projectId: '2',
         id: '5',
     }
@@ -76,6 +72,7 @@ export class Checkpoints extends React.Component<ICheckpointsProps, ICheckpoints
         checkpointDescription: '',
         checkpointDeadline: '',
         isUpdate: false,
+        checkpoints,
     }
 
     public handleChange = handleChange(this);
@@ -92,9 +89,9 @@ export class Checkpoints extends React.Component<ICheckpointsProps, ICheckpoints
             infoIcon,
         } = createCheckpointsClasses(this.props, this.state);
 
-        const mappedCheckpoints = checkpoints.map((checkpoint, index) => {
+        const mappedCheckpoints = this.state.checkpoints.map((checkpoint, index) => {
                 const infoOutline = !checkpoint.description ? undefined : (
-                    <Tooltip title={checkpoint.description} placement="left">
+                    <Tooltip title={checkpoint.description} placement="right">
                         <InfoOutlineIcon className={infoIcon}/>
                     </Tooltip>
                 );
@@ -176,6 +173,7 @@ export class Checkpoints extends React.Component<ICheckpointsProps, ICheckpoints
                             onChange={this.handleChange}
                         />
                         <TextField
+                            multiline={true}
                             label="Description"
                             name="checkpointDescription"
                             value={this.state.checkpointDescription}
@@ -225,27 +223,40 @@ export class Checkpoints extends React.Component<ICheckpointsProps, ICheckpoints
                 checkpointDescription: checkpoint.description!,
                 checkpointDeadline: this.formatDateForPicker(checkpoint.deadline!),
                 isUpdate: true,
-            })
+            });
         }
     }
 
     private handleClose = () => {
         this.setState({
             open: false,
-            checkpointName: '',
-            checkpointDescription: ''
         })
     }
 
     private handleSave = () => {
-        // if (this.state.isUpdate) {
-
+        // const checkpointsClone = _.cloneDeep(this.props.checkpoints);
+        // const deadlineFromString = new Date(this.state.checkpointDeadline);
+        // const newCheckpoint: ICheckpoint = {
+        //     name: this.state.checkpointName,
+        //     description: this.state.checkpointDescription,
+        //     complete: false,
+        //     id: Date.now().toString(),
+        //     projectId: '1',
+        //     deadline: deadlineFromString,
         // }
-        this.setState({
-            open: false,
-            checkpointName: '',
-            checkpointDescription: ''
-        })
+
+        if (this.state.isUpdate) {
+            return;
+        } else {
+            // const checkpointsWithNewCheckpoint = checkpointsClone.concat([newCheckpoint]);
+            this.setState({
+                open: false,
+            });
+        }
+        // this.setState({
+        //     open: false,
+
+        // })
     }
 
     private openNewCheckpointDialog = () => {

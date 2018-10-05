@@ -2,9 +2,6 @@ import { Button, TextField } from '@material-ui/core';
 import { withTheme } from '@material-ui/core/styles';
 // import { User } from 'firebase';
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
-import { CLEAR_ADMIN_STATE } from '../../adminUser.reducer';
 import Api from '../../Api/api';
 // import firebase from '../../firebase';
 import { handleChange } from '../../Utils/handleChange';
@@ -165,12 +162,4 @@ export class AuthenticationPresentation extends React.Component<
     // }
 }
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-  clearAdminState: () => {
-    dispatch({
-      type: CLEAR_ADMIN_STATE,
-    });
-  }
-});
-
-export const Authentication = connect(undefined, mapDispatchToProps)(withTheme()(AuthenticationPresentation));
+export const Authentication = withTheme()(AuthenticationPresentation);
