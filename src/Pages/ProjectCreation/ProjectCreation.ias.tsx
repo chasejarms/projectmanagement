@@ -1,13 +1,16 @@
 import { WithTheme } from '@material-ui/core';
 import { css } from 'emotion';
 import { IWorkflowCheckpoint } from '../../Models/workflow';
+import { IProjectCreationSliceOfState } from '../../Redux/Reducers/projectCreationReducer';
 
 // tslint:disable-next-line:no-empty-interface
-export interface IProjectCreationProps extends WithTheme {}
+export interface IProjectCreationProps extends WithTheme {
+    projectCreation: IProjectCreationSliceOfState;
+    updateProjectName: (projectName: string) => void,
+}
 // tslint:disable-next-line:no-empty-interface
 export interface IProjectCreationState {
     activeStep: number;
-    projectName: string;
     checkpoints: IWorkflowCheckpoint[];
     open: boolean;
     user: any;

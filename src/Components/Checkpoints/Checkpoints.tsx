@@ -21,58 +21,20 @@ import AddIcon from '@material-ui/icons/Add';
 import InfoOutlineIcon from '@material-ui/icons/InfoOutlined';
 import * as _ from 'lodash';
 import * as React from 'react';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 import { ICheckpoint } from '../../Models/checkpoint';
+import { addCheckpointCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
 import { handleChange } from '../../Utils/handleChange';
 import { createCheckpointsClasses, ICheckpointsProps, ICheckpointsState } from './Checkpoints.ias';
 
-const checkpoints: ICheckpoint[] = [
-    {
-        name: 'Finalize Contract',
-        deadline: new Date(),
-        complete: true,
-        projectId: '2',
-        id: '1',
-    },
-    {
-        name: 'Initial Design Specs',
-        deadline: new Date(),
-        complete: false,
-        projectId: '2',
-        id: '2',
-    },
-    {
-        name: 'Art Preview',
-        description: 'Working with our designers, we create tech packs and finalize art work',
-        deadline: new Date(),
-        complete: false,
-        projectId: '2',
-        id: '3',
-    },
-    {
-        name: 'Product Sample',
-        description: 'The manufacturer will give us back an exact duplicate of what we can expect the product to look like',
-        deadline: new Date(),
-        complete: false,
-        projectId: '2',
-        id: '4',
-    },
-    {
-        name: 'Delivery',
-        deadline: new Date(),
-        complete: false,
-        projectId: '2',
-        id: '5',
-    }
-]
-
-export class Checkpoints extends React.Component<ICheckpointsProps, ICheckpointsState> {
+export class CheckpointsPresentation extends React.Component<ICheckpointsProps, ICheckpointsState> {
     public state = {
         open: false,
         checkpointName: '',
         checkpointDescription: '',
         checkpointDeadline: '',
         isUpdate: false,
-        checkpoints,
     }
 
     public handleChange = handleChange(this);
@@ -87,9 +49,10 @@ export class Checkpoints extends React.Component<ICheckpointsProps, ICheckpoints
             checkpointsPaper,
             nameAndDescription,
             infoIcon,
+            checkpointActionButtons,
         } = createCheckpointsClasses(this.props, this.state);
 
-        const mappedCheckpoints = this.state.checkpoints.map((checkpoint, index) => {
+        const mappedCheckpoints = this.props.checkpoints.map((checkpoint, index) => {
                 const infoOutline = !checkpoint.description ? undefined : (
                     <Tooltip title={checkpoint.description} placement="right">
                         <InfoOutlineIcon className={infoIcon}/>
@@ -181,8 +144,8 @@ export class Checkpoints extends React.Component<ICheckpointsProps, ICheckpoints
                             onChange={this.handleChange}
                         />
                     </DialogContent>
-                    <DialogActions>
-                        <Button color="primary" onClick={this.handleClose}>Cancel</Button>
+                    <DialogActions className={checkpointActionButtons}>
+                        <Button color="primary" onClick={this.handleDelete}>Delete</Button>
                         <Button color="secondary" onClick={this.handleSave}>
                             {this.state.isUpdate ? 'Update Checkpoint' : 'Add Checkpoint'}
                         </Button>
@@ -233,17 +196,23 @@ export class Checkpoints extends React.Component<ICheckpointsProps, ICheckpoints
         })
     }
 
+    private handleDelete = () => {
+        this.setState({
+            open: false,
+        })
+    }
+
     private handleSave = () => {
         // const checkpointsClone = _.cloneDeep(this.props.checkpoints);
-        // const deadlineFromString = new Date(this.state.checkpointDeadline);
-        // const newCheckpoint: ICheckpoint = {
-        //     name: this.state.checkpointName,
-        //     description: this.state.checkpointDescription,
-        //     complete: false,
-        //     id: Date.now().toString(),
-        //     projectId: '1',
-        //     deadline: deadlineFromString,
-        // }
+        const deadlineFromString = new Date(this.state.checkpointDeadline);
+        const newCheckpoint: ICheckpoint = {
+            name: this.state.checkpointName,
+            description: this.state.checkpointDescription,
+            complete: false,
+            id: Date.now().toString(),
+            projectId: '1',
+            deadline: deadlineFromString,
+        }
 
         if (this.state.isUpdate) {
             return;
@@ -252,6 +221,7 @@ export class Checkpoints extends React.Component<ICheckpointsProps, ICheckpoints
             this.setState({
                 open: false,
             });
+            this.props.addCheckpoint(this.props.projectCreation)(newCheckpoint);
         }
         // this.setState({
         //     open: false,
@@ -273,3 +243,14 @@ export class Checkpoints extends React.Component<ICheckpointsProps, ICheckpoints
     //     return '9/17/18';
     // }
 }
+
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+    addCheckpoint: (isProjectCreation: boolean) => (checkpoint: ICheckpoint) => {
+        if (isProjectCreation) {
+            const projectCreationAddCheckpointAction = addCheckpointCreator(checkpoint);
+            dispatch(projectCreationAddCheckpointAction);
+        }
+    }
+})
+
+export const Checkpoints = connect(undefined, mapDispatchToProps)(CheckpointsPresentation);

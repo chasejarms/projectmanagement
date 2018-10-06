@@ -1,14 +1,8 @@
-import { Action } from 'redux';
 import { ICheckpoint } from '../../Models/checkpoint';
-import { GET_INITIAL_CHECKPOINTS } from '../Actions/projectCreationActions';
+import { IProjectCreationActions, IProjectCreationAddCheckpointAction, IProjectCreationNameUpdateAction } from './../ActionCreators/projectCreationActionCreators';
+import { ADD_CHECKPOINT, SET_PROJECT_NAME } from './../Actions/projectCreationActions';
 
-type ProjectCreationActionType = typeof GET_INITIAL_CHECKPOINTS;
-
-interface IProjectCreationAction extends Action<ProjectCreationActionType> {
-  isAdmin: boolean;
-}
-
-interface IProjectCreationState {
+export interface IProjectCreationSliceOfState {
     projectName: string;
     checkpoints: ICheckpoint[];
 }
@@ -18,10 +12,21 @@ const initialState = {
   checkpoints: [],
 }
 
-export const projectCreationReducer = (state: IProjectCreationState = initialState, action: IProjectCreationAction) => {
+export const projectCreationReducer = (state: IProjectCreationSliceOfState = initialState, action: IProjectCreationActions): IProjectCreationSliceOfState => {
   switch (action.type) {
-    case GET_INITIAL_CHECKPOINTS:
-      return action;
+    case SET_PROJECT_NAME:
+      const projectNameAction = action as IProjectCreationNameUpdateAction;
+      return {
+        ...state,
+        projectName: projectNameAction.projectName,
+      };
+    case ADD_CHECKPOINT:
+      const addCheckpointAction = action as IProjectCreationAddCheckpointAction;
+      const checkpoints = state.checkpoints.concat([addCheckpointAction.checkpoint]);
+      return {
+        ...state,
+        checkpoints,
+      };
     default:
       return state;
   }

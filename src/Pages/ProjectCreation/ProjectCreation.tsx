@@ -27,11 +27,15 @@ import {
 import AddIcon from '@material-ui/icons/Add';
 import ClearIcon from '@material-ui/icons/Clear';
 import * as React from 'react';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 import Api from '../../Api/api';
 import { Checkpoints } from '../../Components/Checkpoints/Checkpoints';
 import { users } from '../../MockData/users';
 import { workflow } from '../../MockData/workflow';
 import { IProject } from '../../Models/project';
+import { setProjectNameCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
+import { IAppState } from '../../Redux/Reducers/rootReducer';
 import { handleChange } from '../../Utils/handleChange';
 import {
     createProjectCreationClasses,
@@ -52,6 +56,12 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
     }
 
     public handleChange = handleChange(this);
+
+    public handleProjectNameChange = (event: any) => {
+        // tslint:disable-next-line:no-console
+        const projectName = event.target.value;
+        this.props.updateProjectName(projectName);
+    }
 
     public render() {
         const {
@@ -104,7 +114,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
     private createProject = () => {
         const projectToCreate: IProject = {
             id: Date.now().toString(),
-            name: this.state.projectName,
+            name: '',
             checkpoints: this.state.checkpoints,
             users: [],
             complete: false,
@@ -233,8 +243,8 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                             className={projectName}
                             label="Project Name"
                             name="projectName"
-                            value={this.state.projectName}
-                            onChange={this.handleChange}
+                            value={this.props.projectCreation.projectName}
+                            onChange={this.handleProjectNameChange}
                         />
                     </Paper>
                 </div>
@@ -257,7 +267,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
 
             return (
                 <div className={`${stepperContent} ${checkpointContainer}`}>
-                    <Checkpoints checkpoints={[]} projectCreation={true}/>
+                    <Checkpoints checkpoints={this.props.projectCreation.checkpoints} projectCreation={true}/>
                 </div>
             )
         } else if (this.state.activeStep === 2) {
@@ -398,4 +408,16 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
     }
 }
 
-export const ProjectCreation = withTheme()(ProjectCreationPresentation);
+const mapStateToProps = ({ projectCreation }: IAppState) => ({
+    projectCreation,
+});
+
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+    updateProjectName: (projectName: string) => {
+        const projectNameUpdateAction = setProjectNameCreator(projectName);
+        dispatch(projectNameUpdateAction);
+    }
+})
+
+export const connectedProjectCreation = connect(mapStateToProps, mapDispatchToProps)(ProjectCreationPresentation as any);
+export const ProjectCreation = withTheme()(connectedProjectCreation as any);

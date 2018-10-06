@@ -5,6 +5,7 @@ import { ICheckpoint } from '../../Models/checkpoint';
 export interface ICheckpointsProps {
     checkpoints: ICheckpoint[];
     projectCreation: boolean;
+    addCheckpoint: (isProjectCreation: boolean) => (checkpoint: ICheckpoint) => void;
 }
 
 // tslint:disable-next-line:no-empty-interface
@@ -66,6 +67,12 @@ export const createCheckpointsClasses = (
         marginLeft: 8,
     });
 
+    const checkpointActionButtons = css({
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    });
+
     return {
         fabButton,
         dialogContent,
@@ -75,5 +82,6 @@ export const createCheckpointsClasses = (
         checkpointsPaper,
         nameAndDescription,
         infoIcon,
+        checkpointActionButtons,
     };
 }
