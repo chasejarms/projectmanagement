@@ -146,7 +146,7 @@ export class CheckpointsPresentation extends React.Component<ICheckpointsProps, 
                         />
                     </DialogContent>
                     <DialogActions className={checkpointActionButtons}>
-                        <Button color="primary" onClick={this.handleDelete(1)}>Delete</Button>
+                        <Button color="primary" onClick={this.handleDelete(this.state.index)}>Delete</Button>
                         <Button color="secondary" onClick={this.handleSave}>
                             {this.state.isUpdate ? 'Update Checkpoint' : 'Add Checkpoint'}
                         </Button>
