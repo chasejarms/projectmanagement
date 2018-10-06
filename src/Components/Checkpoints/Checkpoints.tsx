@@ -24,7 +24,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { ICheckpoint } from '../../Models/checkpoint';
-import { addCheckpointCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
+import { addCheckpointCreator, removeCheckpointCreation } from '../../Redux/ActionCreators/projectCreationActionCreators';
 import { handleChange } from '../../Utils/handleChange';
 import { createCheckpointsClasses, ICheckpointsProps, ICheckpointsState } from './Checkpoints.ias';
 
@@ -35,6 +35,7 @@ export class CheckpointsPresentation extends React.Component<ICheckpointsProps, 
         checkpointDescription: '',
         checkpointDeadline: '',
         isUpdate: false,
+        index: -1,
     }
 
     public handleChange = handleChange(this);
@@ -145,7 +146,7 @@ export class CheckpointsPresentation extends React.Component<ICheckpointsProps, 
                         />
                     </DialogContent>
                     <DialogActions className={checkpointActionButtons}>
-                        <Button color="primary" onClick={this.handleDelete}>Delete</Button>
+                        <Button color="primary" onClick={this.handleDelete(1)}>Delete</Button>
                         <Button color="secondary" onClick={this.handleSave}>
                             {this.state.isUpdate ? 'Update Checkpoint' : 'Add Checkpoint'}
                         </Button>
@@ -186,6 +187,7 @@ export class CheckpointsPresentation extends React.Component<ICheckpointsProps, 
                 checkpointDescription: checkpoint.description!,
                 checkpointDeadline: this.formatDateForPicker(checkpoint.deadline!),
                 isUpdate: true,
+                index,
             });
         }
     }
@@ -196,10 +198,13 @@ export class CheckpointsPresentation extends React.Component<ICheckpointsProps, 
         })
     }
 
-    private handleDelete = () => {
-        this.setState({
-            open: false,
-        })
+    private handleDelete = (index: number) => {
+        return () => {
+            this.setState({
+                open: false,
+            });
+            this.props.removeCheckpoint(this.props.projectCreation)(index);
+        }
     }
 
     private handleSave = () => {
@@ -249,6 +254,12 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
         if (isProjectCreation) {
             const projectCreationAddCheckpointAction = addCheckpointCreator(checkpoint);
             dispatch(projectCreationAddCheckpointAction);
+        }
+    },
+    removeCheckpoint: (isProjectCreation: boolean) => (index: number) => {
+        if (isProjectCreation) {
+            const projectCreationRemoveCheckpointAction = removeCheckpointCreation(index);
+            dispatch(projectCreationRemoveCheckpointAction);
         }
     }
 })

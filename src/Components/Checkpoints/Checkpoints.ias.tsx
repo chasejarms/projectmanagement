@@ -6,6 +6,7 @@ export interface ICheckpointsProps {
     checkpoints: ICheckpoint[];
     projectCreation: boolean;
     addCheckpoint: (isProjectCreation: boolean) => (checkpoint: ICheckpoint) => void;
+    removeCheckpoint: (isProjectCreation: boolean) => (index: number) => void;
 }
 
 // tslint:disable-next-line:no-empty-interface
@@ -15,7 +16,7 @@ export interface ICheckpointsState {
     checkpointDescription: string;
     checkpointDeadline: string;
     isUpdate: boolean;
-    index?: number;
+    index: number;
 }
 
 export const createCheckpointsClasses = (

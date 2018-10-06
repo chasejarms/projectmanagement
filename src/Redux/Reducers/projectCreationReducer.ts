@@ -1,6 +1,6 @@
 import { ICheckpoint } from '../../Models/checkpoint';
-import { IProjectCreationActions, IProjectCreationAddCheckpointAction, IProjectCreationNameUpdateAction } from './../ActionCreators/projectCreationActionCreators';
-import { ADD_CHECKPOINT, SET_PROJECT_NAME } from './../Actions/projectCreationActions';
+import { IProjectCreationActions, IProjectCreationAddCheckpointAction, IProjectCreationNameUpdateAction, IProjectCreationRemoveCheckpointAction } from './../ActionCreators/projectCreationActionCreators';
+import { ADD_CHECKPOINT, DELETE_CHECKPOINT, SET_PROJECT_NAME } from './../Actions/projectCreationActions';
 
 export interface IProjectCreationSliceOfState {
     projectName: string;
@@ -22,11 +22,21 @@ export const projectCreationReducer = (state: IProjectCreationSliceOfState = ini
       };
     case ADD_CHECKPOINT:
       const addCheckpointAction = action as IProjectCreationAddCheckpointAction;
-      const checkpoints = state.checkpoints.concat([addCheckpointAction.checkpoint]);
+      const checkpointsAfterAddedCheckpoint = state.checkpoints.concat([addCheckpointAction.checkpoint]);
       return {
         ...state,
-        checkpoints,
+        checkpoints: checkpointsAfterAddedCheckpoint,
       };
+    case DELETE_CHECKPOINT:
+      const deleteCheckpointAction = action as IProjectCreationRemoveCheckpointAction;
+      const checkpointsAfterDeletedCheckpoint = state.checkpoints.filter((checkpoint, index) => {
+        return index !== deleteCheckpointAction.index;
+      });
+
+      return {
+        ...state,
+        checkpoints: checkpointsAfterDeletedCheckpoint,
+      }
     default:
       return state;
   }
