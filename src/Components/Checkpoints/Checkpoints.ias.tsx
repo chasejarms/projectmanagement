@@ -7,6 +7,7 @@ export interface ICheckpointsProps {
     projectCreation: boolean;
     addCheckpoint: (isProjectCreation: boolean) => (checkpoint: ICheckpoint) => void;
     removeCheckpoint: (isProjectCreation: boolean) => (index: number) => void;
+    updateCheckpoint: (isProjectCreation: boolean) => (index: number, checkpoint: ICheckpoint) => void;
 }
 
 // tslint:disable-next-line:no-empty-interface

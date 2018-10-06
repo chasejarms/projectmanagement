@@ -24,7 +24,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { ICheckpoint } from '../../Models/checkpoint';
-import { addCheckpointCreator, removeCheckpointCreation } from '../../Redux/ActionCreators/projectCreationActionCreators';
+import { addCheckpointCreator, removeCheckpointCreation, updateCheckpointCreation } from '../../Redux/ActionCreators/projectCreationActionCreators';
 import { handleChange } from '../../Utils/handleChange';
 import { createCheckpointsClasses, ICheckpointsProps, ICheckpointsState } from './Checkpoints.ias';
 
@@ -220,18 +220,14 @@ export class CheckpointsPresentation extends React.Component<ICheckpointsProps, 
         }
 
         if (this.state.isUpdate) {
-            return;
+            this.props.updateCheckpoint(this.props.projectCreation)(this.state.index, newCheckpoint);
         } else {
-            // const checkpointsWithNewCheckpoint = checkpointsClone.concat([newCheckpoint]);
-            this.setState({
-                open: false,
-            });
             this.props.addCheckpoint(this.props.projectCreation)(newCheckpoint);
         }
-        // this.setState({
-        //     open: false,
 
-        // })
+        this.setState({
+            open: false,
+        })
     }
 
     private openNewCheckpointDialog = () => {
@@ -261,7 +257,13 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
             const projectCreationRemoveCheckpointAction = removeCheckpointCreation(index);
             dispatch(projectCreationRemoveCheckpointAction);
         }
-    }
+    },
+    updateCheckpoint: (isProjectCreation: boolean) => (index: number, checkpoint: ICheckpoint) => {
+        if (isProjectCreation) {
+            const projectCreationUpdateCheckpointAction = updateCheckpointCreation(index, checkpoint);
+            dispatch(projectCreationUpdateCheckpointAction);
+        }
+    },
 })
 
 export const Checkpoints = connect(undefined, mapDispatchToProps)(CheckpointsPresentation);
