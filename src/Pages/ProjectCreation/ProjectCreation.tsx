@@ -31,10 +31,10 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import Api from '../../Api/api';
 import { Checkpoints } from '../../Components/Checkpoints/Checkpoints';
-import { users } from '../../MockData/users';
-import { workflow } from '../../MockData/workflow';
 import { IProject } from '../../Models/project';
+import { IProjectCreationProjectUser } from '../../Models/projectUser';
 import { getInitialCheckpoints, setProjectNameCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
+import { addProjectUserActionCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
 import { IAppState } from '../../Redux/Reducers/rootReducer';
 import { handleChange } from '../../Utils/handleChange';
 import {
@@ -193,7 +193,14 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
     }
 
     private addUserToProject = (): void => {
-        // add user to project
+        const projectUser: IProjectCreationProjectUser = {
+            userId: '5',
+            email: 'bob@bob.com',
+            name: this.state.user,
+            type: 'Admin',
+            checkpoints: [] as any,
+        }
+        this.props.addProjectUser(projectUser);
         this.setState({
             open: false,
         })
@@ -254,29 +261,14 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                 </div>
             )
         } else if (this.state.activeStep === 1) {
-            // const workflowCheckpoints = workflow.checkpoints.map((workflowCheckpoint, index) => {
-            //     const isOddCheckpoint = index % 2 === 0;
-    
-            //     return (
-            //         <div key={index} className={singleCheckpointContainer}>
-            //             <WorkflowCheckpoint
-            //                 theme={this.props.theme}
-            //                 workflowCheckpoint={workflowCheckpoint}
-            //                 greyBackground={isOddCheckpoint}
-            //                 isFirstCheckpoint={index === 0}
-            //                 />
-            //         </div>
-            //     )
-            // });
-
             return (
                 <div className={`${stepperContent} ${checkpointContainer}`}>
                     <Checkpoints checkpoints={this.props.projectCreation.checkpoints} projectCreation={true}/>
                 </div>
             )
         } else if (this.state.activeStep === 2) {
-            const mappedUsers = users.map(user => (
-                    <TableRow key={user.id} className={addedUserRow} onClick={this.openUserDialog}>
+            const mappedUsers = this.props.projectCreation.projectUsers.map(user => (
+                    <TableRow key={user.userId} className={addedUserRow} onClick={this.openUserDialog}>
                         <TableCell>{user.name}</TableCell>
                         <TableCell>{user.email}</TableCell>
                         <TableCell>All</TableCell>
@@ -286,7 +278,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             )
 
             const showOtherCheckpointField = this.state.checkpointStatus === 'AllCheckpointsExcept' || this.state.checkpointStatus === 'SomeCheckpoints';
-            const checkpointItems = workflow.checkpoints.filter((checkpoint) => {
+            const checkpointItems = this.props.projectCreation.checkpoints.filter((checkpoint) => {
                 return !this.state.additionalCheckpoints.has(checkpoint.name);
             }).map((checkpoint, index) => {
                 return (
@@ -422,9 +414,11 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
         dispatch(projectNameUpdateAction);
     },
     getInitialProjectCreationCheckpoints: () => {
-        // tslint:disable-next-line:no-console
-        // console.log(typeof getInitialCheckpoints);
         dispatch(getInitialCheckpoints as any);
+    },
+    addProjectUser: (projectUser: IProjectCreationProjectUser) => {
+        const projectUserAction = addProjectUserActionCreator(projectUser);
+        dispatch(projectUserAction);
     }
 })
 

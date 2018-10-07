@@ -2,7 +2,8 @@ import { Action } from 'redux';
 import { Dispatch } from 'redux';
 import api from '../../Api/api';
 import { ICheckpoint } from './../../Models/checkpoint';
-import { ADD_CHECKPOINT, DELETE_CHECKPOINT, GET_INITIAL_CHECKPOINTS, RECEIVE_INITIAL_CHECKPOINTS, SET_PROJECT_NAME, UPDATE_CHECKPOINT } from './../Actions/projectCreationActions';
+import { IProjectCreationProjectUser } from './../../Models/projectUser';
+import { ADD_CHECKPOINT, ADD_PROJECT_USER, DELETE_CHECKPOINT, GET_INITIAL_CHECKPOINTS, RECEIVE_INITIAL_CHECKPOINTS, SET_PROJECT_NAME, UPDATE_CHECKPOINT } from './../Actions/projectCreationActions';
 
 export interface IProjectCreationNameUpdateAction extends Action<typeof GET_INITIAL_CHECKPOINTS> {
     projectName: string;
@@ -25,9 +26,17 @@ export interface IProjectCreationReceiveInitialCheckpointsAction extends Action<
     checkpoints: ICheckpoint[];
 }
 
+export interface IProjectCreationAddUserAction extends Action<typeof ADD_PROJECT_USER> {
+    projectUser: IProjectCreationProjectUser;
+}
+
 export interface IProjectCreationGetCheckpointsAction extends Action<typeof GET_INITIAL_CHECKPOINTS> {}
 
-export type IProjectCreationActions = IProjectCreationNameUpdateAction | IProjectCreationAddCheckpointAction | IProjectCreationRemoveCheckpointAction | IProjectCreationReceiveInitialCheckpointsAction;
+export type IProjectCreationActions = IProjectCreationNameUpdateAction |
+IProjectCreationAddCheckpointAction |
+IProjectCreationRemoveCheckpointAction |
+IProjectCreationReceiveInitialCheckpointsAction |
+IProjectCreationAddUserAction;
 
 export const setProjectNameCreator = (projectName: string): IProjectCreationNameUpdateAction => {
     return {
@@ -54,6 +63,13 @@ export const receiveInitialCheckpointsCreator = (initialCheckpoints: ICheckpoint
     return {
         type: RECEIVE_INITIAL_CHECKPOINTS,
         checkpoints: initialCheckpoints,
+    }
+};
+
+export const addProjectUserActionCreator = (projectUser: IProjectCreationProjectUser): IProjectCreationAddUserAction => {
+    return {
+        type: ADD_PROJECT_USER,
+        projectUser,
     }
 };
 

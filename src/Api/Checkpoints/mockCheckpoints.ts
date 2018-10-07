@@ -11,8 +11,6 @@ export class MockCheckpointsApi implements ICheckpointsApi {
 
         const initialCheckpoints: ICheckpoint[] = workflow.checkpoints.map((workflowCheckpoint, index) => {
             const currentCheckpointDeadline = this.checkpointDeadline(previousCheckpointDeadine, workflowCheckpoint.deadlineFromLastCheckpoint);
-            // tslint:disable-next-line:no-console
-            console.log(currentCheckpointDeadline);
 
             const checkpoint: ICheckpoint = {
                 name: workflowCheckpoint.name,
@@ -31,8 +29,6 @@ export class MockCheckpointsApi implements ICheckpointsApi {
     }
 
     private checkpointDeadline(previousCheckpointDeadline: Date, days: number): Date {
-        // tslint:disable-next-line:no-console
-        console.log(days);
         const previousCheckpointClone = new Date(previousCheckpointDeadline);
         previousCheckpointClone.setDate(previousCheckpointClone.getDate() + Number(days));
         return previousCheckpointClone;

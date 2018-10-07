@@ -1,5 +1,6 @@
 import { WithTheme } from '@material-ui/core';
 import { css } from 'emotion';
+import { IProjectCreationProjectUser } from '../../Models/projectUser';
 import { IWorkflowCheckpoint } from '../../Models/workflow';
 import { IProjectCreationSliceOfState } from '../../Redux/Reducers/projectCreationReducer';
 
@@ -8,6 +9,7 @@ export interface IProjectCreationProps extends WithTheme {
     projectCreation: IProjectCreationSliceOfState;
     updateProjectName: (projectName: string) => void;
     getInitialProjectCreationCheckpoints: () => void;
+    addProjectUser: (projectUser: IProjectCreationProjectUser) => void;
 }
 // tslint:disable-next-line:no-empty-interface
 export interface IProjectCreationState {
