@@ -1,6 +1,8 @@
 import { Action } from 'redux';
+import { Dispatch } from 'redux';
+import api from '../../Api/api';
 import { ICheckpoint } from './../../Models/checkpoint';
-import { ADD_CHECKPOINT, DELETE_CHECKPOINT, GET_INITIAL_CHECKPOINTS, SET_PROJECT_NAME, UPDATE_CHECKPOINT } from './../Actions/projectCreationActions';
+import { ADD_CHECKPOINT, DELETE_CHECKPOINT, GET_INITIAL_CHECKPOINTS, RECEIVE_INITIAL_CHECKPOINTS, SET_PROJECT_NAME, UPDATE_CHECKPOINT } from './../Actions/projectCreationActions';
 
 export interface IProjectCreationNameUpdateAction extends Action<typeof GET_INITIAL_CHECKPOINTS> {
     projectName: string;
@@ -19,7 +21,13 @@ export interface IProjectCreationUpdateCheckpointAction extends Action<typeof UP
     checkpoint: ICheckpoint;
 }
 
-export type IProjectCreationActions = IProjectCreationNameUpdateAction | IProjectCreationAddCheckpointAction | IProjectCreationRemoveCheckpointAction;
+export interface IProjectCreationReceiveInitialCheckpointsAction extends Action<typeof RECEIVE_INITIAL_CHECKPOINTS> {
+    checkpoints: ICheckpoint[];
+}
+
+export interface IProjectCreationGetCheckpointsAction extends Action<typeof GET_INITIAL_CHECKPOINTS> {}
+
+export type IProjectCreationActions = IProjectCreationNameUpdateAction | IProjectCreationAddCheckpointAction | IProjectCreationRemoveCheckpointAction | IProjectCreationReceiveInitialCheckpointsAction;
 
 export const setProjectNameCreator = (projectName: string): IProjectCreationNameUpdateAction => {
     return {
@@ -40,6 +48,19 @@ export const removeCheckpointCreation = (index: number): IProjectCreationRemoveC
         type: DELETE_CHECKPOINT,
         index,
     }
+}
+
+export const receiveInitialCheckpointsCreator = (initialCheckpoints: ICheckpoint[]): IProjectCreationReceiveInitialCheckpointsAction => {
+    return {
+        type: RECEIVE_INITIAL_CHECKPOINTS,
+        checkpoints: initialCheckpoints,
+    }
+};
+
+export const getInitialCheckpoints = (dispatch: Dispatch) => {
+    const initialCheckpoints = api.checkpointsApi.getCheckpointsForProjectCreation('anything');
+    const receiveInitialCheckpointAction = receiveInitialCheckpointsCreator(initialCheckpoints);
+    dispatch(receiveInitialCheckpointAction);
 }
 
 export const updateCheckpointCreation = (index: number, checkpoint: ICheckpoint): IProjectCreationUpdateCheckpointAction => {

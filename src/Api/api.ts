@@ -1,6 +1,9 @@
 import { AuthenticationApi } from './Authentication/authentication'
 import { IAuthenticationApi } from './Authentication/authenticationInterface';
 import { MockAuthenticationApi } from './Authentication/mockAuthentication';
+import { CheckpointsApi } from './Checkpoints/checkpoints';
+import { ICheckpointsApi } from './Checkpoints/checkpointsInterface';
+import { MockCheckpointsApi } from './Checkpoints/mockCheckpoints';
 import { mockApiConfig } from './mockApi.config';
 import { MockProjectsApi } from './Projects/mockProjects';
 import { ProjectsApi } from './Projects/projects';
@@ -19,13 +22,17 @@ export interface IApi {
     authenticationApi: IAuthenticationApi;
     workflowApi: IWorkflowApi;
     projectsApi: IProjectsApi;
+    checkpointsApi: ICheckpointsApi;
 }
+
+const mockWorkflowApi = new MockWorkflowApi(mockApiConfig.defaultWorkflow);
 
 const mockApi: IApi = {
     userApi: new MockUsersApi(mockApiConfig.defaultCompanyUsers),
     authenticationApi: new MockAuthenticationApi(),
-    workflowApi: new MockWorkflowApi(mockApiConfig.defaultWorkflow),
+    workflowApi: mockWorkflowApi,
     projectsApi: new MockProjectsApi(mockApiConfig.defaultProjects),
+    checkpointsApi: new MockCheckpointsApi(mockWorkflowApi),
 }
 
 const api: IApi = {
@@ -33,6 +40,7 @@ const api: IApi = {
     authenticationApi: new AuthenticationApi(),
     workflowApi: new WorkflowApi(),
     projectsApi: new ProjectsApi(),
+    checkpointsApi: new CheckpointsApi(),
 }
 
 export default (useMockApi ? mockApi : api);

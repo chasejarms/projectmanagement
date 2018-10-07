@@ -34,7 +34,7 @@ import { Checkpoints } from '../../Components/Checkpoints/Checkpoints';
 import { users } from '../../MockData/users';
 import { workflow } from '../../MockData/workflow';
 import { IProject } from '../../Models/project';
-import { setProjectNameCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
+import { getInitialCheckpoints, setProjectNameCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
 import { IAppState } from '../../Redux/Reducers/rootReducer';
 import { handleChange } from '../../Utils/handleChange';
 import {
@@ -61,6 +61,10 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         // tslint:disable-next-line:no-console
         const projectName = event.target.value;
         this.props.updateProjectName(projectName);
+    }
+
+    public componentWillMount() {
+        this.props.getInitialProjectCreationCheckpoints();
     }
 
     public render() {
@@ -416,6 +420,11 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     updateProjectName: (projectName: string) => {
         const projectNameUpdateAction = setProjectNameCreator(projectName);
         dispatch(projectNameUpdateAction);
+    },
+    getInitialProjectCreationCheckpoints: () => {
+        // tslint:disable-next-line:no-console
+        // console.log(typeof getInitialCheckpoints);
+        dispatch(getInitialCheckpoints as any);
     }
 })
 

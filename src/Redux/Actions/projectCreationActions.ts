@@ -1,6 +1,7 @@
 const actionKey = '(Project Creation) -';
 
 export const GET_INITIAL_CHECKPOINTS = `${actionKey} get initial checkpoints`;
+export const RECEIVE_INITIAL_CHECKPOINTS = `${actionKey} receive initial checkpoints`;
 export const UPDATE_CHECKPOINT = `${actionKey} update checkpoint`;
 export const ADD_CHECKPOINT = `${actionKey} add checkpoint`;
 export const DELETE_CHECKPOINT = `${actionKey} delete checkpoint`;

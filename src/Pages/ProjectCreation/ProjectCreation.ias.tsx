@@ -6,7 +6,8 @@ import { IProjectCreationSliceOfState } from '../../Redux/Reducers/projectCreati
 // tslint:disable-next-line:no-empty-interface
 export interface IProjectCreationProps extends WithTheme {
     projectCreation: IProjectCreationSliceOfState;
-    updateProjectName: (projectName: string) => void,
+    updateProjectName: (projectName: string) => void;
+    getInitialProjectCreationCheckpoints: () => void;
 }
 // tslint:disable-next-line:no-empty-interface
 export interface IProjectCreationState {
