@@ -140,7 +140,9 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
                         />
                     </DialogContent>
                     <DialogActions>
-                        <Button color="primary" onClick={this.handleClose}>Cancel</Button>
+                        { this.state.isUpdate ? (
+                            <Button color="primary" onClick={this.handleCheckpointDelete(this.state.index)}>Delete</Button>
+                        ) : undefined}
                         <Button color="secondary" onClick={this.handleSave}>
                             {this.state.isUpdate ? 'Update Checkpoint' : 'Add Checkpoint' }
                         </Button>
@@ -170,6 +172,25 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
                 isUpdate: true,
                 index,
             })
+        }
+    }
+
+    private handleCheckpointDelete = (index: number) => {
+        return () => {
+            const updatedCheckpoints = this.state.workflow!.checkpoints.filter((checkpoint, compareIndex) => {
+                return compareIndex !== index;
+            });
+            Api.workflowApi.updateWorkflow('does not matter', {
+                id: '',
+                checkpoints: updatedCheckpoints,
+            });
+
+            const workflow = Api.workflowApi.getWorkflow('does not matter');
+
+            this.setState({
+                open: false,
+                workflow,
+            });
         }
     }
 

@@ -177,15 +177,6 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         this.setState({
             open: false,
         });
-
-        setTimeout(() => {
-            this.setState({
-                checkpoints: [],
-                user: '',
-                checkpointStatus: '',
-                role: '',
-            });
-        });
     }
 
     private openUserDialog = (): void => {
