@@ -3,7 +3,7 @@ import { Dispatch } from 'redux';
 import api from '../../Api/api';
 import { ICheckpoint } from './../../Models/checkpoint';
 import { IProjectCreationProjectUser } from './../../Models/projectUser';
-import { ADD_CHECKPOINT, ADD_PROJECT_USER, DELETE_CHECKPOINT, GET_INITIAL_CHECKPOINTS, RECEIVE_INITIAL_CHECKPOINTS, SET_PROJECT_NAME, UPDATE_CHECKPOINT } from './../Actions/projectCreationActions';
+import { ADD_CHECKPOINT, ADD_PROJECT_USER, DELETE_CHECKPOINT, GET_INITIAL_CHECKPOINTS, RECEIVE_INITIAL_CHECKPOINTS, SET_PROJECT_NAME, UPDATE_CHECKPOINT, UPDATE_PROJECT_USER } from './../Actions/projectCreationActions';
 
 export interface IProjectCreationNameUpdateAction extends Action<typeof GET_INITIAL_CHECKPOINTS> {
     projectName: string;
@@ -30,13 +30,19 @@ export interface IProjectCreationAddUserAction extends Action<typeof ADD_PROJECT
     projectUser: IProjectCreationProjectUser;
 }
 
+export interface IProjectCreationUpdateUserAction extends Action<typeof UPDATE_PROJECT_USER> {
+    projectUser: IProjectCreationProjectUser;
+    index: number;
+}
+
 export interface IProjectCreationGetCheckpointsAction extends Action<typeof GET_INITIAL_CHECKPOINTS> {}
 
 export type IProjectCreationActions = IProjectCreationNameUpdateAction |
 IProjectCreationAddCheckpointAction |
 IProjectCreationRemoveCheckpointAction |
 IProjectCreationReceiveInitialCheckpointsAction |
-IProjectCreationAddUserAction;
+IProjectCreationAddUserAction |
+IProjectCreationUpdateUserAction;
 
 export const setProjectNameCreator = (projectName: string): IProjectCreationNameUpdateAction => {
     return {
@@ -72,6 +78,14 @@ export const addProjectUserActionCreator = (projectUser: IProjectCreationProject
         projectUser,
     }
 };
+
+export const updateProjectUserActionCreator = (projectUser: IProjectCreationProjectUser, index: number): IProjectCreationUpdateUserAction => {
+    return {
+        type: UPDATE_PROJECT_USER,
+        projectUser,
+        index,
+    }
+}
 
 export const getInitialCheckpoints = (dispatch: Dispatch) => {
     const initialCheckpoints = api.checkpointsApi.getCheckpointsForProjectCreation('anything');

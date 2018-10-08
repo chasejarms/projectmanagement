@@ -33,7 +33,7 @@ import Api from '../../Api/api';
 import { Checkpoints } from '../../Components/Checkpoints/Checkpoints';
 import { IProject } from '../../Models/project';
 import { IProjectCreationProjectUser } from '../../Models/projectUser';
-import { getInitialCheckpoints, setProjectNameCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
+import { getInitialCheckpoints, setProjectNameCreator, updateProjectUserActionCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
 import { addProjectUserActionCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
 import { IAppState } from '../../Redux/Reducers/rootReducer';
 import { handleChange } from '../../Utils/handleChange';
@@ -267,7 +267,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             checkpoints,
             checkpointModifier: this.state.checkpointStatus as any,
         }
-        this.props.addProjectUser(projectUser);
+        this.props.updateProjectUser(projectUser, this.state.index);
         this.setState({
             open: false,
         })
@@ -509,6 +509,10 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     addProjectUser: (projectUser: IProjectCreationProjectUser) => {
         const projectUserAction = addProjectUserActionCreator(projectUser);
         dispatch(projectUserAction);
+    },
+    updateProjectUser: (projectUser: IProjectCreationProjectUser, index: number) => {
+        const updateProjectUserAction = updateProjectUserActionCreator(projectUser, index);
+        dispatch(updateProjectUserAction);
     }
 })
 

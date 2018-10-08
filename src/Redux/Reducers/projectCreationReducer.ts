@@ -1,7 +1,7 @@
 import { ICheckpoint } from '../../Models/checkpoint';
 import { IProjectCreationProjectUser } from './../../Models/projectUser';
-import { IProjectCreationActions, IProjectCreationAddCheckpointAction, IProjectCreationAddUserAction, IProjectCreationNameUpdateAction, IProjectCreationReceiveInitialCheckpointsAction, IProjectCreationRemoveCheckpointAction, IProjectCreationUpdateCheckpointAction } from './../ActionCreators/projectCreationActionCreators';
-import { ADD_CHECKPOINT, ADD_PROJECT_USER, DELETE_CHECKPOINT, RECEIVE_INITIAL_CHECKPOINTS, SET_PROJECT_NAME, UPDATE_CHECKPOINT } from './../Actions/projectCreationActions';
+import { IProjectCreationActions, IProjectCreationAddCheckpointAction, IProjectCreationAddUserAction, IProjectCreationNameUpdateAction, IProjectCreationReceiveInitialCheckpointsAction, IProjectCreationRemoveCheckpointAction, IProjectCreationUpdateCheckpointAction, IProjectCreationUpdateUserAction } from './../ActionCreators/projectCreationActionCreators';
+import { ADD_CHECKPOINT, ADD_PROJECT_USER, DELETE_CHECKPOINT, RECEIVE_INITIAL_CHECKPOINTS, SET_PROJECT_NAME, UPDATE_CHECKPOINT, UPDATE_PROJECT_USER } from './../Actions/projectCreationActions';
 
 export interface IProjectCreationSliceOfState {
     projectName: string;
@@ -65,6 +65,15 @@ export const projectCreationReducer = (state: IProjectCreationSliceOfState = ini
       return {
         ...state,
         projectUsers,
+      }
+    case UPDATE_PROJECT_USER:
+      const updateProjectUserAction = action as IProjectCreationUpdateUserAction;
+      const updatedProjectUsers = state.projectUsers.map((projectUser, index) => {
+        return index === updateProjectUserAction.index ? updateProjectUserAction.projectUser : projectUser;
+      });
+      return {
+        ...state,
+        projectUsers: updatedProjectUsers,
       }
     default:
       return state;
