@@ -9,6 +9,7 @@ import {
     InputLabel,
     MenuItem,
     Paper,
+    Popper,
     Select,
     Step,
     StepLabel,
@@ -26,6 +27,7 @@ import {
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import ClearIcon from '@material-ui/icons/Clear';
+import Downshift from 'downshift';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
@@ -33,8 +35,9 @@ import Api from '../../Api/api';
 import { Checkpoints } from '../../Components/Checkpoints/Checkpoints';
 import { IProject } from '../../Models/project';
 import { IProjectCreationProjectUser } from '../../Models/projectUser';
-import { deleteProjectUserActionCreator, getInitialCheckpoints, setProjectNameCreator, updateProjectUserActionCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
+import { IUser } from '../../Models/user';
 import { addProjectUserActionCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
+import { deleteProjectUserActionCreator, getInitialCheckpoints, setProjectNameCreator, updateProjectUserActionCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
 import { IAppState } from '../../Redux/Reducers/rootReducer';
 import { handleChange } from '../../Utils/handleChange';
 import {
@@ -46,7 +49,7 @@ import {
 export class ProjectCreationPresentation extends React.Component<IProjectCreationProps, IProjectCreationState> {
     public state = {
         open: false,
-        activeStep: 0,
+        activeStep: 2,
         projectName: '',
         checkpoints: [],
         user: '',
@@ -311,6 +314,63 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         }
     }
 
+    private handleUserSelection = (event: any) => {
+        // tslint:disable-next-line:no-console
+        console.log(event);
+    }
+
+    private renderInput = (inputProps: any) => {
+        const { InputProps, ref, classes, ...other } = inputProps;
+        return (
+            <TextField
+                InputProps={{
+                    inputRef: ref,
+                    ...InputProps,
+                }}
+                {...other}
+            />
+        )
+    }
+
+    private getSuggestions(inputValue: any): IUser[] {
+        const changedInputValue = inputValue.trim().toLowerCase();
+        const inputLength = changedInputValue.length;
+        let count = 0;
+
+        return inputLength === 0 ? [] : (
+            Api.userApi.getUsers('does not matter').filter((user) => {
+                const keep =
+                    count < 10 && user.name.slice(0, inputLength).toLowerCase() === inputValue;
+
+                if (keep) {
+                    count += 1;
+                }
+
+                return keep;
+            })
+        )
+    }
+
+    private renderSuggestion = (input: any) => {
+        const suggestion = input.suggestion as IUser;
+        const isHighlighted = input.highlightedIndex === input.index;
+        const isSelected = (input.selectedItem || '').indexOf(input.suggestion.label) > -1;
+
+        return (
+            <MenuItem
+                    {...input.itemProps}
+                    key={suggestion.id}
+                    selected={isHighlighted}
+                    component="div"
+                    style={{
+                        fontWeight: isSelected ? 500 : 400,
+                    }}
+                >
+                {suggestion.name}
+            </MenuItem>
+        );
+    }
+
     private getStepActiveContent(): any {
         const {
             stepperContent,
@@ -329,6 +389,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             clearCheckpointIcon,
             checkpointContainer,
             projectUsersToolbarContainer,
+            autocompletePaper,
         } = createProjectCreationClasses(this.props, this.state);
 
         if (this.state.activeStep === 0) {
@@ -415,6 +476,8 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                 </div>
             ) : undefined;
 
+            let popperNode: any = React.createRef();
+
             return (
                 <div className={`${stepperContent} ${usersContainer}`}>
                     <Paper className={paper}>
@@ -458,13 +521,57 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                     >
                         <DialogTitle>{this.state.isUpdate ? 'Update User' : 'Add User To Project'}</DialogTitle>
                         <DialogContent className={dialogContent}>
-                            <TextField
-                                label="User"
-                                name="user"
-                                value={this.state.user}
-                                className={dialogControl}
-                                onChange={this.handleChange}
-                            />
+                            <Downshift onChange={this.handleUserSelection}>
+                                {({
+                                    getInputProps,
+                                    getMenuProps,
+                                    inputValue,
+                                    highlightedIndex,
+                                    selectedItem,
+                                    getItemProps,
+                                    isOpen,
+                                }) => {
+                                    return (
+                                        <div>
+                                            {this.renderInput({
+                                                fullWidth: true,
+                                                InputProps: getInputProps({
+                                                    placeholder: 'User',
+                                                }),
+                                                classes: {
+                                                    flexWrap: 'wrap',
+                                                },
+                                                ref: (node: any) => {
+                                                    popperNode = node;
+                                                }
+                                            })}
+                                            <div {...getMenuProps()}>
+                                                <Popper className={autocompletePaper} disablePortal={true} open={isOpen} anchorEl={popperNode}>
+                                                    <Paper square={true} style={{ width: popperNode ? popperNode.clientWidth : null }}>
+                                                        {this.getSuggestions(inputValue).map((user: IUser, index: number) => {
+                                                            const itemProps = getItemProps({ item: user.name });
+                                                            return this.renderSuggestion({
+                                                                suggestion: user,
+                                                                index,
+                                                                highlightedIndex,
+                                                                selectedItem,
+                                                                itemProps,
+                                                            })
+                                                        })}
+                                                    </Paper>
+                                                </Popper>
+                                            </div>
+                                            {/* <TextField
+                                                label="User"
+                                                name="user"
+                                                value={this.state.user}
+                                                className={dialogControl}
+                                                onChange={this.handleChange}
+                                            /> */}
+                                        </div>
+                                    )
+                                }}
+                            </Downshift>
                             <FormControl>
                                 <InputLabel htmlFor="role">Checkpoints</InputLabel>
                                 <Select

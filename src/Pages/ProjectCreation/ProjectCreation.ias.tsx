@@ -106,8 +106,14 @@ export const createProjectCreationClasses = (
 
     const paper = css({
         marginBottom: 32,
-        overflow: 'hidden',
+        overflow: 'visible',
     });
+
+    const autocompletePaper = css({
+        zIndex: 1,
+        position: 'relative',
+        top: 35,
+    })
 
     const usersContainer = css({
         padding: 32,
@@ -253,5 +259,6 @@ export const createProjectCreationClasses = (
         underline,
         root,
         focused,
+        autocompletePaper,
     };
 }
