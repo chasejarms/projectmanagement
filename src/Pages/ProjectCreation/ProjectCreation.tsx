@@ -198,7 +198,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             email: 'bob@bob.com',
             name: this.state.user,
             type: 'Admin',
-            checkpoints: [] as any,
+            checkpoints: this.state.additionalCheckpoints,
         }
         this.props.addProjectUser(projectUser);
         this.setState({
@@ -209,8 +209,6 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
     private handleAdditionalCheckpoint = (event: any): any => {
         const clonedSet = new Set(this.state.additionalCheckpoints);
         clonedSet.add(event.target.value);
-        // tslint:disable-next-line:no-console
-        console.log(event.target.value);
         this.setState({
             additionalCheckpoints: clonedSet as any,
         });
@@ -222,6 +220,22 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         return () => {
             this.setState({
                 additionalCheckpoints: clonedSet as any,
+            });
+        }
+    }
+
+    private handleCheckpointModifierChange = (event: any): void => {
+        this.setState({
+            checkpointStatus: event.target.value,
+        });
+
+        if (event.target.value === 'AllCheckpoints') {
+            const allCheckpoints = this.props.projectCreation.checkpoints.map((checkpoint) => {
+                return checkpoint.name;
+            });
+            const allCheckpointsSet = new Set(allCheckpoints);
+            this.setState({
+                additionalCheckpoints: allCheckpointsSet,
             });
         }
     }
@@ -267,14 +281,19 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                 </div>
             )
         } else if (this.state.activeStep === 2) {
-            const mappedUsers = this.props.projectCreation.projectUsers.map(user => (
-                    <TableRow key={user.userId} className={addedUserRow} onClick={this.openUserDialog}>
-                        <TableCell>{user.name}</TableCell>
-                        <TableCell>{user.email}</TableCell>
-                        <TableCell>All</TableCell>
-                        <TableCell>{user.type}</TableCell>
-                    </TableRow>
-                )
+            const mappedUsers = this.props.projectCreation.projectUsers.map(user => {
+                    const numberOfUserCheckpoint = user.checkpoints.size;
+                    const numberOfProjectCheckpoints = this.props.projectCreation.checkpoints.length;
+                    const checkpointsText = numberOfUserCheckpoint === numberOfProjectCheckpoints ? 'All' : `${numberOfUserCheckpoint}/${numberOfProjectCheckpoints}`;
+                    return (
+                        <TableRow key={user.userId} className={addedUserRow} onClick={this.openUserDialog}>
+                            <TableCell>{user.name}</TableCell>
+                            <TableCell>{user.email}</TableCell>
+                            <TableCell>{checkpointsText}</TableCell>
+                            <TableCell>{user.type}</TableCell>
+                        </TableRow>
+                    )
+                }
             )
 
             const showOtherCheckpointField = this.state.checkpointStatus === 'AllCheckpointsExcept' || this.state.checkpointStatus === 'SomeCheckpoints';
@@ -384,7 +403,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                                         id: 'role',
                                     }}
                                     value={this.state.checkpointStatus}
-                                    onChange={this.handleChange}
+                                    onChange={this.handleCheckpointModifierChange}
                                 >
                                     <MenuItem value={'AllCheckpoints'}>Add User To All Checkpoints</MenuItem>
                                     <MenuItem value={'AllCheckpointsExcept'}>Add User To All Checkpoints Except For</MenuItem>
