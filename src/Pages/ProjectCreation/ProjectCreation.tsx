@@ -53,7 +53,9 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         checkpointStatus: '',
         role: '',
         additionalCheckpoints: new Set<string>([]),
-    }
+        isUpdate: false,
+        index: -1,
+    };
 
     public handleChange = handleChange(this);
 
@@ -189,16 +191,81 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
     private openUserDialog = (): void => {
         this.setState({
             open: true,
+            index: -1,
+            isUpdate: false,
+            checkpointStatus: '',
+            additionalCheckpoints: new Set([]),
         });
     }
 
+    private updateUserDialog = (index: number): () => void => {
+        const user = this.props.projectCreation.projectUsers[index];
+        
+        let additionalCheckpoints: Set<string>;
+
+        if (user.checkpointModifier === 'AllCheckpointsExcept') {
+            const newCheckpointsArray = this.props.projectCreation.checkpoints.filter((checkpoint) => {
+                return !user.checkpoints.has(checkpoint.name);
+            }).map((checkpoint) => checkpoint.name);
+            additionalCheckpoints = new Set(newCheckpointsArray);
+        } else {
+            additionalCheckpoints = this.state.additionalCheckpoints;
+        }
+
+        return () => {
+            this.setState({
+                open: true,
+                index,
+                isUpdate: true,
+                checkpointStatus: user.checkpointModifier,
+                additionalCheckpoints,
+            })
+        }
+    }
+
     private addUserToProject = (): void => {
+        let checkpoints: Set<string>;
+        if (this.state.checkpointStatus === 'AllCheckpointsExcept') {
+            const newCheckpointsArray = this.props.projectCreation.checkpoints.filter((checkpoint) => {
+                return !this.state.additionalCheckpoints.has(checkpoint.name);
+            }).map((checkpoint) => checkpoint.name);
+            checkpoints = new Set(newCheckpointsArray);
+        } else {
+            checkpoints = this.state.additionalCheckpoints;
+        }
+
         const projectUser: IProjectCreationProjectUser = {
             userId: '5',
             email: 'bob@bob.com',
             name: this.state.user,
             type: 'Admin',
-            checkpoints: this.state.additionalCheckpoints,
+            checkpoints,
+            checkpointModifier: this.state.checkpointStatus as any,
+        }
+        this.props.addProjectUser(projectUser);
+        this.setState({
+            open: false,
+        })
+    }
+
+    private updateProjectUser = (): void => {
+        let checkpoints: Set<string>;
+        if (this.state.checkpointStatus === 'AllCheckpointsExcept') {
+            const newCheckpointsArray = this.props.projectCreation.checkpoints.filter((checkpoint) => {
+                return !this.state.additionalCheckpoints.has(checkpoint.name);
+            }).map((checkpoint) => checkpoint.name);
+            checkpoints = new Set(newCheckpointsArray);
+        } else {
+            checkpoints = this.state.additionalCheckpoints;
+        }
+
+        const projectUser: IProjectCreationProjectUser = {
+            userId: '5',
+            email: 'bob@bob.com',
+            name: this.state.user,
+            type: 'Admin',
+            checkpoints,
+            checkpointModifier: this.state.checkpointStatus as any,
         }
         this.props.addProjectUser(projectUser);
         this.setState({
@@ -237,6 +304,10 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             this.setState({
                 additionalCheckpoints: allCheckpointsSet,
             });
+        } else {
+            this.setState({
+                additionalCheckpoints: new Set([]),
+            })
         }
     }
 
@@ -281,12 +352,12 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                 </div>
             )
         } else if (this.state.activeStep === 2) {
-            const mappedUsers = this.props.projectCreation.projectUsers.map(user => {
+            const mappedUsers = this.props.projectCreation.projectUsers.map((user, index) => {
                     const numberOfUserCheckpoint = user.checkpoints.size;
                     const numberOfProjectCheckpoints = this.props.projectCreation.checkpoints.length;
                     const checkpointsText = numberOfUserCheckpoint === numberOfProjectCheckpoints ? 'All' : `${numberOfUserCheckpoint}/${numberOfProjectCheckpoints}`;
                     return (
-                        <TableRow key={user.userId} className={addedUserRow} onClick={this.openUserDialog}>
+                        <TableRow key={user.userId} className={addedUserRow} onClick={this.updateUserDialog(index)}>
                             <TableCell>{user.name}</TableCell>
                             <TableCell>{user.email}</TableCell>
                             <TableCell>{checkpointsText}</TableCell>
@@ -385,7 +456,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                         open={this.state.open}
                         onClose={this.handleClose}
                     >
-                        <DialogTitle>Add User To Project</DialogTitle>
+                        <DialogTitle>{this.state.isUpdate ? 'Update User' : 'Add User To Project'}</DialogTitle>
                         <DialogContent className={dialogContent}>
                             <TextField
                                 label="User"
@@ -414,7 +485,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                         </DialogContent>
                         <DialogActions>
                             <Button color="primary" onClick={this.handleClose}>Cancel</Button>
-                            <Button color="secondary" onClick={this.addUserToProject}>Add User</Button>
+                            <Button color="secondary" onClick={this.state.isUpdate ? this.updateProjectUser : this.addUserToProject}>{this.state.isUpdate ? 'Update User' : 'Add User' }</Button>
                         </DialogActions>
                     </Dialog>
                 </div>

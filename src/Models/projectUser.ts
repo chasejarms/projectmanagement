@@ -4,4 +4,5 @@ export interface IProjectCreationProjectUser {
     name: string;
     type: 'Admin' | 'Staff' | 'Customer';
     checkpoints: Set<string>;
+    checkpointModifier: 'AllCheckpoints' | 'AllCheckpointsExcept' | 'SomeCheckpoints';
 }

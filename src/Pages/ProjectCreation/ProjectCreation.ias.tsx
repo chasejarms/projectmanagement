@@ -20,6 +20,8 @@ export interface IProjectCreationState {
     checkpointStatus: any;
     role: any;
     additionalCheckpoints: Set<string>;
+    isUpdate: boolean;
+    index: number;
 }
 
 export const createProjectCreationClasses = (
