@@ -1,7 +1,7 @@
 import { ICheckpoint } from '../../Models/checkpoint';
 import { IProjectCreationProjectUser } from './../../Models/projectUser';
-import { IProjectCreationActions, IProjectCreationAddCheckpointAction, IProjectCreationAddUserAction, IProjectCreationNameUpdateAction, IProjectCreationReceiveInitialCheckpointsAction, IProjectCreationRemoveCheckpointAction, IProjectCreationUpdateCheckpointAction, IProjectCreationUpdateUserAction } from './../ActionCreators/projectCreationActionCreators';
-import { ADD_CHECKPOINT, ADD_PROJECT_USER, DELETE_CHECKPOINT, RECEIVE_INITIAL_CHECKPOINTS, SET_PROJECT_NAME, UPDATE_CHECKPOINT, UPDATE_PROJECT_USER } from './../Actions/projectCreationActions';
+import { IProjectCreationActions, IProjectCreationAddCheckpointAction, IProjectCreationAddUserAction, IProjectCreationDeleteUserAction, IProjectCreationNameUpdateAction, IProjectCreationReceiveInitialCheckpointsAction, IProjectCreationRemoveCheckpointAction, IProjectCreationUpdateCheckpointAction, IProjectCreationUpdateUserAction } from './../ActionCreators/projectCreationActionCreators';
+import { ADD_CHECKPOINT, ADD_PROJECT_USER, DELETE_CHECKPOINT, DELETE_PROJECT_USER, RECEIVE_INITIAL_CHECKPOINTS, SET_PROJECT_NAME, UPDATE_CHECKPOINT, UPDATE_PROJECT_USER } from './../Actions/projectCreationActions';
 
 export interface IProjectCreationSliceOfState {
     projectName: string;
@@ -74,6 +74,15 @@ export const projectCreationReducer = (state: IProjectCreationSliceOfState = ini
       return {
         ...state,
         projectUsers: updatedProjectUsers,
+      }
+    case DELETE_PROJECT_USER:
+      const deleteProjectUserAction = action as IProjectCreationDeleteUserAction;
+      const projectUsersMinusDeletedUser = state.projectUsers.filter((projectUser, index) => {
+        return index !== deleteProjectUserAction.index;
+      });
+      return {
+        ...state,
+        projectUsers: projectUsersMinusDeletedUser,
       }
     default:
       return state;

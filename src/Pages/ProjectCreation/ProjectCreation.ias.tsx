@@ -11,6 +11,7 @@ export interface IProjectCreationProps extends WithTheme {
     getInitialProjectCreationCheckpoints: () => void;
     addProjectUser: (projectUser: IProjectCreationProjectUser) => void;
     updateProjectUser: (projectUser: IProjectCreationProjectUser, index: number) => void;
+    deleteProjectUser: (index: number) => void;
 }
 // tslint:disable-next-line:no-empty-interface
 export interface IProjectCreationState {

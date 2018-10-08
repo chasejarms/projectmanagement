@@ -3,7 +3,7 @@ import { Dispatch } from 'redux';
 import api from '../../Api/api';
 import { ICheckpoint } from './../../Models/checkpoint';
 import { IProjectCreationProjectUser } from './../../Models/projectUser';
-import { ADD_CHECKPOINT, ADD_PROJECT_USER, DELETE_CHECKPOINT, GET_INITIAL_CHECKPOINTS, RECEIVE_INITIAL_CHECKPOINTS, SET_PROJECT_NAME, UPDATE_CHECKPOINT, UPDATE_PROJECT_USER } from './../Actions/projectCreationActions';
+import { ADD_CHECKPOINT, ADD_PROJECT_USER, DELETE_CHECKPOINT, DELETE_PROJECT_USER, GET_INITIAL_CHECKPOINTS, RECEIVE_INITIAL_CHECKPOINTS, SET_PROJECT_NAME, UPDATE_CHECKPOINT, UPDATE_PROJECT_USER } from './../Actions/projectCreationActions';
 
 export interface IProjectCreationNameUpdateAction extends Action<typeof GET_INITIAL_CHECKPOINTS> {
     projectName: string;
@@ -35,6 +35,10 @@ export interface IProjectCreationUpdateUserAction extends Action<typeof UPDATE_P
     index: number;
 }
 
+export interface IProjectCreationDeleteUserAction extends Action<typeof DELETE_PROJECT_USER> {
+    index: number;
+}
+
 export interface IProjectCreationGetCheckpointsAction extends Action<typeof GET_INITIAL_CHECKPOINTS> {}
 
 export type IProjectCreationActions = IProjectCreationNameUpdateAction |
@@ -42,7 +46,8 @@ IProjectCreationAddCheckpointAction |
 IProjectCreationRemoveCheckpointAction |
 IProjectCreationReceiveInitialCheckpointsAction |
 IProjectCreationAddUserAction |
-IProjectCreationUpdateUserAction;
+IProjectCreationUpdateUserAction |
+IProjectCreationDeleteUserAction;
 
 export const setProjectNameCreator = (projectName: string): IProjectCreationNameUpdateAction => {
     return {
@@ -83,6 +88,13 @@ export const updateProjectUserActionCreator = (projectUser: IProjectCreationProj
     return {
         type: UPDATE_PROJECT_USER,
         projectUser,
+        index,
+    }
+}
+
+export const deleteProjectUserActionCreator = (index: number): IProjectCreationDeleteUserAction => {
+    return {
+        type: DELETE_PROJECT_USER,
         index,
     }
 }

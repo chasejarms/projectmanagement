@@ -33,7 +33,7 @@ import Api from '../../Api/api';
 import { Checkpoints } from '../../Components/Checkpoints/Checkpoints';
 import { IProject } from '../../Models/project';
 import { IProjectCreationProjectUser } from '../../Models/projectUser';
-import { getInitialCheckpoints, setProjectNameCreator, updateProjectUserActionCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
+import { deleteProjectUserActionCreator, getInitialCheckpoints, setProjectNameCreator, updateProjectUserActionCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
 import { addProjectUserActionCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
 import { IAppState } from '../../Redux/Reducers/rootReducer';
 import { handleChange } from '../../Utils/handleChange';
@@ -311,6 +311,15 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         }
     }
 
+    private handleUserDelete = (index: number): () => void => {
+        return () => {
+            this.setState({
+                open: false,
+            });
+            this.props.deleteProjectUser(index);
+        }
+    }
+
     private getStepActiveContent(): any {
         const {
             stepperContent,
@@ -484,7 +493,9 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                             {otherCheckpointsField}
                         </DialogContent>
                         <DialogActions>
-                            <Button color="primary" onClick={this.handleClose}>Cancel</Button>
+                            { this.state.isUpdate ? (
+                                <Button color="primary" onClick={this.handleUserDelete(this.state.index)}>Delete</Button>
+                            ) : undefined}
                             <Button color="secondary" onClick={this.state.isUpdate ? this.updateProjectUser : this.addUserToProject}>{this.state.isUpdate ? 'Update User' : 'Add User' }</Button>
                         </DialogActions>
                     </Dialog>
@@ -513,6 +524,10 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     updateProjectUser: (projectUser: IProjectCreationProjectUser, index: number) => {
         const updateProjectUserAction = updateProjectUserActionCreator(projectUser, index);
         dispatch(updateProjectUserAction);
+    },
+    deleteProjectUser: (index: number) => {
+        const deleteProjectUserAction = deleteProjectUserActionCreator(index);
+        dispatch(deleteProjectUserAction);
     }
 })
 
