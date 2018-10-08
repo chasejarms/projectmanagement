@@ -25,8 +25,6 @@ export class MockProjectsApi implements IProjectsApi {
     }
 
     public createProject(companyName: string, project: IProject): IProject {
-        // tslint:disable-next-line:no-console
-        console.log(project);
         this.createSlimProjectFromProject(project);
         return {} as any;
     }
@@ -50,7 +48,7 @@ export class MockProjectsApi implements IProjectsApi {
     //     const existingProjectData = existingSlimProjects.filter((existingSlimProject) => {
     //         return existingSlimProject.projectId === project.id;
     //     })[0];
-    //     const deadline = this.projectDeadline(project);
+    //     const deadline = this.nextCheckpointDeadline(project);
     //     const slimProjectToUpdate: ISlimProjects = {
     //         ...existingProjectData,
     //         projectName: project.name,
@@ -75,7 +73,7 @@ export class MockProjectsApi implements IProjectsApi {
     // }
 
     private createSlimProjectFromProject(project: IProject): void {
-        const deadline = this.projectDeadline(project);
+        const deadline = this.nextCheckpointDeadline(project);
         const slimProjectToUpdate: ISlimProjects = {
             id: Date.now().toString(),
             projectId: project.id,
@@ -83,7 +81,7 @@ export class MockProjectsApi implements IProjectsApi {
             completionPercentage: this.completedCheckpoints(project),
             currentCheckpoint: this.currentCheckpoint(project),
             deadline,
-            deadlinePretty: this.createPrettyDeadline(deadline),
+            nextCheckpointDeadlinePretty: this.createPrettyDeadline(deadline),
         }
 
         const existingSlimProjects = this.getSlimProjects('does not matter');
@@ -115,9 +113,13 @@ export class MockProjectsApi implements IProjectsApi {
         return '';
     }
 
-    private projectDeadline(project: IProject): Date {
-        const lastCheckpoint = project.checkpoints[project.checkpoints.length - 1];
-        return lastCheckpoint.deadline!;
+    private nextCheckpointDeadline(project: IProject): Date {
+        for (const checkpoint of project.checkpoints) {
+            if (!checkpoint.complete) {
+                return checkpoint.deadline!;
+            }
+        }
+        return new Date();
     }
 
     private createPrettyDeadline(deadline: Date): string {

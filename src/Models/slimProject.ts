@@ -5,5 +5,5 @@ export interface ISlimProjects {
     completionPercentage: number;
     currentCheckpoint: string;
     deadline: Date;
-    deadlinePretty: string;
+    nextCheckpointDeadlinePretty: string;
 }

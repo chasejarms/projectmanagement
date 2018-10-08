@@ -42,7 +42,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                 <TableRow key={slimProject.id} onClick={this.navigateToProject(slimProject.id)} className={rowStyling}>
                     <TableCell>{slimProject.projectName}</TableCell>
                     <TableCell>{slimProject.currentCheckpoint}</TableCell>
-                    <TableCell>{slimProject.deadlinePretty}</TableCell>
+                    <TableCell>{slimProject.nextCheckpointDeadlinePretty}</TableCell>
                 </TableRow>
             )
         )

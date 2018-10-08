@@ -34,7 +34,7 @@ export class MyProjectsPresentation extends React.Component<IMyProjectsPresentat
                 <TableRow key={project.id} onClick={this.navigateToProject(project.id)} className={rowStyling}>
                     <TableCell>{project.projectName}</TableCell>
                     <TableCell>{project.currentCheckpoint}</TableCell>
-                    <TableCell>{project.deadlinePretty}</TableCell>
+                    <TableCell>{project.nextCheckpointDeadlinePretty}</TableCell>
                 </TableRow>
             )
         )
