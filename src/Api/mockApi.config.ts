@@ -5,7 +5,7 @@ interface IMockApiConfig {
 }
 
 export const mockApiConfig: IMockApiConfig = {
-    defaultCompanyUsers: true,
-    defaultWorkflow: true,
+    defaultCompanyUsers: false,
+    defaultWorkflow: false,
     defaultProjects: false,
 }
