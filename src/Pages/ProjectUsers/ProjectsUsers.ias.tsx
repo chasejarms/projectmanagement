@@ -1,13 +1,18 @@
 import { css } from 'emotion';
+import { RouteComponentProps } from 'react-router';
+import { ICheckpoint } from '../../Models/checkpoint';
+import { IProjectCreationProjectUser } from '../../Models/projectUser';
 
 // tslint:disable-next-line:no-empty-interface
-export interface IProjectUsersProps {}
+export interface IProjectUsersProps extends RouteComponentProps<{}> {}
 // tslint:disable-next-line:no-empty-interface
 export interface IProjectUsersState {
     open: boolean;
     user: string;
     checkpointStatus: string;
     additionalCheckpoints: Set<string>,
+    users: IProjectCreationProjectUser[],
+    checkpoints: ICheckpoint[],
 }
 
 export const createProjectUsersClasses = (

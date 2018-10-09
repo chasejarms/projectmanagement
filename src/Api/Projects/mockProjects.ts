@@ -2,6 +2,7 @@ import * as _ from 'lodash';
 import { slimProjects as mockSlimProjects } from './../../MockData/slimProjects';
 import { ICheckpoint } from './../../Models/checkpoint';
 import { IProject } from './../../Models/project';
+import { IProjectCreationProjectUser } from './../../Models/projectUser';
 import { ISlimProjects } from './../../Models/slimProject';
 import { mockApiKey } from './../mockApi.key';
 import { IProjectsApi } from './projectsInterface';
@@ -41,6 +42,11 @@ export class MockProjectsApi implements IProjectsApi {
     public getProjectName(companyName: string, projectId: string): string {
         const project = this.getProject(projectId);
         return project.name;
+    }
+
+    public getProjectUsers(companyName: string, projectId: string): IProjectCreationProjectUser[] {
+        const project = this.getProject(projectId);
+        return project.users;
     }
 
     private getProject(projectId: string): IProject {

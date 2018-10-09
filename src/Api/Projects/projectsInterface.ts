@@ -10,7 +10,7 @@ export interface IProjectsApi {
     // getMySlimProjects(companyName: string): ISlimProjects[];
     getProjectCheckpoints(companyName: string, projectId: string): ICheckpoint[];
     // updateProjectCheckpoints(companyName: string, projectId: string, checkpoints: ICheckpoint[]): boolean;
-    // getProjectUsers(companyName: string, projectId: string): any; // should return project users
+    getProjectUsers(companyName: string, projectId: string): any; // should return project users
     // addProjectUser(companyName: string, projectId: string, user: any): boolean;
     // deleteProjectUser(companyName: string, projectId: string, projectUserId: string): boolean;
     // updateProjectUser(companyName: string, projectId: string, user: any): boolean;

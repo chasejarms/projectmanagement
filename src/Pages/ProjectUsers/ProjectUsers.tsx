@@ -23,8 +23,10 @@ import {
 import AddIcon from '@material-ui/icons/Add';
 import ClearIcon from '@material-ui/icons/Clear';
 import * as React from 'react';
-import { users } from '../../MockData/users';
-import { workflow } from '../../MockData/workflow';
+import { withRouter } from 'react-router';
+import Api from '../../Api/api';
+import { ICheckpoint } from '../../Models/checkpoint';
+import { IProjectCreationProjectUser } from '../../Models/projectUser';
 import { handleChange } from '../../Utils/handleChange';
 import {
     createProjectUsersClasses,
@@ -32,16 +34,28 @@ import {
     IProjectUsersState
 } from './ProjectsUsers.ias';
 
-export class ProjectUsers extends React.Component<IProjectUsersProps, IProjectUsersState> {
+export class ProjectUsersPresentation extends React.Component<IProjectUsersProps, IProjectUsersState> {
     public state = {
         open: false,
         checkpoints: [],
         user: '',
         checkpointStatus: '',
         additionalCheckpoints: new Set<string>([]),
+        users: [],
     }
 
     public handleChange = handleChange(this);
+
+    public componentWillMount(): void {
+        const projectId = this.props.match.params['projectId'];
+        const users = Api.projectsApi.getProjectUsers('does not matter', projectId);
+        const checkpoints = Api.projectsApi.getProjectCheckpoints('does not matter', projectId);
+
+        this.setState({
+            users,
+            checkpoints,
+        })
+    }
     
     public render() {
         const {
@@ -59,8 +73,8 @@ export class ProjectUsers extends React.Component<IProjectUsersProps, IProjectUs
             clearCheckpointIcon,
         } = createProjectUsersClasses(this.props, this.state);
 
-        const mappedUsers = users.map(user => (
-                <TableRow key={user.id} className={addedUserRow} onClick={this.openUserDialog}>
+        const mappedUsers = this.state.users.map((user: IProjectCreationProjectUser) => (
+                <TableRow key={user.userId} className={addedUserRow} onClick={this.openUserDialog}>
                     <TableCell>{user.name}</TableCell>
                     <TableCell>{user.email}</TableCell>
                     <TableCell>All</TableCell>
@@ -70,9 +84,9 @@ export class ProjectUsers extends React.Component<IProjectUsersProps, IProjectUs
         )
 
         const showOtherCheckpointField = this.state.checkpointStatus === 'AllCheckpointsExcept' || this.state.checkpointStatus === 'SomeCheckpoints';
-        const checkpointItems = workflow.checkpoints.filter((checkpoint) => {
+        const checkpointItems = this.state.checkpoints.filter((checkpoint: ICheckpoint) => {
             return !this.state.additionalCheckpoints.has(checkpoint.name);
-        }).map((checkpoint, index) => {
+        }).map((checkpoint: ICheckpoint, index) => {
             return (
                 <MenuItem
                     value={checkpoint.name}
@@ -240,3 +254,5 @@ export class ProjectUsers extends React.Component<IProjectUsersProps, IProjectUs
         }
     }
 }
+
+export const ProjectUsers = withRouter(ProjectUsersPresentation);
