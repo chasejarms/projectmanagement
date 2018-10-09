@@ -49,7 +49,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
     public myRef: React.RefObject<{}>;
     public state = {
         open: false,
-        activeStep: 2,
+        activeStep: 0,
         projectName: '',
         checkpoints: [],
         userName: '',
