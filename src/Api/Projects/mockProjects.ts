@@ -38,6 +38,11 @@ export class MockProjectsApi implements IProjectsApi {
         });
     }
 
+    public getProjectName(companyName: string, projectId: string): string {
+        const project = this.getProject(projectId);
+        return project.name;
+    }
+
     private getProject(projectId: string): IProject {
         const stringifiedProject = localStorage.getItem(largeProjectsKey + projectId);
         return JSON.parse(stringifiedProject!);

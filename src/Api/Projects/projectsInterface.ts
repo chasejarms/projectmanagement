@@ -6,6 +6,7 @@ import { ISlimProjects } from './../../Models/slimProject';
 export interface IProjectsApi {
     getSlimProjects(companyName: string): ISlimProjects[];
     createProject(companyName: string, project: IProject): IProject;
+    getProjectName(companyName: string, projectId: string): string;
     // getMySlimProjects(companyName: string): ISlimProjects[];
     getProjectCheckpoints(companyName: string, projectId: string): ICheckpoint[];
     // updateProjectCheckpoints(companyName: string, projectId: string, checkpoints: ICheckpoint[]): boolean;

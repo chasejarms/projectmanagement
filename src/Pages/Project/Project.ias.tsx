@@ -7,6 +7,7 @@ export interface IProjectPresentationProps extends RouteComponentProps<{}>, With
 
 export interface IProjectPresentationState {
     tabValue: number;
+    projectName: string;
 }
 
 export const createProjectPresentationClasses = (

@@ -3,6 +3,7 @@ import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import * as React from 'react';
 import { withRouter } from 'react-router';
+import Api from '../../Api/api';
 import { Chat } from '../../Components/Chat/Chat';
 import { ProjectProgress } from '../../Components/ProjectProgress/ProjectProgress';
 import { ProjectUsers } from '../ProjectUsers/ProjectUsers';
@@ -11,6 +12,7 @@ import { createProjectPresentationClasses, IProjectPresentationProps, IProjectPr
 class ProjectPresentation extends React.Component<IProjectPresentationProps, IProjectPresentationState> {
     public state = {
         tabValue: 1,
+        projectName: '',
     }
 
     public tabComponents = {
@@ -24,6 +26,14 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
     constructor(props: IProjectPresentationProps) {
         super(props);
         this.handleChange = this.handleChange.bind(this);
+    }
+
+    public componentWillMount(): void {
+        const projectId = this.props.match.params['projectId'];
+        const projectName = Api.projectsApi.getProjectName('does not matter', projectId);
+        this.setState({
+            projectName,
+        })
     }
 
     public handleChange(event: any, value: number): void {
@@ -50,7 +60,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                 <Tabs value={this.state.tabValue} onChange={this.handleChange} className={tabs}>
                     <Tab
                         disabled={true}
-                        label="Project Name"
+                        label={this.state.projectName}
                         classes={tabClasses}/>
                     <Tab
                         label="Checkpoints"

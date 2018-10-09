@@ -15,4 +15,8 @@ export class ProjectsApi implements IProjectsApi {
     public getProjectCheckpoints(companyName: string, projectId: string): ICheckpoint[] {
         throw new Error("Method not implemented.");
     }
+
+    public getProjectName(companyName: string, projectId: string): string {
+        throw new Error("Method not implemented.");
+    }
 }
