@@ -3,6 +3,8 @@ import { withTheme } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import AddIcon from '@material-ui/icons/Add';
 import * as React from 'react';
+import { withRouter } from 'react-router';
+import Api from '../../Api/api';
 import { IMessage } from '../../Models/message';
 import { handleChange } from '../../Utils/handleChange';
 import { Message } from '../Message/Message';
@@ -15,6 +17,21 @@ export class ChatPresentation extends React.Component<IChatProps, IChatState> {
     }
 
     public handleChange = handleChange(this);
+
+    public componentWillMount(): void {
+        const projectId = this.props.match.params['projectId'];
+        if (this.props.staffChat) {
+            const messages = Api.projectsApi.getStaffMessages('does not matter', projectId);
+            this.setState({
+                messages,
+            })
+        } else {
+            const messages = Api.projectsApi.getCustomerMessages('does not matter', projectId);
+            this.setState({
+                messages,
+            })
+        }
+    }
 
     public render() {
         const {
@@ -65,8 +82,16 @@ export class ChatPresentation extends React.Component<IChatProps, IChatState> {
             uid: '123',
             created: new Date(),
             content: this.state.message,
-            id: Date.now(),
+            id: Date.now().toString(),
         }
+
+        const projectId = this.props.match.params['projectId'];
+        if (this.props.staffChat) {
+            Api.projectsApi.createStaffMessage('does not matter', projectId, message);
+        } else {
+            Api.projectsApi.createCustomerMessage('does not matter', projectId, message);
+        }
+
         const newMessages = this.state.messages.concat([message]);
         this.setState({
             message: '',
@@ -80,4 +105,4 @@ export class ChatPresentation extends React.Component<IChatProps, IChatState> {
     }
 }
 
-export const Chat = withTheme()(ChatPresentation);
+export const Chat = withRouter(withTheme()(ChatPresentation));

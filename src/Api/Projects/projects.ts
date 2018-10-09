@@ -1,4 +1,5 @@
 import { ICheckpoint } from './../../Models/checkpoint';
+import { IMessage } from './../../Models/message';
 import { IProject } from './../../Models/project';
 import { IProjectCreationProjectUser } from './../../Models/projectUser';
 import { ISlimProjects } from './../../Models/slimProject';
@@ -22,6 +23,22 @@ export class ProjectsApi implements IProjectsApi {
     }
 
     public getProjectUsers(companyName: string, projectId: string): IProjectCreationProjectUser {
+        throw new Error("Method not implemented.");
+    }
+
+    public getStaffMessages(companyName: string, projectId: string): IMessage[] {
+        throw new Error("Method not implemented.");
+    }
+
+    public getCustomerMessages(companyName: string, projectId: string): IMessage[] {
+        throw new Error("Method not implemented.");
+    }
+
+    public createStaffMessage(companyName: string, projectId: string): IMessage {
+        throw new Error("Method not implemented.");
+    }
+
+    public createCustomerMessage(companyName: string, projectId: string): IMessage {
         throw new Error("Method not implemented.");
     }
 }

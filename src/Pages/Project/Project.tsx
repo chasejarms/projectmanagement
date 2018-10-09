@@ -19,8 +19,8 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         0: undefined,
         1: <ProjectProgress key={1} theme={this.props.theme}/>,
         2: <ProjectUsers key={2}/>,
-        3: <Chat theme={this.props.theme} key={3}/>,
-        4: <Chat theme={this.props.theme} key={4}/>,
+        3: <Chat theme={this.props.theme} key={3} staffChat={true}/>,
+        4: <Chat theme={this.props.theme} key={4} staffChat={false}/>,
     }
 
     constructor(props: IProjectPresentationProps) {
