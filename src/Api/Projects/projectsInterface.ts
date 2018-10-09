@@ -7,7 +7,7 @@ export interface IProjectsApi {
     getSlimProjects(companyName: string): ISlimProjects[];
     createProject(companyName: string, project: IProject): IProject;
     getProjectName(companyName: string, projectId: string): string;
-    // getMySlimProjects(companyName: string): ISlimProjects[];
+    getMySlimProjects(companyName: string): ISlimProjects[];
     getProjectCheckpoints(companyName: string, projectId: string): ICheckpoint[];
     // updateProjectCheckpoints(companyName: string, projectId: string, checkpoints: ICheckpoint[]): boolean;
     getProjectUsers(companyName: string, projectId: string): any; // should return project users

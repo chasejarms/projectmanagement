@@ -26,6 +26,14 @@ export class MockProjectsApi implements IProjectsApi {
         return _.cloneDeep(slimProjects);
     }
 
+    public getMySlimProjects(companyName: string): ISlimProjects[] {
+        const slimProjects = this.getSlimProjects(companyName);
+        const mySlimProjects = slimProjects.filter((slimProject: ISlimProjects) => {
+            return true;
+        });
+        return mySlimProjects;
+    }
+
     public createProject(companyName: string, project: IProject): IProject {
         this.createSlimProjectFromProject(project);
         const createdLargeProject = this.createLargeProjectFromProject(project);

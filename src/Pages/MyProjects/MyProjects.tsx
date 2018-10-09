@@ -13,13 +13,24 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import AddIcon from '@material-ui/icons/Add';
-// import FilterListIcon from '@material-ui/icons/FilterList';
 import * as React from 'react';
 import { withRouter } from 'react-router';
-import { slimProjects } from '../../MockData/slimProjects';
+// import FilterListIcon from '@material-ui/icons/FilterList';
+import Api from '../../Api/api';
 import { createMyProjectsPresentationClasses, IMyProjectsPresentationProps, IMyProjectsPresentationState } from './MyProjects.ias';
 
 export class MyProjectsPresentation extends React.Component<IMyProjectsPresentationProps, IMyProjectsPresentationState> {
+    public state: IMyProjectsPresentationState = {
+        slimProjects: [],
+    }
+
+    public componentWillMount(): void {
+        const slimProjects = Api.projectsApi.getMySlimProjects('does not matter');
+        this.setState({
+            slimProjects,
+        })
+    }
+
     public render() {
         const {
             rowStyling,
@@ -30,7 +41,7 @@ export class MyProjectsPresentation extends React.Component<IMyProjectsPresentat
             projectsPaper,
         } = createMyProjectsPresentationClasses(this.props, this.state);
 
-        const mappedMyProjects = slimProjects.map(project => (
+        const mappedMyProjects = this.state.slimProjects.map(project => (
                 <TableRow key={project.id} onClick={this.navigateToProject(project.id)} className={rowStyling}>
                     <TableCell>{project.projectName}</TableCell>
                     <TableCell>{project.currentCheckpoint}</TableCell>

@@ -1,11 +1,14 @@
 import { WithTheme } from '@material-ui/core';
 import { css } from 'emotion';
 import { RouteComponentProps } from "react-router";
+import { ISlimProjects } from '../../Models/slimProject';
 
 export interface IMyProjectsPresentationProps extends RouteComponentProps<{}>, WithTheme {}
 
 // tslint:disable-next-line:no-empty-interface
-export interface IMyProjectsPresentationState {}
+export interface IMyProjectsPresentationState {
+    slimProjects: ISlimProjects[];
+}
 
 export const createMyProjectsPresentationClasses = (
     props: IMyProjectsPresentationProps,

@@ -10,6 +10,10 @@ export class ProjectsApi implements IProjectsApi {
         throw Error('method not implemented');
     }
 
+    public getMySlimProjects(companyName: string): ISlimProjects[] {
+        throw Error('method not implemented');
+    }
+
     public createProject(companyName: string, project: IProject): IProject {
         throw new Error("Method not implemented.");
     }
