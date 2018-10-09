@@ -139,7 +139,7 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
                             onChange={this.handleChange}
                         />
                     </DialogContent>
-                    <DialogActions>
+                    <DialogActions style={{display: 'flex', justifyContent: this.state.isUpdate ? 'space-between' : 'flex-end' }}>
                         { this.state.isUpdate ? (
                             <Button color="primary" onClick={this.handleCheckpointDelete(this.state.index)}>Delete</Button>
                         ) : undefined}
@@ -218,7 +218,7 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
         } else {
             newCheckpoints = this.state.workflow!.checkpoints.concat([newCheckpoint])
         }
-        
+
         Api.workflowApi.updateWorkflow('does not matter', {
             id: '',
             checkpoints: newCheckpoints,
