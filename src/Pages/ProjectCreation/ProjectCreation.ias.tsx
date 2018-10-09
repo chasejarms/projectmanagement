@@ -109,13 +109,14 @@ export const createProjectCreationClasses = (
 
     const paper = css({
         marginBottom: 32,
-        overflow: 'visible',
+        overflow: 'hidden',
     });
 
     const autocompletePaper = css({
         zIndex: 1,
         position: 'relative',
         top: 35,
+        overflow: 'visible',
     })
 
     const usersContainer = css({
@@ -239,6 +240,11 @@ export const createProjectCreationClasses = (
     const paperInPopper = css({
         position: 'relative',
         top: 81,
+        overflowY: 'visible',
+    });
+
+    const userDialogContainer = css({
+        overflowY: 'visible',
     });
 
     return {
@@ -274,5 +280,6 @@ export const createProjectCreationClasses = (
         autocompletePaper,
         myRefSpacing,
         paperInPopper,
+        userDialogContainer,
     };
 }

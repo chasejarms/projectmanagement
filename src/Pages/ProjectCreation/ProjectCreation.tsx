@@ -370,6 +370,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             projectUsersToolbarContainer,
             autocompletePaper,
             paperInPopper,
+            userDialogContainer,
         } = createProjectCreationClasses(this.props, this.state);
 
         if (this.state.activeStep === 0) {
@@ -496,6 +497,10 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                     <Dialog
                         open={this.state.open}
                         onClose={this.handleClose}
+                        className={userDialogContainer}
+                        classes={{
+                            paper: paperInPopper,
+                        }}
                     >
                         <DialogTitle>{this.state.isUpdate ? 'Update User' : 'Add User To Project'}</DialogTitle>
                         <DialogContent className={dialogContent}>
