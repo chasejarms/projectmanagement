@@ -29,14 +29,15 @@ import AddIcon from '@material-ui/icons/Add';
 import ClearIcon from '@material-ui/icons/Clear';
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
 import { Dispatch } from 'redux';
 import Api from '../../Api/api';
 import { Checkpoints } from '../../Components/Checkpoints/Checkpoints';
 import { IProject } from '../../Models/project';
 import { IProjectCreationProjectUser } from '../../Models/projectUser';
 import { IUser } from '../../Models/user';
-import { addProjectUserActionCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
 import { deleteProjectUserActionCreator, getInitialCheckpoints, setProjectNameCreator, updateProjectUserActionCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
+import { addProjectUserActionCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
 import { IAppState } from '../../Redux/Reducers/rootReducer';
 import { handleChange } from '../../Utils/handleChange';
 import {
@@ -136,6 +137,8 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             complete: false,
         };
         Api.projectsApi.createProject('does not matter', projectToCreate);
+        const companyName = this.props.match.path.split('/')[2];
+        this.props.history.push(`/company/${companyName}/project/${projectToCreate.id}`);
     }
 
     private createActionButtons(): any {
@@ -583,4 +586,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
 })
 
 export const connectedProjectCreation = connect(mapStateToProps, mapDispatchToProps)(ProjectCreationPresentation as any);
-export const ProjectCreation = withTheme()(connectedProjectCreation as any);
+export const ProjectCreation = withRouter((withTheme()(connectedProjectCreation as any)) as any);

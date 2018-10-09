@@ -1,12 +1,13 @@
 import { WithTheme } from '@material-ui/core';
 import { css } from 'emotion';
+import { RouteComponentProps } from 'react-router';
 import { IProjectCreationProjectUser } from '../../Models/projectUser';
 import { IUser } from '../../Models/user';
 import { IWorkflowCheckpoint } from '../../Models/workflow';
 import { IProjectCreationSliceOfState } from '../../Redux/Reducers/projectCreationReducer';
 
 // tslint:disable-next-line:no-empty-interface
-export interface IProjectCreationProps extends WithTheme {
+export interface IProjectCreationProps extends WithTheme, RouteComponentProps<{}> {
     projectCreation: IProjectCreationSliceOfState;
     updateProjectName: (projectName: string) => void;
     getInitialProjectCreationCheckpoints: () => void;

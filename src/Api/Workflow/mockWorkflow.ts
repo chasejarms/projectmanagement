@@ -17,7 +17,7 @@ export class MockWorkflowApi implements IWorkflowApi {
                     id: Date.now().toString(),
                 }),
             )
-        } else if (!defaultWorkflow) {
+        } else if (!defaultWorkflow && !workflowAlreadyExists) {
             localStorage.setItem(
                 workflowKey,
                 JSON.stringify({
