@@ -1,11 +1,14 @@
 import { WithTheme } from '@material-ui/core';
 import { css } from 'emotion';
-
+import { RouteComponentProps } from 'react-router';
+import { ICheckpoint } from '../../Models/checkpoint';
 
 // tslint:disable-next-line:no-empty-interface
-export interface IProjectProgressProps extends WithTheme {}
+export interface IProjectProgressProps extends RouteComponentProps<{}>, WithTheme {}
 // tslint:disable-next-line:no-empty-interface
-export interface IProjectProgressState {}
+export interface IProjectProgressState {
+    checkpoints: ICheckpoint[];
+}
 
 export const projectProgressClasses = (
     props: IProjectProgressProps,

@@ -1,13 +1,13 @@
 import * as _ from 'lodash';
 import { slimProjects as mockSlimProjects } from './../../MockData/slimProjects';
+import { ICheckpoint } from './../../Models/checkpoint';
 import { IProject } from './../../Models/project';
 import { ISlimProjects } from './../../Models/slimProject';
 import { mockApiKey } from './../mockApi.key';
 import { IProjectsApi } from './projectsInterface';
 
 export const slimProjectsKey = `${mockApiKey}slimProjects`;
-export const projectCheckpointsKey = `${mockApiKey}projectCheckpoints`;
-export const projectUsersKey = `${mockApiKey}projectUsers`;
+export const largeProjectsKey = `${mockApiKey}largeProjects`;
 export const projectStaffChatKey = `${mockApiKey}projectStaffChat`;
 export const projectUserChatKey = `${mockApiKey}projectUserChat`;
 
@@ -26,7 +26,21 @@ export class MockProjectsApi implements IProjectsApi {
 
     public createProject(companyName: string, project: IProject): IProject {
         this.createSlimProjectFromProject(project);
-        return {} as any;
+        const createdLargeProject = this.createLargeProjectFromProject(project);
+        return createdLargeProject;
+    }
+
+    public getProjectCheckpoints(companyName: string, projectId: string): ICheckpoint[] {
+        const project = this.getProject(projectId);
+        return project.checkpoints.map((checkpoint) => {
+            checkpoint.deadline = new Date(checkpoint.deadline!);
+            return checkpoint;
+        });
+    }
+
+    private getProject(projectId: string): IProject {
+        const stringifiedProject = localStorage.getItem(largeProjectsKey + projectId);
+        return JSON.parse(stringifiedProject!);
     }
 
     private setUpSlimProjects(defaultProject: boolean, projectsAlreadyExist: boolean) {
@@ -91,6 +105,29 @@ export class MockProjectsApi implements IProjectsApi {
             slimProjectsKey,
             stringifiedSlimProjects,
         )
+    }
+
+    private createLargeProjectFromProject(project: IProject): IProject {
+        const stringifiedLargeProject = JSON.stringify(project);
+        localStorage.setItem(
+            largeProjectsKey + project.id,
+            stringifiedLargeProject,
+        )
+
+        const staffChat = JSON.stringify([]);
+        const userChat = JSON.stringify([]);
+
+        localStorage.setItem(
+            projectStaffChatKey,
+            staffChat,
+        )
+
+        localStorage.setItem(
+            projectUserChatKey,
+            userChat,
+        )
+
+        return project;
     }
 
     private completedCheckpoints(project: IProject): number {

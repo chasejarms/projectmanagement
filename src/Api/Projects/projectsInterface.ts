@@ -1,5 +1,5 @@
+import { ICheckpoint } from './../../Models/checkpoint';
 import { IProject } from './../../Models/project';
-// import { ICheckpoint } from './../../Models/checkpoint';
 // import { IMessage } from './../../Models/message';
 import { ISlimProjects } from './../../Models/slimProject';
 
@@ -7,7 +7,7 @@ export interface IProjectsApi {
     getSlimProjects(companyName: string): ISlimProjects[];
     createProject(companyName: string, project: IProject): IProject;
     // getMySlimProjects(companyName: string): ISlimProjects[];
-    // getProjectCheckpoints(companyName: string, projectId: string): ICheckpoint[];
+    getProjectCheckpoints(companyName: string, projectId: string): ICheckpoint[];
     // updateProjectCheckpoints(companyName: string, projectId: string, checkpoints: ICheckpoint[]): boolean;
     // getProjectUsers(companyName: string, projectId: string): any; // should return project users
     // addProjectUser(companyName: string, projectId: string, user: any): boolean;

@@ -1,10 +1,26 @@
 import { withTheme } from '@material-ui/core';
 import * as React from 'react';
-import { Checkpoints } from '../Checkpoints/Checkpoints';
 // import { CompletionBar } from '../CompletionBar/CompletionBar';
+import { withRouter } from 'react-router';
+import Api from '../../Api/api';
+import { Checkpoints } from '../Checkpoints/Checkpoints';
 import { IProjectProgressProps, IProjectProgressState, projectProgressClasses } from './ProjectProgress.ias';
 
 class PresentationProjectProgress extends React.Component<IProjectProgressProps, IProjectProgressState> {
+    public state: IProjectProgressState = {
+        checkpoints: [],
+    }
+
+    public componentDidMount(): void {
+        const projectId = this.props.match.params['projectId']
+        const checkpoints = Api.projectsApi.getProjectCheckpoints('does not matter', projectId);
+        // tslint:disable-next-line:no-console
+        console.log(checkpoints);
+        this.setState({
+            checkpoints,
+        });
+    }
+
     public render() {
         const {
             checkpointsContainer,
@@ -19,13 +35,13 @@ class PresentationProjectProgress extends React.Component<IProjectProgressProps,
                     <CompletionBar percentComplete={75} theme={this.props.theme}/>
                 </div>
                 <Typography variant="display1" className={sectionHeader}>Project Checkpoints</Typography> */}
-                <Checkpoints checkpoints={[]} projectCreation={false}/>
+                <Checkpoints checkpoints={this.state.checkpoints} projectCreation={false}/>
             </div>
         )
     }
 }
 
-export const ProjectProgress = withTheme()(PresentationProjectProgress);
+export const ProjectProgress = withRouter(withTheme()(PresentationProjectProgress));
 
 /*
 

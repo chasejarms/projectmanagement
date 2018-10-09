@@ -96,7 +96,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                             <TableRow>
                                 <TableCell>Full Name</TableCell>
                                 <TableCell>Email</TableCell>
-                                <TableCell>User Type</TableCell>
+                                <TableCell>Role</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
