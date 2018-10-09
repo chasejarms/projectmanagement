@@ -1,6 +1,7 @@
 import { WithTheme } from '@material-ui/core';
 import { css } from 'emotion';
 import { IProjectCreationProjectUser } from '../../Models/projectUser';
+import { IUser } from '../../Models/user';
 import { IWorkflowCheckpoint } from '../../Models/workflow';
 import { IProjectCreationSliceOfState } from '../../Redux/Reducers/projectCreationReducer';
 
@@ -18,12 +19,14 @@ export interface IProjectCreationState {
     activeStep: number;
     checkpoints: IWorkflowCheckpoint[];
     open: boolean;
-    user: any;
+    user: IUser;
+    userName: string;
     checkpointStatus: any;
     role: any;
     additionalCheckpoints: Set<string>;
     isUpdate: boolean;
     index: number;
+    popperIsOpen: boolean;
 }
 
 export const createProjectCreationClasses = (
@@ -229,6 +232,15 @@ export const createProjectCreationClasses = (
         color: `${props.theme.palette.secondary.main} !important`,
     })
 
+    const myRefSpacing = css({
+        height: 50,
+    });
+
+    const paperInPopper = css({
+        position: 'relative',
+        top: 81,
+    });
+
     return {
         projectCreationContainer,
         stepperContainer,
@@ -260,5 +272,7 @@ export const createProjectCreationClasses = (
         root,
         focused,
         autocompletePaper,
+        myRefSpacing,
+        paperInPopper,
     };
 }

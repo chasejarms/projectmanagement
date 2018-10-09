@@ -27,7 +27,6 @@ import {
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import ClearIcon from '@material-ui/icons/Clear';
-import Downshift from 'downshift';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
@@ -47,20 +46,28 @@ import {
 } from './ProjectCreation.ias';
 
 export class ProjectCreationPresentation extends React.Component<IProjectCreationProps, IProjectCreationState> {
+    public myRef: React.RefObject<{}>;
     public state = {
         open: false,
         activeStep: 2,
         projectName: '',
         checkpoints: [],
-        user: '',
+        userName: '',
         checkpointStatus: '',
         role: '',
         additionalCheckpoints: new Set<string>([]),
         isUpdate: false,
         index: -1,
+        popperIsOpen: true,
+        user: {} as any,
     };
 
     public handleChange = handleChange(this);
+
+    constructor(props: IProjectCreationProps) {
+        super(props);
+        this.myRef = React.createRef();
+    }
 
     public handleProjectNameChange = (event: any) => {
         // tslint:disable-next-line:no-console
@@ -185,6 +192,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
     private openUserDialog = (): void => {
         this.setState({
             open: true,
+            popperIsOpen: true,
             index: -1,
             isUpdate: false,
             checkpointStatus: '',
@@ -229,10 +237,10 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         }
 
         const projectUser: IProjectCreationProjectUser = {
-            userId: '5',
-            email: 'bob@bob.com',
-            name: this.state.user,
-            type: 'Admin',
+            userId: this.state.user.id,
+            email: this.state.user.email,
+            name: this.state.userName,
+            type: this.state.user.type,
             checkpoints,
             checkpointModifier: this.state.checkpointStatus as any,
         }
@@ -254,10 +262,10 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         }
 
         const projectUser: IProjectCreationProjectUser = {
-            userId: '5',
-            email: 'bob@bob.com',
-            name: this.state.user,
-            type: 'Admin',
+            userId: this.state.user.id,
+            email: this.state.user.email,
+            name: this.state.userName,
+            type: this.state.user.type,
             checkpoints,
             checkpointModifier: this.state.checkpointStatus as any,
         }
@@ -314,22 +322,13 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         }
     }
 
-    private handleUserSelection = (event: any) => {
-        // tslint:disable-next-line:no-console
-        console.log(event);
-    }
-
-    private renderInput = (inputProps: any) => {
-        const { InputProps, ref, classes, ...other } = inputProps;
-        return (
-            <TextField
-                InputProps={{
-                    inputRef: ref,
-                    ...InputProps,
-                }}
-                {...other}
-            />
-        )
+    private handleUserSelection = (user: IUser): () => void => {
+        return () => {
+            this.setState({
+                user,
+                userName: user.name,
+            });
+        }
     }
 
     private getSuggestions(inputValue: any): IUser[] {
@@ -351,26 +350,6 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         )
     }
 
-    private renderSuggestion = (input: any) => {
-        const suggestion = input.suggestion as IUser;
-        const isHighlighted = input.highlightedIndex === input.index;
-        const isSelected = (input.selectedItem || '').indexOf(input.suggestion.label) > -1;
-
-        return (
-            <MenuItem
-                    {...input.itemProps}
-                    key={suggestion.id}
-                    selected={isHighlighted}
-                    component="div"
-                    style={{
-                        fontWeight: isSelected ? 500 : 400,
-                    }}
-                >
-                {suggestion.name}
-            </MenuItem>
-        );
-    }
-
     private getStepActiveContent(): any {
         const {
             stepperContent,
@@ -390,6 +369,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             checkpointContainer,
             projectUsersToolbarContainer,
             autocompletePaper,
+            paperInPopper,
         } = createProjectCreationClasses(this.props, this.state);
 
         if (this.state.activeStep === 0) {
@@ -476,8 +456,6 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                 </div>
             ) : undefined;
 
-            let popperNode: any = React.createRef();
-
             return (
                 <div className={`${stepperContent} ${usersContainer}`}>
                     <Paper className={paper}>
@@ -521,57 +499,27 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                     >
                         <DialogTitle>{this.state.isUpdate ? 'Update User' : 'Add User To Project'}</DialogTitle>
                         <DialogContent className={dialogContent}>
-                            <Downshift onChange={this.handleUserSelection}>
-                                {({
-                                    getInputProps,
-                                    getMenuProps,
-                                    inputValue,
-                                    highlightedIndex,
-                                    selectedItem,
-                                    getItemProps,
-                                    isOpen,
-                                }) => {
-                                    return (
-                                        <div>
-                                            {this.renderInput({
-                                                fullWidth: true,
-                                                InputProps: getInputProps({
-                                                    placeholder: 'User',
-                                                }),
-                                                classes: {
-                                                    flexWrap: 'wrap',
-                                                },
-                                                ref: (node: any) => {
-                                                    popperNode = node;
-                                                }
-                                            })}
-                                            <div {...getMenuProps()}>
-                                                <Popper className={autocompletePaper} disablePortal={true} open={isOpen} anchorEl={popperNode}>
-                                                    <Paper square={true} style={{ width: popperNode ? popperNode.clientWidth : null }}>
-                                                        {this.getSuggestions(inputValue).map((user: IUser, index: number) => {
-                                                            const itemProps = getItemProps({ item: user.name });
-                                                            return this.renderSuggestion({
-                                                                suggestion: user,
-                                                                index,
-                                                                highlightedIndex,
-                                                                selectedItem,
-                                                                itemProps,
-                                                            })
-                                                        })}
-                                                    </Paper>
-                                                </Popper>
-                                            </div>
-                                            {/* <TextField
-                                                label="User"
-                                                name="user"
-                                                value={this.state.user}
-                                                className={dialogControl}
-                                                onChange={this.handleChange}
-                                            /> */}
-                                        </div>
-                                    )
-                                }}
-                            </Downshift>
+                            <TextField
+                                label='User'
+                                name={'userName'}
+                                onChange={this.handleChange}
+                                value={this.state.userName}
+                                className={dialogControl}
+                            />
+                            <Popper className={autocompletePaper} disablePortal={true} open={this.state.popperIsOpen}>
+                                <Paper square={true} className={paperInPopper}>
+                                    {this.getSuggestions(this.state.userName).map((user: IUser, index: number) => {
+                                        return (
+                                            <MenuItem
+                                                    key={user.id}
+                                                    onClick={this.handleUserSelection(user)}
+                                                >
+                                                {user.name}
+                                            </MenuItem>
+                                        )
+                                    })}
+                                </Paper>
+                            </Popper>
                             <FormControl>
                                 <InputLabel htmlFor="role">Checkpoints</InputLabel>
                                 <Select
