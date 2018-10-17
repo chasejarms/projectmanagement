@@ -21,6 +21,8 @@ import {
 import AddIcon from '@material-ui/icons/Add';
 import * as React from 'react';
 import Api from '../../Api/api';
+import { DraggableWorkflowItem } from '../../Components/DraggableWorkflowItem/DraggableWorkflowItem';
+import { DroppableWorkflowRow } from '../../Components/DroppableWorkflowRow/DroppableWorkflowRow';
 import { IWorkflowCheckpoint } from '../../Models/workflow';
 // import { WorkflowCheckpoint } from '../../Components/WorkflowCheckpoint/WorkflowCheckpoint';
 import { handleChange } from '../../Utils/handleChange';
@@ -32,7 +34,7 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
         checkpointName: '',
         checkpointDescription: '',
         checkpointDays: 0,
-        workflow: undefined,
+        workflow: undefined, 
         isUpdate: false,
         index: 0,
     }
@@ -40,6 +42,8 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
     public handleChange = handleChange(this);
 
     public componentWillMount(): void {
+        // tslint:disable-next-line:no-console
+        console.log('in component will mount');
         const workflow = Api.workflowApi.getWorkflow('any name');
         this.setState({
             workflow,
@@ -56,18 +60,23 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
             dialogControl,
             workflowToolbar,
             workflowContainer,
-            workflowRow,
+            // workflowRow,
             workflowPaper,
         } = createWorkflowPresentationClasses(this.props, this.state);
 
         const mappedCheckpoints = this.state.workflow.checkpoints.map((checkpoint, index) => (
-                <TableRow key={index} onClick={this.openCheckpointDialog(checkpoint, index)} className={workflowRow}>
-                    <TableCell>{checkpoint.name}</TableCell>
-                    <TableCell>{checkpoint.deadlineFromLastCheckpoint}</TableCell>
-                    <TableCell>{checkpoint.description}</TableCell>
-                </TableRow>
-            )
-        )
+            <DraggableWorkflowItem
+             key={index}
+             workflowCheckpoint={checkpoint}
+             index={index}/>
+        )).reduce((acc: any, draggableWorkflowItem: any) => {
+            acc.push((
+                <DroppableWorkflowRow/>
+            ), draggableWorkflowItem, (
+                <DroppableWorkflowRow/>
+            ));
+            return acc;
+        }, []);
 
         return (
             // <div className={workflowContainer}>
@@ -100,6 +109,7 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
                                 <TableCell>Checkpoint Name</TableCell>
                                 <TableCell>Completion Days</TableCell>
                                 <TableCell>Checkpoint Description</TableCell>
+                                <TableCell/>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -162,18 +172,18 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
         })
     }
 
-    private openCheckpointDialog = (checkpoint: IWorkflowCheckpoint, index: number) => {
-        return () => {
-            this.setState({
-                open: true,
-                checkpointDays: checkpoint.deadlineFromLastCheckpoint!,
-                checkpointDescription: checkpoint.description || '',
-                checkpointName: checkpoint.name,
-                isUpdate: true,
-                index,
-            })
-        }
-    }
+    // private openCheckpointDialog = (checkpoint: IWorkflowCheckpoint, index: number) => {
+    //     return () => {
+    //         this.setState({
+    //             open: true,
+    //             checkpointDays: checkpoint.deadlineFromLastCheckpoint!,
+    //             checkpointDescription: checkpoint.description || '',
+    //             checkpointName: checkpoint.name,
+    //             isUpdate: true,
+    //             index,
+    //         })
+    //     }
+    // }
 
     private handleCheckpointDelete = (index: number) => {
         return () => {

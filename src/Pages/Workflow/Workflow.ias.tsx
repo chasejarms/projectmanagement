@@ -4,7 +4,8 @@ import { RouteComponentProps } from "react-router";
 import { IWorkflow } from '../../Models/workflow';
 
 export interface IWorkflowPresentationProps extends RouteComponentProps<{}>, WithTheme {
-
+    connectDragSource: any;
+    isDragging: boolean;
 }
 
 // tslint:disable-next-line:no-empty-interface
