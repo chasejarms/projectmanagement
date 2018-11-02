@@ -28,6 +28,8 @@ export interface IProjectCreationState {
     isUpdate: boolean;
     index: number;
     popperIsOpen: boolean;
+    caseDeadline: Date;
+    projectNotes: string;
 }
 
 export const createProjectCreationClasses = (
@@ -248,6 +250,15 @@ export const createProjectCreationClasses = (
         overflowY: 'visible',
     });
 
+    const projectNotesContainer = css({
+        display: 'flex',
+        margin: 16,
+    });
+
+    const projectNotesInput = css({
+        flexGrow: 1,
+    });
+
     return {
         projectCreationContainer,
         stepperContainer,
@@ -282,5 +293,7 @@ export const createProjectCreationClasses = (
         myRefSpacing,
         paperInPopper,
         userDialogContainer,
+        projectNotesContainer,
+        projectNotesInput,
     };
 }

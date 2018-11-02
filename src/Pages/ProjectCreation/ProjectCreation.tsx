@@ -1,41 +1,19 @@
 import {
     Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    FormControl,
-    IconButton,
-    InputLabel,
-    MenuItem,
     Paper,
-    Popper,
-    Select,
     Step,
     StepLabel,
     Stepper,
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableRow,
     TextField,
-    Toolbar,
-    Tooltip,
-    Typography,
     withTheme,
 } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
-import ClearIcon from '@material-ui/icons/Clear';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { Dispatch } from 'redux';
 import Api from '../../Api/api';
-import { Checkpoints } from '../../Components/Checkpoints/Checkpoints';
 import { IProject } from '../../Models/project';
 import { IProjectCreationProjectUser } from '../../Models/projectUser';
-import { IUser } from '../../Models/user';
 import { deleteProjectUserActionCreator, getInitialCheckpoints, setProjectNameCreator, updateProjectUserActionCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
 import { addProjectUserActionCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
 import { IAppState } from '../../Redux/Reducers/rootReducer';
@@ -61,6 +39,8 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         index: -1,
         popperIsOpen: true,
         user: {} as any,
+        caseDeadline: new Date(),
+        projectNotes: '',
     };
 
     public handleChange = handleChange(this);
@@ -96,13 +76,13 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                         <Paper className={fullWidthPaper}>
                             <Stepper activeStep={this.state.activeStep} className={stepperContainer}>
                                 <Step>
-                                    <StepLabel>Project Name</StepLabel>
+                                    <StepLabel>Case Name</StepLabel>
                                 </Step>
                                 <Step>
-                                    <StepLabel>Add Checkpoints</StepLabel>
+                                    <StepLabel>Case Delivery Date</StepLabel>
                                 </Step>
                                 <Step>
-                                    <StepLabel>Add Users</StepLabel>
+                                    <StepLabel>Case Notes And Attachments</StepLabel>
                                 </Step>
                             </Stepper>
                             <div>
@@ -186,171 +166,19 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         )
     }
 
-    private handleClose = (): void => {
-        this.setState({
-            open: false,
-        });
-    }
-
-    private openUserDialog = (): void => {
-        this.setState({
-            open: true,
-            popperIsOpen: true,
-            index: -1,
-            isUpdate: false,
-            checkpointStatus: '',
-            additionalCheckpoints: new Set([]),
-        });
-    }
-
-    private updateUserDialog = (index: number): () => void => {
-        const user = this.props.projectCreation.projectUsers[index];
-        
-        let additionalCheckpoints: Set<string>;
-
-        if (user.checkpointModifier === 'AllCheckpointsExcept') {
-            const newCheckpointsArray = this.props.projectCreation.checkpoints.filter((checkpoint) => {
-                return !user.checkpoints.has(checkpoint.name);
-            }).map((checkpoint) => checkpoint.name);
-            additionalCheckpoints = new Set(newCheckpointsArray);
-        } else {
-            additionalCheckpoints = this.state.additionalCheckpoints;
+    private formatDateForPicker(date: Date): string {
+        let day = date.getDate().toString();
+        let month = (date.getMonth() + 1).toString();
+        if (day.length === 1) {
+            day = `0${day}`;
         }
 
-        return () => {
-            this.setState({
-                open: true,
-                index,
-                isUpdate: true,
-                checkpointStatus: user.checkpointModifier,
-                additionalCheckpoints,
-            })
+        if (month.length === 1) {
+            month = `0${month}`;
         }
-    }
+        const year = date.getFullYear();
 
-    private addUserToProject = (): void => {
-        let checkpoints: Set<string>;
-        if (this.state.checkpointStatus === 'AllCheckpointsExcept') {
-            const newCheckpointsArray = this.props.projectCreation.checkpoints.filter((checkpoint) => {
-                return !this.state.additionalCheckpoints.has(checkpoint.name);
-            }).map((checkpoint) => checkpoint.name);
-            checkpoints = new Set(newCheckpointsArray);
-        } else {
-            checkpoints = this.state.additionalCheckpoints;
-        }
-
-        const projectUser: IProjectCreationProjectUser = {
-            userId: this.state.user.id,
-            email: this.state.user.email,
-            name: this.state.userName,
-            type: this.state.user.type,
-            checkpoints,
-            checkpointModifier: this.state.checkpointStatus as any,
-        }
-        this.props.addProjectUser(projectUser);
-        this.setState({
-            open: false,
-        })
-    }
-
-    private updateProjectUser = (): void => {
-        let checkpoints: Set<string>;
-        if (this.state.checkpointStatus === 'AllCheckpointsExcept') {
-            const newCheckpointsArray = this.props.projectCreation.checkpoints.filter((checkpoint) => {
-                return !this.state.additionalCheckpoints.has(checkpoint.name);
-            }).map((checkpoint) => checkpoint.name);
-            checkpoints = new Set(newCheckpointsArray);
-        } else {
-            checkpoints = this.state.additionalCheckpoints;
-        }
-
-        const projectUser: IProjectCreationProjectUser = {
-            userId: this.state.user.id,
-            email: this.state.user.email,
-            name: this.state.userName,
-            type: this.state.user.type,
-            checkpoints,
-            checkpointModifier: this.state.checkpointStatus as any,
-        }
-        this.props.updateProjectUser(projectUser, this.state.index);
-        this.setState({
-            open: false,
-        })
-    }
-
-    private handleAdditionalCheckpoint = (event: any): any => {
-        const clonedSet = new Set(this.state.additionalCheckpoints);
-        clonedSet.add(event.target.value);
-        this.setState({
-            additionalCheckpoints: clonedSet as any,
-        });
-    }
-
-    private removeCheckpointItem = (checkpointName: string) => {
-        const clonedSet = new Set(this.state.additionalCheckpoints);
-        clonedSet.delete(checkpointName);
-        return () => {
-            this.setState({
-                additionalCheckpoints: clonedSet as any,
-            });
-        }
-    }
-
-    private handleCheckpointModifierChange = (event: any): void => {
-        this.setState({
-            checkpointStatus: event.target.value,
-        });
-
-        if (event.target.value === 'AllCheckpoints') {
-            const allCheckpoints = this.props.projectCreation.checkpoints.map((checkpoint) => {
-                return checkpoint.name;
-            });
-            const allCheckpointsSet = new Set(allCheckpoints);
-            this.setState({
-                additionalCheckpoints: allCheckpointsSet,
-            });
-        } else {
-            this.setState({
-                additionalCheckpoints: new Set([]),
-            })
-        }
-    }
-
-    private handleUserDelete = (index: number): () => void => {
-        return () => {
-            this.setState({
-                open: false,
-            });
-            this.props.deleteProjectUser(index);
-        }
-    }
-
-    private handleUserSelection = (user: IUser): () => void => {
-        return () => {
-            this.setState({
-                user,
-                userName: user.name,
-            });
-        }
-    }
-
-    private getSuggestions(inputValue: any): IUser[] {
-        const changedInputValue = inputValue.trim().toLowerCase();
-        const inputLength = changedInputValue.length;
-        let count = 0;
-
-        return inputLength === 0 ? [] : (
-            Api.userApi.getUsers('does not matter').filter((user) => {
-                const keep =
-                    count < 10 && user.name.slice(0, inputLength).toLowerCase() === inputValue;
-
-                if (keep) {
-                    count += 1;
-                }
-
-                return keep;
-            })
-        )
+        return `${year}-${month}-${day}`;
     }
 
     private getStepActiveContent(): any {
@@ -360,20 +188,8 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             projectName,
             usersContainer,
             paper,
-            addedUserRow,
-            dialogControl,
-            dialogContent,
-            dialogRow,
-            dialogRowFirstItem,
-            dialogRowSecondItem,
-            selectControl,
-            addedItemContainer,
-            clearCheckpointIcon,
-            checkpointContainer,
-            projectUsersToolbarContainer,
-            autocompletePaper,
-            paperInPopper,
-            userDialogContainer,
+            projectNotesContainer,
+            projectNotesInput,
         } = createProjectCreationClasses(this.props, this.state);
 
         if (this.state.activeStep === 0) {
@@ -382,7 +198,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                     <Paper>
                         <TextField
                             className={projectName}
-                            label="Project Name"
+                            label="Case Name"
                             name="projectName"
                             value={this.props.projectCreation.projectName}
                             onChange={this.handleProjectNameChange}
@@ -391,168 +207,38 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                 </div>
             )
         } else if (this.state.activeStep === 1) {
+            const value = this.formatDateForPicker(new Date());
             return (
-                <div className={`${stepperContent} ${checkpointContainer}`}>
-                    <Checkpoints checkpoints={this.props.projectCreation.checkpoints} projectCreation={true}/>
+                <div className={`${stepperContent} ${projectNameContainer}`}>
+                    <Paper>
+                        <TextField
+                            className={projectName}
+                            id="date"
+                            type="date"
+                            value={value}
+                            label="Case Delivery Date"
+                            name="caseDeadline"
+                            onChange={this.handleChange}
+                        />
+                    </Paper>
                 </div>
-            )
+            );
         } else if (this.state.activeStep === 2) {
-            const mappedUsers = this.props.projectCreation.projectUsers.map((user, index) => {
-                    const numberOfUserCheckpoint = user.checkpoints.size;
-                    const numberOfProjectCheckpoints = this.props.projectCreation.checkpoints.length;
-                    const checkpointsText = numberOfUserCheckpoint === numberOfProjectCheckpoints ? 'All' : `${numberOfUserCheckpoint}/${numberOfProjectCheckpoints}`;
-                    return (
-                        <TableRow key={user.userId} className={addedUserRow} onClick={this.updateUserDialog(index)}>
-                            <TableCell>{user.name}</TableCell>
-                            <TableCell>{user.email}</TableCell>
-                            <TableCell>{checkpointsText}</TableCell>
-                            <TableCell>{user.type}</TableCell>
-                        </TableRow>
-                    )
-                }
-            )
-
-            const showOtherCheckpointField = this.state.checkpointStatus === 'AllCheckpointsExcept' || this.state.checkpointStatus === 'SomeCheckpoints';
-            const checkpointItems = this.props.projectCreation.checkpoints.filter((checkpoint) => {
-                return !this.state.additionalCheckpoints.has(checkpoint.name);
-            }).map((checkpoint, index) => {
-                return (
-                    <MenuItem
-                        value={checkpoint.name}
-                        key={index}>
-                        {checkpoint.name}
-                    </MenuItem>
-
-                )
-            });
-            const addedItems: any[] = [];
-            this.state.additionalCheckpoints.forEach((checkpoint) => {
-                addedItems.push(checkpoint);
-            });
-            const addedItemsWithElement = addedItems.map((addedItem, index) => {
-                return (
-                    <div className={addedItemContainer} key={index}>
-                        <Typography>{addedItem}</Typography>
-                        <ClearIcon onClick={this.removeCheckpointItem(addedItem)} className={clearCheckpointIcon}/>
-                    </div>
-                )
-            });
-            const otherCheckpointsField = showOtherCheckpointField ? (
-                <div className={dialogRow}>
-                    <div className={dialogRowFirstItem}>
-                        <FormControl className={selectControl} disabled={checkpointItems.length <= 1}>
-                            <InputLabel htmlFor="role">Select Checkpoints</InputLabel>
-                            <Select
-                                name=""
-                                inputProps={{
-                                    id: 'role',
-                                }}
-                                value={''}
-                                onChange={this.handleAdditionalCheckpoint}
-                            >
-                                {checkpointItems}
-                            </Select>
-                        </FormControl>
-                    </div>
-                    <div className={dialogRowSecondItem}>
-                        {addedItemsWithElement}
-                    </div>
-                </div>
-            ) : undefined;
 
             return (
                 <div className={`${stepperContent} ${usersContainer}`}>
                     <Paper className={paper}>
-                        <Toolbar className={projectUsersToolbarContainer}>
-                            <Typography variant="title">
-                                Users
-                            </Typography>
-                            <Tooltip title="Add A User" placement="left">
-                                <IconButton
-                                    aria-label="Add A User"
-                                    onClick={this.openUserDialog}
-                                    color="secondary"
-                                    type="button"
-                                >
-                                    <AddIcon />
-                                </IconButton>
-                            </Tooltip>
-                            {/* <Tooltip title="Filter list">
-                                <IconButton aria-label="Filter list">
-                                    <FilterListIcon />
-                                </IconButton>
-                            </Tooltip> */}
-                        </Toolbar>
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>Name</TableCell>
-                                    <TableCell>Email</TableCell>
-                                    <TableCell>Checkpoints</TableCell>
-                                    <TableCell>Role</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {mappedUsers}
-                            </TableBody>
-                        </Table>
-                    </Paper>
-                    <Dialog
-                        open={this.state.open}
-                        onClose={this.handleClose}
-                        className={userDialogContainer}
-                        classes={{
-                            paper: paperInPopper,
-                        }}
-                    >
-                        <DialogTitle>{this.state.isUpdate ? 'Update User' : 'Add User To Project'}</DialogTitle>
-                        <DialogContent className={dialogContent}>
+                        <div className={projectNotesContainer}>
                             <TextField
-                                label='User'
-                                name={'userName'}
+                                className={projectNotesInput}
+                                multiline={true}
+                                label="Case Notes"
+                                name="projectNotes"
+                                value={this.state.projectNotes}
                                 onChange={this.handleChange}
-                                value={this.state.userName}
-                                className={dialogControl}
                             />
-                            <Popper className={autocompletePaper} disablePortal={true} open={this.state.popperIsOpen}>
-                                <Paper square={true} className={paperInPopper}>
-                                    {this.getSuggestions(this.state.userName).map((user: IUser, index: number) => {
-                                        return (
-                                            <MenuItem
-                                                    key={user.id}
-                                                    onClick={this.handleUserSelection(user)}
-                                                >
-                                                {user.name}
-                                            </MenuItem>
-                                        )
-                                    })}
-                                </Paper>
-                            </Popper>
-                            <FormControl>
-                                <InputLabel htmlFor="role">Checkpoints</InputLabel>
-                                <Select
-                                    name="checkpointStatus"
-                                    className={dialogControl}
-                                    inputProps={{
-                                        id: 'role',
-                                    }}
-                                    value={this.state.checkpointStatus}
-                                    onChange={this.handleCheckpointModifierChange}
-                                >
-                                    <MenuItem value={'AllCheckpoints'}>Add User To All Checkpoints</MenuItem>
-                                    <MenuItem value={'AllCheckpointsExcept'}>Add User To All Checkpoints Except For</MenuItem>
-                                    <MenuItem value={'SomeCheckpoints'}>Add User To Some Checkpoints</MenuItem>
-                                </Select>
-                            </FormControl>
-                            {otherCheckpointsField}
-                        </DialogContent>
-                        <DialogActions>
-                            { this.state.isUpdate ? (
-                                <Button color="primary" onClick={this.handleUserDelete(this.state.index)}>Delete</Button>
-                            ) : undefined}
-                            <Button color="secondary" onClick={this.state.isUpdate ? this.updateProjectUser : this.addUserToProject}>{this.state.isUpdate ? 'Update User' : 'Add User' }</Button>
-                        </DialogActions>
-                    </Dialog>
+                        </div>
+                    </Paper>
                 </div>
             )
         }
