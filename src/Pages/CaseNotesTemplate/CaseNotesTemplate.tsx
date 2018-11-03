@@ -6,7 +6,7 @@ import {
     Typography,
 } from '@material-ui/core';
 
-import { handleChange } from '../../Utils/handleChange';
+import Api from '../../Api/api';
 import { createCaseNotesTemplateClasses, ICaseNotesTemplateProps, ICaseNotesTemplateState } from './CaseNotesTemplate.ias';
 
 export class CaseNotesTemplate extends React.Component<ICaseNotesTemplateProps, ICaseNotesTemplateState> {
@@ -14,7 +14,12 @@ export class CaseNotesTemplate extends React.Component<ICaseNotesTemplateProps, 
         notes: '',
     };
 
-    public handleChange = handleChange(this);
+    public componentWillMount = (): void => {
+        const caseNotes = Api.caseNotesApi.getCaseNotes('does not matter');
+        this.setState({
+            notes: caseNotes,
+        });
+    }
 
     public render() {
         const {
@@ -39,10 +44,18 @@ export class CaseNotesTemplate extends React.Component<ICaseNotesTemplateProps, 
                         label="Case Notes"
                         name="notes"
                         value={this.state.notes}
-                        onChange={this.handleChange}
+                        onChange={this.handleCaseNoteChange}
                     />
                 </Paper>
             </div>
         )
+    }
+
+    private handleCaseNoteChange = (event: any): void => {
+        this.setState({
+            notes: event.target.value,
+        });
+
+        Api.caseNotesApi.updateCaseNotes('does not matter', event.target.value);
     }
 }

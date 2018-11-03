@@ -43,6 +43,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                     <TableCell>{slimProject.projectName}</TableCell>
                     <TableCell>{slimProject.currentCheckpoint}</TableCell>
                     <TableCell>{slimProject.nextCheckpointDeadlinePretty}</TableCell>
+                    <TableCell/>
                 </TableRow>
             )
         )
@@ -52,11 +53,11 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                 <Paper className={projectsPaper}>
                     <Toolbar className={projectsToolbarContainer}>
                         <Typography variant="title">
-                            All Projects
+                            Cases
                         </Typography>
-                        <Tooltip title="New Project" placement="left">
+                        <Tooltip title="New Case" placement="left">
                             <IconButton
-                                aria-label="New Project"
+                                aria-label="New Case"
                                 onClick={this.navigateToCreateProjectPage}
                                 color="secondary"
                             >
@@ -72,9 +73,10 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                     <Table>
                         <TableHead>
                             <TableRow>
-                                <TableCell>Project Name</TableCell>
+                                <TableCell>Case Name</TableCell>
                                 <TableCell>Current Checkpoint</TableCell>
-                                <TableCell>Current Checkpoint Deadline</TableCell>
+                                <TableCell>Case Deadline</TableCell>
+                                <TableCell/>
                             </TableRow>
                         </TableHead>
                         <TableBody >
