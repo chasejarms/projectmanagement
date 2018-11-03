@@ -104,7 +104,7 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
                         <TableHead>
                             <TableRow>
                                 <TableCell>Checkpoint Name</TableCell>
-                                <TableCell>Estimated Completion Days</TableCell>
+                                <TableCell>Estimated Completion Time</TableCell>
                                 <TableCell>Visible To Doctor</TableCell>
                             </TableRow>
                         </TableHead>
@@ -129,7 +129,7 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
                             onChange={this.handleChange}
                         />
                         <TextField
-                            label="Estimated Completion Days"
+                            label="Estimated Completion Time"
                             name="estimatedCompletionTime"
                             value={this.state.estimatedCompletionTime}
                             className={dialogControl}

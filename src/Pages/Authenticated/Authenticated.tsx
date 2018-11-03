@@ -9,14 +9,12 @@ import {
 import { withTheme } from '@material-ui/core';
 // import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import AssignmentIcon from '@material-ui/icons/Assignment';
-import DashboardIcon from '@material-ui/icons/Dashboard';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import ListIcon from '@material-ui/icons/List';
 import PeopleIcon from '@material-ui/icons/People';
 import * as React from 'react';
 import { withRouter } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
-import { MyProjects } from '../MyProjects/MyProjects'
 import { Project } from '../Project/Project';
 import { ProjectCreation } from '../ProjectCreation/ProjectCreation';
 import { Projects } from '../Projects/Projects';
@@ -46,18 +44,7 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                     >
                         <List className={list}>
                             <div>
-                                <Tooltip title="My Projects" placement="right">
-                                    <ListItem
-                                        button={true}
-                                        className={iconContainer}
-                                        onClick={this.navigateToMyProjects}
-                                    >
-                                        <ListItemIcon>
-                                            <DashboardIcon className={iconStyling}/>
-                                        </ListItemIcon>
-                                    </ListItem>
-                                </Tooltip>
-                                <Tooltip title="All Projects" placement="right">
+                                <Tooltip title="Cases" placement="right">
                                     <ListItem
                                         button={true}
                                         className={iconContainer}
@@ -148,11 +135,6 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                             exact={true}
                             component={ProjectCreation}
                         />
-                        <Route
-                            path={this.props.match.url + '/myProjects'}
-                            exact={true}
-                            component={MyProjects}
-                        />
                     </Switch>
                 </div>
             </div>
@@ -162,11 +144,6 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
     private navigateToProjects = () => {
         const { companyName } = this.props.match.params as any;
         this.props.history.push(`/company/${companyName}`);
-    }
-
-    private navigateToMyProjects = () => {
-        const { companyName } = this.props.match.params as any;
-        this.props.history.push(`/company/${companyName}/myProjects`);
     }
 
     private navigateToUsers = () => {

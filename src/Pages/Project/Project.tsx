@@ -93,7 +93,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                                 <TableHead>
                                     <TableRow>
                                         <TableCell>Checkpoint Name</TableCell>
-                                        <TableCell>Estimated Completion Days</TableCell>
+                                        <TableCell>Estimated Completion Time</TableCell>
                                         <TableCell>Complete</TableCell>
                                     </TableRow>
                                 </TableHead>
