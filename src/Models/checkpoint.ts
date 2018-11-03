@@ -1,6 +1,6 @@
 export interface ICheckpoint {
     name: string;
-    estimatedTimeframe: string;
+    estimatedCompletionTime: string;
     visibleToCustomer: boolean;
     description?: string;
     complete: boolean;

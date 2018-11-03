@@ -1,6 +1,7 @@
 import { Theme, WithTheme } from '@material-ui/core';
 import { css } from 'emotion';
 import { RouteComponentProps } from 'react-router';
+import { ICheckpoint } from '../../Models/checkpoint';
 
 // tslint:disable-next-line:no-empty-interface
 export interface IProjectPresentationProps extends RouteComponentProps<{}>, WithTheme {}
@@ -8,6 +9,7 @@ export interface IProjectPresentationProps extends RouteComponentProps<{}>, With
 export interface IProjectPresentationState {
     tabValue: number;
     projectName: string;
+    checkpoints: ICheckpoint[];
 }
 
 export const createProjectPresentationClasses = (
@@ -41,7 +43,6 @@ export const createProjectPresentationClasses = (
         flexGrow: 1,
         justifyContent: 'space-between',
         marginRight: 32,
-        padding: 16,
         height: '100%',
         boxSizing: 'border-box',
         overflowY: 'auto',
@@ -77,6 +78,7 @@ export const createProjectPresentationClasses = (
     });
 
     const attachmentButtonsContainer = css({
+        padding: 16,
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'flex-end',
@@ -84,6 +86,13 @@ export const createProjectPresentationClasses = (
 
     const seeAttachmentsButton = css({
         marginRight: 8,
+    });
+
+    const workflowToolbar = css({
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingRight: 10,
     });
 
     return {
@@ -98,5 +107,6 @@ export const createProjectPresentationClasses = (
         halfWidthProjectContainer,
         attachmentButtonsContainer,
         seeAttachmentsButton,
+        workflowToolbar,
     };
 }

@@ -205,7 +205,7 @@ export class CheckpointsPresentation extends React.Component<ICheckpointsProps, 
             complete: false,
             id: Date.now().toString(),
             projectId: '1',
-            estimatedTimeframe: '1 day',
+            estimatedCompletionTime: '1 day',
             visibleToCustomer: true,
         }
 
