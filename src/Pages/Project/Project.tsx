@@ -1,6 +1,9 @@
 import { withTheme } from '@material-ui/core';
-import Tab from '@material-ui/core/Tab';
-import Tabs from '@material-ui/core/Tabs';
+import {
+    Button,
+    Paper,
+    TextField,
+} from '@material-ui/core';
 import * as React from 'react';
 import { withRouter } from 'react-router';
 import Api from '../../Api/api';
@@ -44,40 +47,68 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
 
     public render() {
         const {
+            attachmentButtonsContainer,
             projectContainer,
-            tabs,
-            tabsContentContainer,
-            selectedTab,
-            nonSelectedTab,
+            evenPaper,
+            secondPaper,
+            fieldSpacing,
+            halfWidthProjectContainer,
+            seeAttachmentsButton,
         } = createProjectPresentationClasses(this.props, this.state, this.props.theme);
-        const tabClasses = {
-            selected: selectedTab,
-            root: nonSelectedTab,
-        }
 
         return (
             <div className={projectContainer}>
-                <Tabs value={this.state.tabValue} onChange={this.handleChange} className={tabs}>
-                    <Tab
-                        disabled={true}
-                        label={this.state.projectName}
-                        classes={tabClasses}/>
-                    <Tab
-                        label="Checkpoints"
-                        classes={tabClasses}/>
-                    <Tab
-                        label="Users"
-                        classes={tabClasses}
-                    />
-                    <Tab
-                        label="Staff Chat"
-                        classes={tabClasses}/>
-                    <Tab
-                        label="Customer Chat"
-                        classes={tabClasses}/>
-                </Tabs>
-                <div className={tabsContentContainer}>
-                    {this.tabComponents[this.state.tabValue]}
+                <div className={halfWidthProjectContainer}>
+                    <Paper className={evenPaper}>
+                        <TextField
+                            fullWidth={true}
+                            className={fieldSpacing}
+                            label="Case Name"
+                            name="projectName"
+                            value={this.state.projectName}
+                        />
+                        <TextField
+                            fullWidth={true}
+                            className={fieldSpacing}
+                            id="date"
+                            type="date"
+                            value="2018-10-10"
+                            label="Case Delivery Date"
+                            name="caseDeadline"
+                        />
+                        <TextField
+                            fullWidth={true}
+                            multiline={true}
+                            label="Case Notes"
+                            name="projectNotes"
+                        />
+                    </Paper>
+                </div>
+                <div className={halfWidthProjectContainer}>
+                    <Paper className={secondPaper}>
+                        <TextField
+                            fullWidth={true}
+                            className={fieldSpacing}
+                            id="date"
+                            type="date"
+                            value="2018-10-10"
+                            label="Case Delivery Date"
+                            name="caseDeadline"
+                        />
+                        <div className={attachmentButtonsContainer}>
+                            <Button
+                                className={seeAttachmentsButton}
+                                variant="contained"
+                                color="secondary">
+                                See Attachments (1)
+                            </Button>
+                            <Button
+                                variant="contained"
+                                color="secondary">
+                                Add An Attachment
+                            </Button>
+                        </div>
+                    </Paper>
                 </div>
             </div>
         );

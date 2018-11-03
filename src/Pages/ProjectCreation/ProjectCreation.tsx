@@ -190,6 +190,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             paper,
             projectNotesContainer,
             projectNotesInput,
+            addAttachmentButtonContainer,
         } = createProjectCreationClasses(this.props, this.state);
 
         if (this.state.activeStep === 0) {
@@ -237,6 +238,13 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                                 value={this.state.projectNotes}
                                 onChange={this.handleChange}
                             />
+                        </div>
+                        <div className={addAttachmentButtonContainer}>
+                            <Button
+                                variant="contained"
+                                color="secondary">
+                                Add An Attachment
+                            </Button>
                         </div>
                     </Paper>
                 </div>

@@ -259,6 +259,15 @@ export const createProjectCreationClasses = (
         flexGrow: 1,
     });
 
+    const addAttachmentButtonContainer = css({
+        marginBottom: 16,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        marginRight: 16,
+        marginTop: 32,
+    });
+
     return {
         projectCreationContainer,
         stepperContainer,
@@ -295,5 +304,6 @@ export const createProjectCreationClasses = (
         userDialogContainer,
         projectNotesContainer,
         projectNotesInput,
+        addAttachmentButtonContainer,
     };
 }

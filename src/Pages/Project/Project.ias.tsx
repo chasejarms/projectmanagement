@@ -17,9 +17,35 @@ export const createProjectPresentationClasses = (
 ) => {
     const projectContainer = css({
         height: '100vh',
+        boxSizing: 'border-box',
+        display: 'flex',
+        flexDirection: 'row',
+        paddingTop: 32,
+        paddingLeft: 32,
+        paddingBottom: 32,
+    })
+
+    const evenPaper = css({
+        flexDirection: 'column',
+        flexGrow: 1,
+        marginRight: 32,
+        padding: 16,
+        height: '100%',
+        boxSizing: 'border-box',
+        overflowY: 'auto',
+    });
+
+    const secondPaper = css({
         display: 'flex',
         flexDirection: 'column',
-    })
+        flexGrow: 1,
+        justifyContent: 'space-between',
+        marginRight: 32,
+        padding: 16,
+        height: '100%',
+        boxSizing: 'border-box',
+        overflowY: 'auto',
+    });
 
     const tabs = css({
         flexBasis: 'auto',
@@ -31,7 +57,12 @@ export const createProjectPresentationClasses = (
         flexGrow: 1,
         display: 'flex',
         flexDirection: 'column'
-    })
+    });
+
+    const fieldSpacing = css({
+        marginBottom: 16,
+        flexGrow: 1,
+    });
 
     const selectedTab = css({
         color: theme.palette.primary.main,
@@ -39,7 +70,21 @@ export const createProjectPresentationClasses = (
 
     const nonSelectedTab = css({
         color: 'white',
-    })
+    });
+
+    const halfWidthProjectContainer = css({
+        flex: 1,
+    });
+
+    const attachmentButtonsContainer = css({
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+    });
+
+    const seeAttachmentsButton = css({
+        marginRight: 8,
+    });
 
     return {
         projectContainer,
@@ -47,5 +92,11 @@ export const createProjectPresentationClasses = (
         tabsContentContainer,
         selectedTab,
         nonSelectedTab,
+        evenPaper,
+        secondPaper,
+        fieldSpacing,
+        halfWidthProjectContainer,
+        attachmentButtonsContainer,
+        seeAttachmentsButton,
     };
 }
