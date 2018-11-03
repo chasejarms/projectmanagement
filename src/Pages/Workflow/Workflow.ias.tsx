@@ -12,7 +12,8 @@ export interface IWorkflowPresentationState {
     open: boolean;
     checkpointName: string;
     checkpointDescription: string;
-    checkpointDays: number;
+    estimatedCompletionTime: string;
+    visibleToDoctor: boolean;
     workflow: IWorkflow | undefined;
     isUpdate: boolean;
     index: number;

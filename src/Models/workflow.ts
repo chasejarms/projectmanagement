@@ -5,6 +5,6 @@ export interface IWorkflow {
 
 export interface IWorkflowCheckpoint {
     name: string;
-    description: string;
-    deadlineFromLastCheckpoint: number;
+    estimatedCompletionTime: string;
+    visibleToDoctor: boolean;
 }

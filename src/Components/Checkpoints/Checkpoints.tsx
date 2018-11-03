@@ -67,7 +67,7 @@ export class CheckpointsPresentation extends React.Component<ICheckpointsProps, 
                                 {infoOutline}
                             </div>
                         </TableCell>
-                        <TableCell>{this.formatDateForGrid(checkpoint.deadline!)}</TableCell>
+                        <TableCell>{'1'}</TableCell>
                         <TableCell>
                             <Checkbox
                                 checked={checkpoint.complete}
@@ -171,21 +171,12 @@ export class CheckpointsPresentation extends React.Component<ICheckpointsProps, 
         return `${year}-${month}-${day}`;
     }
 
-    private formatDateForGrid(date: Date): string {
-        const day = date.getDate().toString();
-        const month = (date.getMonth() + 1).toString();
-        const year = date.getFullYear().toString().slice(2);
-
-        return `${month}/${day}/${year}`;
-    }
-
     private openCheckpointDialog = (checkpoint: ICheckpoint, index: number) => {
         return () => {
             this.setState({
                 open: true,
                 checkpointName: checkpoint.name,
                 checkpointDescription: checkpoint.description!,
-                checkpointDeadline: this.formatDateForPicker(checkpoint.deadline!),
                 isUpdate: true,
                 index,
             });
@@ -208,15 +199,14 @@ export class CheckpointsPresentation extends React.Component<ICheckpointsProps, 
     }
 
     private handleSave = () => {
-        // const checkpointsClone = _.cloneDeep(this.props.checkpoints);
-        const deadlineFromString = new Date(this.state.checkpointDeadline);
         const newCheckpoint: ICheckpoint = {
             name: this.state.checkpointName,
             description: this.state.checkpointDescription,
             complete: false,
             id: Date.now().toString(),
             projectId: '1',
-            deadline: deadlineFromString,
+            estimatedTimeframe: '1 day',
+            visibleToCustomer: true,
         }
 
         if (this.state.isUpdate) {

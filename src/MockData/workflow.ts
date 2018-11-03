@@ -5,28 +5,28 @@ export const workflow: IWorkflow = {
     checkpoints: [
         {
             name: 'Finalize Contract',
-            deadlineFromLastCheckpoint: 1,
-            description: '',
+            estimatedCompletionTime: '1 - 2 days',
+            visibleToDoctor: true,
         },
         {
             name: 'Initial Design Specs',
-            deadlineFromLastCheckpoint: 4,
-            description: '',
+            estimatedCompletionTime: '2 - 3 days',
+            visibleToDoctor: false,
         },
         {
             name: 'Art Preview',
-            description: 'Working with our designers, we create tech packs and finalize art work',
-            deadlineFromLastCheckpoint: 3,
+            estimatedCompletionTime: '1 - 4 days',
+            visibleToDoctor: false,
         },
         {
             name: 'Product Sample',
-            description: 'The manufacturer will give us back an exact duplicate of what we can expect the product to look like',
-            deadlineFromLastCheckpoint: 5,
+            estimatedCompletionTime: '1 - 2 days',
+            visibleToDoctor: true,
         },
         {
             name: 'Delivery',
-            description: '',
-            deadlineFromLastCheckpoint: 4,
+            estimatedCompletionTime: '1 - 3 days',
+            visibleToDoctor: true,
         }
     ],
 }

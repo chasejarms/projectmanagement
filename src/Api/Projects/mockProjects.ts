@@ -42,10 +42,7 @@ export class MockProjectsApi implements IProjectsApi {
 
     public getProjectCheckpoints(companyName: string, projectId: string): ICheckpoint[] {
         const project = this.getProject(projectId);
-        return project.checkpoints.map((checkpoint) => {
-            checkpoint.deadline = new Date(checkpoint.deadline!);
-            return checkpoint;
-        });
+        return project.checkpoints;
     }
 
     public getProjectName(companyName: string, projectId: string): string {
@@ -211,11 +208,6 @@ export class MockProjectsApi implements IProjectsApi {
     }
 
     private nextCheckpointDeadline(project: IProject): Date {
-        for (const checkpoint of project.checkpoints) {
-            if (!checkpoint.complete) {
-                return checkpoint.deadline!;
-            }
-        }
         return new Date();
     }
 

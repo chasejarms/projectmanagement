@@ -1,9 +1,11 @@
 import {
     Button,
+    Checkbox,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
+    FormControlLabel,
     IconButton,
     Paper,
     Table,
@@ -19,6 +21,7 @@ import {
 
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
+import DoneIcon from '@material-ui/icons/Done';
 import * as React from 'react';
 import Api from '../../Api/api';
 import { IWorkflowCheckpoint } from '../../Models/workflow';
@@ -31,7 +34,8 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
         open: false,
         checkpointName: '',
         checkpointDescription: '',
-        checkpointDays: 0,
+        estimatedCompletionTime: '',
+        visibleToDoctor: false,
         workflow: undefined,
         isUpdate: false,
         index: 0,
@@ -63,8 +67,10 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
         const mappedCheckpoints = this.state.workflow.checkpoints.map((checkpoint, index) => (
                 <TableRow key={index} onClick={this.openCheckpointDialog(checkpoint, index)} className={workflowRow}>
                     <TableCell>{checkpoint.name}</TableCell>
-                    <TableCell>{checkpoint.deadlineFromLastCheckpoint}</TableCell>
-                    <TableCell>{checkpoint.description}</TableCell>
+                    <TableCell>{checkpoint.estimatedCompletionTime}</TableCell>
+                    <TableCell>{checkpoint.visibleToDoctor ? (
+                        <DoneIcon/>
+                    ) : undefined}</TableCell>
                 </TableRow>
             )
         )
@@ -98,8 +104,8 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
                         <TableHead>
                             <TableRow>
                                 <TableCell>Checkpoint Name</TableCell>
-                                <TableCell>Completion Days</TableCell>
-                                <TableCell>Checkpoint Description</TableCell>
+                                <TableCell>Estimated Completion Days</TableCell>
+                                <TableCell>Visible To Doctor</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -123,21 +129,21 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
                             onChange={this.handleChange}
                         />
                         <TextField
-                            type="number"
-                            label="Days To Complete from last checkpoint"
-                            name="checkpointDays"
-                            value={this.state.checkpointDays}
+                            label="Estimated Completion Days"
+                            name="estimatedCompletionTime"
+                            value={this.state.estimatedCompletionTime}
                             className={dialogControl}
                             onChange={this.handleChange}
                         />
-                        <TextField
-                            label="Description"
-                            name="checkpointDescription"
-                            value={this.state.checkpointDescription}
-                            multiline={true}
-                            className={dialogControl}
-                            onChange={this.handleChange}
-                        />
+                        <FormControlLabel className={dialogControl} control={
+                            <Checkbox
+                                checked={this.state.visibleToDoctor}
+                                onChange={this.handleVisibleToDoctorChange}
+                                name="visibleToDoctor"
+                                color="primary"
+                            />
+                        }
+                        label="Visible To Doctor"/>
                     </DialogContent>
                     <DialogActions style={{display: 'flex', justifyContent: this.state.isUpdate ? 'space-between' : 'flex-end' }}>
                         { this.state.isUpdate ? (
@@ -152,10 +158,16 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
         );
     }
 
+    private handleVisibleToDoctorChange = (event: any) => {
+        this.setState({
+            visibleToDoctor: event.target.checked,
+        })
+    }
+
     private openNewCheckpointDialog = () => {
         this.setState({
             open: true,
-            checkpointDays: 0,
+            estimatedCompletionTime: '',
             checkpointDescription: '',
             checkpointName: '',
             isUpdate: false,
@@ -166,9 +178,9 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
         return () => {
             this.setState({
                 open: true,
-                checkpointDays: checkpoint.deadlineFromLastCheckpoint!,
-                checkpointDescription: checkpoint.description || '',
+                estimatedCompletionTime: checkpoint.estimatedCompletionTime,
                 checkpointName: checkpoint.name,
+                visibleToDoctor: checkpoint.visibleToDoctor,
                 isUpdate: true,
                 index,
             })
@@ -204,8 +216,8 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
         let newCheckpoints: IWorkflowCheckpoint[];
         const newCheckpoint: IWorkflowCheckpoint = {
             name: this.state.checkpointName,
-            description: this.state.checkpointDescription,
-            deadlineFromLastCheckpoint: this.state.checkpointDays,
+            estimatedCompletionTime: this.state.estimatedCompletionTime,
+            visibleToDoctor: this.state.visibleToDoctor,
         }
         if (this.state.isUpdate) {
             newCheckpoints = this.state.workflow!.checkpoints.map((checkpoint, compareIndex) => {

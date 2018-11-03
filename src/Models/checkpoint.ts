@@ -1,7 +1,8 @@
 export interface ICheckpoint {
     name: string;
+    estimatedTimeframe: string;
+    visibleToCustomer: boolean;
     description?: string;
-    deadline?: Date;
     complete: boolean;
     projectId: string;
     id: string;

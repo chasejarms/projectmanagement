@@ -1,5 +1,4 @@
 import Checkbox from '@material-ui/core/Checkbox'
-import TextField from '@material-ui/core/TextField';
 // import { TextFieldProps } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
@@ -12,7 +11,6 @@ export class Checkpoint extends React.Component<ICheckpointProps, ICheckpointSta
         const {
             name,
             description,
-            deadline,
             complete,
         } = this.props.checkpoint;
 
@@ -24,7 +22,6 @@ export class Checkpoint extends React.Component<ICheckpointProps, ICheckpointSta
             descriptionTooltip,
         } = createCheckpointClasses(this.props, this.state);
 
-        const formattedDate = this.formatDate(deadline);
         const tooltip = !description ? undefined : (
             <Tooltip title={description} placement="right">
                 <InfoOutlinedIcon/>
@@ -36,30 +33,12 @@ export class Checkpoint extends React.Component<ICheckpointProps, ICheckpointSta
                     <Typography variant="title" className={descriptionTooltip}>{name}</Typography>
                     { tooltip }
                 </div>
-                <Typography>{formattedDate}</Typography>
+                <Typography>something</Typography>
                 <div className={completeContainer}>
                     <Typography variant="body1" className={completeText}>Complete: </Typography>
                     <Checkbox checked={complete}/>
                 </div>
             </div>
         )
-    }
-
-    private formatDate(date: Date | undefined): undefined | any {
-        const formattedDate = '2014-05-24';
-        if (date === undefined) {
-            return '';
-        } else {
-            return (
-                <TextField
-                    type="date"
-                    label="Deadline: "
-                    defaultValue={formattedDate}
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
-                />
-            )
-        }
     }
 }
