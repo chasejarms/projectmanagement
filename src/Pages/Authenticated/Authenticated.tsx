@@ -11,10 +11,12 @@ import { withTheme } from '@material-ui/core';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import ListIcon from '@material-ui/icons/List';
+import NoteIcon from '@material-ui/icons/Note';
 import PeopleIcon from '@material-ui/icons/People';
 import * as React from 'react';
 import { withRouter } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
+import { CaseNotesTemplate } from '../CaseNotesTemplate/CaseNotesTemplate';
 import { Project } from '../Project/Project';
 import { ProjectCreation } from '../ProjectCreation/ProjectCreation';
 import { Projects } from '../Projects/Projects';
@@ -77,6 +79,17 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                                         </ListItemIcon>
                                     </ListItem>
                                 </Tooltip>
+                                <Tooltip title="Case Notes Template" placement="right">
+                                    <ListItem
+                                        button={true}
+                                        className={iconContainer}
+                                        onClick={this.navigateToCaseNotesTemplate}
+                                    >
+                                        <ListItemIcon>
+                                            <NoteIcon className={iconStyling}/>
+                                        </ListItemIcon>
+                                    </ListItem>
+                                </Tooltip>
                             </div>
                             <div>
                                 <Divider/>
@@ -135,6 +148,11 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                             exact={true}
                             component={ProjectCreation}
                         />
+                        <Route
+                            path={this.props.match.url + '/caseNotesTemplate'}
+                            exact={true}
+                            component={CaseNotesTemplate}
+                        />
                     </Switch>
                 </div>
             </div>
@@ -149,6 +167,11 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
     private navigateToUsers = () => {
         const { companyName } = this.props.match.params as any;
         this.props.history.push(`/company/${companyName}/users`);
+    }
+
+    private navigateToCaseNotesTemplate = () => {
+        const { companyName } = this.props.match.params as any;
+        this.props.history.push(`/company/${companyName}/caseNotesTemplate`);
     }
 
     // private navigateToUserSettings = () => {
