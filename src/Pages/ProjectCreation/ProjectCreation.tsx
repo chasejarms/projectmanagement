@@ -117,7 +117,10 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             id: Date.now().toString(),
             name: this.props.projectCreation.projectName,
             checkpoints: this.props.projectCreation.checkpoints,
-            users: this.props.projectCreation.projectUsers,
+            deadline: this.state.caseDeadline,
+            notes: this.state.projectNotes,
+            attachments: [],
+            doctor: { name: 'Bob' } as any,
             complete: false,
         };
         Api.projectsApi.createProject('does not matter', projectToCreate);

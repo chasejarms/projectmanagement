@@ -20,35 +20,22 @@ import { createProjectPresentationClasses, IProjectPresentationProps, IProjectPr
 
 class ProjectPresentation extends React.Component<IProjectPresentationProps, IProjectPresentationState> {
     public state = {
-        tabValue: 1,
-        projectName: '',
-        checkpoints: [] as ICheckpoint[],
+        project: null,
     }
 
     constructor(props: IProjectPresentationProps) {
         super(props);
-        this.handleChange = this.handleChange.bind(this);
     }
 
     public componentWillMount(): void {
         const projectId = this.props.match.params['projectId'];
-        const projectName = Api.projectsApi.getProjectName('does not matter', projectId);
-        this.setState({
-            projectName,
-        })
 
-        const checkpoints = Api.projectsApi.getProjectCheckpoints('does not matter', projectId);
+        const project = Api.projectsApi.getProject(projectId);
         // tslint:disable-next-line:no-console
-        console.log(checkpoints);
+        console.log(project);
         this.setState({
-            checkpoints,
+            project,
         });
-    }
-
-    public handleChange(event: any, value: number): void {
-        this.setState({
-            tabValue: value,
-        })
     }
 
     public render() {
@@ -63,7 +50,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             workflowToolbar,
         } = createProjectPresentationClasses(this.props, this.state, this.props.theme);
 
-        const mappedCheckpoints = this.state.checkpoints.map((checkpoint, index) => (
+        const mappedCheckpoints = (this.state.project as any).checkpoints.map((checkpoint: ICheckpoint, index: number) => (
                 <TableRow key={index}>
                     <TableCell>{checkpoint.name}</TableCell>
                     <TableCell>{checkpoint.estimatedCompletionTime}</TableCell>
@@ -124,7 +111,8 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                             className={fieldSpacing}
                             label="Case Name"
                             name="projectName"
-                            value={this.state.projectName}
+                            value={(this.state.project! as any).name}
+                            onChange={this.handleProjectNameChange}
                         />
                         <TextField
                             fullWidth={true}
@@ -140,11 +128,31 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                             multiline={true}
                             label="Case Notes"
                             name="projectNotes"
+                            value={(this.state.project as any).notes}
+                            onChange={this.handleNotesChange}
                         />
                     </Paper>
                 </div>
             </div>
         );
+    }
+
+    private handleProjectNameChange = (event: any): void => {
+        this.setState({
+            project: {
+                ...this.state.project as any,
+                name: event.target.value,
+            }
+        })
+    }
+
+    private handleNotesChange = (event: any): void => {
+        this.setState({
+            project: {
+                ...this.state.project as any,
+                notes: event.target.value,
+            }
+        })
     }
 }
 

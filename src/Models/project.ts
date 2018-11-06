@@ -1,10 +1,12 @@
 import { ICheckpoint } from './checkpoint';
-import { IProjectCreationProjectUser } from './projectUser';
 
 export interface IProject {
     id: string;
     name: string;
+    deadline: Date;
     checkpoints: ICheckpoint[];
     complete: boolean;
-    users: IProjectCreationProjectUser[];
+    doctor: any;
+    notes: string;
+    attachments: any[];
 }

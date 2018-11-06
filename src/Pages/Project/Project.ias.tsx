@@ -1,15 +1,13 @@
 import { Theme, WithTheme } from '@material-ui/core';
 import { css } from 'emotion';
 import { RouteComponentProps } from 'react-router';
-import { ICheckpoint } from '../../Models/checkpoint';
+import { IProject } from '../../Models/project';
 
 // tslint:disable-next-line:no-empty-interface
 export interface IProjectPresentationProps extends RouteComponentProps<{}>, WithTheme {}
 
 export interface IProjectPresentationState {
-    tabValue: number;
-    projectName: string;
-    checkpoints: ICheckpoint[];
+    project: IProject | null;
 }
 
 export const createProjectPresentationClasses = (
