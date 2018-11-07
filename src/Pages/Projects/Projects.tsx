@@ -39,7 +39,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         } = createProjectsPresentationClasses(this.props, this.state);
 
         const mappedProjects = this.state.slimProjects.map(slimProject => (
-                <TableRow key={slimProject.id} onClick={this.navigateToProject(slimProject.id)} className={rowStyling}>
+                <TableRow key={slimProject.id} onClick={this.navigateToProject(slimProject.projectId)} className={rowStyling}>
                     <TableCell>{slimProject.projectName}</TableCell>
                     <TableCell>{slimProject.currentCheckpoint}</TableCell>
                     <TableCell>{slimProject.nextCheckpointDeadlinePretty}</TableCell>
