@@ -21,6 +21,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import AddIcon from '@material-ui/icons/Add';
+import ClearIcon from '@material-ui/icons/Clear';
 import * as React from 'react';
 import { withRouter } from 'react-router';
 import Api from '../../Api/api';
@@ -29,12 +30,14 @@ import { handleChange } from '../../Utils/handleChange';
 import { createUsersPresentationClasses, IUsersPresentationProps, IUsersPresentationState } from './Users.ias';
 
 export class UsersPresentation extends React.Component<IUsersPresentationProps, IUsersPresentationState> {
-    public state = {
+    public state: IUsersPresentationState = {
         open: false,
         newUserFullName: '',
         newUserEmail: '',
         newUserRole: 'Staff',
         users: [],
+        additionalCheckpoints: new Set([]),
+        checkpoints: [],
     };
 
     public handleChange = handleChange(this);
@@ -44,8 +47,10 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
         // tslint:disable-next-line:no-console
         console.log(companyName);
         const users = Api.userApi.getUsers(companyName);
+        const workflow = Api.workflowApi.getWorkflow(companyName);
         this.setState({
             users,
+            checkpoints: workflow.checkpoints,
         });
     }
 
@@ -57,6 +62,12 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
             usersToolbarContainer,
             userRow,
             usersPaper,
+            clearCheckpointIcon,
+            addedItemContainer,
+            automaticScanCheckpointsContainer,
+            potentialCheckpointsContainer,
+            potentialCheckpointsSelect,
+            automaticScanCheckpoints,
         } = createUsersPresentationClasses(this.props, this.state);
 
         const mappedUsers = this.state.users.map((user: IUser) => (
@@ -67,6 +78,32 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                 </TableRow>
             )
         )
+
+        const checkpointItems = this.state.checkpoints.filter((checkpoint) => {
+            return !this.state.additionalCheckpoints.has(checkpoint.name);
+        }).map((checkpoint, index) => {
+            return (
+                <MenuItem
+                    value={checkpoint.name}
+                    key={index}>
+                    {checkpoint.name}
+                </MenuItem>
+            )
+        });
+
+        const addedItems: any[] = [];
+        this.state.additionalCheckpoints.forEach((checkpoint) => {
+            addedItems.push(checkpoint);
+        });
+        const addedItemsWithElement = addedItems.map((addedItem, index) => {
+            return (
+                <div key={index} className={addedItemContainer}>
+                    <Typography>{addedItem}</Typography>
+                    <ClearIcon onClick={this.removeCheckpointItem(addedItem)} className={clearCheckpointIcon}/>
+                </div>
+            )
+        });
+        const showAdditionalCheckpoints = this.state.newUserRole === "Staff" || this.state.newUserRole === "Admin";
 
         return (
             <div className={usersContainer}>
@@ -140,6 +177,30 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                                 <MenuItem value={'Customer'}>Customer</MenuItem>
                             </Select>
                         </FormControl>
+                        {
+                            showAdditionalCheckpoints ? (
+                                <div className={automaticScanCheckpointsContainer}>
+                                    <div className={potentialCheckpointsContainer}>
+                                        <FormControl disabled={checkpointItems.length === 0} className={potentialCheckpointsSelect}>
+                                            <InputLabel htmlFor="role">Automatic Checkpoint Completion</InputLabel>
+                                            <Select
+                                                name=""
+                                                inputProps={{
+                                                    id: "role",
+                                                }}
+                                                value={""}
+                                                onChange={this.handleAdditionalCheckpoint}
+                                            >
+                                                {checkpointItems}
+                                            </Select>
+                                        </FormControl>
+                                    </div>
+                                    <div className={automaticScanCheckpoints}>
+                                        {addedItemsWithElement}
+                                    </div>
+                                </div>
+                            ) : undefined
+                        }
                     </DialogContent>
                     <DialogActions>
                         <Button color="primary" onClick={this.handleClose}>Cancel</Button>
@@ -148,6 +209,24 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                 </Dialog>
             </div>
         )
+    }
+
+    private removeCheckpointItem = (checkpointName: string) => {
+        const clonedSet = new Set(this.state.additionalCheckpoints);
+        clonedSet.delete(checkpointName);
+        return () => {
+            this.setState({
+                additionalCheckpoints: clonedSet as any,
+            });
+        }
+    }
+
+    private handleAdditionalCheckpoint = (event: any): any => {
+        const clonedSet = new Set(this.state.additionalCheckpoints);
+        clonedSet.add(event.target.value);
+        this.setState({
+            additionalCheckpoints: clonedSet as any,
+        });
     }
 
     private openNewUserDialog = () => {

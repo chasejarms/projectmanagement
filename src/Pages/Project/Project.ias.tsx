@@ -8,6 +8,7 @@ export interface IProjectPresentationProps extends RouteComponentProps<{}>, With
 
 export interface IProjectPresentationState {
     project: IProject | null;
+    open: boolean;
 }
 
 export const createProjectPresentationClasses = (
@@ -26,6 +27,7 @@ export const createProjectPresentationClasses = (
     })
 
     const evenPaper = css({
+        display: 'flex',
         flexDirection: 'column',
         flexGrow: 1,
         marginRight: 32,
@@ -33,6 +35,7 @@ export const createProjectPresentationClasses = (
         height: '100%',
         boxSizing: 'border-box',
         overflowY: 'auto',
+        justifyContent: 'space-between',
     });
 
     const secondPaper = css({
@@ -93,6 +96,12 @@ export const createProjectPresentationClasses = (
         paddingRight: 10,
     });
 
+    const qrCodeButtonContainer = css({
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+    });
+
     return {
         projectContainer,
         tabs,
@@ -106,5 +115,6 @@ export const createProjectPresentationClasses = (
         attachmentButtonsContainer,
         seeAttachmentsButton,
         workflowToolbar,
+        qrCodeButtonContainer,
     };
 }

@@ -4,4 +4,5 @@ export interface IUser {
     name: string;
     type: 'Admin' | 'Staff' | 'Customer';
     added: Date;
+    scanCheckpoints?: string[];
 }

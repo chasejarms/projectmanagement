@@ -12,6 +12,8 @@ export interface IUsersPresentationState {
     newUserEmail: string;
     newUserRole: string;
     users: IUser[];
+    additionalCheckpoints: Set<string>;
+    checkpoints: any[];
 }
 
 export const createUsersPresentationClasses = (
@@ -30,7 +32,7 @@ export const createUsersPresentationClasses = (
     });
 
     const dialogControl = css({
-        width: 400,
+        width: 550,
         marginBottom: 16,
     });
 
@@ -58,6 +60,40 @@ export const createUsersPresentationClasses = (
         overflow: 'hidden',
     });
 
+    const clearCheckpointIcon = css({
+        cursor: 'pointer',
+    });
+
+    const addedItemContainer = css({
+        paddingLeft: 8,
+        height: 32,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    });
+
+    const automaticScanCheckpointsContainer = css({
+        display: 'flex',
+        flexDirection: 'row',
+        marginBottom: 16,
+    });
+
+    const potentialCheckpointsContainer = css({
+        width: 'calc(50% - 8px)',
+        marginRight: 16,
+        display: 'inline-block',
+    });
+
+    const potentialCheckpointsSelect = css({
+        width: '100%',
+    });
+
+    const automaticScanCheckpoints = css({
+        marginTop: 24,
+        width: 'calc(50% - 8px)',
+        display: 'inline-block',
+    });
+
     return {
         fabButton,
         dialogContent,
@@ -66,5 +102,11 @@ export const createUsersPresentationClasses = (
         usersToolbarContainer,
         userRow,
         usersPaper,
+        clearCheckpointIcon,
+        addedItemContainer,
+        automaticScanCheckpointsContainer,
+        potentialCheckpointsContainer,
+        potentialCheckpointsSelect,
+        automaticScanCheckpoints,
     };
 }

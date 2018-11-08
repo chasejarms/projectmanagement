@@ -21,6 +21,7 @@ import { createProjectPresentationClasses, IProjectPresentationProps, IProjectPr
 class ProjectPresentation extends React.Component<IProjectPresentationProps, IProjectPresentationState> {
     public state = {
         project: null,
+        open: false,
     }
 
     constructor(props: IProjectPresentationProps) {
@@ -48,6 +49,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             halfWidthProjectContainer,
             seeAttachmentsButton,
             workflowToolbar,
+            qrCodeButtonContainer,
         } = createProjectPresentationClasses(this.props, this.state, this.props.theme);
 
         const mappedCheckpoints = (this.state.project as any).checkpoints.map((checkpoint: ICheckpoint, index: number) => (
@@ -106,36 +108,58 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                 </div>
                 <div className={halfWidthProjectContainer}>
                     <Paper className={evenPaper}>
-                        <TextField
-                            fullWidth={true}
-                            className={fieldSpacing}
-                            label="Case Name"
-                            name="projectName"
-                            value={(this.state.project! as any).name}
-                            onChange={this.handleProjectNameChange}
-                        />
-                        <TextField
-                            fullWidth={true}
-                            className={fieldSpacing}
-                            id="date"
-                            type="date"
-                            value="2018-10-10"
-                            label="Case Delivery Date"
-                            name="caseDeadline"
-                        />
-                        <TextField
-                            fullWidth={true}
-                            multiline={true}
-                            label="Case Notes"
-                            name="projectNotes"
-                            value={(this.state.project as any).notes}
-                            onChange={this.handleNotesChange}
-                        />
+                        <div>
+                            <TextField
+                                fullWidth={true}
+                                className={fieldSpacing}
+                                label="Case Name"
+                                name="projectName"
+                                value={(this.state.project! as any).name}
+                                onChange={this.handleProjectNameChange}
+                            />
+                            <TextField
+                                fullWidth={true}
+                                className={fieldSpacing}
+                                id="date"
+                                type="date"
+                                value="2018-10-10"
+                                label="Case Delivery Date"
+                                name="caseDeadline"
+                            />
+                            <TextField
+                                fullWidth={true}
+                                multiline={true}
+                                label="Case Notes"
+                                name="projectNotes"
+                                value={(this.state.project as any).notes}
+                                onChange={this.handleNotesChange}
+                            />
+                        </div>
+                        <div className={qrCodeButtonContainer}>
+                            <Button
+                                onClick={this.showQrCodeDialog}
+                                variant="contained"
+                                color="secondary">
+                                Print QR Code
+                            </Button>
+                        </div>
                     </Paper>
                 </div>
             </div>
         );
     }
+
+    private showQrCodeDialog = (): void => {
+        this.setState({
+            open: true,
+        })
+    }
+
+    // private handleClose = (): void => {
+    //     this.setState({
+    //         open: false,
+    //     })
+    // }
 
     private handleProjectNameChange = (event: any): void => {
         this.setState({
