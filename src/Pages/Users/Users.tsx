@@ -244,6 +244,10 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
 
     private handleSave = () => {
         const companyName = this.props.match.path.split('/')[2];
+        const scanCheckpoints: string[] = [];
+        this.state.additionalCheckpoints.forEach((checkpoint) => {
+            scanCheckpoints.push(checkpoint);
+        });
 
         Api.userApi.addUser(companyName, {
             name: this.state.newUserFullName,
@@ -251,6 +255,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
             type: this.state.newUserRole as any,
             id: '1',
             added: new Date(),
+            scanCheckpoints,
         })
 
         this.setState({
