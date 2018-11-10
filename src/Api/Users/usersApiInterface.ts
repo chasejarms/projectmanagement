@@ -1,8 +1,8 @@
 import { IUser } from '../../Models/user';
 
 export interface IUsersApi {
-    getUsers(companyName: string): IUser[];
-    addUser(companyName: string, user: IUser): IUser;
-    deleteUser(companyName: string, userId: string): boolean;
-    updateUser(companyName: string, user: IUser): IUser;
+    getUsers(companyName: string): Promise<IUser[]>;
+    addUser(companyName: string, user: IUser): Promise<IUser>;
+    deleteUser(companyName: string, userId: string): Promise<boolean>;
+    updateUser(companyName: string, user: IUser): Promise<IUser>;
 }

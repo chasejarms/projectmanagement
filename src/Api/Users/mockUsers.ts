@@ -8,31 +8,33 @@ export const companyUsersKey = `${mockApiKey}projectUsers`;
 
 export class MockUsersApi implements IUsersApi {
     constructor(defaultCompanyUsers?: boolean) {
-        const users = this.getUsers('does not matter');
-        const usersAlreadyExists = !!users && !!users.length;
-        // tslint:disable-next-line:no-console
-        console.log(usersAlreadyExists);
-        if (defaultCompanyUsers && !usersAlreadyExists) {
-            localStorage.setItem(
-                companyUsersKey,
-                JSON.stringify(mockUsers),
-            )
-        } else if (!usersAlreadyExists) {
-            localStorage.setItem(
-                companyUsersKey,
-                JSON.stringify([]),
-            )
-        }
+        this.getUsers('does not matter').then((users) => {
+            const usersAlreadyExists = !!users && !!users.length;
+            // tslint:disable-next-line:no-console
+            console.log(usersAlreadyExists);
+            if (defaultCompanyUsers && !usersAlreadyExists) {
+                localStorage.setItem(
+                    companyUsersKey,
+                    JSON.stringify(mockUsers),
+                )
+            } else if (!usersAlreadyExists) {
+                localStorage.setItem(
+                    companyUsersKey,
+                    JSON.stringify([]),
+                )
+            }
+        });
     }
 
-    public getUsers(companyName: string): IUser[] {
+    public getUsers(companyName: string): Promise<IUser[]> {
         const stringifiedUsers = localStorage.getItem(companyUsersKey);
         const users = JSON.parse(stringifiedUsers!);
-        return _.cloneDeep(users);
+        const clonedUsers = _.cloneDeep(users);
+        return Promise.resolve(clonedUsers);
     }
 
-    public addUser(companyName: string, user: IUser): IUser {
-        const users = this.getUsers('does not matter');
+    public async addUser(companyName: string, user: IUser): Promise<IUser> {
+        const users = await this.getUsers('does not matter');
         const addedUser = {
             ...user,
             id: Date.now().toString(),
@@ -45,8 +47,8 @@ export class MockUsersApi implements IUsersApi {
         return _.cloneDeep(addedUser);
     }
 
-    public deleteUser(companyName: string, userId: string): boolean {
-        const users = this.getUsers('does not matter');
+    public async deleteUser(companyName: string, userId: string): Promise<boolean> {
+        const users = await this.getUsers('does not matter');
         const usersWithoutDeletedUsers = users.filter((user) => {
             return user.id !== userId;
         });
@@ -57,8 +59,8 @@ export class MockUsersApi implements IUsersApi {
         return true;
     }
 
-    public updateUser(companyName: string, userToUpdate: IUser): IUser {
-        const users = this.getUsers('does not matter');
+    public async updateUser(companyName: string, userToUpdate: IUser): Promise<IUser> {
+        const users = await this.getUsers('does not matter');
         const usersWithUpdatedUser = users.map((user) => {
             if (userToUpdate.id !== user.id) {
                 return user;

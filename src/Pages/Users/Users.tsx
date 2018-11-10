@@ -42,15 +42,15 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
 
     public handleChange = handleChange(this);
 
-    public componentWillMount(): void {
+    public async componentWillMount(): Promise<void> {
         const companyName = this.props.match.path.split('/')[2];
         // tslint:disable-next-line:no-console
         console.log(companyName);
-        const users = Api.userApi.getUsers(companyName);
-        const workflow = Api.workflowApi.getWorkflow(companyName);
+        const users = await Api.userApi.getUsers(companyName);
+        // const workflow = Api.workflowApi.getWorkflow(companyName);
         this.setState({
             users,
-            checkpoints: workflow.checkpoints,
+            // checkpoints: workflow.checkpoints,
         });
     }
 
@@ -72,7 +72,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
 
         const mappedUsers = this.state.users.map((user: IUser) => (
                 <TableRow key={user.id} className={userRow}>
-                    <TableCell>{user.name}</TableCell>
+                    <TableCell>{user.fullName}</TableCell>
                     <TableCell>{user.email}</TableCell>
                     <TableCell>{user.type}</TableCell>
                 </TableRow>
@@ -250,7 +250,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
         });
 
         Api.userApi.addUser(companyName, {
-            name: this.state.newUserFullName,
+            fullName: this.state.newUserFullName,
             email: this.state.newUserEmail,
             type: this.state.newUserRole as any,
             id: '1',
@@ -258,12 +258,14 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
             scanCheckpoints,
         })
 
-        this.setState({
-            open: false,
-            newUserFullName: '',
-            newUserEmail: '',
-            newUserRole: 'Staff',
-            users: Api.userApi.getUsers(companyName),
+        Api.userApi.getUsers(companyName).then((users) => {
+            this.setState({
+                open: false,
+                newUserFullName: '',
+                newUserEmail: '',
+                newUserRole: 'Staff',
+                users,
+            });
         });
     }
 }
