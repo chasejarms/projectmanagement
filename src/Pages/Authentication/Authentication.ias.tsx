@@ -3,15 +3,13 @@ import { css } from 'emotion'
 import { RouteComponentProps } from 'react-router';
 
 export interface IAuthenticationPresentationState {
-    companyName?: string;
     fullName?: string;
+    companyName: string;
     email: string;
     password: string;
 }
 
-export interface IAuthenticationPresentationProps extends RouteComponentProps<{}>, WithTheme {
-  clearAdminState: () => void;
-}
+export interface IAuthenticationPresentationProps extends RouteComponentProps<{}>, WithTheme {}
 
 export const createAuthenticationClasses = (
   props: IAuthenticationPresentationProps,

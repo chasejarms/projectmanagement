@@ -18,9 +18,6 @@ export class AuthenticationPresentation extends React.Component<
         fullName: '',
     };
 
-    // private signUpFunctionName = 'createUserWithEmailAndPassword';
-    // private loginFunctionName = 'signInWithEmailAndPassword';
-
     private handleChange = handleChange(this);
 
     public render() {
@@ -96,8 +93,9 @@ export class AuthenticationPresentation extends React.Component<
     }
 
     private login = () => {
+        const modifiedCompanyName = this.state.companyName!.trim().toLowerCase();
         Api.authenticationApi.login(
-            this.state.companyName!,
+            modifiedCompanyName,
             this.state.email,
             this.state.password,
         ).then(() => {
@@ -109,8 +107,9 @@ export class AuthenticationPresentation extends React.Component<
     }
 
     private signup = () => {
+        const modifiedCompanyName = this.state.companyName!.trim().toLowerCase();
         Api.authenticationApi.signUp(
-            this.state.companyName!,
+            modifiedCompanyName,
             this.state.fullName!,
             this.state.email,
             this.state.password,
@@ -119,49 +118,14 @@ export class AuthenticationPresentation extends React.Component<
         });
     }
 
-    // private logout(): void {
-    //       firebase.auth().signOut().then(() => {
-    //         // tslint:disable-next-line:no-console
-    //         console.log('successfully signed out');
-    //       }).catch((error) => {
-    //         // tslint:disable-next-line:no-console
-    //         console.log(error);
-    //       });
-    // }
-
     private isLoginUrl(): boolean {
         return this.props.match.path === '/login';
     }
 
-    // private sharedAuthFunctionality(isLogin: boolean) {
-    //     const authFunctionName = isLogin ? this.loginFunctionName : this.signUpFunctionName;
-    //     firebase.auth()[authFunctionName](
-    //         this.state.email,
-    //         this.state.password,
-    //     ).then((userInfo: User) => {
-    //         // this.potentiallySetUserRole(authFunctionName, userInfo.uid);
-    //         this.setState({
-    //             email: '',
-    //             password: '',
-    //         });
-    //     })
-    //     .catch((error: any) => {
-    //         // tslint:disable-next-line:no-console
-    //         console.log(error);
-    //     });
-    // }
-
     private redirectToCompanyPage(): void {
-        
         const company = this.state.companyName || 'xactware';
         this.props.history.push(`company/${company}`);
     }
-
-    // private potentiallySetUserRole(authFunctionName: string, userId: string): void {
-    //     if (authFunctionName === this.signUpFunctionName) {
-    //         console.log('something');
-    //     }
-    // }
 }
 
 export const Authentication = withTheme()(AuthenticationPresentation);
