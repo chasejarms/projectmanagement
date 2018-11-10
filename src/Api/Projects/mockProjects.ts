@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import { slimProjects as mockSlimProjects } from './../../MockData/slimProjects';
 import { ICheckpoint } from './../../Models/checkpoint';
 import { IProject } from './../../Models/project';
-import { ISlimProjects } from './../../Models/slimProject';
+import { ISlimProject } from './../../Models/slimProject';
 import { mockApiKey } from './../mockApi.key';
 import { IProjectsApi } from './projectsInterface';
 
@@ -16,7 +16,7 @@ export class MockProjectsApi implements IProjectsApi {
         this.setUpSlimProjects(defaultProject, projectsAlreadyExist);
     }
 
-    public getSlimProjects(companyName: string): ISlimProjects[] {
+    public getSlimProjects(companyName: string): ISlimProject[] {
         const stringifiedSlimProjects = localStorage.getItem(slimProjectsKey);
         const slimProjects = JSON.parse(stringifiedSlimProjects!);
         return _.cloneDeep(slimProjects);
@@ -63,7 +63,7 @@ export class MockProjectsApi implements IProjectsApi {
     //         return existingSlimProject.projectId === project.id;
     //     })[0];
     //     const deadline = this.nextCheckpointDeadline(project);
-    //     const slimProjectToUpdate: ISlimProjects = {
+    //     const slimProjectToUpdate: ISlimProject = {
     //         ...existingProjectData,
     //         projectName: project.name,
     //         completionPercentage: this.completedCheckpoints(project),
@@ -88,7 +88,7 @@ export class MockProjectsApi implements IProjectsApi {
 
     private createSlimProjectFromProject(project: IProject): void {
         const deadline = this.nextCheckpointDeadline(project);
-        const slimProjectToUpdate: ISlimProjects = {
+        const slimProjectToUpdate: ISlimProject = {
             id: Date.now().toString(),
             projectId: project.id,
             projectName: project.name,
@@ -96,6 +96,7 @@ export class MockProjectsApi implements IProjectsApi {
             currentCheckpoint: this.currentCheckpoint(project),
             deadline,
             nextCheckpointDeadlinePretty: this.createPrettyDeadline(deadline),
+            showNewInfoFrom: null,
         }
 
         const existingSlimProjects = this.getSlimProjects('does not matter');

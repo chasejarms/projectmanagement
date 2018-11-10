@@ -1,10 +1,10 @@
 import { ICheckpoint } from './../../Models/checkpoint';
 import { IProject } from './../../Models/project';
-import { ISlimProjects } from './../../Models/slimProject';
+import { ISlimProject } from './../../Models/slimProject';
 import { IProjectsApi } from './projectsInterface';
 
 export class ProjectsApi implements IProjectsApi {
-    public getSlimProjects(companyName: string): ISlimProjects[] {
+    public getSlimProjects(companyName: string): ISlimProject[] {
         throw new Error("Method not implemented.");
     }
 

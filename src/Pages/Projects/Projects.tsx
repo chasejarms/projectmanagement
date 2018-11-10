@@ -11,6 +11,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import AddIcon from '@material-ui/icons/Add';
+import NotificationsIcon from '@material-ui/icons/Notifications';
 import * as React from 'react';
 import { withRouter } from 'react-router';
 import Api from '../../Api/api';
@@ -38,15 +39,22 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
             projectsPaper,
         } = createProjectsPresentationClasses(this.props, this.state);
 
-        const mappedProjects = this.state.slimProjects.map(slimProject => (
+        const mappedProjects = this.state.slimProjects.map(slimProject => {
+            const newInfoCell = slimProject.showNewInfoFrom === null ? <TableCell/> : (
+                <TableCell>
+                    <NotificationsIcon/>
+                </TableCell>
+            );
+
+            return (
                 <TableRow key={slimProject.id} onClick={this.navigateToProject(slimProject.projectId)} className={rowStyling}>
                     <TableCell>{slimProject.projectName}</TableCell>
                     <TableCell>{slimProject.currentCheckpoint}</TableCell>
                     <TableCell>{slimProject.nextCheckpointDeadlinePretty}</TableCell>
-                    <TableCell/>
+                    {newInfoCell}
                 </TableRow>
             )
-        )
+        })
 
         return (
             <div className={projectsContainer}>

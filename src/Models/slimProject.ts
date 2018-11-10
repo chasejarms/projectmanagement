@@ -1,4 +1,4 @@
-export interface ISlimProjects {
+export interface ISlimProject {
     id: string;
     projectId: string;
     projectName: string;
@@ -6,4 +6,5 @@ export interface ISlimProjects {
     currentCheckpoint: string;
     deadline: Date;
     nextCheckpointDeadlinePretty: string;
+    showNewInfoFrom: 'doctor' | 'lab' | null;
 }

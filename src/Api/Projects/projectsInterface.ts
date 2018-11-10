@@ -1,9 +1,9 @@
 import { ICheckpoint } from './../../Models/checkpoint';
 import { IProject } from './../../Models/project';
-import { ISlimProjects } from './../../Models/slimProject';
+import { ISlimProject } from './../../Models/slimProject';
 
 export interface IProjectsApi {
-    getSlimProjects(companyName: string): ISlimProjects[];
+    getSlimProjects(companyName: string): ISlimProject[];
     createProject(companyName: string, project: IProject): IProject;
     getProject(projectId: string): IProject;
     getProjectCheckpoints(companyName: string, projectId: string): ICheckpoint[];

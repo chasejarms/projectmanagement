@@ -35,18 +35,6 @@ export class AuthenticationPresentation extends React.Component<
             actionButton,
         } = createAuthenticationClasses(this.props, this.state);
 
-        const companyNameField = this.isLoginUrl() ? undefined : (
-            <TextField
-                className={textField}
-                autoFocus={true}
-                label="Company Name"
-                name="companyName"
-                value={this.state.companyName}
-                onChange={this.handleChange}
-                margin="normal"
-            />
-        )
-
         const fullNameField = this.isLoginUrl() ? undefined : (
             <TextField
                 className={textField}
@@ -61,7 +49,15 @@ export class AuthenticationPresentation extends React.Component<
         return (
             <div className={authenticationContainer}>
                 <div className={authenticationRow}>
-                    { companyNameField }
+                    <TextField
+                        className={textField}
+                        autoFocus={true}
+                        label="Company Name"
+                        name="companyName"
+                        value={this.state.companyName}
+                        onChange={this.handleChange}
+                        margin="normal"
+                    />
                 </div>
                 <div className={authenticationRow}>
                     { fullNameField }
@@ -69,7 +65,6 @@ export class AuthenticationPresentation extends React.Component<
                 <div className={authenticationRow}>
                     <TextField
                         className={textField}
-                        autoFocus={this.isLoginUrl()}
                         label="Email"
                         name="email"
                         value={this.state.email}
@@ -101,10 +96,16 @@ export class AuthenticationPresentation extends React.Component<
     }
 
     private login = () => {
-
-        this.redirectToCompanyPage();
-        // this.redirectToCompanyPage();
-        // this.sharedAuthFunctionality(true);
+        Api.authenticationApi.login(
+            this.state.companyName!,
+            this.state.email,
+            this.state.password,
+        ).then(() => {
+            this.redirectToCompanyPage();
+        }).catch((error) => {
+            // tslint:disable-next-line:no-console
+            console.log('there was an error: ', error);
+        });
     }
 
     private signup = () => {
@@ -113,8 +114,9 @@ export class AuthenticationPresentation extends React.Component<
             this.state.fullName!,
             this.state.email,
             this.state.password,
-        );
-        this.redirectToCompanyPage();
+        ).then(() => {
+            this.redirectToCompanyPage();
+        });
     }
 
     // private logout(): void {
