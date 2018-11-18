@@ -1,8 +1,8 @@
 import { companyUsersKey } from '../Users/mockUsers';
-import { IAuthenticationApi } from './authenticationInterface';
+import { IAuthenticationApi, IAuthenticationMessage } from './authenticationInterface';
 
 export class MockAuthenticationApi implements IAuthenticationApi {
-    public signUp(companyName: string, fullName: string, email: string, password: string): Promise<boolean> {
+    public signUp(companyName: string, fullName: string, email: string, password: string): Promise<IAuthenticationMessage> {
         const stringifiedUsers = localStorage.getItem(companyUsersKey);
         const users = JSON.parse(stringifiedUsers!);
         const usersWithSignedUpUser = users.concat([
@@ -16,7 +16,10 @@ export class MockAuthenticationApi implements IAuthenticationApi {
         ]);
         const usersToSaveToStorage = JSON.stringify(usersWithSignedUpUser);
         localStorage.setItem(companyUsersKey, usersToSaveToStorage);
-        return Promise.resolve(true);
+        return Promise.resolve({
+            wasSuccessful: true,
+            message: 'Success',
+        });
     }
 
     public login(): Promise<boolean> {

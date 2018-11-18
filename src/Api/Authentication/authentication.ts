@@ -1,5 +1,5 @@
 import firebase, { db } from '../../firebase';
-import { IAuthenticationApi } from './authenticationInterface';
+import { IAuthenticationApi, IAuthenticationMessage } from './authenticationInterface';
 
 export class AuthenticationApi implements IAuthenticationApi {
     public async signUp(
@@ -7,16 +7,43 @@ export class AuthenticationApi implements IAuthenticationApi {
         fullName: string,
         email: string,
         password: string,
-    ): Promise<boolean> {
+    ): Promise<IAuthenticationMessage> {
         const modifiedCompanyName = companyName.trim().toLowerCase();
-        await firebase.auth().createUserWithEmailAndPassword(email, password);
-        await db.collection('companies').doc(modifiedCompanyName).collection('users').add({
-            fullName,
-            email,
-            type: 'Admin',
-            scanCheckpoints: [],
+        const signUp = firebase.functions().httpsCallable('signUp');
+        try {
+            await signUp({
+                companyName: modifiedCompanyName,
+                fullName,
+                email,
+                password,
+            });
+        }  catch (error) {
+            // tslint:disable-next-line:no-console
+            console.log(error);
+            Promise.reject({
+                wasSuccessful: false,
+                message: 'Something went wrong with signup',
+            })
+        }
+
+        try {
+            await firebase.auth().signInWithEmailAndPassword(
+                email,
+                password,
+            )
+        } catch (error) {
+            // tslint:disable-next-line:no-console
+            console.log(error);
+            Promise.reject({
+                wasSuccessful: false,
+                message: 'Something went wrong with login',
+            })
+        }
+
+        return Promise.resolve({
+            wasSuccessful: true,
+            message: 'Success',
         });
-        return Promise.resolve(true);
     }
 
     public async login(

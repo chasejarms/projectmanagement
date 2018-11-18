@@ -107,14 +107,16 @@ export class AuthenticationPresentation extends React.Component<
     }
 
     private signup = () => {
-        const modifiedCompanyName = this.state.companyName!.trim().toLowerCase();
         Api.authenticationApi.signUp(
-            modifiedCompanyName,
+            this.state.companyName,
             this.state.fullName!,
             this.state.email,
             this.state.password,
         ).then(() => {
             this.redirectToCompanyPage();
+        }).catch((message) => {
+            // tslint:disable-next-line:no-console
+            console.log(message);
         });
     }
 

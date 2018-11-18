@@ -13,9 +13,11 @@ export class UsersApi implements IUsersApi {
                 id: querySnapshot.id,
             });
         });
+
+        return users;
     }
 
-    public addUser(companyName: string, user: IUser): Promise<IUser> {
+    public async addUser(companyName: string, user: IUser): Promise<IUser> {
         throw new Error("Method not implemented.");
     }
 
