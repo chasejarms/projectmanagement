@@ -19,7 +19,7 @@ exports.signUpLocal = (passedInAdmin) => functions.https.onCall((data, context) 
         throw new functions.https.HttpsError('already-exists', 'The company you\'re trying to create already exists.');
     }
     // create the company
-    passedInAdmin.firestore().collection('companies').doc(data.companyName).set({
+    yield passedInAdmin.firestore().collection('companies').doc(data.companyName).set({
         companyName: data.companyName,
     });
     console.log(`${data.companyName} was created.`);
@@ -35,7 +35,12 @@ exports.signUpLocal = (passedInAdmin) => functions.https.onCall((data, context) 
             password: data.password,
         });
     }
-    yield passedInAdmin.firestore().collection('companies').doc(data.companyName).collection('users').add({
+    yield passedInAdmin.firestore()
+        .collection('companies')
+        .doc(data.companyName)
+        .collection('users')
+        .doc(user.uid)
+        .set({
         fullName: data.fullName,
         email: data.email,
         type: 'Admin',

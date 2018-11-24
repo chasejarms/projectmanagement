@@ -13,7 +13,7 @@ export const signUpLocal = (passedInAdmin: admin.app.App) => functions.https.onC
     }
 
     // create the company
-    passedInAdmin.firestore().collection('companies').doc(data.companyName).set({
+    await passedInAdmin.firestore().collection('companies').doc(data.companyName).set({
         companyName: data.companyName,
     });
     console.log(`${data.companyName} was created.`);
@@ -31,12 +31,17 @@ export const signUpLocal = (passedInAdmin: admin.app.App) => functions.https.onC
         });
     }
 
-    await passedInAdmin.firestore().collection('companies').doc(data.companyName).collection('users').add({
-        fullName: data.fullName,
-        email: data.email,
-        type: 'Admin',
-        scanCheckpoints: [],
-    });
+    await passedInAdmin.firestore()
+        .collection('companies')
+        .doc(data.companyName)
+        .collection('users')
+        .doc(user.uid)
+        .set({
+            fullName: data.fullName,
+            email: data.email,
+            type: 'Admin',
+            scanCheckpoints: [],
+        });
 
     return { user };
 });

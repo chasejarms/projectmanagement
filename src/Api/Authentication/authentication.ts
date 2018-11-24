@@ -52,16 +52,25 @@ export class AuthenticationApi implements IAuthenticationApi {
         password: string,
     ): Promise<any> {
         const modifiedCompanyName = companyName.trim().toLowerCase();
-        let response: any;
+        let userCredential: firebase.auth.UserCredential;
         try {
-            response = await firebase.auth().signInWithEmailAndPassword(email, password);
-        } catch(error) {
+            userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+        } catch (error) {
+            // tslint:disable-next-line:no-console
+            console.log(error);
             return Promise.reject(error.message);
         }
 
-        const userInDatabaseResponse = await db.collection('companies').doc(modifiedCompanyName).collection('users').doc(response.user!.uid).get();
+        // tslint:disable-next-line:no-console
+        console.log(userCredential);
 
-        if (userInDatabaseResponse.exists) {
+        const userDocumentSnapshot = await db.collection('companies')
+            .doc(modifiedCompanyName)
+            .collection('users')
+            .doc(userCredential.user!.uid)
+            .get();
+
+        if (userDocumentSnapshot.exists) {
             return Promise.resolve();
         } else {
             return Promise.reject('The user does not exist on that company');
