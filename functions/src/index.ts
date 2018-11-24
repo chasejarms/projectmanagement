@@ -20,6 +20,7 @@ export const signUp = functions.https.onCall(async(data, context) => {
     // create the company
     await admin.firestore().collection('companies').doc(data.companyName).set({
         companyName: data.companyName,
+        caseNotesTemplate: '',
     });
     console.log(`${data.companyName} was created.`);
 
