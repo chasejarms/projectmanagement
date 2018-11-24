@@ -11,15 +11,16 @@ export const largeProjectsKey = `${mockApiKey}largeProjects`;
 
 export class MockProjectsApi implements IProjectsApi {
     constructor(defaultProject: boolean) {
-        const projects = this.getSlimProjects('does not matter');
-        const projectsAlreadyExist = !!projects && !!projects.length;
-        this.setUpSlimProjects(defaultProject, projectsAlreadyExist);
+        this.getSlimProjects('does not matter').then((projects) => {
+            const projectsAlreadyExist = !!projects && !!projects.length;
+            this.setUpSlimProjects(defaultProject, projectsAlreadyExist);
+        });
     }
 
-    public getSlimProjects(companyName: string): ISlimProject[] {
+    public getSlimProjects(companyName: string): Promise<ISlimProject[]> {
         const stringifiedSlimProjects = localStorage.getItem(slimProjectsKey);
         const slimProjects = JSON.parse(stringifiedSlimProjects!);
-        return _.cloneDeep(slimProjects);
+        return Promise.resolve(_.cloneDeep(slimProjects));
     }
 
     public createProject(companyName: string, project: IProject): IProject {
@@ -86,7 +87,7 @@ export class MockProjectsApi implements IProjectsApi {
     //     );
     // }
 
-    private createSlimProjectFromProject(project: IProject): void {
+    private async createSlimProjectFromProject(project: IProject): Promise<void> {
         const deadline = this.nextCheckpointDeadline(project);
         const slimProjectToUpdate: ISlimProject = {
             id: Date.now().toString(),
@@ -97,7 +98,7 @@ export class MockProjectsApi implements IProjectsApi {
             showNewInfoFrom: null,
         }
 
-        const existingSlimProjects = this.getSlimProjects('does not matter');
+        const existingSlimProjects = await this.getSlimProjects('does not matter');
         const slimProjectsWithNewProject = existingSlimProjects.concat([slimProjectToUpdate]);
         const stringifiedSlimProjects = JSON.stringify(slimProjectsWithNewProject);
         localStorage.setItem(

@@ -20,10 +20,12 @@ import { createProjectsPresentationClasses, IProjectsPresentationProps, IProject
 export class ProjectsPresentation extends React.Component<IProjectsPresentationProps, IProjectsPresentationState> {
     public state: IProjectsPresentationState = {}
 
-    public componentWillMount(): void {
-        const slimProjects = Api.projectsApi.getSlimProjects('does not matter');
-        this.setState({
-            slimProjects,
+    public async componentWillMount(): Promise<void> {
+        const companyName = this.props.match.path.split('/')[2];
+        Api.projectsApi.getSlimProjects(companyName).then((slimProjects) => {
+            this.setState({
+                slimProjects,
+            })
         });
     }
 
