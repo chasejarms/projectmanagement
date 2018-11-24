@@ -43,8 +43,14 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
 
     public handleChange = handleChange(this);
 
+    constructor(props: IWorkflowPresentationProps) {
+        super(props);
+        this.handleSave = this.handleSave.bind(this);
+    }
+
     public componentWillMount(): void {
-        Api.workflowApi.getWorkflow('any name').then((workflow) => {
+        const companyName = this.props.match.path.split('/')[2];
+        Api.workflowApi.getWorkflow(companyName).then((workflow) => {
             this.setState({
                 workflow,
             });
@@ -188,18 +194,16 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
         }
     }
 
-    private handleCheckpointDelete = (index: number) => {
-        return () => {
+    private handleCheckpointDelete(index: number) {
+        return async() => {
+            const companyName = this.props.match.path.split('/')[2];
             const updatedCheckpoints = this.state.workflow!.filter((checkpoint, compareIndex) => {
                 return compareIndex !== index;
             });
-            Api.workflowApi.updateWorkflow('does not matter', updatedCheckpoints);
-
-            Api.workflowApi.getWorkflow('does not matter').then((workflow) => {
-                this.setState({
-                    open: false,
-                    workflow,
-                });
+            await Api.workflowApi.updateWorkflow(companyName, updatedCheckpoints);
+            this.setState({
+                open: false,
+                workflow: updatedCheckpoints,
             });
         }
     }
@@ -210,7 +214,7 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
         })
     }
 
-    private handleSave = () => {
+    private async handleSave() {
         let newCheckpoints: IWorkflowCheckpoint[];
         const newCheckpoint: IWorkflowCheckpoint = {
             name: this.state.checkpointName,
@@ -229,13 +233,12 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
             newCheckpoints = this.state.workflow!.concat([newCheckpoint])
         }
 
-        Api.workflowApi.updateWorkflow('does not matter', newCheckpoints)
+        const companyName = this.props.match.path.split('/')[2];
 
-        Api.workflowApi.getWorkflow('does not matter').then((workflow) => {
-            this.setState({
-                open: false,
-                workflow,
-            });
+        await Api.workflowApi.updateWorkflow(companyName, newCheckpoints)
+        this.setState({
+            open: false,
+            workflow: newCheckpoints,
         });
     }
 }

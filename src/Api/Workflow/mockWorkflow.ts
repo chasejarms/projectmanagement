@@ -16,10 +16,10 @@ export class MockWorkflowApi implements IWorkflowApi {
         return Promise.resolve(workflow);
     }
 
-    public async updateWorkflow(companyName: string, newWorkflow: IWorkflow): Promise<IWorkflow> {
+    public async updateWorkflow(companyName: string, newWorkflow: IWorkflow): Promise<void> {
         const stringifiedWorkflow = JSON.stringify(newWorkflow);
         localStorage.setItem(workflowKey, stringifiedWorkflow);
-        return Promise.resolve(newWorkflow);
+        return Promise.resolve();
     }
 
     private async mockWorkflowSetup(defaultWorkflow?: boolean): Promise<void> {

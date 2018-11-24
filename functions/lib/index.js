@@ -27,6 +27,7 @@ exports.signUp = functions.https.onCall((data, context) => __awaiter(this, void 
     yield admin.firestore().collection('companies').doc(data.companyName).set({
         companyName: data.companyName,
         caseNotesTemplate: '',
+        workflow: [],
     });
     console.log(`${data.companyName} was created.`);
     let user;
