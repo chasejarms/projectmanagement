@@ -5,10 +5,10 @@ import { ICheckpointsApi } from './checkpointsInterface';
 export class MockCheckpointsApi implements ICheckpointsApi {
     constructor(public workflowApi?: IWorkflowApi) {}
 
-    public getCheckpointsForProjectCreation(companyName: string): ICheckpoint[] {
-        const workflow = this.workflowApi!.getWorkflow(companyName);
+    public async getCheckpointsForProjectCreation(companyName: string): Promise<ICheckpoint[]> {
+        const workflow = await this.workflowApi!.getWorkflow(companyName);
 
-        const initialCheckpoints: ICheckpoint[] = workflow.checkpoints.map((workflowCheckpoint, index) => {
+        const initialCheckpoints: ICheckpoint[] = workflow.map((workflowCheckpoint, index) => {
 
             const checkpoint: ICheckpoint = {
                 name: workflowCheckpoint.name,

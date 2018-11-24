@@ -1,5 +1,5 @@
 import { ICheckpoint } from './../../Models/checkpoint';
 
 export interface ICheckpointsApi {
-    getCheckpointsForProjectCreation(companyName: string): ICheckpoint[];
+    getCheckpointsForProjectCreation(companyName: string): Promise<ICheckpoint[]>;
 }

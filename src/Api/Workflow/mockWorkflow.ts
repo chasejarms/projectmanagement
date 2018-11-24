@@ -7,8 +7,24 @@ export const workflowKey = `${mockApiKey}workflow`;
 
 export class MockWorkflowApi implements IWorkflowApi {
     constructor(defaultWorkflow?: boolean) {
-        const workflow = this.getWorkflow('does not matter');
-        const workflowAlreadyExists = !!workflow && !!workflow.checkpoints && !!workflow.checkpoints.length;
+        this.mockWorkflowSetup(defaultWorkflow);
+    }
+
+    public async getWorkflow(companyName: string): Promise<IWorkflow> {
+        const stringifiedWorkflow = localStorage.getItem(workflowKey);
+        const workflow = JSON.parse(stringifiedWorkflow!);
+        return Promise.resolve(workflow);
+    }
+
+    public async updateWorkflow(companyName: string, newWorkflow: IWorkflow): Promise<IWorkflow> {
+        const stringifiedWorkflow = JSON.stringify(newWorkflow);
+        localStorage.setItem(workflowKey, stringifiedWorkflow);
+        return Promise.resolve(newWorkflow);
+    }
+
+    private async mockWorkflowSetup(defaultWorkflow?: boolean): Promise<void> {
+        const workflow = await this.getWorkflow('does not matter');
+        const workflowAlreadyExists = !!workflow && !!workflow.length;
         if (defaultWorkflow && !workflowAlreadyExists) {
             localStorage.setItem(
                 workflowKey,
@@ -26,22 +42,6 @@ export class MockWorkflowApi implements IWorkflowApi {
                 })
             )
         }
-    }
-
-    public getWorkflow(companyName: string): IWorkflow {
-        const stringifiedWorkflow = localStorage.getItem(workflowKey);
-        const workflow = JSON.parse(stringifiedWorkflow!);
-        return workflow;
-    }
-
-    public updateWorkflow(companyName: string, newWorkflow: IWorkflow): IWorkflow {
-        const { id } = this.getWorkflow(companyName);
-        const stringifiedWorkflow = JSON.stringify({
-            ...newWorkflow,
-            id,
-        });
-        localStorage.setItem(workflowKey, stringifiedWorkflow);
-        return newWorkflow;
     }
 
 }

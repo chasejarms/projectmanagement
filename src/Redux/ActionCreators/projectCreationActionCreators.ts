@@ -100,9 +100,10 @@ export const deleteProjectUserActionCreator = (index: number): IProjectCreationD
 }
 
 export const getInitialCheckpoints = (dispatch: Dispatch) => {
-    const initialCheckpoints = api.checkpointsApi.getCheckpointsForProjectCreation('anything');
-    const receiveInitialCheckpointAction = receiveInitialCheckpointsCreator(initialCheckpoints);
-    dispatch(receiveInitialCheckpointAction);
+    api.checkpointsApi.getCheckpointsForProjectCreation('anything').then((initialCheckpoints) => {
+        const receiveInitialCheckpointAction = receiveInitialCheckpointsCreator(initialCheckpoints);
+        dispatch(receiveInitialCheckpointAction);
+    });
 }
 
 export const updateCheckpointCreation = (index: number, checkpoint: ICheckpoint): IProjectCreationUpdateCheckpointAction => {

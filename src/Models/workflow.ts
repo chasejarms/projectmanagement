@@ -1,7 +1,4 @@
-export interface IWorkflow {
-    id: string;
-    checkpoints: IWorkflowCheckpoint[];
-}
+export type IWorkflow = IWorkflowCheckpoint[];
 
 export interface IWorkflowCheckpoint {
     name: string;

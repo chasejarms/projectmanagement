@@ -44,10 +44,11 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
     public handleChange = handleChange(this);
 
     public componentWillMount(): void {
-        const workflow = Api.workflowApi.getWorkflow('any name');
-        this.setState({
-            workflow,
-        })
+        Api.workflowApi.getWorkflow('any name').then((workflow) => {
+            this.setState({
+                workflow,
+            });
+        });
     }
 
     public render() {
@@ -64,7 +65,7 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
             workflowPaper,
         } = createWorkflowPresentationClasses(this.props, this.state);
 
-        const mappedCheckpoints = this.state.workflow.checkpoints.map((checkpoint, index) => (
+        const mappedCheckpoints = this.state.workflow.map((checkpoint, index) => (
                 <TableRow key={index} onClick={this.openCheckpointDialog(checkpoint, index)} className={workflowRow}>
                     <TableCell>{checkpoint.name}</TableCell>
                     <TableCell>{checkpoint.estimatedCompletionTime}</TableCell>
@@ -189,19 +190,16 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
 
     private handleCheckpointDelete = (index: number) => {
         return () => {
-            const updatedCheckpoints = this.state.workflow!.checkpoints.filter((checkpoint, compareIndex) => {
+            const updatedCheckpoints = this.state.workflow!.filter((checkpoint, compareIndex) => {
                 return compareIndex !== index;
             });
-            Api.workflowApi.updateWorkflow('does not matter', {
-                id: '',
-                checkpoints: updatedCheckpoints,
-            });
+            Api.workflowApi.updateWorkflow('does not matter', updatedCheckpoints);
 
-            const workflow = Api.workflowApi.getWorkflow('does not matter');
-
-            this.setState({
-                open: false,
-                workflow,
+            Api.workflowApi.getWorkflow('does not matter').then((workflow) => {
+                this.setState({
+                    open: false,
+                    workflow,
+                });
             });
         }
     }
@@ -220,7 +218,7 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
             visibleToDoctor: this.state.visibleToDoctor,
         }
         if (this.state.isUpdate) {
-            newCheckpoints = this.state.workflow!.checkpoints.map((checkpoint, compareIndex) => {
+            newCheckpoints = this.state.workflow!.map((checkpoint, compareIndex) => {
                 if (compareIndex === this.state.index) {
                     return newCheckpoint;
                 } else {
@@ -228,19 +226,16 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
                 }
             });
         } else {
-            newCheckpoints = this.state.workflow!.checkpoints.concat([newCheckpoint])
+            newCheckpoints = this.state.workflow!.concat([newCheckpoint])
         }
 
-        Api.workflowApi.updateWorkflow('does not matter', {
-            id: '',
-            checkpoints: newCheckpoints,
-        })
+        Api.workflowApi.updateWorkflow('does not matter', newCheckpoints)
 
-        const workflow = Api.workflowApi.getWorkflow('does not matter');
-
-        this.setState({
-            open: false,
-            workflow,
+        Api.workflowApi.getWorkflow('does not matter').then((workflow) => {
+            this.setState({
+                open: false,
+                workflow,
+            });
         });
     }
 }
