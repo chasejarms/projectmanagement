@@ -46,11 +46,12 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                 </TableCell>
             );
 
+            const prettyDeadline = this.makeDeadlinePretty(slimProject.deadline);
             return (
                 <TableRow key={slimProject.id} onClick={this.navigateToProject(slimProject.projectId)} className={rowStyling}>
                     <TableCell>{slimProject.projectName}</TableCell>
                     <TableCell>{slimProject.currentCheckpoint}</TableCell>
-                    <TableCell>{slimProject.nextCheckpointDeadlinePretty}</TableCell>
+                    <TableCell>{prettyDeadline}</TableCell>
                     {newInfoCell}
                 </TableRow>
             )
@@ -96,7 +97,27 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         )
     }
 
-    private navigateToProject(projectId: string): () => void{
+    private makeDeadlinePretty = (date: Date): string => {
+        const today = new Date();
+        const todayCalendarDay = today.getDate() + 1;
+        const tomorrowCalendarDay = today.getDate() + 2;
+
+        const dateCalendarDay = date.getDate() + 1;
+        const tomorrowDateCalendarDay = date.getDate() + 2;
+
+        if (todayCalendarDay === dateCalendarDay) {
+            return 'Today';
+        } else if (tomorrowCalendarDay === tomorrowDateCalendarDay) {
+            return 'Tomorrow';
+        } else {
+            const dateCalendarMonth = today.getMonth() + 1;
+            const dateCalendarYear = today.getFullYear();
+
+            return `${dateCalendarMonth}/${dateCalendarDay}/${dateCalendarYear}`;
+        }
+    }
+
+    private navigateToProject(projectId: string): () => void {
         return () => {
             const postRoute = `${this.props.location.pathname}/project/${projectId}`;
             this.props.history.push(postRoute);

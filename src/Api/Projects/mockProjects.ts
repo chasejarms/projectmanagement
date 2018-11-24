@@ -92,10 +92,8 @@ export class MockProjectsApi implements IProjectsApi {
             id: Date.now().toString(),
             projectId: project.id,
             projectName: project.name,
-            completionPercentage: this.completedCheckpoints(project),
             currentCheckpoint: this.currentCheckpoint(project),
             deadline,
-            nextCheckpointDeadlinePretty: this.createPrettyDeadline(deadline),
             showNewInfoFrom: null,
         }
 
@@ -118,15 +116,6 @@ export class MockProjectsApi implements IProjectsApi {
         return project;
     }
 
-    private completedCheckpoints(project: IProject): number {
-        const completedCheckpoints = project.checkpoints.filter((checkpoint) => {
-            return checkpoint.complete;
-        }).length;
-        const allCheckpoints = project.checkpoints.length;
-
-        return Math.round(completedCheckpoints / allCheckpoints);
-    }
-
     private currentCheckpoint(project: IProject): string {
         // tslint:disable-next-line:prefer-for-of
         for (let i = 0; i < project.checkpoints.length; i++) {
@@ -140,13 +129,5 @@ export class MockProjectsApi implements IProjectsApi {
 
     private nextCheckpointDeadline(project: IProject): Date {
         return new Date();
-    }
-
-    private createPrettyDeadline(deadline: Date): string {
-        const day = deadline.getDate();
-        const month = deadline.getMonth() + 1;
-        const year = deadline.getFullYear();
-
-        return `${month}/${day}/${year}`;
     }
 }
