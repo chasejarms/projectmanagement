@@ -1,7 +1,9 @@
 import { css } from 'emotion';
+import { RouteComponentProps } from 'react-router';
 
 // tslint:disable-next-line:no-empty-interface
-export interface ICaseNotesTemplateProps {}
+
+export interface ICaseNotesTemplateProps extends RouteComponentProps<any> {}
 
 // tslint:disable-next-line:no-empty-interface
 export interface ICaseNotesTemplateState {

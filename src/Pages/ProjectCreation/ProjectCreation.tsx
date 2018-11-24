@@ -58,9 +58,11 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
 
     public componentWillMount = (): void => {
         this.props.getInitialProjectCreationCheckpoints();
-        const caseNotes = Api.caseNotesApi.getCaseNotes('does not matter');
-        this.setState({
-            projectNotes: caseNotes,
+        const companyName = this.props.match.path.split('/')[2];
+        Api.caseNotesApi.getCaseNotes(companyName).then((caseNotes) => {
+            this.setState({
+                projectNotes: caseNotes,
+            });
         });
     }
 

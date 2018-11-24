@@ -6,18 +6,21 @@ import {
     Typography,
 } from '@material-ui/core';
 
+import { withRouter } from 'react-router-dom'
 import Api from '../../Api/api';
 import { createCaseNotesTemplateClasses, ICaseNotesTemplateProps, ICaseNotesTemplateState } from './CaseNotesTemplate.ias';
 
-export class CaseNotesTemplate extends React.Component<ICaseNotesTemplateProps, ICaseNotesTemplateState> {
+export class CaseNotesTemplatePresentation extends React.Component<ICaseNotesTemplateProps, ICaseNotesTemplateState> {
     public state: ICaseNotesTemplateState = {
         notes: '',
     };
 
     public componentWillMount = (): void => {
-        const caseNotes = Api.caseNotesApi.getCaseNotes('does not matter');
-        this.setState({
-            notes: caseNotes,
+        const companyName = this.props.match.path.split('/')[2];
+        Api.caseNotesApi.getCaseNotes(companyName).then((caseNotes) => {
+            this.setState({
+                notes: caseNotes,
+            });
         });
     }
 
@@ -52,10 +55,14 @@ export class CaseNotesTemplate extends React.Component<ICaseNotesTemplateProps, 
     }
 
     private handleCaseNoteChange = (event: any): void => {
+        const companyName = this.props.match.path.split('/')[2];
+
+        Api.caseNotesApi.updateCaseNotes(companyName, event.target.value);
+
         this.setState({
             notes: event.target.value,
         });
-
-        Api.caseNotesApi.updateCaseNotes('does not matter', event.target.value);
     }
 }
+
+export const CaseNotesTemplate = withRouter(CaseNotesTemplatePresentation);
