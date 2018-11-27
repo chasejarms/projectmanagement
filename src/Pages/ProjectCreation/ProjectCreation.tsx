@@ -7,6 +7,7 @@ import {
     TextField,
     withTheme,
 } from '@material-ui/core';
+import {DateFormatInput} from 'material-ui-next-pickers'
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
@@ -14,8 +15,8 @@ import { Dispatch } from 'redux';
 import Api from '../../Api/api';
 import { IProject } from '../../Models/project';
 import { IProjectCreationProjectUser } from '../../Models/projectUser';
-import { deleteProjectUserActionCreator, getInitialCheckpoints, setProjectNameCreator, updateProjectUserActionCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
 import { addProjectUserActionCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
+import { deleteProjectUserActionCreator, getInitialCheckpoints, setProjectNameCreator, updateProjectUserActionCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
 import { IAppState } from '../../Redux/Reducers/rootReducer';
 import { handleChange } from '../../Utils/handleChange';
 import {
@@ -174,19 +175,10 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         )
     }
 
-    private formatDateForPicker(date: Date): string {
-        let day = date.getDate().toString();
-        let month = (date.getMonth() + 1).toString();
-        if (day.length === 1) {
-            day = `0${day}`;
-        }
-
-        if (month.length === 1) {
-            month = `0${month}`;
-        }
-        const year = date.getFullYear();
-
-        return `${year}-${month}-${day}`;
+    private handleCaseDeadlineChange = (newCaseDeadline: Date): void => {
+        this.setState({
+            caseDeadline: newCaseDeadline,
+        })
     }
 
     private getStepActiveContent(): any {
@@ -216,18 +208,17 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                 </div>
             )
         } else if (this.state.activeStep === 1) {
-            const value = this.formatDateForPicker(new Date());
             return (
                 <div className={`${stepperContent} ${projectNameContainer}`}>
                     <Paper>
-                        <TextField
-                            className={projectName}
-                            id="date"
-                            type="date"
-                            value={value}
+                        <DateFormatInput
+                            fullWidth={true}
                             label="Case Delivery Date"
+                            className={projectName}
                             name="caseDeadline"
-                            onChange={this.handleChange}
+                            value={this.state.caseDeadline}
+                            onChange={this.handleCaseDeadlineChange}
+                            min={new Date()}
                         />
                     </Paper>
                 </div>
