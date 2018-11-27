@@ -10,7 +10,7 @@ import { IProjectCreationSliceOfState } from '../../Redux/Reducers/projectCreati
 export interface IProjectCreationProps extends WithTheme, RouteComponentProps<{}> {
     projectCreation: IProjectCreationSliceOfState;
     updateProjectName: (projectName: string) => void;
-    getInitialProjectCreationCheckpoints: () => void;
+    getInitialProjectCreationCheckpoints: (companyName: string) => void;
     addProjectUser: (projectUser: IProjectCreationProjectUser) => void;
     updateProjectUser: (projectUser: IProjectCreationProjectUser, index: number) => void;
     deleteProjectUser: (index: number) => void;

@@ -57,7 +57,6 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
     }
 
     public componentWillMount = (): void => {
-        this.props.getInitialProjectCreationCheckpoints();
         const companyName = this.props.match.path.split('/')[2];
         Api.caseNotesApi.getCaseNotes(companyName).then((caseNotes) => {
             this.setState({
@@ -125,8 +124,8 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             doctor: { name: 'Bob' } as any,
             complete: false,
         };
-        Api.projectsApi.createProject('does not matter', projectToCreate);
         const companyName = this.props.match.path.split('/')[2];
+        Api.projectsApi.createProject(companyName, projectToCreate);
         this.props.history.push(`/company/${companyName}/project/${projectToCreate.id}`);
     }
 
@@ -271,8 +270,9 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
         const projectNameUpdateAction = setProjectNameCreator(projectName);
         dispatch(projectNameUpdateAction);
     },
-    getInitialProjectCreationCheckpoints: () => {
-        dispatch(getInitialCheckpoints as any);
+    getInitialProjectCreationCheckpoints: (companyName: string) => {
+        const fetchInitialCheckpoints = getInitialCheckpoints(companyName);
+        dispatch(fetchInitialCheckpoints as any);
     },
     addProjectUser: (projectUser: IProjectCreationProjectUser) => {
         const projectUserAction = addProjectUserActionCreator(projectUser);

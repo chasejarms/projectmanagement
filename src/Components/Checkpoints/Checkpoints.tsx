@@ -18,7 +18,6 @@ import {
     Typography,
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
-import InfoOutlineIcon from '@material-ui/icons/InfoOutlined';
 import * as _ from 'lodash';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -49,22 +48,15 @@ export class CheckpointsPresentation extends React.Component<ICheckpointsProps, 
             checkpointRow,
             checkpointsPaper,
             nameAndDescription,
-            infoIcon,
             checkpointActionButtons,
         } = createCheckpointsClasses(this.props, this.state);
 
         const mappedCheckpoints = this.props.checkpoints.map((checkpoint, index) => {
-                const infoOutline = !checkpoint.description ? undefined : (
-                    <Tooltip title={checkpoint.description} placement="right">
-                        <InfoOutlineIcon className={infoIcon}/>
-                    </Tooltip>
-                );
                 return (
                     <TableRow key={index} onClick={this.openCheckpointDialog(checkpoint, index)} className={checkpointRow}>
                         <TableCell>
                             <div className={nameAndDescription}>
                                 {checkpoint.name}
-                                {infoOutline}
                             </div>
                         </TableCell>
                         <TableCell>{'1'}</TableCell>
@@ -176,7 +168,6 @@ export class CheckpointsPresentation extends React.Component<ICheckpointsProps, 
             this.setState({
                 open: true,
                 checkpointName: checkpoint.name,
-                checkpointDescription: checkpoint.description!,
                 isUpdate: true,
                 index,
             });
@@ -201,12 +192,10 @@ export class CheckpointsPresentation extends React.Component<ICheckpointsProps, 
     private handleSave = () => {
         const newCheckpoint: ICheckpoint = {
             name: this.state.checkpointName,
-            description: this.state.checkpointDescription,
             complete: false,
-            id: Date.now().toString(),
-            projectId: '1',
             estimatedCompletionTime: '1 day',
-            visibleToCustomer: true,
+            visibleToDoctor: true,
+            completedBy: null,
         }
 
         if (this.state.isUpdate) {

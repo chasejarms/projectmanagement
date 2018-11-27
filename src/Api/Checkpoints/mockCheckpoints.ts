@@ -13,10 +13,9 @@ export class MockCheckpointsApi implements ICheckpointsApi {
             const checkpoint: ICheckpoint = {
                 name: workflowCheckpoint.name,
                 estimatedCompletionTime: '1 days',
-                visibleToCustomer: true,
+                visibleToDoctor: true,
                 complete: false,
-                projectId: '1',
-                id: '1',
+                completedBy: null,
             };
 
             return checkpoint;

@@ -1,9 +1,7 @@
 export interface ICheckpoint {
     name: string;
     estimatedCompletionTime: string;
-    visibleToCustomer: boolean;
-    description?: string;
+    visibleToDoctor: boolean;
     complete: boolean;
-    projectId: string;
-    id: string;
+    completedBy: string | null;
 }
