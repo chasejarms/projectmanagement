@@ -5,6 +5,7 @@ import { IProject } from './../../Models/project';
 import { ISlimProject } from './../../Models/slimProject';
 import { mockApiKey } from './../mockApi.key';
 import { IProjectsApi } from './projectsInterface';
+import { IProjectCreateRequest } from './projectsInterface';
 
 export const slimProjectsKey = `${mockApiKey}slimProjects`;
 export const largeProjectsKey = `${mockApiKey}largeProjects`;
@@ -23,7 +24,17 @@ export class MockProjectsApi implements IProjectsApi {
         return Promise.resolve(_.cloneDeep(slimProjects));
     }
 
-    public createProject(companyName: string, project: IProject): IProject {
+    public async createProject(companyName: string, projectCreateRequest: IProjectCreateRequest): Promise<IProject> {
+        const project: IProject = {
+            id: Date.now().toString(),
+            name: projectCreateRequest.name,
+            deadline: projectCreateRequest.deadline,
+            checkpoints: [],
+            complete: false,
+            doctor: 'Bob',
+            notes: projectCreateRequest.notes,
+            attachments: [],
+        }
         this.createSlimProjectFromProject(project);
         const createdLargeProject = this.createLargeProjectFromProject(project);
         return createdLargeProject;

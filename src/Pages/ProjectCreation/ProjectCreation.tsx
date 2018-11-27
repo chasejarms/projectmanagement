@@ -13,6 +13,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { Dispatch } from 'redux';
 import Api from '../../Api/api';
+import { IProjectCreateRequest } from '../../Api/Projects/projectsInterface';
 import { IProject } from '../../Models/project';
 import { IProjectCreationProjectUser } from '../../Models/projectUser';
 import { addProjectUserActionCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
@@ -115,19 +116,17 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
     }
 
     private createProject = () => {
-        const projectToCreate: IProject = {
-            id: Date.now().toString(),
+        const companyName = this.props.match.path.split('/')[2];
+
+        const projectCreateRequest: IProjectCreateRequest = {
             name: this.props.projectCreation.projectName,
-            checkpoints: this.props.projectCreation.checkpoints,
             deadline: this.state.caseDeadline,
             notes: this.state.projectNotes,
-            attachments: [],
-            doctor: { name: 'Bob' } as any,
-            complete: false,
+            companyName,
         };
-        const companyName = this.props.match.path.split('/')[2];
-        Api.projectsApi.createProject(companyName, projectToCreate);
-        this.props.history.push(`/company/${companyName}/project/${projectToCreate.id}`);
+        Api.projectsApi.createProject(companyName, projectCreateRequest).then((project: IProject) => {
+            this.props.history.push(`/company/${companyName}/project/${project.id}`);
+        });
     }
 
     private createActionButtons(): any {
