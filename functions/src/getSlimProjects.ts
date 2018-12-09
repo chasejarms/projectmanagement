@@ -44,7 +44,9 @@ export const getSlimProjectsLocal = (passedInAdmin: admin.app.App) => functions.
         const slimProjectsList = [];
         console.log(slimProjectsList);
         slimProjects.forEach((document) => {
-            slimProjectsList.push(document.data());
+            const slimProject = document.data();
+            slimProject.projectId = document.id;
+            slimProjectsList.push(slimProject);
         })
         return slimProjectsList;
     }

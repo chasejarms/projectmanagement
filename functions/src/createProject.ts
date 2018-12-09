@@ -11,6 +11,7 @@ export interface IProjectCreateData {
 export const createProjectLocal = (passedInAdmin: admin.app.App) => functions.https.onCall(async(data: IProjectCreateData, context) => {
     console.log(data.deadline);
     // check what type of user the requesting user is
+
     const project = {
         name: data.name,
         deadline: data.deadline,

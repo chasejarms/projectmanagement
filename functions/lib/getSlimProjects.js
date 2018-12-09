@@ -47,7 +47,9 @@ exports.getSlimProjectsLocal = (passedInAdmin) => functions.https.onCall((compan
         const slimProjectsList = [];
         console.log(slimProjectsList);
         slimProjects.forEach((document) => {
-            slimProjectsList.push(document.data());
+            const slimProject = document.data();
+            slimProject.projectId = document.id;
+            slimProjectsList.push(slimProject);
         });
         return slimProjectsList;
     }
