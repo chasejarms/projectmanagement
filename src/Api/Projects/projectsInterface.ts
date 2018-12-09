@@ -12,7 +12,7 @@ export interface IProjectCreateRequest {
 export interface IProjectsApi {
     getSlimProjects(companyName: string): Promise<ISlimProject[]>;
     createProject(companyName: string, projectCreateRequest: IProjectCreateRequest): Promise<IProject>;
-    getProject(projectId: string): IProject;
-    getProjectCheckpoints(companyName: string, projectId: string): ICheckpoint[];
+    getProject(companyName: string, projectId: string): Promise<IProject>;
+    getProjectCheckpoints(companyName: string, projectId: string): Promise<ICheckpoint[]>;
     updateProject(companyName: string, project: IProject): IProject;
 }

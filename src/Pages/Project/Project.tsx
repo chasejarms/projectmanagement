@@ -30,16 +30,22 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
 
     public componentWillMount(): void {
         const projectId = this.props.match.params['projectId'];
+        const companyName = this.props.match.path.split('/')[2];
 
-        const project = Api.projectsApi.getProject(projectId);
-        // tslint:disable-next-line:no-console
-        console.log(project);
-        this.setState({
-            project,
+        Api.projectsApi.getProject(companyName, projectId).then((project) => {
+            // tslint:disable-next-line:no-console
+            console.log(project);
+            this.setState({
+                project,
+            });
         });
     }
 
     public render() {
+        if (!this.state.project) {
+            return <div>Loading</div>
+        }
+
         const {
             attachmentButtonsContainer,
             projectContainer,

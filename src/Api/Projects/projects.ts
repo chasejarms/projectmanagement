@@ -34,11 +34,18 @@ export class ProjectsApi implements IProjectsApi {
         } as any;
     }
 
-    public getProject(projectId: string): IProject {
-        throw new Error("Method not implemented.");
+    public async getProject(companyName: string, projectId: string): Promise<IProject> {
+        const documentReference = await firebase.firestore()
+            .collection('companies')
+            .doc(companyName)
+            .collection('cases')
+            .doc(projectId)
+            .get();
+        
+        return documentReference.data()! as IProject;
     }
 
-    public getProjectCheckpoints(companyName: string, projectId: string): ICheckpoint[] {
+    public async getProjectCheckpoints(companyName: string, projectId: string): Promise<ICheckpoint[]> {
         throw new Error("Method not implemented.");
     }
 
