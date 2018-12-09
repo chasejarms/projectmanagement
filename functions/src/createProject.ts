@@ -66,5 +66,5 @@ export const createProjectLocal = (passedInAdmin: admin.app.App) => functions.ht
         .collection('cases')
         .add(project);
 
-    return projectDocumentReference;
+    return projectDocumentReference.id;
 });

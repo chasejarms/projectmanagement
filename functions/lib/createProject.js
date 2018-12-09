@@ -57,6 +57,6 @@ exports.createProjectLocal = (passedInAdmin) => functions.https.onCall((data, co
         .doc(data.companyName)
         .collection('cases')
         .add(project);
-    return projectDocumentReference;
+    return projectDocumentReference.id;
 }));
 //# sourceMappingURL=createProject.js.map

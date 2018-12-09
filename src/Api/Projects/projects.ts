@@ -28,8 +28,10 @@ export class ProjectsApi implements IProjectsApi {
             return Promise.reject(error.message);
         }
         // tslint:disable-next-line:no-console
-        console.log(createProjectResult);
-        return {} as any;
+        console.log('createProjectResult: ', createProjectResult);
+        return {
+            id: createProjectResult.data,
+        } as any;
     }
 
     public getProject(projectId: string): IProject {
