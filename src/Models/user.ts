@@ -3,6 +3,6 @@ export interface IUser {
     email: string;
     fullName: string;
     type: 'Admin' | 'Staff' | 'Customer';
-    added: Date;
+    added: string;
     scanCheckpoints?: string[];
 }

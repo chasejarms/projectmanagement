@@ -27,29 +27,17 @@ exports.getSlimProjectsLocal = (passedInAdmin) => functions.https.onCall((compan
     const isAdminOrStaff = userType === 'admin' || userType === 'staff';
     console.log('isAdminOrStaff: ', isAdminOrStaff);
     if (isAdminOrStaff) {
-        const slimProjects = yield passedInAdmin.firestore().collection('companies')
+        return yield passedInAdmin.firestore().collection('companies')
             .doc(companyName)
             .collection('slimProjects')
             .get();
-        const slimProjectsList = [];
-        slimProjects.forEach((document) => {
-            slimProjectsList.push(document.data());
-        });
-        console.log(slimProjectsList);
-        return slimProjectsList;
     }
     else {
         // change this to only return the project corresponding to that company
-        const slimProjects = yield passedInAdmin.firestore().collection('companies')
+        return yield passedInAdmin.firestore().collection('companies')
             .doc(companyName)
             .collection('slimProjects')
             .get();
-        const slimProjectsList = [];
-        console.log(slimProjectsList);
-        slimProjects.forEach((document) => {
-            slimProjectsList.push(document.data());
-        });
-        return slimProjectsList;
     }
 }));
 //# sourceMappingURL=getSlimProjects.js.map

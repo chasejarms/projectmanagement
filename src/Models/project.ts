@@ -3,7 +3,7 @@ import { ICheckpoint } from './checkpoint';
 export interface IProject {
     id: string;
     name: string;
-    deadline: Date;
+    deadline: string;
     checkpoints: ICheckpoint[];
     complete: boolean;
     doctor: any;

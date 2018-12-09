@@ -118,9 +118,12 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
     private createProject = () => {
         const companyName = this.props.match.path.split('/')[2];
 
+        // tslint:disable-next-line:no-console
+        console.log('caseDeadline :', this.state.caseDeadline);
+
         const projectCreateRequest: IProjectCreateRequest = {
             name: this.props.projectCreation.projectName,
-            deadline: this.state.caseDeadline,
+            deadline: this.state.caseDeadline.toUTCString(),
             notes: this.state.projectNotes,
             companyName,
         };

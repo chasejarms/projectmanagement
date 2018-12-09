@@ -48,7 +48,8 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                 </TableCell>
             );
 
-            const prettyDeadline = this.makeDeadlinePretty(slimProject.deadline);
+            const date = new Date(slimProject.deadline);
+            const prettyDeadline = this.makeDeadlinePretty(date);
             return (
                 <TableRow key={slimProject.id} onClick={this.navigateToProject(slimProject.projectId)} className={rowStyling}>
                     <TableCell>{slimProject.projectName}</TableCell>

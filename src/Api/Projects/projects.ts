@@ -6,6 +6,8 @@ import { IProjectCreateRequest, IProjectsApi } from './projectsInterface';
 
 export class ProjectsApi implements IProjectsApi {
     public async getSlimProjects(companyName: string): Promise<ISlimProject[]> {
+        // tslint:disable-next-line:no-console
+        console.log(companyName);
         const slimProjectsCloudFunction = firebase.functions().httpsCallable('getSlimProjects');
         let slimProjectsResult: firebase.functions.HttpsCallableResult;
         try {
@@ -14,10 +16,7 @@ export class ProjectsApi implements IProjectsApi {
             return Promise.reject(error.message);
         }
 
-        const slimProjectsMapping = slimProjectsResult.data._docs;
-
-        const slimProjects = Object.keys(slimProjectsMapping).map((key) => slimProjectsMapping[key]);
-        return slimProjects;
+        return slimProjectsResult.data;
     }
 
     public async createProject(companyName: string, projectCreateRequest: IProjectCreateRequest): Promise<IProject> {

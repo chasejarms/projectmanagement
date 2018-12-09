@@ -254,7 +254,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
             email: this.state.newUserEmail,
             type: this.state.newUserRole as any,
             id: '1',
-            added: new Date(),
+            added: Date.now().toString(),
             scanCheckpoints,
         })
 

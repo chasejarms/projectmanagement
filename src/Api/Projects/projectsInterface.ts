@@ -4,7 +4,7 @@ import { ISlimProject } from './../../Models/slimProject';
 
 export interface IProjectCreateRequest {
     name: string;
-    deadline: Date;
+    deadline: string;
     notes: string;
     companyName: string;
 }

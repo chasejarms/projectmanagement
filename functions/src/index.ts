@@ -3,6 +3,11 @@ import * as admin from 'firebase-admin';
 import { signUpLocal } from './signUp';
 import { getSlimProjectsLocal } from './getSlimProjects';
 import { createProjectLocal } from './createProject';
+import {
+    slimProjectFromProjectCreateLocal,
+    slimProjectFromProjectUpdateLocal,
+    deleteSlimProjectLocal,
+} from './slimProjectFromProject';
 
 const app = admin.initializeApp({
     credential: admin.credential.applicationDefault(),
@@ -12,9 +17,6 @@ const app = admin.initializeApp({
 export const signUp = signUpLocal(app);
 export const getSlimProjects = getSlimProjectsLocal(app);
 export const createProject = createProjectLocal(app);
-
-
-
-
-
-
+export const slimProjectFromProjectCreate = slimProjectFromProjectCreateLocal(app);
+export const slimProjectFromProjectUpdate = slimProjectFromProjectUpdateLocal(app);
+export const deleteSlimProject = deleteSlimProjectLocal(app);

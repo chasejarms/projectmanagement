@@ -3,6 +3,6 @@ export interface ISlimProject {
     projectId: string;
     projectName: string;
     currentCheckpoint: string;
-    deadline: Date;
+    deadline: string;
     showNewInfoFrom: 'doctor' | 'lab' | null;
 }

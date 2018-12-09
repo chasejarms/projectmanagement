@@ -23,15 +23,29 @@ export const getSlimProjectsLocal = (passedInAdmin: admin.app.App) => functions.
     console.log('isAdminOrStaff: ', isAdminOrStaff);
 
     if (isAdminOrStaff) {
-        return await passedInAdmin.firestore().collection('companies')
+        const slimProjects = await passedInAdmin.firestore().collection('companies')
             .doc(companyName)
             .collection('slimProjects')
             .get();
+
+        const slimProjectsList = [];
+        slimProjects.forEach((document) => {
+            slimProjectsList.push(document.data());
+        })
+        console.log(slimProjectsList);
+        return slimProjectsList;
     } else {
         // change this to only return the project corresponding to that company
-        return await passedInAdmin.firestore().collection('companies')
+        const slimProjects = await passedInAdmin.firestore().collection('companies')
             .doc(companyName)
             .collection('slimProjects')
             .get();
+
+        const slimProjectsList = [];
+        console.log(slimProjectsList);
+        slimProjects.forEach((document) => {
+            slimProjectsList.push(document.data());
+        })
+        return slimProjectsList;
     }
 });

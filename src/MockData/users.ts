@@ -6,27 +6,27 @@ export const users: IUser[] = [
         fullName: 'Chase Armstrong',
         email: 'chasejarms@gmail.com',
         type: 'Admin',
-        added: new Date(),
+        added: Date.now().toString(),
     },
     {
         id: '2',
         fullName: 'Christian Eaton',
         email: 'christian12@yahoo.com',
         type: 'Admin',
-        added: new Date(),
+        added: Date.now().toString(),
     },
     {
         id: '3',
         fullName: 'Jane Doe',
         email: 'jane_doe@hotmail.com',
         type: 'Customer',
-        added: new Date(),
+        added: Date.now().toString(),
     },
     {
         id: '4',
         fullName: 'Jim Gaffigan',
         email: 'jgaff@gmail.com',
         type: 'Customer',
-        added: new Date(),
+        added: Date.now().toString(),
     }
 ]

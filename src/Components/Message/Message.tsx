@@ -29,7 +29,8 @@ export class Message extends React.Component<IMessageProps, IMessageState> {
         const avatarVersionName = this.props.message.name.split(' ').map((name) => {
             return name[0];
         }).join(' ');
-        const niceDate = this.prettyPrintDate(this.props.message.created);
+        const convertedDate = new Date(this.props.message.created);
+        const niceDate = this.prettyPrintDate(convertedDate);
 
             return (
                 // <div className={messageContainer}>

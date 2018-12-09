@@ -105,7 +105,7 @@ export class MockProjectsApi implements IProjectsApi {
             projectId: project.id,
             projectName: project.name,
             currentCheckpoint: this.currentCheckpoint(project),
-            deadline,
+            deadline: deadline.toUTCString(),
             showNewInfoFrom: null,
         }
 

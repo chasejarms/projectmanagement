@@ -4,7 +4,7 @@ export const slimProjects: ISlimProject[] = [
     {
         projectName: 'Podium Grand Opening',
         currentCheckpoint: 'Art Work',
-        deadline: new Date(),
+        deadline: Date.now().toString(),
         id: '4234',
         projectId: '23423',
         showNewInfoFrom: null,
@@ -12,7 +12,7 @@ export const slimProjects: ISlimProject[] = [
     {
         projectName: 'Aptive Summer Contest',
         currentCheckpoint: 'Negotiation',
-        deadline: new Date(),
+        deadline: Date.now().toString(),
         id: '45234',
         projectId: '45slkj',
         showNewInfoFrom: null,
@@ -20,7 +20,7 @@ export const slimProjects: ISlimProject[] = [
     {
         projectName: 'Aptive Team Gear',
         currentCheckpoint: 'Manufacturing',
-        deadline: new Date(),
+        deadline: Date.now().toString(),
         id: 'ser2',
         projectId: '234l3asd',
         showNewInfoFrom: null,
@@ -28,7 +28,7 @@ export const slimProjects: ISlimProject[] = [
     {
         projectName: 'Hawks Executive Branding',
         currentCheckpoint: 'Initial Client Meeting',
-        deadline: new Date(),
+        deadline: Date.now().toString(),
         id: '34lks',
         projectId: 'wxcvaelj',
         showNewInfoFrom: null,
