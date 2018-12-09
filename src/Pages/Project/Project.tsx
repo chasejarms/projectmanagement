@@ -12,10 +12,12 @@ import {
     Typography,
 } from '@material-ui/core';
 import DoneIcon from '@material-ui/icons/Done';
+import * as _ from 'lodash';
 import * as React from 'react';
 import { withRouter } from 'react-router';
 import Api from '../../Api/api';
 import { ICheckpoint } from '../../Models/checkpoint';
+import { IProject } from '../../Models/project';
 import { createProjectPresentationClasses, IProjectPresentationProps, IProjectPresentationState } from './Project.ias';
 
 class ProjectPresentation extends React.Component<IProjectPresentationProps, IProjectPresentationState> {
@@ -56,6 +58,8 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             seeAttachmentsButton,
             workflowToolbar,
             qrCodeButtonContainer,
+            addAttachmentButton,
+            addAttachmentInput,
         } = createProjectPresentationClasses(this.props, this.state, this.props.theme);
 
         const mappedCheckpoints = (this.state.project as any).checkpoints.map((checkpoint: ICheckpoint, index: number) => (
@@ -105,8 +109,14 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                                 See Attachments (1)
                             </Button>
                             <Button
+                                className={addAttachmentButton}
                                 variant="contained"
                                 color="secondary">
+                                <input
+                                    type="file"
+                                    className={addAttachmentInput}
+                                    onChange={this.handleFileSelection}
+                                />
                                 Add An Attachment
                             </Button>
                         </div>
@@ -153,6 +163,24 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                 </div>
             </div>
         );
+    }
+
+    private handleFileSelection = (event: any): void => {
+        const file = event.target.files[0];
+        const companyName = this.props.match.path.split('/')[2];
+        const projectId = this.props.match.params['projectId'];
+
+        Api.projectsApi.uploadFile(companyName, projectId, file).then((uploadTaskSnapshot) => {
+            const downloadUrl = uploadTaskSnapshot.downloadURL;
+            const attachments = _.cloneDeep((this.state.project! as IProject).attachments);
+            attachments.push(downloadUrl);
+            this.setState({
+                project: {
+                    ...this.state.project! as IProject,
+                    attachments,
+                }
+            })
+        });
     }
 
     private showQrCodeDialog = (): void => {

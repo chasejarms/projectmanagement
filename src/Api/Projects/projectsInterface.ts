@@ -14,5 +14,6 @@ export interface IProjectsApi {
     createProject(companyName: string, projectCreateRequest: IProjectCreateRequest): Promise<IProject>;
     getProject(companyName: string, projectId: string): Promise<IProject>;
     getProjectCheckpoints(companyName: string, projectId: string): Promise<ICheckpoint[]>;
+    uploadFile(companyName: string, projectId: string, file: File): Promise<firebase.storage.UploadTaskSnapshot>;
     updateProject(companyName: string, project: IProject): IProject;
 }

@@ -55,6 +55,10 @@ export class MockProjectsApi implements IProjectsApi {
         return {} as any;
     }
 
+    public uploadFile(companyName: string, projectId: string, file: File): Promise<firebase.storage.UploadTaskSnapshot> {
+        throw new Error("Method not implemented");
+    }
+
     private setUpSlimProjects(defaultProject: boolean, projectsAlreadyExist: boolean) {
         if (defaultProject && !projectsAlreadyExist) {
             localStorage.setItem(

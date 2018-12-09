@@ -7,7 +7,7 @@ const config = {
   databaseURL: "https://project-management-develop.firebaseio.com",
   messagingSenderId: "1058726788485",
   projectId: "project-management-develop",
-  storageBucket: "",
+  storageBucket: "gs://project-management-develop.appspot.com",
 };
 firebase.initializeApp(config);
 export default firebase;

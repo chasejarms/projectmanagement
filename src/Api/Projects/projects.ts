@@ -41,8 +41,16 @@ export class ProjectsApi implements IProjectsApi {
             .collection('cases')
             .doc(projectId)
             .get();
-        
+
         return documentReference.data()! as IProject;
+    }
+
+    public async uploadFile(companyName: string, projectId: string, file: File): Promise<firebase.storage.UploadTaskSnapshot> {
+        const storageRef = firebase.storage().ref();
+        const updatedStorageRef = storageRef.child(`${companyName}/${projectId}/${file.name}`);
+        const uploadTaskSnapshot: firebase.storage.UploadTaskSnapshot = await updatedStorageRef.put(file);
+
+        return uploadTaskSnapshot;
     }
 
     public async getProjectCheckpoints(companyName: string, projectId: string): Promise<ICheckpoint[]> {
