@@ -1,8 +1,9 @@
-import { Button, TextField } from '@material-ui/core';
+import { TextField } from '@material-ui/core';
 import { withTheme } from '@material-ui/core/styles';
 // import { User } from 'firebase';
 import * as React from 'react';
 import Api from '../../Api/api';
+import { AsyncButton } from '../../Components/AsyncButton/AsyncButton';
 // import firebase from '../../firebase';
 import { handleChange } from '../../Utils/handleChange';
 import { createAuthenticationClasses, IAuthenticationPresentationProps, IAuthenticationPresentationState } from './Authentication.ias';
@@ -16,6 +17,7 @@ export class AuthenticationPresentation extends React.Component<
         password: '',
         companyName: '',
         fullName: '',
+        authenticationActionInProgress: false,
     };
 
     private handleChange = handleChange(this);
@@ -81,42 +83,64 @@ export class AuthenticationPresentation extends React.Component<
                     />
                 </div>
                 <div className={`${authenticationRow} ${actionContainer}`}>
-                    <Button
+                    <AsyncButton
+                        disabled={this.state.authenticationActionInProgress}
+                        asyncActionInProgress={this.state.authenticationActionInProgress}
                         className={actionButton}
-                        variant="contained"
                         onClick={authenticationAction}
-                        color="primary">{authenticationText}
-                    </Button>
+                        color="primary"
+                        variant="contained"
+                    >
+                        {authenticationText}
+                    </AsyncButton>
                 </div>
             </div>
         );
     }
 
     private login = () => {
+        this.setState({
+            authenticationActionInProgress: true,
+        });
         const modifiedCompanyName = this.state.companyName!.trim().toLowerCase();
         Api.authenticationApi.login(
             modifiedCompanyName,
             this.state.email,
             this.state.password,
         ).then(() => {
+            this.setState({
+                authenticationActionInProgress: false,
+            });
             this.redirectToCompanyPage();
         }).catch((error) => {
+            this.setState({
+                authenticationActionInProgress: false,
+            });
             // tslint:disable-next-line:no-console
             console.log('there was an error: ', error);
         });
     }
 
     private signup = () => {
+        this.setState({
+            authenticationActionInProgress: true,
+        });
         Api.authenticationApi.signUp(
             this.state.companyName,
             this.state.fullName!,
             this.state.email,
             this.state.password,
         ).then(() => {
+            this.setState({
+                authenticationActionInProgress: false,
+            });
             this.redirectToCompanyPage();
         }).catch((message) => {
             // tslint:disable-next-line:no-console
             console.log(message);
+            this.setState({
+                authenticationActionInProgress: false,
+            });
         });
     }
 

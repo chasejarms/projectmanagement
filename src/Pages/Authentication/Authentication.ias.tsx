@@ -7,6 +7,7 @@ export interface IAuthenticationPresentationState {
     companyName: string;
     email: string;
     password: string;
+    authenticationActionInProgress: boolean;
 }
 
 export interface IAuthenticationPresentationProps extends RouteComponentProps<{}>, WithTheme {}
