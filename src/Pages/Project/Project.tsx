@@ -103,10 +103,11 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                         </div>
                         <div className={attachmentButtonsContainer}>
                             <Button
+
                                 className={seeAttachmentsButton}
                                 variant="contained"
                                 color="secondary">
-                                See Attachments (1)
+                                See Attachments ({(this.state.project! as IProject).attachments.length})
                             </Button>
                             <Button
                                 className={addAttachmentButton}
