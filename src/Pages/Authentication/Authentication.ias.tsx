@@ -1,12 +1,13 @@
 import { WithTheme } from '@material-ui/core';
 import { css } from 'emotion'
 import { RouteComponentProps } from 'react-router';
+import { IFormControlState } from '../../Classes/formControlState';
 
 export interface IAuthenticationPresentationState {
-    fullName?: string;
-    companyName: string;
-    email: string;
-    password: string;
+    fullName?: IFormControlState<string>;
+    companyName: IFormControlState<string>;
+    email: IFormControlState<string>;
+    password: IFormControlState<string>;
     authenticationActionInProgress: boolean;
 }
 

@@ -1,11 +1,18 @@
-import { TextField } from '@material-ui/core';
+import {
+    FormControl,
+    FormHelperText,
+    Input,
+    InputLabel,
+} from '@material-ui/core';
 import { withTheme } from '@material-ui/core/styles';
-// import { User } from 'firebase';
 import * as React from 'react';
+import { companyNameValidator } from 'src/Validators/companyName.validator';
+import { emailValidator } from 'src/Validators/email.validator';
+import { passwordValidator } from 'src/Validators/password.validator';
 import Api from '../../Api/api';
+import { FormControlState } from '../../Classes/formControlState';
 import { AsyncButton } from '../../Components/AsyncButton/AsyncButton';
-// import firebase from '../../firebase';
-import { handleChange } from '../../Utils/handleChange';
+import { requiredValidator } from '../../Validators/required.validator';
 import { createAuthenticationClasses, IAuthenticationPresentationProps, IAuthenticationPresentationState } from './Authentication.ias';
 
 export class AuthenticationPresentation extends React.Component<
@@ -13,14 +20,33 @@ export class AuthenticationPresentation extends React.Component<
     IAuthenticationPresentationState
     > {
     public state: IAuthenticationPresentationState = {
-        email: '',
-        password: '',
-        companyName: '',
-        fullName: '',
+        email: new FormControlState({
+            value: '',
+            validators: [
+                requiredValidator('An email is required'),
+                emailValidator,
+            ]
+        }).markAsInvalid(),
+        password: new FormControlState({
+            value: '',
+            validators: [
+                requiredValidator('A password is required'),
+                passwordValidator,
+            ],
+        }).markAsInvalid(),
+        companyName: new FormControlState({
+            value: '',
+            validators: [
+                requiredValidator('A company name is required'),
+                companyNameValidator,
+            ],
+        }).markAsInvalid(),
+        fullName: new FormControlState({
+            value: '',
+            validators: [requiredValidator('A full name is required')],
+        }).markAsInvalid(),
         authenticationActionInProgress: false,
     };
-
-    private handleChange = handleChange(this);
 
     public render() {
         const authenticationText = this.isLoginUrl() ? 'Login' : 'Sign Up';
@@ -34,65 +60,82 @@ export class AuthenticationPresentation extends React.Component<
             actionButton,
         } = createAuthenticationClasses(this.props, this.state);
 
+        const {
+            fullName,
+            companyName,
+            email,
+            password,
+        } = this.state;
+
+        const fullNameError = fullName!.shouldShowError() ? fullName!.errors[0] : undefined;
         const fullNameField = this.isLoginUrl() ? undefined : (
-            <TextField
-                className={textField}
-                label="Full Name"
-                name="fullName"
-                value={this.state.fullName}
-                onChange={this.handleChange}
-                margin="normal"
-            />
-        )
+            <div className={authenticationRow}>
+                 <FormControl required={true} className={textField} error={fullName!.shouldShowError()}>
+                    <InputLabel>Full Name</InputLabel>
+                    <Input
+                        name="fullName"
+                        value={this.state.fullName!.value}
+                        onChange={this.handleFormControlChange}
+                    />
+                    <FormHelperText>{fullNameError}</FormHelperText>
+                </FormControl>
+            </div>
+        );
+
+        const companyNameError = companyName.shouldShowError() ? companyName.errors[0] : undefined;
+        const emailError = email.shouldShowError() ? email.errors[0] : undefined;
+        const passwordError = password.shouldShowError() ? password.errors[0] : undefined;
 
         return (
             <div className={authenticationContainer}>
                 <div className={authenticationRow}>
-                    <TextField
-                        className={textField}
-                        autoFocus={true}
-                        label="Company Name"
-                        name="companyName"
-                        value={this.state.companyName}
-                        onChange={this.handleChange}
-                        margin="normal"
-                    />
+                    <FormControl required={true} className={textField} error={this.state.companyName.shouldShowError()}>
+                        <InputLabel>Company Name</InputLabel>
+                        <Input
+                            autoFocus={true}
+                            name="companyName"
+                            value={this.state.companyName.value}
+                            onChange={this.handleFormControlChange}
+                        />
+                        <FormHelperText>{companyNameError}</FormHelperText>
+                    </FormControl>
+                </div>
+                {fullNameField}
+                <div className={authenticationRow}>
+                    <FormControl required={true} className={textField} error={this.state.email.shouldShowError()}>
+                        <InputLabel>Email</InputLabel>
+                        <Input
+                            name="email"
+                            value={this.state.email.value}
+                            onChange={this.handleFormControlChange}
+                        />
+                        <FormHelperText>{emailError}</FormHelperText>
+                    </FormControl>
                 </div>
                 <div className={authenticationRow}>
-                    { fullNameField }
-                </div>
-                <div className={authenticationRow}>
-                    <TextField
-                        className={textField}
-                        label="Email"
-                        name="email"
-                        value={this.state.email}
-                        onChange={this.handleChange}
-                        margin="normal"
-                    />
-                </div>
-                <div className={authenticationRow}>
-                    <TextField
-                        className={textField}
-                        type="password"
-                        name="password"
-                        value={this.state.password}
-                        onChange={this.handleChange}
-                        label="Password"
-                        margin="normal"
-                    />
+                    <FormControl required={true} className={textField} error={this.state.password.shouldShowError()}>
+                        <InputLabel>Password</InputLabel>
+                        <Input
+                            type="password"
+                            name="password"
+                            value={this.state.password.value}
+                            onChange={this.handleFormControlChange}
+                        />
+                        <FormHelperText>{passwordError}</FormHelperText>
+                    </FormControl>
                 </div>
                 <div className={`${authenticationRow} ${actionContainer}`}>
-                    <AsyncButton
-                        disabled={this.state.authenticationActionInProgress}
-                        asyncActionInProgress={this.state.authenticationActionInProgress}
-                        className={actionButton}
-                        onClick={authenticationAction}
-                        color="primary"
-                        variant="contained"
-                    >
-                        {authenticationText}
-                    </AsyncButton>
+                    <div className={actionButton}>
+                        <AsyncButton
+                            disabled={!this.allControlsAreValid() || this.state.authenticationActionInProgress}
+                            asyncActionInProgress={this.state.authenticationActionInProgress}
+                            onClick={authenticationAction}
+                            color="primary"
+                            variant="contained"
+                        >
+                            {authenticationText}
+                        </AsyncButton>
+                    </div>
                 </div>
             </div>
         );
@@ -102,11 +145,11 @@ export class AuthenticationPresentation extends React.Component<
         this.setState({
             authenticationActionInProgress: true,
         });
-        const modifiedCompanyName = this.state.companyName!.trim().toLowerCase();
+        const modifiedCompanyName = this.state.companyName!.value.trim().toLowerCase();
         Api.authenticationApi.login(
             modifiedCompanyName,
-            this.state.email,
-            this.state.password,
+            this.state.email.value,
+            this.state.password.value,
         ).then(() => {
             this.setState({
                 authenticationActionInProgress: false,
@@ -126,10 +169,10 @@ export class AuthenticationPresentation extends React.Component<
             authenticationActionInProgress: true,
         });
         Api.authenticationApi.signUp(
-            this.state.companyName,
-            this.state.fullName!,
-            this.state.email,
-            this.state.password,
+            this.state.companyName.value,
+            this.state.fullName!.value,
+            this.state.email.value,
+            this.state.password.value,
         ).then(() => {
             this.setState({
                 authenticationActionInProgress: false,
@@ -149,8 +192,31 @@ export class AuthenticationPresentation extends React.Component<
     }
 
     private redirectToCompanyPage(): void {
-        const company = this.state.companyName || 'xactware';
-        this.props.history.push(`company/${company}`);
+        const companyName = this.state.companyName.value;
+        this.props.history.push(`company/${companyName}`);
+    }
+
+    private handleFormControlChange = (event: any): void => {
+        const formControl: FormControlState<string> = this.state[event.target.name];
+        const controlToSetOnState = formControl.createCopy().setValue(event.target.value);
+        const name: 'fullName' | 'companyName' | 'email' | 'password' = event.target.name;
+
+        this.setState({
+            [name]: controlToSetOnState,
+        } as any);
+    }
+
+    private allControlsAreValid(): boolean {
+        const {
+            fullName,
+            email,
+            password,
+            companyName,
+        } = this.state;
+
+        const fullNameIsValid = this.isLoginUrl() ? true : !fullName!.invalid;
+
+        return fullNameIsValid && !email.invalid && !password.invalid && !companyName.invalid;
     }
 }
 
