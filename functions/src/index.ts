@@ -1,13 +1,13 @@
 import * as admin from 'firebase-admin';
 
-import { signUpLocal } from './signUp';
-import { getSlimProjectsLocal } from './getSlimProjects';
-import { createProjectLocal } from './createProject';
+import { signUpLocal } from './functions/signUp';
+import { getSlimProjectsLocal } from './functions/getSlimProjects';
+import { createProjectLocal } from './functions/createProject';
 import {
     slimProjectFromProjectCreateLocal,
     slimProjectFromProjectUpdateLocal,
     deleteSlimProjectLocal,
-} from './slimProjectFromProject';
+} from './functions/slimProjectFromProject';
 
 const app = admin.initializeApp({
     credential: admin.credential.applicationDefault(),

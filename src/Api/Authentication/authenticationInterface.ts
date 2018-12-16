@@ -1,5 +1,4 @@
 export interface IAuthenticationMessage {
-    wasSuccessful: boolean;
     message: string;
 }
 

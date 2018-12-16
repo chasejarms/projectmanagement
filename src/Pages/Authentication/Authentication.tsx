@@ -178,10 +178,13 @@ export class AuthenticationPresentation extends React.Component<
                 authenticationActionInProgress: false,
             });
             this.redirectToCompanyPage();
-        }).catch((message) => {
-            // tslint:disable-next-line:no-console
-            console.log(message);
+        }).catch((error) => {
+            const newCompanyNameControl = this.state.companyName.createCopy()
+                .markAsInvalid()
+                .setError(error.message);
+
             this.setState({
+                companyName: newCompanyNameControl,
                 authenticationActionInProgress: false,
             });
         });
@@ -198,7 +201,7 @@ export class AuthenticationPresentation extends React.Component<
 
     private handleFormControlChange = (event: any): void => {
         const formControl: FormControlState<string> = this.state[event.target.name];
-        const controlToSetOnState = formControl.createCopy().setValue(event.target.value);
+        const controlToSetOnState = formControl.setValue(event.target.value);
         const name: 'fullName' | 'companyName' | 'email' | 'password' = event.target.name;
 
         this.setState({

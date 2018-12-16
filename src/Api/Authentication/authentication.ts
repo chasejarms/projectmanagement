@@ -1,3 +1,4 @@
+import * as functions from 'firebase-functions';
 import firebase, { db } from '../../firebase';
 import { IAuthenticationApi, IAuthenticationMessage } from './authenticationInterface';
 
@@ -18,11 +19,10 @@ export class AuthenticationApi implements IAuthenticationApi {
                 password,
             });
         }  catch (error) {
-            // tslint:disable-next-line:no-console
-            console.log(error);
-            Promise.reject({
-                wasSuccessful: false,
-                message: 'Something went wrong with signup',
+            const errorWithTyping = error as functions.https.HttpsError;
+
+            return Promise.reject({
+                message: errorWithTyping.message,
             })
         }
 
@@ -32,16 +32,14 @@ export class AuthenticationApi implements IAuthenticationApi {
                 password,
             )
         } catch (error) {
-            // tslint:disable-next-line:no-console
-            console.log(error);
-            Promise.reject({
-                wasSuccessful: false,
-                message: 'Something went wrong with login',
+            const errorWithTyping = error as functions.https.HttpsError;
+
+            return Promise.reject({
+                message: errorWithTyping.message,
             })
         }
 
         return Promise.resolve({
-            wasSuccessful: true,
             message: 'Success',
         });
     }

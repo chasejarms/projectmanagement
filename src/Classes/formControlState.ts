@@ -73,7 +73,8 @@ export class FormControlState<T> implements IFormControlState<T> {
 
     public setValue(value: T): FormControlState<T> {
         this.value = value;
-        return this.markAsTouched()
+        return this.createCopy()
+            .markAsTouched()
             .markAsDirty()
             .runValidators();
     }
@@ -107,6 +108,11 @@ export class FormControlState<T> implements IFormControlState<T> {
 
     public shouldShowError(): boolean {
         return this.invalid && this.touched && this.dirty;
+    }
+
+    public setError(errorMessage: string): FormControlState<T> {
+        this.errors = [errorMessage];
+        return this;
     }
 
     private runValidatorFn = (validatorFn: IValidator<T>) => {

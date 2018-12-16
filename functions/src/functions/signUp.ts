@@ -9,7 +9,7 @@ export const signUpLocal = (passedInAdmin: admin.app.App) => functions.https.onC
 
     console.log(`${data.companyName} already exists.`);
     if (companyAlreadyExists) {
-        throw new functions.https.HttpsError('already-exists', 'The company you\'re trying to create already exists.');
+        throw new functions.https.HttpsError('already-exists', 'The company you\'re trying to create already exists');
     }
 
     // create the company
