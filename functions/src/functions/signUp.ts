@@ -7,18 +7,10 @@ export const signUpLocal = (passedInAdmin: admin.app.App) => functions.https.onC
     const companyDocumentRef = await passedInAdmin.firestore().collection('companies').doc(data.companyName).get();
     const companyAlreadyExists = companyDocumentRef.exists;
 
-    console.log(`${data.companyName} already exists.`);
     if (companyAlreadyExists) {
+        console.log(`${data.companyName} already exists.`);
         throw new functions.https.HttpsError('already-exists', 'The company you\'re trying to create already exists');
     }
-
-    // create the company
-    await passedInAdmin.firestore().collection('companies').doc(data.companyName).set({
-        companyName: data.companyName,
-        caseNotesTemplate: '',
-        workflow: [],
-    });
-    console.log(`${data.companyName} was created.`);
 
     let user: admin.auth.UserRecord;
 
@@ -32,6 +24,14 @@ export const signUpLocal = (passedInAdmin: admin.app.App) => functions.https.onC
             password: data.password,
         });
     }
+
+    // create the company
+    await passedInAdmin.firestore().collection('companies').doc(data.companyName).set({
+        companyName: data.companyName,
+        caseNotesTemplate: '',
+        workflow: [],
+    });
+    console.log(`${data.companyName} was created.`);
 
     await passedInAdmin.firestore()
         .collection('companies')

@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const admin = require("firebase-admin");
-const signUp_1 = require("./signUp");
-const getSlimProjects_1 = require("./getSlimProjects");
-const createProject_1 = require("./createProject");
-const slimProjectFromProject_1 = require("./slimProjectFromProject");
+const signUp_1 = require("./functions/signUp");
+const getSlimProjects_1 = require("./functions/getSlimProjects");
+const createProject_1 = require("./functions/createProject");
+const slimProjectFromProject_1 = require("./functions/slimProjectFromProject");
 const app = admin.initializeApp({
     credential: admin.credential.applicationDefault(),
     databaseURL: 'https://project-management-develop.firebaseio.com',
