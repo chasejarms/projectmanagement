@@ -156,11 +156,14 @@ export class AuthenticationPresentation extends React.Component<
             });
             this.redirectToCompanyPage();
         }).catch((error) => {
+            const newPasswordControl = this.state.password.createCopy()
+                .markAsInvalid()
+                .setError('The username or password is incorrect');
+
             this.setState({
+                password: newPasswordControl,
                 authenticationActionInProgress: false,
             });
-            // tslint:disable-next-line:no-console
-            console.log('there was an error: ', error);
         });
     }
 
