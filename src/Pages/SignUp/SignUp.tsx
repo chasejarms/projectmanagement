@@ -3,6 +3,7 @@ import {
     FormHelperText,
     Input,
     InputLabel,
+    Typography,
 } from '@material-ui/core';
 import { withTheme } from '@material-ui/core/styles';
 import * as React from 'react';
@@ -55,6 +56,8 @@ export class SignUpPresentation extends React.Component<
             textField,
             actionContainer,
             actionButton,
+            link,
+            linkContainer,
         } = createAuthenticationClasses(this.props, this.state);
 
         const {
@@ -116,6 +119,9 @@ export class SignUpPresentation extends React.Component<
                         />
                         <FormHelperText>{passwordError}</FormHelperText>
                     </FormControl>
+                </div>
+                <div className={`${signUpRow} ${linkContainer}`}>
+                    <Typography className={link} variant="caption">Create a company with an existing user</Typography>
                 </div>
                 <div className={`${signUpRow} ${actionContainer}`}>
                     <div className={actionButton}>

@@ -43,11 +43,26 @@ export const createAuthenticationClasses = (
     marginLeft: 'auto !important',
   })
 
+  const linkContainer = css({
+    display: 'flex',
+  });
+
+  const link = css({
+    color: `${props.theme.palette.primary.main} !important`,
+    '&:hover': {
+      textDecoration: 'underline',
+      cursor: 'pointer',
+    },
+    marginLeft: 'auto !important',
+  });
+
   return {
     signUpContainer,
     signUpRow,
     textField,
     actionContainer,
     actionButton,
+    link,
+    linkContainer,
   };
 }
