@@ -6,6 +6,7 @@ import { Authentication } from '../Authentication/Authentication';
 
 import { RouteGuard } from 'src/Components/RouteGuard/RouteGuard';
 import { Roles } from '../../Models/roles';
+import { SignUp } from '../SignUp/SignUp';
 import {
   IMainPresentationProps,
   IMainPresentationState,
@@ -18,11 +19,10 @@ class MainPresentation extends React.Component<IMainPresentationProps, IMainPres
     return (
       <MuiThemeProvider theme={theme}>
         <div>
-          {/* {GA.init() && <GA.RouteTracker />} */}
           <Switch>
             <Route
               path="/signup"
-              component={Authentication}
+              component={SignUp}
             />
             <Route
               path="/login"
