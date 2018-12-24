@@ -149,7 +149,9 @@ export class SignUpPresentation extends React.Component<
             this.state.fullName!.value,
             this.state.email.value,
             this.state.password.value,
-        ).then(() => {
+        ).then((information) => {
+            // tslint:disable-next-line:no-console
+            console.log('information: ', information);
             this.setState({
                 signUpActionInProgress: false,
             });

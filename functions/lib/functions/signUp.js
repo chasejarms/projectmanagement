@@ -10,44 +10,44 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const functions = require("firebase-functions");
 exports.signUpLocal = (passedInAdmin) => functions.https.onCall((data, context) => __awaiter(this, void 0, void 0, function* () {
-    console.log('incoming data');
-    console.log(data);
-    const companyDocumentRef = yield passedInAdmin.firestore().collection('companies').doc(data.companyName).get();
-    const companyAlreadyExists = companyDocumentRef.exists;
-    if (companyAlreadyExists) {
-        console.log(`${data.companyName} already exists.`);
-        throw new functions.https.HttpsError('already-exists', 'The company you\'re trying to create already exists');
-    }
-    // create the company
-    yield passedInAdmin.firestore().collection('companies').doc(data.companyName).set({
-        companyName: data.companyName,
-        caseNotesTemplate: '',
-        workflow: [],
-    });
-    console.log(`${data.companyName} was created.`);
-    let user;
+    const auth = passedInAdmin.auth();
     try {
-        console.log(`Trying to fetch a user with email: ${data.email}.`);
-        user = yield passedInAdmin.auth().getUserByEmail(data.email);
+        yield auth.getUserByEmail(data.email);
     }
-    catch (error) {
-        console.log(`Trying to create a user with email: ${data.email}.`);
-        user = yield passedInAdmin.auth().createUser({
+    catch (_a) {
+        const firebase = passedInAdmin.firestore();
+        const firebaseAuthenticationUser = yield auth.createUser({
             email: data.email,
             password: data.password,
         });
+        const createCompanyPromise = firebase.collection('companies').add({
+            companyName: data.companyName,
+        });
+        const createUserPromise = firebase.collection('users').add({
+            email: data.email,
+            fullName: data.fullName,
+            type: 'Admin',
+            scanCheckpoints: [],
+            mustResetPassword: false,
+            uid: firebaseAuthenticationUser.uid,
+        });
+        const [companyDocumentReference, userDocumentReference,] = yield Promise.all([
+            createCompanyPromise,
+            createUserPromise,
+        ]);
+        yield firebase.collection('companyUserJoin')
+            .doc(`${companyDocumentReference.id}_${firebaseAuthenticationUser.uid}`)
+            .set({
+            companyId: companyDocumentReference.id,
+            userId: userDocumentReference.id,
+            firebaseAuthenticationUid: firebaseAuthenticationUser.uid,
+            companyName: data.companyName,
+        });
+        return {
+            user: firebaseAuthenticationUser,
+        };
     }
-    yield passedInAdmin.firestore()
-        .collection('companies')
-        .doc(data.companyName)
-        .collection('users')
-        .doc(user.uid)
-        .set({
-        fullName: data.fullName,
-        email: data.email,
-        type: 'Admin',
-        scanCheckpoints: [],
-    });
-    return { user };
+    console.log(`${data.email} already exists in the system.`);
+    throw new functions.https.HttpsError('already-exists', 'That user already exists');
 }));
 //# sourceMappingURL=signUp.js.map

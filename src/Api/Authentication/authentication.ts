@@ -9,11 +9,10 @@ export class AuthenticationApi implements IAuthenticationApi {
         email: string,
         password: string,
     ): Promise<IAuthenticationMessage> {
-        const modifiedCompanyName = companyName.trim().toLowerCase();
         const signUp = firebase.functions().httpsCallable('signUp');
         try {
             await signUp({
-                companyName: modifiedCompanyName,
+                companyName,
                 fullName,
                 email,
                 password,

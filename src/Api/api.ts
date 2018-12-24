@@ -7,6 +7,9 @@ import { MockCaseNotesApi } from './CaseNotesApi/mockCaseNotes';
 import { CheckpointsApi } from './Checkpoints/checkpoints';
 import { ICheckpointsApi } from './Checkpoints/checkpointsInterface';
 import { MockCheckpointsApi } from './Checkpoints/mockCheckpoints';
+import { CompanySelectionApi } from './CompanySelection/companySelection';
+import { ICompanySelectionApi } from './CompanySelection/companySelectionInterface';
+import { MockCompanySelectionApi } from './CompanySelection/mockCompanySelection';
 import { mockApiConfig } from './mockApi.config';
 import { MockProjectsApi } from './Projects/mockProjects';
 import { ProjectsApi } from './Projects/projects';
@@ -27,6 +30,7 @@ export interface IApi {
     projectsApi: IProjectsApi;
     checkpointsApi: ICheckpointsApi;
     caseNotesApi: ICaseNotesApi;
+    companySelectionApi: ICompanySelectionApi;
 }
 
 const mockWorkflowApi = new MockWorkflowApi(mockApiConfig.defaultWorkflow);
@@ -38,6 +42,7 @@ const mockApi: IApi = {
     projectsApi: new MockProjectsApi(mockApiConfig.defaultProjects),
     checkpointsApi: new MockCheckpointsApi(mockWorkflowApi),
     caseNotesApi: new MockCaseNotesApi(),
+    companySelectionApi: new MockCompanySelectionApi(),
 }
 
 const api: IApi = {
@@ -47,6 +52,7 @@ const api: IApi = {
     projectsApi: new ProjectsApi(),
     checkpointsApi: new CheckpointsApi(),
     caseNotesApi: new CaseNotesApi(),
+    companySelectionApi: new CompanySelectionApi(),
 }
 
 export default (useMockApi ? mockApi : api);

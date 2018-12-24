@@ -6,6 +6,7 @@ import { Authentication } from '../Authentication/Authentication';
 
 import { RouteGuard } from 'src/Components/RouteGuard/RouteGuard';
 import { Roles } from '../../Models/roles';
+import { CompanySelection } from '../CompanySelection/CompanySelection';
 import { SignUp } from '../SignUp/SignUp';
 import {
   IMainPresentationProps,
@@ -32,6 +33,10 @@ class MainPresentation extends React.Component<IMainPresentationProps, IMainPres
               mustHaveRole={[Roles.Admin, Roles.Customer, Roles.Staff]}
               path="/company/:companyName"
               component={Authenticated}
+            />
+            <Route
+              path="/companySelection"
+              component={CompanySelection}
             />
           </Switch>
         </div>
