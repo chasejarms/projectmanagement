@@ -149,20 +149,18 @@ export class SignUpPresentation extends React.Component<
             this.state.fullName!.value,
             this.state.email.value,
             this.state.password.value,
-        ).then((information) => {
-            // tslint:disable-next-line:no-console
-            console.log('information: ', information);
+        ).then(() => {
             this.setState({
                 signUpActionInProgress: false,
             });
             this.redirectToCompanySelection();
         }).catch((error) => {
-            const newCompanyNameControl = this.state.companyName.createCopy()
+            const newEmailControl = this.state.email.createCopy()
                 .markAsInvalid()
                 .setError(error.message);
 
             this.setState({
-                companyName: newCompanyNameControl,
+                email: newEmailControl,
                 signUpActionInProgress: false,
             });
         });
