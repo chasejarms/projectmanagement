@@ -11,7 +11,7 @@ exports.slimProjectFromProjectCreateLocal = (passedInAdmin) => functions.firesto
         currentCheckpoint,
         deadline: project.deadline,
         showNewInfoFrom: null,
-    }; // ISlimProject
+    }; // ISlimCase
     console.log('slimProject: ', slimProject);
     const companyName = context.params.companyName;
     console.log('companyName: ', companyName);
@@ -33,7 +33,7 @@ exports.slimProjectFromProjectUpdateLocal = (passedInAdmin) => functions.firesto
         currentCheckpoint,
         deadline: project.deadline,
         showNewInfoFrom: null,
-    }; // ISlimProject
+    }; // ISlimCase
     const companyName = context.params.companyName;
     const caseId = context.params.caseId;
     return passedInAdmin.firestore()

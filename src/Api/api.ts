@@ -13,7 +13,7 @@ import { MockCompanySelectionApi } from './CompanySelection/mockCompanySelection
 import { mockApiConfig } from './mockApi.config';
 import { MockProjectsApi } from './Projects/mockProjects';
 import { ProjectsApi } from './Projects/projects';
-import { IProjectsApi } from './Projects/projectsInterface';
+import { ICaseApi } from './Projects/projectsInterface';
 import { MockUsersApi } from './Users/mockUsers';
 import { UsersApi } from './Users/users';
 import { IUsersApi } from './Users/usersApiInterface';
@@ -27,7 +27,7 @@ export interface IApi {
     userApi: IUsersApi;
     authenticationApi: IAuthenticationApi;
     workflowApi: IWorkflowApi;
-    projectsApi: IProjectsApi;
+    projectsApi: ICaseApi;
     checkpointsApi: ICheckpointsApi;
     caseNotesApi: ICaseNotesApi;
     companySelectionApi: ICompanySelectionApi;

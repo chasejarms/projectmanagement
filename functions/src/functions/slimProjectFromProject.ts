@@ -12,7 +12,7 @@ export const slimProjectFromProjectCreateLocal = (passedInAdmin: admin.app.App) 
             currentCheckpoint,
             deadline: project.deadline,
             showNewInfoFrom: null,
-        } as any; // ISlimProject
+        } as any; // ISlimCase
 
         console.log('slimProject: ', slimProject);
 
@@ -39,7 +39,7 @@ export const slimProjectFromProjectUpdateLocal = (passedInAdmin: admin.app.App) 
             currentCheckpoint,
             deadline: project.deadline,
             showNewInfoFrom: null,
-        } as any; // ISlimProject
+        } as any; // ISlimCase
 
         const companyName = context.params.companyName;
         const caseId = context.params.caseId;

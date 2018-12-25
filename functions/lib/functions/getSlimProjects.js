@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const functions = require("firebase-functions");
-exports.getSlimProjectsLocal = (passedInAdmin) => functions.https.onCall((companyName, context) => __awaiter(this, void 0, void 0, function* () {
+exports.getSlimCasesLocal = (passedInAdmin) => functions.https.onCall((companyName, context) => __awaiter(this, void 0, void 0, function* () {
     // check if the user is an admin or staff
     const uid = context.auth.uid;
     console.log('uid is: ', uid);
@@ -54,4 +54,4 @@ exports.getSlimProjectsLocal = (passedInAdmin) => functions.https.onCall((compan
         return slimProjectsList;
     }
 }));
-//# sourceMappingURL=getSlimProjects.js.map
+//# sourceMappingURL=getSlimCases.js.map

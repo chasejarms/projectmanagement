@@ -1,12 +1,12 @@
 import { css } from 'emotion';
 import { RouteComponentProps } from "react-router";
-import { ISlimProject } from '../../Models/slimProject';
+import { ISlimCase } from '../../Models/slimCase';
 
 export interface IProjectsPresentationProps extends RouteComponentProps<{}> {}
 
 // tslint:disable-next-line:no-empty-interface
 export interface IProjectsPresentationState {
-    slimProjects?: ISlimProject[];
+    slimCases?: ISlimCase[];
 }
 
 export const createProjectsPresentationClasses = (

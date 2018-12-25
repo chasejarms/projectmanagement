@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { Dispatch } from 'redux';
 import Api from '../../Api/api';
-import { IProjectCreateRequest } from '../../Api/Projects/projectsInterface';
+import { ICaseCreateRequest } from '../../Api/Projects/projectsInterface';
 import { IProject } from '../../Models/project';
 import { IProjectCreationProjectUser } from '../../Models/projectUser';
 import { addProjectUserActionCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
@@ -121,7 +121,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         // tslint:disable-next-line:no-console
         console.log('caseDeadline :', this.state.caseDeadline);
 
-        const projectCreateRequest: IProjectCreateRequest = {
+        const projectCreateRequest: ICaseCreateRequest = {
             name: this.props.projectCreation.projectName,
             deadline: this.state.caseDeadline.toUTCString(),
             notes: this.state.projectNotes,

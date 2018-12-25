@@ -1,17 +1,15 @@
 import * as firebase from 'firebase';
 import { ICheckpoint } from './../../Models/checkpoint';
 import { IProject } from './../../Models/project';
-import { ISlimProject } from './../../Models/slimProject';
-import { IProjectCreateRequest, IProjectsApi } from './projectsInterface';
+import { ISlimCase } from './../../Models/slimCase';
+import { ICaseApi, ICaseCreateRequest, ISlimCasesSearchRequest } from './projectsInterface';
 
-export class ProjectsApi implements IProjectsApi {
-    public async getSlimProjects(companyName: string): Promise<ISlimProject[]> {
-        // tslint:disable-next-line:no-console
-        console.log(companyName);
-        const slimProjectsCloudFunction = firebase.functions().httpsCallable('getSlimProjects');
+export class ProjectsApi implements ICaseApi {
+    public async getSlimCases(slimCasesSearchRequest: ISlimCasesSearchRequest): Promise<ISlimCase[]> {
+        const slimProjectsCloudFunction = firebase.functions().httpsCallable('getSlimCases');
         let slimProjectsResult: firebase.functions.HttpsCallableResult;
         try {
-            slimProjectsResult = await slimProjectsCloudFunction(companyName);
+            slimProjectsResult = await slimProjectsCloudFunction(slimCasesSearchRequest);
         } catch (error) {
             return Promise.reject(error.message);
         }
@@ -19,7 +17,7 @@ export class ProjectsApi implements IProjectsApi {
         return slimProjectsResult.data;
     }
 
-    public async createProject(companyName: string, projectCreateRequest: IProjectCreateRequest): Promise<IProject> {
+    public async createProject(companyName: string, projectCreateRequest: ICaseCreateRequest): Promise<IProject> {
         const createProjectCloudFunction = firebase.functions().httpsCallable('createProject');
         let createProjectResult: firebase.functions.HttpsCallableResult;
         try {
