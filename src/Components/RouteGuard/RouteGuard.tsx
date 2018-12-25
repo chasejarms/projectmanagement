@@ -59,7 +59,7 @@ class RouteGuardPresentation extends React.Component<IRouteGuardPresentationProp
   }
 
   private verifyUserIsAdmin(): void {
-    firebase.auth().onAuthStateChanged((user) => {
+    firebase.auth().onAuthStateChanged(async(user) => {
       if (!user) {
         this.setState({
           userCanViewPage: false,
@@ -67,19 +67,33 @@ class RouteGuardPresentation extends React.Component<IRouteGuardPresentationProp
         return;
       }
 
-      const companyName = this.props.location.pathname.split('/')[2];
+      const companyId = this.props.location.pathname.split('/')[2];
 
-      db.collection('companies').doc(companyName).collection('users').doc(user!.uid).get().then((userDocumentSnapshot) => {
-        if (!userDocumentSnapshot.exists) {
-          this.setState({
-            userCanViewPage: false,
-          });
-          return;
-        }
+      const companyUserJoinQuerySnapshot = await db.collection('companyUserJoin')
+        .where('companyId', '==', companyId)
+        .where('firebaseAuthenticationUid', '==', user.uid)
+        .get();
 
-        const userData = userDocumentSnapshot.data()! as IUser;
-        this.setViewRights(userData);
-      });
+      if (companyUserJoinQuerySnapshot.empty) {
+        this.setState({
+          userCanViewPage: false,
+        });
+        return;
+      }
+
+      const userDocumentSnapshot = await db.collection('users')
+        .doc(companyUserJoinQuerySnapshot.docs[0].data().userId)
+        .get();
+
+      if (!userDocumentSnapshot.exists) {
+        this.setState({
+          userCanViewPage: false,
+        });
+        return;
+      }
+
+      const userData = userDocumentSnapshot.data()! as IUser;
+      this.setViewRights(userData);
     });
   }
 
