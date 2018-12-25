@@ -3,21 +3,18 @@ import { css } from 'emotion'
 import { RouteComponentProps } from 'react-router';
 import { IFormControlState } from '../../Classes/formControlState';
 
-export interface IAuthenticationPresentationState {
-    fullName?: IFormControlState<string>;
-    companyName: IFormControlState<string>;
+export interface ILoginPresentationProps extends RouteComponentProps<{}>, WithTheme {}
+
+export interface ILoginPresentationState {
     email: IFormControlState<string>;
     password: IFormControlState<string>;
-    authenticationActionInProgress: boolean;
+    loginActionInProgress: boolean;
 }
-
-export interface IAuthenticationPresentationProps extends RouteComponentProps<{}>, WithTheme {}
-
 export const createAuthenticationClasses = (
-  props: IAuthenticationPresentationProps,
-  state: IAuthenticationPresentationState,
+  props: ILoginPresentationProps,
+  state: ILoginPresentationState,
 ) => {
-  const authenticationContainer = css({
+  const loginContainer = css({
     display: 'flex',
     flexDirection: 'column',
     height: '100vh',
@@ -26,7 +23,7 @@ export const createAuthenticationClasses = (
     alignItems: 'center',
   })
 
-  const authenticationRow = css({
+  const loginRow = css({
     minWidth: 400,
     marginBottom: 8,
   })
@@ -45,8 +42,8 @@ export const createAuthenticationClasses = (
   })
 
   return {
-    authenticationContainer,
-    authenticationRow,
+    loginContainer,
+    loginRow,
     textField,
     actionContainer,
     actionButton,

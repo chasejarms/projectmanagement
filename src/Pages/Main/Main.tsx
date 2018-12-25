@@ -2,11 +2,11 @@ import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
 import * as React from 'react';
 import { Route, Switch, withRouter } from 'react-router-dom';
 import { Authenticated } from '../Authenticated/Authenticated';
-import { Authentication } from '../Authentication/Authentication';
 
 import { RouteGuard } from 'src/Components/RouteGuard/RouteGuard';
 import { Roles } from '../../Models/roles';
 import { CompanySelection } from '../CompanySelection/CompanySelection';
+import { Login } from '../Login/Login';
 import { SignUp } from '../SignUp/SignUp';
 import {
   IMainPresentationProps,
@@ -27,7 +27,7 @@ class MainPresentation extends React.Component<IMainPresentationProps, IMainPres
             />
             <Route
               path="/login"
-              component={Authentication}
+              component={Login}
             />
             <RouteGuard
               mustHaveRole={[Roles.Admin, Roles.Customer, Roles.Staff]}
