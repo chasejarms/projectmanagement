@@ -18,9 +18,18 @@ export const createCompanySelectionPresentationClasses = (
     const pageContainer = css({
         minHeight: '100vh',
         minWidth: '100vw',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column',
     })
+
+    const companySelect = css({
+        minWidth: 300,
+    });
 
     return {
         pageContainer,
+        companySelect,
     };
 }

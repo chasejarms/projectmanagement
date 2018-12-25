@@ -1,4 +1,7 @@
 import {
+    CircularProgress,
+    FormControl,
+    InputLabel,
     MenuItem,
     Select,
     Typography,
@@ -20,9 +23,15 @@ class CompanySelectionPresentation extends React.Component<ICompanySelectionPres
         firebase.auth().onAuthStateChanged(async(user) => {
             if (user) {
                 const companiesQuerySnapshot = await Api.companySelectionApi.getCompaniesForCurrentUser(user.uid);
-                this.setState({
-                    companiesQuerySnapshot,
-                })
+                if (companiesQuerySnapshot.size === 1) {
+                    const onlyCompanyDocumentSnapshot = companiesQuerySnapshot.docs[0];
+                    const companyId = onlyCompanyDocumentSnapshot.data().companyId;
+                    this.props.history.push(`/company/${companyId}`);
+                } else {
+                    this.setState({
+                        companiesQuerySnapshot,
+                    })
+                }
             }
         });
     }
@@ -30,25 +39,38 @@ class CompanySelectionPresentation extends React.Component<ICompanySelectionPres
     public render() {
         const {
             pageContainer,
+            companySelect,
         } = createCompanySelectionPresentationClasses(this.props, this.state);
 
-        const template = this.state.companiesQuerySnapshot === null ? <div>Loading</div> : (
+        const template = this.state.companiesQuerySnapshot === null ? (
             <div className={pageContainer}>
-            <Typography variant="headline">Which company would you like to work on?</Typography>
-            <Select
-                name="newUserRole"
-                value={'does not matter'}
-                onChange={this.handleCompanySelection}
-            >
-                {this.state.companiesQuerySnapshot.docs.map((doc) => {
-                    return (
-                        <MenuItem key={doc.id} value={doc.data().companyId}>
-                            {doc.data().companyName}
-                        </MenuItem>
-                    )
-                })}
-            </Select>
-        </div>
+                <CircularProgress
+                    color="primary"
+                    size={64}
+                    thickness={3}
+                />
+            </div>
+        ) : (
+            <div className={pageContainer}>
+                <Typography variant="headline">Which company would you like to work on?</Typography>
+                <FormControl>
+                    <InputLabel>Select A Company</InputLabel>
+                    <Select
+                        className={companySelect}
+                        name="newUserRole"
+                        value=''
+                        onChange={this.handleCompanySelection}
+                    >
+                        {this.state.companiesQuerySnapshot.docs.map((doc) => {
+                            return (
+                                <MenuItem key={doc.id} value={doc.data().companyId}>
+                                    {doc.data().companyName}
+                                </MenuItem>
+                            )
+                        })}
+                    </Select>
+                </FormControl>
+            </div>
         )
 
         return template;
