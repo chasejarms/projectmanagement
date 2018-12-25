@@ -6,8 +6,8 @@ import { IUserSliceOfState } from '../../Redux/Reducers/userReducer';
 export interface IRouteGuardPresentationProps extends RouteComponentProps<{}> {
   path: string;
   component: React.ComponentClass;
-  user: IUserSliceOfState;
-  setUser: (user: IUser) => void;
+  userState: IUserSliceOfState;
+  setUser: (companyId: string, user: IUser) => void;
   mustHaveRole: string[];
 }
 

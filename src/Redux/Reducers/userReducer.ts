@@ -1,26 +1,26 @@
+import { cloneDeep } from "lodash";
 import { IUser } from "src/Models/user";
 import { ISetCurrentUserAction, IUserActions } from "../ActionCreators/userActionCreators";
-import { REMOVE_CURRENT_USER, SET_CURRENT_USER } from "../Actions/userActions";
+import { REMOVE_CURRENT_USER_FOR_COMPANY, SET_CURRENT_USER_FOR_COMPANY } from "../Actions/userActions";
 
 export interface IUserSliceOfState {
-    user: IUser | undefined;
+    [companyId: string]: IUser;
 }
 
-const initialState = {
-    user: undefined,
-}
+const initialState = {}
 
 export const userReducer = (state: IUserSliceOfState = initialState, action: IUserActions) => {
     switch (action.type) {
-        case SET_CURRENT_USER:
+        case SET_CURRENT_USER_FOR_COMPANY:
             const setUserAction = action as ISetCurrentUserAction;
             return {
-                user: setUserAction.user,
+                ...state,
+                [setUserAction.companyId]: setUserAction.user,
             };
-        case REMOVE_CURRENT_USER:
-            return {
-                user: undefined,
-            }
+        case REMOVE_CURRENT_USER_FOR_COMPANY:
+            const clonedState = cloneDeep(state);
+            delete clonedState[action.companyId];
+            return clonedState;
         default:
             return state;
     }

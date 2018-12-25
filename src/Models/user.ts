@@ -1,8 +1,9 @@
 export interface IUser {
     id: string;
+    uid: string;
     email: string;
     fullName: string;
     type: 'Admin' | 'Staff' | 'Customer';
-    added: string;
+    mustResetPassword: boolean;
     scanCheckpoints?: string[];
 }

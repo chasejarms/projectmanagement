@@ -4,10 +4,10 @@ import { IUserSliceOfState, userReducer } from './userReducer';
 
 export interface IAppState {
     projectCreation: IProjectCreationSliceOfState;
-    user: IUserSliceOfState;
+    userState: IUserSliceOfState;
 }
 
 export const rootReducer = combineReducers({
     projectCreation: projectCreationReducer,
-    user: userReducer,
+    userState: userReducer,
 });

@@ -11,7 +11,6 @@ export class MockAuthenticationApi implements IAuthenticationApi {
                 email,
                 name: fullName,
                 type: 'Admin',
-                added: new Date(),
             }
         ]);
         const usersToSaveToStorage = JSON.stringify(usersWithSignedUpUser);

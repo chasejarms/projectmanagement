@@ -3,7 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Redirect, Route, withRouter } from 'react-router';
 import { IUser } from 'src/Models/user';
-import { setCurrentUser } from 'src/Redux/ActionCreators/userActionCreators';
+import { setUserForCompany } from 'src/Redux/ActionCreators/userActionCreators';
 import { IAppState } from 'src/Redux/Reducers/rootReducer';
 import firebase, { db } from '../../firebase';
 import { createRouteGuardClasses, IRouteGuardPresentationProps, IRouteGuardPresentationState } from './RouteGuard.ias';
@@ -18,8 +18,11 @@ class RouteGuardPresentation extends React.Component<IRouteGuardPresentationProp
   }
 
   public componentWillMount(): void {
-    if (!!this.props.user.user) {
-      this.setViewRights(this.props.user.user!);
+    const companyId = this.props.location.pathname.split('/')[2];
+    const user = this.props.userState[companyId];
+
+    if (!!user) {
+      this.setViewRights(user);
     } else {
       this.verifyUserIsAdmin();
     }
@@ -92,6 +95,11 @@ class RouteGuardPresentation extends React.Component<IRouteGuardPresentationProp
         return;
       }
 
+      this.props.setUser(companyId, {
+        ...userDocumentSnapshot.data() as IUser,
+        id: userDocumentSnapshot.id,
+      });
+
       const userData = userDocumentSnapshot.data()! as IUser;
       this.setViewRights(userData);
     });
@@ -112,13 +120,13 @@ class RouteGuardPresentation extends React.Component<IRouteGuardPresentationProp
   }
 }
 
-const mapStateToProps = ({ user }: IAppState) => ({
-  user
+const mapStateToProps = ({ userState }: IAppState) => ({
+  userState
 });
 
 const mapDispatchToProps = (dispatch: React.Dispatch<any>) => ({
-  setUser: (user: IUser) => {
-    const setCurrentUserAction = setCurrentUser(user);
+  setUser: (companyId: string, user: IUser) => {
+    const setCurrentUserAction = setUserForCompany(companyId, user);
     dispatch(setCurrentUserAction);
   }
 });

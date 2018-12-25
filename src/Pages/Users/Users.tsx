@@ -254,8 +254,9 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
             email: this.state.newUserEmail,
             type: this.state.newUserRole as any,
             id: '1',
-            added: Date.now().toString(),
             scanCheckpoints,
+            mustResetPassword: false,
+            uid: '5',
         })
 
         Api.userApi.getUsers(companyName).then((users) => {
