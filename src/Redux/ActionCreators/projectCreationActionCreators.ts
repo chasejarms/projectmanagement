@@ -6,7 +6,7 @@ import { IProjectCreationProjectUser } from './../../Models/projectUser';
 import { ADD_CHECKPOINT, ADD_PROJECT_USER, DELETE_CHECKPOINT, DELETE_PROJECT_USER, GET_INITIAL_CHECKPOINTS, RECEIVE_INITIAL_CHECKPOINTS, SET_PROJECT_NAME, UPDATE_CHECKPOINT, UPDATE_PROJECT_USER } from './../Actions/projectCreationActions';
 
 export interface IProjectCreationNameUpdateAction extends Action<typeof GET_INITIAL_CHECKPOINTS> {
-    projectName: string;
+    caseName: string;
 }
 
 export interface IProjectCreationAddCheckpointAction extends Action<typeof ADD_CHECKPOINT> {
@@ -49,10 +49,10 @@ IProjectCreationAddUserAction |
 IProjectCreationUpdateUserAction |
 IProjectCreationDeleteUserAction;
 
-export const setProjectNameCreator = (projectName: string): IProjectCreationNameUpdateAction => {
+export const setCaseNameCreator = (caseName: string): IProjectCreationNameUpdateAction => {
     return {
         type: SET_PROJECT_NAME,
-        projectName,
+        caseName,
     }
 }
 

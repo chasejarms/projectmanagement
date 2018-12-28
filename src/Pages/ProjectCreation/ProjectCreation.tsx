@@ -17,7 +17,7 @@ import { ICaseCreateRequest } from '../../Api/Projects/projectsInterface';
 import { ICase } from '../../Models/case';
 import { IProjectCreationProjectUser } from '../../Models/projectUser';
 import { addProjectUserActionCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
-import { deleteProjectUserActionCreator, getInitialCheckpoints, setProjectNameCreator, updateProjectUserActionCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
+import { deleteProjectUserActionCreator, getInitialCheckpoints, setCaseNameCreator, updateProjectUserActionCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
 import { IAppState } from '../../Redux/Reducers/rootReducer';
 import { handleChange } from '../../Utils/handleChange';
 import {
@@ -122,7 +122,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         console.log('caseDeadline :', this.state.caseDeadline);
 
         const projectCreateRequest: ICaseCreateRequest = {
-            name: this.props.projectCreation.projectName,
+            name: this.props.projectCreation.caseName,
             deadline: this.state.caseDeadline.toUTCString(),
             notes: this.state.projectNotes,
             companyName,
@@ -203,7 +203,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                             className={projectName}
                             label="Case Name"
                             name="projectName"
-                            value={this.props.projectCreation.projectName}
+                            value={this.props.projectCreation.caseName}
                             onChange={this.handleProjectNameChange}
                         />
                     </Paper>
@@ -260,7 +260,7 @@ const mapStateToProps = ({ projectCreation }: IAppState) => ({
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     updateProjectName: (projectName: string) => {
-        const projectNameUpdateAction = setProjectNameCreator(projectName);
+        const projectNameUpdateAction = setCaseNameCreator(projectName);
         dispatch(projectNameUpdateAction);
     },
     getInitialProjectCreationCheckpoints: (companyName: string) => {

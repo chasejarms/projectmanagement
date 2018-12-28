@@ -4,13 +4,13 @@ import { IProjectCreationActions, IProjectCreationAddCheckpointAction, IProjectC
 import { ADD_CHECKPOINT, ADD_PROJECT_USER, DELETE_CHECKPOINT, DELETE_PROJECT_USER, RECEIVE_INITIAL_CHECKPOINTS, SET_PROJECT_NAME, UPDATE_CHECKPOINT, UPDATE_PROJECT_USER } from './../Actions/projectCreationActions';
 
 export interface IProjectCreationSliceOfState {
-    projectName: string;
+    caseName: string;
     checkpoints: ICheckpoint[];
     projectUsers: IProjectCreationProjectUser[];
 }
 
 const initialState = {
-  projectName: '',
+  caseName: '',
   checkpoints: [],
   projectUsers: [],
 }
@@ -21,7 +21,7 @@ export const projectCreationReducer = (state: IProjectCreationSliceOfState = ini
       const projectNameAction = action as IProjectCreationNameUpdateAction;
       return {
         ...state,
-        projectName: projectNameAction.projectName,
+        caseName: projectNameAction.caseName,
       };
     case ADD_CHECKPOINT:
       const addCheckpointAction = action as IProjectCreationAddCheckpointAction;
