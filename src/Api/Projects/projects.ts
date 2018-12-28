@@ -1,6 +1,6 @@
 import * as firebase from 'firebase';
+import { ICase } from './../../Models/case';
 import { ICheckpoint } from './../../Models/checkpoint';
-import { IProject } from './../../Models/project';
 import { ISlimCase } from './../../Models/slimCase';
 import { ICaseApi, ICaseCreateRequest, ISlimCasesSearchRequest } from './projectsInterface';
 
@@ -17,7 +17,7 @@ export class ProjectsApi implements ICaseApi {
         return slimProjectsResult.data;
     }
 
-    public async createProject(companyName: string, projectCreateRequest: ICaseCreateRequest): Promise<IProject> {
+    public async createProject(companyName: string, projectCreateRequest: ICaseCreateRequest): Promise<ICase> {
         const createProjectCloudFunction = firebase.functions().httpsCallable('createProject');
         let createProjectResult: firebase.functions.HttpsCallableResult;
         try {
@@ -32,7 +32,7 @@ export class ProjectsApi implements ICaseApi {
         } as any;
     }
 
-    public async getProject(companyName: string, projectId: string): Promise<IProject> {
+    public async getProject(companyName: string, projectId: string): Promise<ICase> {
         const documentReference = await firebase.firestore()
             .collection('companies')
             .doc(companyName)
@@ -40,7 +40,7 @@ export class ProjectsApi implements ICaseApi {
             .doc(projectId)
             .get();
 
-        return documentReference.data()! as IProject;
+        return documentReference.data()! as ICase;
     }
 
     public async uploadFile(companyName: string, projectId: string, file: File): Promise<firebase.storage.UploadTaskSnapshot> {
@@ -55,7 +55,7 @@ export class ProjectsApi implements ICaseApi {
         throw new Error("Method not implemented.");
     }
 
-    public updateProject(companyName: string, project: IProject): IProject {
+    public updateProject(companyName: string, project: ICase): ICase {
         throw new Error("Method not implemented");
     }
 

@@ -3,7 +3,7 @@ import * as admin from 'firebase-admin';
 
 export const slimProjectFromProjectCreateLocal = (passedInAdmin: admin.app.App) => functions.firestore.document('companies/{companyName}/cases/{caseId}').onCreate(
     (document: FirebaseFirestore.DocumentSnapshot, context: functions.EventContext) => {
-        const project = document.data() as any; // as IProject
+        const project = document.data() as any; // as ICase
         console.log('project: ', project);
         const currentCheckpoint = project.checkpoints.find((checkpoint) => !checkpoint.complete).name;
         console.log('currentCheckpoint: ', currentCheckpoint);
@@ -31,7 +31,7 @@ export const slimProjectFromProjectCreateLocal = (passedInAdmin: admin.app.App) 
 
 export const slimProjectFromProjectUpdateLocal = (passedInAdmin: admin.app.App) => functions.firestore.document('companies/{companyName}/cases/{caseId}').onUpdate(
     (change: functions.Change<FirebaseFirestore.DocumentSnapshot>, context: functions.EventContext) => {
-        const project = change.after.data() as any; // IProject
+        const project = change.after.data() as any; // ICase
         const currentCheckpoint = project.checkpoints.find((checkpoint) => !checkpoint.complete).name;
         const slimProject: any = {
             projectId: project.id,
@@ -54,7 +54,7 @@ export const slimProjectFromProjectUpdateLocal = (passedInAdmin: admin.app.App) 
 
 export const deleteSlimProjectLocal = (passedInAdmin: admin.app.App) => functions.firestore.document('companies/{companyName}/cases/{caseId}').onDelete(
     (document: FirebaseFirestore.DocumentSnapshot, context: functions.EventContext) => {
-        const project = document.data() as any; // IProject
+        const project = document.data() as any; // ICase
         const companyName = context.params.companyName;
         const caseId = context.params.caseId;
 

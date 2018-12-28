@@ -14,7 +14,7 @@ import { withRouter } from 'react-router';
 import { Dispatch } from 'redux';
 import Api from '../../Api/api';
 import { ICaseCreateRequest } from '../../Api/Projects/projectsInterface';
-import { IProject } from '../../Models/project';
+import { ICase } from '../../Models/case';
 import { IProjectCreationProjectUser } from '../../Models/projectUser';
 import { addProjectUserActionCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
 import { deleteProjectUserActionCreator, getInitialCheckpoints, setProjectNameCreator, updateProjectUserActionCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
@@ -127,7 +127,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             notes: this.state.projectNotes,
             companyName,
         };
-        Api.projectsApi.createProject(companyName, projectCreateRequest).then((project: IProject) => {
+        Api.projectsApi.createProject(companyName, projectCreateRequest).then((project: ICase) => {
             this.props.history.push(`/company/${companyName}/project/${project.id}`);
         });
     }

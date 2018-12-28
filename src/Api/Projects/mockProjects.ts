@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { slimCases as mockSlimProjects } from './../../MockData/slimProjects';
+import { ICase } from './../../Models/case';
 import { ICheckpoint } from './../../Models/checkpoint';
-import { IProject } from './../../Models/project';
 import { ISlimCase } from './../../Models/slimCase';
 import { mockApiKey } from './../mockApi.key';
 import { ICaseApi, ISlimCasesSearchRequest } from './projectsInterface';
@@ -24,16 +24,17 @@ export class MockProjectsApi implements ICaseApi {
         return Promise.resolve(_.cloneDeep(slimProjects));
     }
 
-    public async createProject(companyName: string, projectCreateRequest: ICaseCreateRequest): Promise<IProject> {
-        const project: IProject = {
-            id: Date.now().toString(),
+    public async createProject(companyName: string, projectCreateRequest: ICaseCreateRequest): Promise<ICase> {
+        const project: ICase = {
+            id: '5',
             name: projectCreateRequest.name,
             deadline: projectCreateRequest.deadline,
-            checkpoints: [],
+            caseCheckpoints: [],
             complete: false,
             doctor: 'Bob',
             notes: projectCreateRequest.notes,
-            attachments: [],
+            attachmentUrls: [],
+            created: Date.now().toString(),
         }
         this.createSlimProjectFromProject(project);
         const createdLargeProject = this.createLargeProjectFromProject(project);
@@ -41,17 +42,17 @@ export class MockProjectsApi implements ICaseApi {
     }
 
     public async getProjectCheckpoints(companyName: string, projectId: string): Promise<ICheckpoint[]> {
-        const project = await this.getProject(companyName, projectId);
-        return project.checkpoints;
+        // const project = await this.getProject(companyName, projectId);
+        return [];
     }
 
-    public getProject(companyName: string, projectId: string): Promise<IProject> {
+    public getProject(companyName: string, projectId: string): Promise<ICase> {
         const stringifiedProject = localStorage.getItem(largeProjectsKey + projectId);
         const project = JSON.parse(stringifiedProject!);
         return project;
     }
 
-    public updateProject(companyName: string, project: IProject): IProject {
+    public updateProject(companyName: string, project: ICase): ICase {
         return {} as any;
     }
 
@@ -73,7 +74,7 @@ export class MockProjectsApi implements ICaseApi {
         }
     }
 
-    // private updateSlimProjectFromProject(project: IProject): void {
+    // private updateSlimProjectFromProject(project: ICase): void {
     //     const existingSlimProjects = this.getSlimCases('does not matter');
     //     const existingProjectData = existingSlimProjects.filter((existingSlimProject) => {
     //         return existingSlimProject.projectId === project.id;
@@ -102,7 +103,7 @@ export class MockProjectsApi implements ICaseApi {
     //     );
     // }
 
-    private async createSlimProjectFromProject(project: IProject): Promise<void> {
+    private async createSlimProjectFromProject(project: ICase): Promise<void> {
         const deadline = this.nextCheckpointDeadline(project);
         const slimProjectToUpdate: ISlimCase = {
             currentCheckpointName: this.currentCheckpoint(project).name,
@@ -114,7 +115,7 @@ export class MockProjectsApi implements ICaseApi {
             doctorName: 'Tom\'s Dentistry',
             showNewInfoFrom: null,
             created: deadline.toUTCString(),
-        }
+        } as any;
 
         const existingSlimProjects = await this.getSlimCases('does not matter' as any);
         const slimProjectsWithNewProject = existingSlimProjects.concat([slimProjectToUpdate]);
@@ -125,7 +126,7 @@ export class MockProjectsApi implements ICaseApi {
         )
     }
 
-    private createLargeProjectFromProject(project: IProject): IProject {
+    private createLargeProjectFromProject(project: ICase): ICase {
         const stringifiedLargeProject = JSON.stringify(project);
         localStorage.setItem(
             largeProjectsKey + project.id,
@@ -135,19 +136,17 @@ export class MockProjectsApi implements ICaseApi {
         return project;
     }
 
-    private currentCheckpoint(project: IProject): ICheckpoint {
+    private currentCheckpoint(project: ICase): ICheckpoint {
         // tslint:disable-next-line:prefer-for-of
-        for (let i = 0; i < project.checkpoints.length; i++) {
-            const currentCheckpoint = project.checkpoints[i];
-            if (!currentCheckpoint.complete) {
-                return currentCheckpoint;
-            }
+        for (let i = 0; i < project.caseCheckpoints.length; i++) {
+            // const currentCheckpoint = project.caseCheckpoints[i];
+            return {} as any;
         }
 
         return {} as any;
     }
 
-    private nextCheckpointDeadline(project: IProject): Date {
+    private nextCheckpointDeadline(project: ICase): Date {
         return new Date();
     }
 }

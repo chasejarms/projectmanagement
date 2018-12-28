@@ -1,13 +1,13 @@
 import { Theme, WithTheme } from '@material-ui/core';
 import { css } from 'emotion';
 import { RouteComponentProps } from 'react-router';
-import { IProject } from '../../Models/project';
+import { ICase } from '../../Models/case';
 
 // tslint:disable-next-line:no-empty-interface
 export interface IProjectPresentationProps extends RouteComponentProps<{}>, WithTheme {}
 
 export interface IProjectPresentationState {
-    project: IProject | null;
+    project: ICase | null;
     open: boolean;
 }
 

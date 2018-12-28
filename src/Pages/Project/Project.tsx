@@ -16,8 +16,8 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import { withRouter } from 'react-router';
 import Api from '../../Api/api';
+import { ICase } from '../../Models/case';
 import { ICheckpoint } from '../../Models/checkpoint';
-import { IProject } from '../../Models/project';
 import { createProjectPresentationClasses, IProjectPresentationProps, IProjectPresentationState } from './Project.ias';
 
 class ProjectPresentation extends React.Component<IProjectPresentationProps, IProjectPresentationState> {
@@ -107,7 +107,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                                 className={seeAttachmentsButton}
                                 variant="contained"
                                 color="secondary">
-                                See Attachments ({(this.state.project! as IProject).attachments.length})
+                                See Attachments ({(this.state.project! as ICase).attachmentUrls.length})
                             </Button>
                             <Button
                                 className={addAttachmentButton}
@@ -173,11 +173,13 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
 
         Api.projectsApi.uploadFile(companyName, projectId, file).then((uploadTaskSnapshot) => {
             const downloadUrl = uploadTaskSnapshot.downloadURL;
-            const attachments = _.cloneDeep((this.state.project! as IProject).attachments);
-            attachments.push(downloadUrl);
+            const attachments = _.cloneDeep((this.state.project! as ICase).attachmentUrls);
+            if (downloadUrl) {
+                attachments.push(downloadUrl);
+            }
             this.setState({
                 project: {
-                    ...this.state.project! as IProject,
+                    ...this.state.project! as ICase,
                     attachments,
                 }
             })
