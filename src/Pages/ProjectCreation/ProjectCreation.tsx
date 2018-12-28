@@ -31,7 +31,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
     public state = {
         open: false,
         activeStep: 0,
-        projectName: '',
+        caseName: '',
         checkpoints: [],
         userName: '',
         checkpointStatus: '',
@@ -52,10 +52,10 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         this.myRef = React.createRef();
     }
 
-    public handleProjectNameChange = (event: any) => {
+    public handleCaseNameChange = (event: any) => {
         // tslint:disable-next-line:no-console
         const projectName = event.target.value;
-        this.props.updateProjectName(projectName);
+        this.props.updateCaseName(projectName);
     }
 
     public componentWillMount = (): void => {
@@ -202,9 +202,9 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                         <TextField
                             className={projectName}
                             label="Case Name"
-                            name="projectName"
+                            name="caseName"
                             value={this.props.projectCreation.caseName}
-                            onChange={this.handleProjectNameChange}
+                            onChange={this.handleCaseNameChange}
                         />
                     </Paper>
                 </div>
@@ -259,9 +259,9 @@ const mapStateToProps = ({ projectCreation }: IAppState) => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-    updateProjectName: (projectName: string) => {
-        const projectNameUpdateAction = setCaseNameCreator(projectName);
-        dispatch(projectNameUpdateAction);
+    updateCaseName: (caseName: string) => {
+        const caseNameUpdateAction = setCaseNameCreator(caseName);
+        dispatch(caseNameUpdateAction);
     },
     getInitialProjectCreationCheckpoints: (companyName: string) => {
         const fetchInitialCheckpoints = getInitialCheckpoints(companyName);
