@@ -21,7 +21,7 @@ import { ICaseCreateRequest } from '../../Api/Projects/projectsInterface';
 import { FormControlState } from '../../Classes/formControlState';
 import { ICase } from '../../Models/case';
 import { IProjectCreationProjectUser } from '../../Models/projectUser';
-import { addProjectUserActionCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
+import { addProjectUserActionCreator, resetProjectCreation } from '../../Redux/ActionCreators/projectCreationActionCreators';
 import { deleteProjectUserActionCreator, getInitialCheckpoints, setCaseNameCreator, updateProjectUserActionCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
 import { IAppState } from '../../Redux/Reducers/rootReducer';
 import { handleChange } from '../../Utils/handleChange';
@@ -58,7 +58,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
     }
 
     public handleCaseNameChange = (event: any) => {
-
+        this.props.resetProjectCreation();
         const caseName = event.target.value;
         const caseNameControl = this.props.projectCreation.caseName.createCopy().setValue(
             caseName,
@@ -67,6 +67,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
     }
 
     public componentWillMount = (): void => {
+
         const companyName = this.props.match.path.split('/')[2];
         Api.caseNotesApi.getCaseNotes(companyName).then((caseNotes) => {
             this.setState({
@@ -123,6 +124,20 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         })
     }
 
+    private previousStepsAreValid = () => {
+        const {
+            caseName,
+        } = this.props.projectCreation;
+
+        if (this.state.activeStep === 0) {
+            return !caseName.invalid;
+        } else if (this.state.activeStep === 1) {
+            return true;
+        }
+
+        return true;
+    }
+
     private createProject = () => {
         const companyName = this.props.match.path.split('/')[2];
 
@@ -161,7 +176,8 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                 className={baseActionButton}
                 variant="contained"
                 onClick={this.onNextClick}
-                color="secondary">
+                color="secondary"
+                disabled={!this.previousStepsAreValid()}>
                 Next
             </Button>
         ) : undefined;
@@ -279,6 +295,9 @@ const mapStateToProps = ({ projectCreation }: IAppState) => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
+    resetProjectCreation: () => {
+        dispatch(resetProjectCreation);
+    },
     updateCaseName: (caseNameControl: FormControlState<string>) => {
         const caseNameUpdateAction = setCaseNameCreator(caseNameControl);
         dispatch(caseNameUpdateAction);

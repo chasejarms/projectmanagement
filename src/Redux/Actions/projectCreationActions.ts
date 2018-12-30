@@ -6,6 +6,7 @@ export const UPDATE_CHECKPOINT = `${actionKey} update checkpoint`;
 export const ADD_CHECKPOINT = `${actionKey} add checkpoint`;
 export const DELETE_CHECKPOINT = `${actionKey} delete checkpoint`;
 
+export const RESET_PROJECT_CREATION = `${actionKey} reset project creation`;
 export const SET_PROJECT_NAME = `${actionKey} set project name`;
 
 export const CREATE_PROJECT = `${actionKey} create project`;

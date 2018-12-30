@@ -4,7 +4,20 @@ import api from '../../Api/api';
 import { FormControlState } from '../../Classes/formControlState';
 import { ICheckpoint } from './../../Models/checkpoint';
 import { IProjectCreationProjectUser } from './../../Models/projectUser';
-import { ADD_CHECKPOINT, ADD_PROJECT_USER, DELETE_CHECKPOINT, DELETE_PROJECT_USER, GET_INITIAL_CHECKPOINTS, RECEIVE_INITIAL_CHECKPOINTS, SET_PROJECT_NAME, UPDATE_CHECKPOINT, UPDATE_PROJECT_USER } from './../Actions/projectCreationActions';
+import {
+    ADD_CHECKPOINT,
+    ADD_PROJECT_USER,
+    DELETE_CHECKPOINT,
+    DELETE_PROJECT_USER,
+    GET_INITIAL_CHECKPOINTS,
+    RECEIVE_INITIAL_CHECKPOINTS,
+    RESET_PROJECT_CREATION,
+    SET_PROJECT_NAME,
+    UPDATE_CHECKPOINT,
+    UPDATE_PROJECT_USER,
+} from './../Actions/projectCreationActions';
+
+export interface IResetProjectCreation extends Action<typeof RESET_PROJECT_CREATION> {}
 
 export interface IProjectCreationNameUpdateAction extends Action<typeof GET_INITIAL_CHECKPOINTS> {
     caseName: FormControlState<string>;
@@ -48,7 +61,12 @@ IProjectCreationRemoveCheckpointAction |
 IProjectCreationReceiveInitialCheckpointsAction |
 IProjectCreationAddUserAction |
 IProjectCreationUpdateUserAction |
-IProjectCreationDeleteUserAction;
+IProjectCreationDeleteUserAction |
+IResetProjectCreation;
+
+export const resetProjectCreation = {
+    type: RESET_PROJECT_CREATION,
+}
 
 export const setCaseNameCreator = (caseName: FormControlState<string>): IProjectCreationNameUpdateAction => {
     return {
