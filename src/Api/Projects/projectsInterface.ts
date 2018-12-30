@@ -6,7 +6,7 @@ export interface ICaseCreateRequest {
     name: string;
     deadline: string;
     notes: string;
-    companyName: string;
+    attachmentUrls: string[];
 }
 
 export interface ISlimCasesSearchRequest {
@@ -17,7 +17,7 @@ export interface ISlimCasesSearchRequest {
 
 export interface ICaseApi {
     getSlimCases(slimCaseSearchRequest: ISlimCasesSearchRequest): Promise<ISlimCase[]>;
-    createProject(companyName: string, projectCreateRequest: ICaseCreateRequest): Promise<ICase>;
+    createProject(companyId: string, projectCreateRequest: ICaseCreateRequest): Promise<ICase>;
     getProject(companyName: string, projectId: string): Promise<ICase>;
     getProjectCheckpoints(companyName: string, projectId: string): Promise<ICheckpoint[]>;
     uploadFile(companyName: string, projectId: string, file: File): Promise<firebase.storage.UploadTaskSnapshot>;

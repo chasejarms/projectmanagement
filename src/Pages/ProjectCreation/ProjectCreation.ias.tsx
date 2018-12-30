@@ -30,7 +30,7 @@ export interface IProjectCreationState {
     isUpdate: boolean;
     index: number;
     popperIsOpen: boolean;
-    caseDeadline: Date;
+    caseDeadline: FormControlState<Date>;
     projectNotes: string;
 }
 
@@ -77,12 +77,11 @@ export const createProjectCreationClasses = (
 
     const projectName = css({
         width: 400,
-        // '& > label': {
-        //     color: 'white',
-        // },
-        // '& > label:focused': {
-        //     color: props.theme.palette.primary.main,
-        // },
+        margin: 16,
+    });
+
+    const caseDeadline = css({
+        width: 400,
         margin: 16,
     });
 
@@ -270,6 +269,10 @@ export const createProjectCreationClasses = (
         marginTop: 32,
     });
 
+    const rootCaseDeadlineClass = css({
+        
+    });
+
     return {
         projectCreationContainer,
         stepperContainer,
@@ -278,6 +281,8 @@ export const createProjectCreationClasses = (
         baseActionButton,
         projectNameContainer,
         projectName,
+        rootCaseDeadlineClass,
+        caseDeadline,
         multipleCheckpointsContainer,
         singleCheckpointContainer,
         topBar,

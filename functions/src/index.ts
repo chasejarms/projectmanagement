@@ -2,7 +2,7 @@ import * as admin from 'firebase-admin';
 
 import { signUpLocal } from './functions/signUp';
 import { getSlimCasesLocal } from './functions/getSlimCases';
-import { createProjectLocal } from './functions/createProject';
+import { createCaseLocal } from './functions/createCase';
 import {
     slimProjectFromProjectCreateLocal,
     slimProjectFromProjectUpdateLocal,
@@ -16,7 +16,7 @@ const app = admin.initializeApp({
 
 export const signUp = signUpLocal(app);
 export const getSlimCases = getSlimCasesLocal(app);
-export const createProject = createProjectLocal(app);
+export const createCase = createCaseLocal(app);
 export const slimProjectFromProjectCreate = slimProjectFromProjectCreateLocal(app);
 export const slimProjectFromProjectUpdate = slimProjectFromProjectUpdateLocal(app);
 export const deleteSlimProject = deleteSlimProjectLocal(app);

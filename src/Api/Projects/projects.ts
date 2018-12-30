@@ -17,7 +17,7 @@ export class ProjectsApi implements ICaseApi {
         return slimProjectsResult.data;
     }
 
-    public async createProject(companyName: string, projectCreateRequest: ICaseCreateRequest): Promise<ICase> {
+    public async createProject(companyId: string, projectCreateRequest: ICaseCreateRequest): Promise<ICase> {
         const createProjectCloudFunction = firebase.functions().httpsCallable('createProject');
         let createProjectResult: firebase.functions.HttpsCallableResult;
         try {
@@ -32,10 +32,10 @@ export class ProjectsApi implements ICaseApi {
         } as any;
     }
 
-    public async getProject(companyName: string, projectId: string): Promise<ICase> {
+    public async getProject(companyId: string, projectId: string): Promise<ICase> {
         const documentReference = await firebase.firestore()
             .collection('companies')
-            .doc(companyName)
+            .doc(companyId)
             .collection('cases')
             .doc(projectId)
             .get();
@@ -43,19 +43,19 @@ export class ProjectsApi implements ICaseApi {
         return documentReference.data()! as ICase;
     }
 
-    public async uploadFile(companyName: string, projectId: string, file: File): Promise<firebase.storage.UploadTaskSnapshot> {
+    public async uploadFile(companyId: string, projectId: string, file: File): Promise<firebase.storage.UploadTaskSnapshot> {
         const storageRef = firebase.storage().ref();
-        const updatedStorageRef = storageRef.child(`${companyName}/${projectId}/${file.name}`);
+        const updatedStorageRef = storageRef.child(`${companyId}/${projectId}/${file.name}`);
         const uploadTaskSnapshot: firebase.storage.UploadTaskSnapshot = await updatedStorageRef.put(file);
 
         return uploadTaskSnapshot;
     }
 
-    public async getProjectCheckpoints(companyName: string, projectId: string): Promise<ICheckpoint[]> {
+    public async getProjectCheckpoints(companyId: string, projectId: string): Promise<ICheckpoint[]> {
         throw new Error("Method not implemented.");
     }
 
-    public updateProject(companyName: string, project: ICase): ICase {
+    public updateProject(companyId: string, project: ICase): ICase {
         throw new Error("Method not implemented");
     }
 

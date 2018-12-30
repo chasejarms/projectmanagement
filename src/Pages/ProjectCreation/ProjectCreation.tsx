@@ -25,6 +25,7 @@ import { addProjectUserActionCreator, resetProjectCreation } from '../../Redux/A
 import { deleteProjectUserActionCreator, getInitialCheckpoints, setCaseNameCreator, updateProjectUserActionCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
 import { IAppState } from '../../Redux/Reducers/rootReducer';
 import { handleChange } from '../../Utils/handleChange';
+import { requiredValidator } from '../../Validators/required.validator';
 import {
     createProjectCreationClasses,
     IProjectCreationProps,
@@ -46,7 +47,12 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         index: -1,
         popperIsOpen: true,
         user: {} as any,
-        caseDeadline: new Date(),
+        caseDeadline: new FormControlState({
+            value: new Date(),
+            validators: [
+                requiredValidator('A case delivery date is required'),
+            ]
+        }),
         projectNotes: '',
     };
 
@@ -129,29 +135,30 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             caseName,
         } = this.props.projectCreation;
 
+        const {
+            caseDeadline,
+        } = this.state;
+
         if (this.state.activeStep === 0) {
             return !caseName.invalid;
         } else if (this.state.activeStep === 1) {
+            return !caseName.invalid && !caseDeadline.invalid;
+        } else {
             return true;
         }
-
-        return true;
     }
 
     private createProject = () => {
-        const companyName = this.props.match.path.split('/')[2];
-
-        // tslint:disable-next-line:no-console
-        console.log('caseDeadline :', this.state.caseDeadline);
+        const companyId = this.props.match.path.split('/')[2];
 
         const projectCreateRequest: ICaseCreateRequest = {
             name: this.props.projectCreation.caseName.value,
-            deadline: this.state.caseDeadline.toUTCString(),
+            deadline: this.state.caseDeadline.value.toUTCString(),
             notes: this.state.projectNotes,
-            companyName,
+            attachmentUrls: [],
         };
-        Api.projectsApi.createProject(companyName, projectCreateRequest).then((project: ICase) => {
-            this.props.history.push(`/company/${companyName}/project/${project.id}`);
+        Api.projectsApi.createProject(companyId, projectCreateRequest).then((project: ICase) => {
+            this.props.history.push(`/company/${companyId}/project/${project.id}`);
         });
     }
 
@@ -202,8 +209,9 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
     }
 
     private handleCaseDeadlineChange = (newCaseDeadline: Date): void => {
+        const newCaseDeadlineControl = this.state.caseDeadline.createCopy().setValue(newCaseDeadline);
         this.setState({
-            caseDeadline: newCaseDeadline,
+            caseDeadline: newCaseDeadlineControl,
         })
     }
 
@@ -217,6 +225,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             projectNotesContainer,
             projectNotesInput,
             addAttachmentButtonContainer,
+            caseDeadline,
         } = createProjectCreationClasses(this.props, this.state);
 
         if (this.state.activeStep === 0) {
@@ -235,13 +244,6 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                                 {caseName.shouldShowError() ? caseName.errors[0] : undefined}
                             </FormHelperText>
                         </FormControl>
-                        {/* <TextField
-                            className={projectName}
-                            label="Case Name"
-                            name="caseName"
-                            value={this.props.projectCreation.caseName.value}
-                            onChange={this.handleCaseNameChange}
-                        /> */}
                     </Paper>
                 </div>
             )
@@ -252,11 +254,12 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                         <DateFormatInput
                             fullWidth={true}
                             label="Case Delivery Date"
-                            className={projectName}
+                            className={caseDeadline}
                             name="caseDeadline"
-                            value={this.state.caseDeadline}
+                            value={this.state.caseDeadline.value}
                             onChange={this.handleCaseDeadlineChange}
                             min={new Date()}
+                            error={this.state.caseDeadline.shouldShowError() ? this.state.caseDeadline.errors[0] : undefined}
                         />
                     </Paper>
                 </div>
