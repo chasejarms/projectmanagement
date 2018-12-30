@@ -1,6 +1,7 @@
 import {
     Button,
     Checkbox,
+    CircularProgress,
     Dialog,
     DialogActions,
     DialogContent,
@@ -18,14 +19,12 @@ import {
     Tooltip,
     Typography,
     withTheme,
-
 } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import DoneIcon from '@material-ui/icons/Done';
 import * as React from 'react';
 import Api from '../../Api/api';
 import { IWorkflowCheckpoint } from '../../Models/workflow';
-// import { WorkflowCheckpoint } from '../../Components/WorkflowCheckpoint/WorkflowCheckpoint';
 import { handleChange } from '../../Utils/handleChange';
 import { createWorkflowPresentationClasses, IWorkflowPresentationProps, IWorkflowPresentationState } from './Workflow.ias';
 
@@ -58,10 +57,6 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
     }
 
     public render() {
-        if (!this.state.workflow) {
-            return '<div></div>'
-        }
-
         const {
             dialogContent,
             dialogControl,
@@ -69,7 +64,20 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
             workflowContainer,
             workflowRow,
             workflowPaper,
+            loadingContainer,
         } = createWorkflowPresentationClasses(this.props, this.state);
+
+        if (!this.state.workflow) {
+            return (
+                <div className={loadingContainer}>
+                    <CircularProgress
+                        color="primary"
+                        size={64}
+                        thickness={3}
+                    />
+                </div>
+            )
+        }
 
         const mappedCheckpoints = this.state.workflow.map((checkpoint, index) => (
                 <TableRow key={index} onClick={this.openCheckpointDialog(checkpoint, index)} className={workflowRow}>

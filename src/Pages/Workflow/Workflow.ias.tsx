@@ -23,13 +23,15 @@ export const createWorkflowPresentationClasses = (
     props: IWorkflowPresentationProps,
     state: IWorkflowPresentationState,
 ) => {
+    const loadingContainer = css({
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+    });
+
     const workflowContainer = css({
-        // minHeight: '100vh',
-        // boxSizing: 'content-box',
-        // paddingTop: 48,
-        // display: 'flex',
-        // flexDirection: 'column',
-        // backgroundColor: '#f5f5f5'
         padding: 32,
     });
 
@@ -83,5 +85,6 @@ export const createWorkflowPresentationClasses = (
         workflowToolbar,
         workflowRow,
         workflowPaper,
+        loadingContainer,
     }
 }

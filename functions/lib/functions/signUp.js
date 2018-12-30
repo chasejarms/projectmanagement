@@ -35,7 +35,13 @@ exports.signUpLocal = (passedInAdmin) => functions.https.onCall((data, context) 
             createCompanyPromise,
             createUserPromise,
         ]);
-        yield firebase.collection('companyUserJoin')
+        const caseNotesTemplateDocumentReference = yield firebase.collection('caseNotesTemplate').add({ notes: '' });
+        const createCompanyWorkflowPromise = firebase.collection('companyWorkflows').add({
+            companyId: companyDocumentReference.id,
+            workflowCheckpoints: [],
+            caseNotesTemplate: caseNotesTemplateDocumentReference.id,
+        });
+        const createCompanyUserJoinPromise = firebase.collection('companyUserJoin')
             .doc(`${companyDocumentReference.id}_${firebaseAuthenticationUser.uid}`)
             .set({
             companyId: companyDocumentReference.id,
@@ -43,6 +49,10 @@ exports.signUpLocal = (passedInAdmin) => functions.https.onCall((data, context) 
             firebaseAuthenticationUid: firebaseAuthenticationUser.uid,
             companyName: data.companyName,
         });
+        yield Promise.all([
+            createCompanyWorkflowPromise,
+            createCompanyUserJoinPromise,
+        ]);
         return {
             user: firebaseAuthenticationUser,
         };

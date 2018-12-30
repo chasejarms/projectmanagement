@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const functions = require("firebase-functions");
 exports.slimProjectFromProjectCreateLocal = (passedInAdmin) => functions.firestore.document('companies/{companyName}/cases/{caseId}').onCreate((document, context) => {
-    const project = document.data(); // as IProject
+    const project = document.data(); // as ICase
     console.log('project: ', project);
     const currentCheckpoint = project.checkpoints.find((checkpoint) => !checkpoint.complete).name;
     console.log('currentCheckpoint: ', currentCheckpoint);
@@ -25,7 +25,7 @@ exports.slimProjectFromProjectCreateLocal = (passedInAdmin) => functions.firesto
         .set(slimProject);
 });
 exports.slimProjectFromProjectUpdateLocal = (passedInAdmin) => functions.firestore.document('companies/{companyName}/cases/{caseId}').onUpdate((change, context) => {
-    const project = change.after.data(); // IProject
+    const project = change.after.data(); // ICase
     const currentCheckpoint = project.checkpoints.find((checkpoint) => !checkpoint.complete).name;
     const slimProject = {
         projectId: project.id,
@@ -44,7 +44,7 @@ exports.slimProjectFromProjectUpdateLocal = (passedInAdmin) => functions.firesto
         .set(slimProject);
 });
 exports.deleteSlimProjectLocal = (passedInAdmin) => functions.firestore.document('companies/{companyName}/cases/{caseId}').onDelete((document, context) => {
-    const project = document.data(); // IProject
+    const project = document.data(); // ICase
     const companyName = context.params.companyName;
     const caseId = context.params.caseId;
     return passedInAdmin.firestore()
