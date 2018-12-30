@@ -1,6 +1,7 @@
 import { WithTheme } from '@material-ui/core';
 import { css } from 'emotion';
 import { RouteComponentProps } from 'react-router';
+import { FormControlState } from '../../Classes/formControlState';
 import { IProjectCreationProjectUser } from '../../Models/projectUser';
 import { IUser } from '../../Models/user';
 import { IWorkflowCheckpoint } from '../../Models/workflow';
@@ -9,7 +10,7 @@ import { IProjectCreationSliceOfState } from '../../Redux/Reducers/projectCreati
 // tslint:disable-next-line:no-empty-interface
 export interface IProjectCreationProps extends WithTheme, RouteComponentProps<{}> {
     projectCreation: IProjectCreationSliceOfState;
-    updateCaseName: (projectName: string) => void;
+    updateCaseName: (caseNameControl: FormControlState<string>) => void;
     getInitialProjectCreationCheckpoints: (companyName: string) => void;
     addProjectUser: (projectUser: IProjectCreationProjectUser) => void;
     updateProjectUser: (projectUser: IProjectCreationProjectUser, index: number) => void;

@@ -1,5 +1,9 @@
 import {
     Button,
+    FormControl,
+    FormHelperText,
+    Input,
+    InputLabel,
     Paper,
     Step,
     StepLabel,
@@ -14,6 +18,7 @@ import { withRouter } from 'react-router';
 import { Dispatch } from 'redux';
 import Api from '../../Api/api';
 import { ICaseCreateRequest } from '../../Api/Projects/projectsInterface';
+import { FormControlState } from '../../Classes/formControlState';
 import { ICase } from '../../Models/case';
 import { IProjectCreationProjectUser } from '../../Models/projectUser';
 import { addProjectUserActionCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
@@ -53,9 +58,12 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
     }
 
     public handleCaseNameChange = (event: any) => {
-        // tslint:disable-next-line:no-console
-        const projectName = event.target.value;
-        this.props.updateCaseName(projectName);
+
+        const caseName = event.target.value;
+        const caseNameControl = this.props.projectCreation.caseName.createCopy().setValue(
+            caseName,
+        )
+        this.props.updateCaseName(caseNameControl);
     }
 
     public componentWillMount = (): void => {
@@ -122,7 +130,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         console.log('caseDeadline :', this.state.caseDeadline);
 
         const projectCreateRequest: ICaseCreateRequest = {
-            name: this.props.projectCreation.caseName,
+            name: this.props.projectCreation.caseName.value,
             deadline: this.state.caseDeadline.toUTCString(),
             notes: this.state.projectNotes,
             companyName,
@@ -196,16 +204,28 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         } = createProjectCreationClasses(this.props, this.state);
 
         if (this.state.activeStep === 0) {
+            const { caseName } = this.props.projectCreation;
             return (
                 <div className={`${stepperContent} ${projectNameContainer}`}>
                     <Paper>
-                        <TextField
+                        <FormControl required={true} className={projectName} error={caseName.shouldShowError()}>
+                            <InputLabel>Case Name</InputLabel>
+                            <Input
+                                name="caseName"
+                                value={caseName.value}
+                                onChange={this.handleCaseNameChange}
+                            />
+                            <FormHelperText>
+                                {caseName.shouldShowError() ? caseName.errors[0] : undefined}
+                            </FormHelperText>
+                        </FormControl>
+                        {/* <TextField
                             className={projectName}
                             label="Case Name"
                             name="caseName"
-                            value={this.props.projectCreation.caseName}
+                            value={this.props.projectCreation.caseName.value}
                             onChange={this.handleCaseNameChange}
-                        />
+                        /> */}
                     </Paper>
                 </div>
             )
@@ -259,8 +279,8 @@ const mapStateToProps = ({ projectCreation }: IAppState) => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-    updateCaseName: (caseName: string) => {
-        const caseNameUpdateAction = setCaseNameCreator(caseName);
+    updateCaseName: (caseNameControl: FormControlState<string>) => {
+        const caseNameUpdateAction = setCaseNameCreator(caseNameControl);
         dispatch(caseNameUpdateAction);
     },
     getInitialProjectCreationCheckpoints: (companyName: string) => {

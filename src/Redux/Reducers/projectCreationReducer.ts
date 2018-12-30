@@ -1,16 +1,23 @@
+import { FormControlState } from 'src/Classes/formControlState';
 import { ICheckpoint } from '../../Models/checkpoint';
 import { IProjectCreationProjectUser } from './../../Models/projectUser';
+import { requiredValidator } from './../../Validators/required.validator';
 import { IProjectCreationActions, IProjectCreationAddCheckpointAction, IProjectCreationAddUserAction, IProjectCreationDeleteUserAction, IProjectCreationNameUpdateAction, IProjectCreationReceiveInitialCheckpointsAction, IProjectCreationRemoveCheckpointAction, IProjectCreationUpdateCheckpointAction, IProjectCreationUpdateUserAction } from './../ActionCreators/projectCreationActionCreators';
 import { ADD_CHECKPOINT, ADD_PROJECT_USER, DELETE_CHECKPOINT, DELETE_PROJECT_USER, RECEIVE_INITIAL_CHECKPOINTS, SET_PROJECT_NAME, UPDATE_CHECKPOINT, UPDATE_PROJECT_USER } from './../Actions/projectCreationActions';
 
 export interface IProjectCreationSliceOfState {
-    caseName: string;
+    caseName: FormControlState<string>;
     checkpoints: ICheckpoint[];
     projectUsers: IProjectCreationProjectUser[];
 }
 
 const initialState = {
-  caseName: '',
+  caseName: new FormControlState({
+    value: '',
+    validators: [
+      requiredValidator('The case name is required'),
+    ]
+  }),
   checkpoints: [],
   projectUsers: [],
 }

@@ -1,12 +1,13 @@
 import { Action } from 'redux';
 import { Dispatch } from 'redux';
 import api from '../../Api/api';
+import { FormControlState } from '../../Classes/formControlState';
 import { ICheckpoint } from './../../Models/checkpoint';
 import { IProjectCreationProjectUser } from './../../Models/projectUser';
 import { ADD_CHECKPOINT, ADD_PROJECT_USER, DELETE_CHECKPOINT, DELETE_PROJECT_USER, GET_INITIAL_CHECKPOINTS, RECEIVE_INITIAL_CHECKPOINTS, SET_PROJECT_NAME, UPDATE_CHECKPOINT, UPDATE_PROJECT_USER } from './../Actions/projectCreationActions';
 
 export interface IProjectCreationNameUpdateAction extends Action<typeof GET_INITIAL_CHECKPOINTS> {
-    caseName: string;
+    caseName: FormControlState<string>;
 }
 
 export interface IProjectCreationAddCheckpointAction extends Action<typeof ADD_CHECKPOINT> {
@@ -49,7 +50,7 @@ IProjectCreationAddUserAction |
 IProjectCreationUpdateUserAction |
 IProjectCreationDeleteUserAction;
 
-export const setCaseNameCreator = (caseName: string): IProjectCreationNameUpdateAction => {
+export const setCaseNameCreator = (caseName: FormControlState<string>): IProjectCreationNameUpdateAction => {
     return {
         type: SET_PROJECT_NAME,
         caseName,
