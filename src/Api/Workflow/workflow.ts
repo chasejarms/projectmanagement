@@ -45,7 +45,7 @@ export class WorkflowApi implements IWorkflowApi {
             }, { merge: true });
 
         return {
-            id: workflowDocumentSnapshot.docs[0].id,
+            id: workflowCheckpointSnapshot.id,
             ...workflowCheckpoint,
         }
 
@@ -76,6 +76,17 @@ export class WorkflowApi implements IWorkflowApi {
             })
 
         return workflowCheckpoint;
+    }
+
+    public async updateWorkflowCheckpointOrder(companyId: string, newCheckpointOrder: string[]): Promise<void> {
+        const workflowDocumentSnapshot = await this.getWorkflowDocumentSnapshotPromise(companyId);
+        const workflowCheckpointId = workflowDocumentSnapshot.docs[0].id;
+
+        await db.collection('companyWorkflows')
+            .doc(workflowCheckpointId)
+            .set({
+                workflowCheckpoints: newCheckpointOrder,
+            }, { merge: true });
     }
 
     private getWorkflowDocumentSnapshotPromise = (companyId: string): Promise<firebase.firestore.QuerySnapshot> => {

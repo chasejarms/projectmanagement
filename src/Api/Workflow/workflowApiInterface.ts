@@ -5,4 +5,5 @@ export interface IWorkflowApi {
     addWorkflowCheckpoint(companyId: string, workflowCheckpoint: IWorkflowCheckpointCreateRequest): Promise<IWorkflowCheckpoint>;
     removeWorkflowCheckpoint(companyId: string, workflowCheckpointId: string): Promise<void>;
     updateWorkflowCheckpoint(companyId: string, workflowCheckpoint: IWorkflowCheckpoint): Promise<IWorkflowCheckpoint>;
+    updateWorkflowCheckpointOrder(companyId: string, newCheckpointOrder: string[]): Promise<void>;
 }

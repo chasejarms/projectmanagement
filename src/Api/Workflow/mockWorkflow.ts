@@ -28,6 +28,10 @@ export class MockWorkflowApi implements IWorkflowApi {
         throw new Error("Method not implemented.");
     }
 
+    public updateWorkflowCheckpointOrder(companyId: string, newCheckpointOrder: string[]): Promise<void> {
+        throw new Error("Method not implemented");
+    }
+
     private async mockWorkflowSetup(defaultWorkflow?: boolean): Promise<void> {
         const workflow = await this.getWorkflow('does not matter');
         const workflowAlreadyExists = !!workflow && !!workflow.length;

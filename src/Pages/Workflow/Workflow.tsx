@@ -7,7 +7,9 @@ import {
     DialogTitle,
     FormControlLabel,
     IconButton,
+    MenuItem,
     Paper,
+    Select,
     Table,
     TableBody,
     TableCell,
@@ -81,13 +83,28 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
             )
         }
 
-        const mappedCheckpoints = this.state.workflow.map((checkpoint) => (
-                <TableRow key={checkpoint.id} onClick={this.openCheckpointDialog(checkpoint, checkpoint.id)} className={workflowRow}>
-                    <TableCell>{checkpoint.name}</TableCell>
-                    <TableCell>{checkpoint.estimatedCompletionTime}</TableCell>
-                    <TableCell>{checkpoint.visibleToDoctor ? (
+        const mappedCheckpoints = this.state.workflow.map((checkpoint, index) => (
+                <TableRow key={checkpoint.id} className={workflowRow}>
+                    <TableCell onClick={this.openCheckpointDialog(checkpoint, checkpoint.id)}>{checkpoint.name}</TableCell>
+                    <TableCell onClick={this.openCheckpointDialog(checkpoint, checkpoint.id)}>{checkpoint.estimatedCompletionTime}</TableCell>
+                    <TableCell onClick={this.openCheckpointDialog(checkpoint, checkpoint.id)}>{checkpoint.visibleToDoctor ? (
                         <DoneIcon/>
                     ) : undefined}</TableCell>
+                    <TableCell>
+                        <Select
+                            fullWidth={true}
+                            value={index}
+                            onChange={this.handleCheckpointOrderChange(index)}
+                        >
+                            {this.state.workflow!.map((_, innerIndex) => {
+                                return (
+                                    <MenuItem key={`${index}_${innerIndex}`} value={innerIndex}>
+                                        {innerIndex + 1}
+                                    </MenuItem>
+                                )
+                            })}
+                        </Select>
+                    </TableCell>
                 </TableRow>
             )
         )
@@ -111,11 +128,6 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
                                 <AddIcon />
                             </IconButton>
                         </Tooltip>
-                        {/* <Tooltip title="Filter list">
-                            <IconButton aria-label="Filter list">
-                                <FilterListIcon />
-                            </IconButton>
-                        </Tooltip> */}
                     </Toolbar>
                     <Table>
                         <TableHead>
@@ -123,6 +135,7 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
                                 <TableCell>Checkpoint Name</TableCell>
                                 <TableCell>Estimated Completion Time</TableCell>
                                 <TableCell>Visible To Doctor</TableCell>
+                                <TableCell>Checkpoint Order</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -187,6 +200,28 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
         );
     }
 
+    private handleCheckpointOrderChange = (currentIndex: number) => (event: any) => {
+        const companyId = this.props.match.path.split('/')[2];
+
+        const futureIndex = event.target.value;
+        const checkpointThatChangesPosition = this.state.workflow![currentIndex];
+        const updatedWorkflow = this.state.workflow!.filter((compareCheckpoint) => {
+            return checkpointThatChangesPosition.id !== compareCheckpoint.id;
+        });
+
+        updatedWorkflow.splice(futureIndex, 0, checkpointThatChangesPosition);
+
+        this.setState({
+            workflow: updatedWorkflow,
+        })
+
+        const updatedWorkflowOrderIds = updatedWorkflow.map((updatedWorkflowCheckpoint) => {
+            return updatedWorkflowCheckpoint.id;
+        });
+
+        Api.workflowApi.updateWorkflowCheckpointOrder(companyId, updatedWorkflowOrderIds);
+    }
+
     private handleVisibleToDoctorChange = (event: any) => {
         this.setState({
             visibleToDoctor: event.target.checked,
@@ -200,6 +235,7 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
             checkpointDescription: '',
             checkpointName: '',
             isUpdate: false,
+            visibleToDoctor: false,
         })
     }
 
