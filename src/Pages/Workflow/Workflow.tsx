@@ -5,8 +5,12 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
+    FormControl,
     FormControlLabel,
+    FormHelperText,
     IconButton,
+    Input,
+    InputLabel,
     MenuItem,
     Paper,
     Select,
@@ -15,7 +19,6 @@ import {
     TableCell,
     TableHead,
     TableRow,
-    TextField,
     Toolbar,
     Tooltip,
     Typography,
@@ -24,6 +27,8 @@ import {
 import AddIcon from '@material-ui/icons/Add';
 import DoneIcon from '@material-ui/icons/Done';
 import * as React from 'react';
+import { FormControlState } from 'src/Classes/formControlState';
+import { requiredValidator } from 'src/Validators/required.validator';
 import Api from '../../Api/api';
 import { AsyncButton } from '../../Components/AsyncButton/AsyncButton';
 import { IWorkflowCheckpoint, IWorkflowCheckpointCreateRequest } from '../../Models/workflow';
@@ -33,9 +38,15 @@ import { createWorkflowPresentationClasses, IWorkflowPresentationProps, IWorkflo
 export class WorkflowPresentation extends React.Component<IWorkflowPresentationProps, IWorkflowPresentationState> {
     public state: IWorkflowPresentationState = {
         open: false,
-        checkpointName: '',
+        checkpointName: new FormControlState({
+            value: '',
+            validators: [requiredValidator('A name is required')],
+        }),
         checkpointDescription: '',
-        estimatedCompletionTime: '',
+        estimatedCompletionTime: new FormControlState({
+            value: '',
+            validators: [requiredValidator('An estimated completion time is required')],
+        }),
         visibleToDoctor: false,
         workflow: undefined,
         isUpdate: false,
@@ -109,6 +120,9 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
             )
         )
 
+        const checkpointNameError = this.state.checkpointName.shouldShowError() ? this.state.checkpointName.errors[0] : undefined;
+        const estimatedCompletionError = this.state.estimatedCompletionTime.shouldShowError() ? this.state.estimatedCompletionTime.errors[0] : undefined;
+
         return (
             // <div className={workflowContainer}>
             //     {workflowCheckpoints}
@@ -151,20 +165,25 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
                         { this.state.isUpdate ? 'Update Checkpoint' : 'Create New Checkpoint' }
                     </DialogTitle>
                     <DialogContent className={dialogContent}>
-                        <TextField
-                            label="Checkpoint Name"
-                            name="checkpointName"
-                            value={this.state.checkpointName}
-                            className={dialogControl}
-                            onChange={this.handleChange}
-                        />
-                        <TextField
-                            label="Estimated Completion Time"
-                            name="estimatedCompletionTime"
-                            value={this.state.estimatedCompletionTime}
-                            className={dialogControl}
-                            onChange={this.handleChange}
-                        />
+                        <FormControl required={true} className={dialogControl} error={this.state.checkpointName.shouldShowError()}>
+                            <InputLabel>Checkpoint Name</InputLabel>
+                            <Input
+                                autoFocus={true}
+                                name="checkpointName"
+                                value={this.state.checkpointName.value}
+                                onChange={this.handleCheckpointNameChange}
+                            />
+                            <FormHelperText>{checkpointNameError}</FormHelperText>
+                        </FormControl>
+                        <FormControl required={true} className={dialogControl} error={this.state.estimatedCompletionTime.shouldShowError()}>
+                            <InputLabel>Estimated Completion Time</InputLabel>
+                            <Input
+                                name="estimatedCompletionTime"
+                                value={this.state.estimatedCompletionTime.value}
+                                onChange={this.handleEstimatedCompletionTimeChange}
+                            />
+                            <FormHelperText>{estimatedCompletionError}</FormHelperText>
+                        </FormControl>
                         <FormControlLabel className={dialogControl} control={
                             <Checkbox
                                 checked={this.state.visibleToDoctor}
@@ -189,7 +208,7 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
                         <AsyncButton
                             color="secondary"
                             onClick={this.handleSave}
-                            disabled={this.state.removingWorkflowCheckpoint || this.state.addingOrUpdatingCheckpoint}
+                            disabled={this.state.removingWorkflowCheckpoint || this.state.addingOrUpdatingCheckpoint || this.workflowIsInvalid()}
                             asyncActionInProgress={this.state.addingOrUpdatingCheckpoint}
                         >
                             {this.state.isUpdate ? 'Update Checkpoint' : 'Add Checkpoint'}
@@ -198,6 +217,31 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
                 </Dialog>
             </div>
         );
+    }
+
+    private handleCheckpointNameChange = (event: any): void => {
+        const newCheckpointName = event.target.value;
+        const updatedFormControlState = this.state.checkpointName.setValue(newCheckpointName);
+        this.setState({
+            checkpointName: updatedFormControlState,
+        })
+    }
+
+    private handleEstimatedCompletionTimeChange = (event: any): void => {
+        const newEstimatedCompletionTime = event.target.value;
+        const updatedFormControlState = this.state.estimatedCompletionTime.setValue(newEstimatedCompletionTime);
+        this.setState({
+            estimatedCompletionTime: updatedFormControlState,
+        })
+    }
+
+    private workflowIsInvalid = (): boolean => {
+        const {
+            estimatedCompletionTime,
+            checkpointName,
+        } = this.state;
+
+        return estimatedCompletionTime.invalid || checkpointName.invalid;
     }
 
     private handleCheckpointOrderChange = (currentIndex: number) => (event: any) => {
@@ -231,9 +275,13 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
     private openNewCheckpointDialog = () => {
         this.setState({
             open: true,
-            estimatedCompletionTime: '',
+            estimatedCompletionTime: this.state.estimatedCompletionTime
+                .setValue('')
+                .markAsInvalid(),
             checkpointDescription: '',
-            checkpointName: '',
+            checkpointName: this.state.estimatedCompletionTime
+                .setValue('')
+                .markAsInvalid(),
             isUpdate: false,
             visibleToDoctor: false,
         })
@@ -243,8 +291,16 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
         return () => {
             this.setState({
                 open: true,
-                estimatedCompletionTime: checkpoint.estimatedCompletionTime,
-                checkpointName: checkpoint.name,
+                estimatedCompletionTime: this.state.estimatedCompletionTime
+                    .setValue(checkpoint.estimatedCompletionTime)
+                    .markAsPristine()
+                    .markAsUntouched()
+                    .markAsValid(),
+                checkpointName: this.state.checkpointName
+                    .setValue(checkpoint.name)
+                    .markAsPristine()
+                    .markAsTouched()
+                    .markAsValid(),
                 visibleToDoctor: checkpoint.visibleToDoctor,
                 isUpdate: true,
                 checkpointId,
@@ -285,8 +341,8 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
 
         if (!this.state.isUpdate) {
             const checkpointCreateRequest: IWorkflowCheckpointCreateRequest = {
-                name: this.state.checkpointName,
-                estimatedCompletionTime: this.state.estimatedCompletionTime,
+                name: this.state.checkpointName.value,
+                estimatedCompletionTime: this.state.estimatedCompletionTime.value,
                 visibleToDoctor: this.state.visibleToDoctor,
             }
 
@@ -308,8 +364,8 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
         } else {
             const checkpointUpdateRequest: IWorkflowCheckpoint = {
                 id: this.state.checkpointId,
-                name: this.state.checkpointName,
-                estimatedCompletionTime: this.state.estimatedCompletionTime,
+                name: this.state.checkpointName.value,
+                estimatedCompletionTime: this.state.estimatedCompletionTime.value,
                 visibleToDoctor: this.state.visibleToDoctor,
             }
 

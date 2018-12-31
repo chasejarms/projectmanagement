@@ -1,6 +1,7 @@
 import { WithTheme } from '@material-ui/core';
 import { css } from 'emotion';
 import { RouteComponentProps } from "react-router";
+import { FormControlState } from '../../Classes/formControlState';
 import { IWorkflow } from '../../Models/workflow';
 
 export interface IWorkflowPresentationProps extends RouteComponentProps<{}>, WithTheme {
@@ -10,9 +11,9 @@ export interface IWorkflowPresentationProps extends RouteComponentProps<{}>, Wit
 // tslint:disable-next-line:no-empty-interface
 export interface IWorkflowPresentationState {
     open: boolean;
-    checkpointName: string;
+    checkpointName: FormControlState<string>;
     checkpointDescription: string;
-    estimatedCompletionTime: string;
+    estimatedCompletionTime: FormControlState<string>;
     visibleToDoctor: boolean;
     workflow: IWorkflow | undefined;
     isUpdate: boolean;

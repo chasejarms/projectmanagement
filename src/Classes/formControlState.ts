@@ -94,6 +94,21 @@ export class FormControlState<T> implements IFormControlState<T> {
         return this;
     }
 
+    public markAsPristine(): FormControlState<T> {
+        this.dirty = false;
+        return this;
+    }
+
+    public markAsValid(): FormControlState<T> {
+        this.invalid = false;
+        return this;
+    }
+
+    public markAsUntouched(): FormControlState<T> {
+        this.touched = false;
+        return this;
+    }
+
     public runValidators(): FormControlState<T> {
         if (this.validators.length > 0) {
             this.errors = [];
