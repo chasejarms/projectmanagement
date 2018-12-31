@@ -16,7 +16,9 @@ export interface IWorkflowPresentationState {
     visibleToDoctor: boolean;
     workflow: IWorkflow | undefined;
     isUpdate: boolean;
-    index: number;
+    checkpointId: string;
+    removingWorkflowCheckpoint: boolean;
+    addingOrUpdatingCheckpoint: boolean;
 }
 
 export const createWorkflowPresentationClasses = (

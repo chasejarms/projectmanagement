@@ -1,5 +1,4 @@
 import {
-    Button,
     Checkbox,
     CircularProgress,
     Dialog,
@@ -24,7 +23,8 @@ import AddIcon from '@material-ui/icons/Add';
 import DoneIcon from '@material-ui/icons/Done';
 import * as React from 'react';
 import Api from '../../Api/api';
-import { IWorkflowCheckpoint } from '../../Models/workflow';
+import { AsyncButton } from '../../Components/AsyncButton/AsyncButton';
+import { IWorkflowCheckpoint, IWorkflowCheckpointCreateRequest } from '../../Models/workflow';
 import { handleChange } from '../../Utils/handleChange';
 import { createWorkflowPresentationClasses, IWorkflowPresentationProps, IWorkflowPresentationState } from './Workflow.ias';
 
@@ -37,7 +37,9 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
         visibleToDoctor: false,
         workflow: undefined,
         isUpdate: false,
-        index: 0,
+        checkpointId: '',
+        removingWorkflowCheckpoint: false,
+        addingOrUpdatingCheckpoint: false,
     }
 
     public handleChange = handleChange(this);
@@ -79,8 +81,8 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
             )
         }
 
-        const mappedCheckpoints = this.state.workflow.map((checkpoint, index) => (
-                <TableRow key={index} onClick={this.openCheckpointDialog(checkpoint, index)} className={workflowRow}>
+        const mappedCheckpoints = this.state.workflow.map((checkpoint) => (
+                <TableRow key={checkpoint.id} onClick={this.openCheckpointDialog(checkpoint, checkpoint.id)} className={workflowRow}>
                     <TableCell>{checkpoint.name}</TableCell>
                     <TableCell>{checkpoint.estimatedCompletionTime}</TableCell>
                     <TableCell>{checkpoint.visibleToDoctor ? (
@@ -162,11 +164,23 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
                     </DialogContent>
                     <DialogActions style={{display: 'flex', justifyContent: this.state.isUpdate ? 'space-between' : 'flex-end' }}>
                         { this.state.isUpdate ? (
-                            <Button color="primary" onClick={this.handleCheckpointDelete(this.state.index)}>Delete</Button>
+                            <AsyncButton
+                                color="primary"
+                                onClick={this.handleCheckpointDelete(this.state.checkpointId)}
+                                disabled={this.state.removingWorkflowCheckpoint || this.state.addingOrUpdatingCheckpoint}
+                                asyncActionInProgress={this.state.removingWorkflowCheckpoint}
+                            >
+                                Delete
+                            </AsyncButton>
                         ) : undefined}
-                        <Button color="secondary" onClick={this.handleSave}>
-                            {this.state.isUpdate ? 'Update Checkpoint' : 'Add Checkpoint' }
-                        </Button>
+                        <AsyncButton
+                            color="secondary"
+                            onClick={this.handleSave}
+                            disabled={this.state.removingWorkflowCheckpoint || this.state.addingOrUpdatingCheckpoint}
+                            asyncActionInProgress={this.state.addingOrUpdatingCheckpoint}
+                        >
+                            {this.state.isUpdate ? 'Update Checkpoint' : 'Add Checkpoint'}
+                        </AsyncButton>
                     </DialogActions>
                 </Dialog>
             </div>
@@ -189,7 +203,7 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
         })
     }
 
-    private openCheckpointDialog = (checkpoint: IWorkflowCheckpoint, index: number) => {
+    private openCheckpointDialog = (checkpoint: IWorkflowCheckpoint, checkpointId: string) => {
         return () => {
             this.setState({
                 open: true,
@@ -197,21 +211,29 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
                 checkpointName: checkpoint.name,
                 visibleToDoctor: checkpoint.visibleToDoctor,
                 isUpdate: true,
-                index,
+                checkpointId,
             })
         }
     }
 
-    private handleCheckpointDelete(index: number) {
+    private handleCheckpointDelete(checkpointId: string) {
         return async() => {
-            const companyName = this.props.match.path.split('/')[2];
-            const updatedCheckpoints = this.state.workflow!.filter((checkpoint, compareIndex) => {
-                return compareIndex !== index;
-            });
-            await Api.workflowApi.updateWorkflow(companyName, updatedCheckpoints);
+            const companyId = this.props.match.path.split('/')[2];
+
+            this.setState({
+                removingWorkflowCheckpoint: true,
+            })
+
+            await Api.workflowApi.removeWorkflowCheckpoint(companyId, checkpointId);
+
+            const workflowWithoutRemovedCheckpoint = this.state.workflow!.filter((workflowCheckpoint) => {
+                return workflowCheckpoint.id !== checkpointId;
+            })
+
             this.setState({
                 open: false,
-                workflow: updatedCheckpoints,
+                workflow: workflowWithoutRemovedCheckpoint,
+                removingWorkflowCheckpoint: false,
             });
         }
     }
@@ -223,31 +245,58 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
     }
 
     private async handleSave() {
-        let newCheckpoints: IWorkflowCheckpoint[];
-        const newCheckpoint: IWorkflowCheckpoint = {
-            name: this.state.checkpointName,
-            estimatedCompletionTime: this.state.estimatedCompletionTime,
-            visibleToDoctor: this.state.visibleToDoctor,
-        }
-        if (this.state.isUpdate) {
-            newCheckpoints = this.state.workflow!.map((checkpoint, compareIndex) => {
-                if (compareIndex === this.state.index) {
-                    return newCheckpoint;
+        const companyId = this.props.match.path.split('/')[2];
+
+        if (!this.state.isUpdate) {
+            const checkpointCreateRequest: IWorkflowCheckpointCreateRequest = {
+                name: this.state.checkpointName,
+                estimatedCompletionTime: this.state.estimatedCompletionTime,
+                visibleToDoctor: this.state.visibleToDoctor,
+            }
+
+            this.setState({
+                addingOrUpdatingCheckpoint: true,
+            })
+
+            const addedCheckpoint = await Api.workflowApi.addWorkflowCheckpoint(companyId, checkpointCreateRequest);
+
+            const workflowCheckpointsWithAddedCheckpoint = this.state.workflow!.concat([
+                addedCheckpoint,
+            ])
+
+            this.setState({
+                open: false,
+                addingOrUpdatingCheckpoint: false,
+                workflow: workflowCheckpointsWithAddedCheckpoint,
+            })
+        } else {
+            const checkpointUpdateRequest: IWorkflowCheckpoint = {
+                id: this.state.checkpointId,
+                name: this.state.checkpointName,
+                estimatedCompletionTime: this.state.estimatedCompletionTime,
+                visibleToDoctor: this.state.visibleToDoctor,
+            }
+
+            this.setState({
+                addingOrUpdatingCheckpoint: true,
+            })
+
+            await Api.workflowApi.updateWorkflowCheckpoint(companyId, checkpointUpdateRequest);
+
+            const workflowCheckpointsWithUpdatedCheckpoint = this.state.workflow!.map((checkpoint) => {
+                if (checkpoint.id === this.state.checkpointId) {
+                    return checkpointUpdateRequest;
                 } else {
                     return checkpoint;
                 }
-            });
-        } else {
-            newCheckpoints = this.state.workflow!.concat([newCheckpoint])
+            })
+
+            this.setState({
+                open: false,
+                addingOrUpdatingCheckpoint: false,
+                workflow: workflowCheckpointsWithUpdatedCheckpoint,
+            })
         }
-
-        const companyName = this.props.match.path.split('/')[2];
-
-        await Api.workflowApi.updateWorkflow(companyName, newCheckpoints)
-        this.setState({
-            open: false,
-            workflow: newCheckpoints,
-        });
     }
 }
 

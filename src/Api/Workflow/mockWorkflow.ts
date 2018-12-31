@@ -1,5 +1,5 @@
 import { workflow as mockWorkflow } from '../../MockData/workflow';
-import { IWorkflow } from './../../Models/workflow';
+import { IWorkflow, IWorkflowCheckpoint, IWorkflowCheckpointCreateRequest } from './../../Models/workflow';
 import { mockApiKey } from './../mockApi.key';
 import { IWorkflowApi } from './workflowApiInterface';
 
@@ -10,16 +10,22 @@ export class MockWorkflowApi implements IWorkflowApi {
         this.mockWorkflowSetup(defaultWorkflow);
     }
 
-    public async getWorkflow(companyName: string): Promise<IWorkflow> {
+    public async getWorkflow(companyId: string): Promise<IWorkflow> {
         const stringifiedWorkflow = localStorage.getItem(workflowKey);
         const workflow = JSON.parse(stringifiedWorkflow!);
         return Promise.resolve(workflow);
     }
 
-    public async updateWorkflow(companyName: string, newWorkflow: IWorkflow): Promise<void> {
-        const stringifiedWorkflow = JSON.stringify(newWorkflow);
-        localStorage.setItem(workflowKey, stringifiedWorkflow);
-        return Promise.resolve();
+    public addWorkflowCheckpoint(companyId: string, workflowCheckpoint: IWorkflowCheckpointCreateRequest): Promise<IWorkflowCheckpoint> {
+        throw new Error("Method not implemented.");
+    }
+
+    public removeWorkflowCheckpoint(companyId: string, workflowCheckpointId: string): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
+
+    public updateWorkflowCheckpoint(companyId: string, workflowCheckpoint: IWorkflowCheckpoint): Promise<IWorkflowCheckpoint> {
+        throw new Error("Method not implemented.");
     }
 
     private async mockWorkflowSetup(defaultWorkflow?: boolean): Promise<void> {

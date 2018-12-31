@@ -1,6 +1,8 @@
-import { IWorkflow } from './../../Models/workflow';
+import { IWorkflow, IWorkflowCheckpoint, IWorkflowCheckpointCreateRequest } from './../../Models/workflow';
 
 export interface IWorkflowApi {
     getWorkflow(companyId: string): Promise<IWorkflow>;
-    updateWorkflow(companyName: string, newWorkflow: IWorkflow): Promise<void>;
+    addWorkflowCheckpoint(companyId: string, workflowCheckpoint: IWorkflowCheckpointCreateRequest): Promise<IWorkflowCheckpoint>;
+    removeWorkflowCheckpoint(companyId: string, workflowCheckpointId: string): Promise<void>;
+    updateWorkflowCheckpoint(companyId: string, workflowCheckpoint: IWorkflowCheckpoint): Promise<IWorkflowCheckpoint>;
 }
