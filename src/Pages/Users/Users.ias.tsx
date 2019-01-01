@@ -1,6 +1,7 @@
 import { css } from 'emotion';
 import { RouteComponentProps } from 'react-router'
-import { FormControlState } from 'src/Classes/formControlState';
+import { IWorkflowCheckpoint } from '../..//Models/workflow';
+import { FormControlState } from '../../Classes/formControlState';
 import { IUser } from '../../Models/user';
 
 // tslint:disable-next-line:no-empty-interface
@@ -14,7 +15,7 @@ export interface IUsersPresentationState {
     userRole: string;
     users: IUser[];
     additionalCheckpoints: Set<string>;
-    checkpoints: any[];
+    checkpoints: IWorkflowCheckpoint[];
     addingUser: boolean;
 }
 

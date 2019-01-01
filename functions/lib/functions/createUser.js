@@ -52,7 +52,7 @@ exports.createUserLocal = (passedInAdmin) => functions.https.onCall((data, conte
         email: data.email,
         fullName: data.fullName,
         type: data.type,
-        scanCheckpoints: [],
+        scanCheckpoints: data.scanCheckpoints || [],
         mustResetPassword: data.mustResetPassword,
         uid: userRecord.uid,
     };

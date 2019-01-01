@@ -61,10 +61,22 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
 
     public async componentWillMount(): Promise<void> {
         const companyId = this.props.match.path.split('/')[2];
-        const users = await Api.userApi.getUsers(companyId);
+
+        const getUsersPromise = Api.userApi.getUsers(companyId);
+        const getWorkflowCheckpointsPromise = Api.workflowApi.getWorkflow(companyId);
+
+        const [
+            users,
+            checkpoints,
+        ] = await Promise.all([
+            getUsersPromise,
+            getWorkflowCheckpointsPromise,
+        ]);
+
         this.setState({
             users,
-        });
+            checkpoints,
+        })
     }
 
     public render() {
@@ -92,14 +104,14 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
             )
         )
 
-        const checkpointItems = this.state.checkpoints.filter((checkpoint) => {
-            return !this.state.additionalCheckpoints.has(checkpoint.name);
-        }).map((checkpoint, index) => {
+        const checkpointItems = this.state.checkpoints.filter((workflowCheckpoint) => {
+            return !this.state.additionalCheckpoints.has(workflowCheckpoint.id);
+        }).map((workflowCheckpoint, index) => {
             return (
                 <MenuItem
-                    value={checkpoint.name}
+                    value={workflowCheckpoint.id}
                     key={index}>
-                    {checkpoint.name}
+                    {workflowCheckpoint.name}
                 </MenuItem>
             )
         });
@@ -108,10 +120,16 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
         this.state.additionalCheckpoints.forEach((checkpoint) => {
             addedItems.push(checkpoint);
         });
+
+        const workflowIdToNameDictionary = this.state.checkpoints.reduce((acc, workflowCheckpoint) => {
+            acc[workflowCheckpoint.id] = workflowCheckpoint.name;
+            return acc;
+        }, {});
+
         const addedItemsWithElement = addedItems.map((addedItem, index) => {
             return (
                 <div key={index} className={addedItemContainer}>
-                    <Typography>{addedItem}</Typography>
+                    <Typography>{workflowIdToNameDictionary[addedItem]}</Typography>
                     <ClearIcon onClick={this.removeCheckpointItem(addedItem)} className={clearCheckpointIcon}/>
                 </div>
             )
@@ -278,12 +296,12 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
         })
     }
 
-    private removeCheckpointItem = (checkpointName: string) => {
+    private removeCheckpointItem = (workflowCheckpointId: string) => {
         const clonedSet = new Set(this.state.additionalCheckpoints);
-        clonedSet.delete(checkpointName);
+        clonedSet.delete(workflowCheckpointId);
         return () => {
             this.setState({
-                additionalCheckpoints: clonedSet as any,
+                additionalCheckpoints: clonedSet,
             });
         }
     }
@@ -292,7 +310,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
         const clonedSet = new Set(this.state.additionalCheckpoints);
         clonedSet.add(event.target.value);
         this.setState({
-            additionalCheckpoints: clonedSet as any,
+            additionalCheckpoints: clonedSet,
         });
     }
 
@@ -336,9 +354,6 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
             scanCheckpoints,
             mustResetPassword: true,
         })
-
-        // tslint:disable-next-line:no-console
-        console.log(addedUser);
 
         this.setState({
             addingUser: false,
