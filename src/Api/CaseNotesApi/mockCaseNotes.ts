@@ -4,7 +4,7 @@ import { ICaseNotesApi } from './caseNotesInterface';
 export const caseNotesKey = `${mockApiKey}caseNotes`;
 
 export class MockCaseNotesApi implements ICaseNotesApi {
-    public getCaseNotes(companyName: string): Promise<string> {
+    public getCaseNotes(companyId: string): Promise<string> {
         if (localStorage.getItem(caseNotesKey) === null) {
             localStorage.setItem(caseNotesKey, '');
         }
@@ -13,7 +13,7 @@ export class MockCaseNotesApi implements ICaseNotesApi {
         return Promise.resolve(caseNotes);
     }
 
-    public updateCaseNotes(companyName: string, updatedCaseNotes: string): Promise<void> {
+    public updateCaseNotes(companyId: string, updatedCaseNotes: string): Promise<void> {
         localStorage.setItem(caseNotesKey, updatedCaseNotes);
         return Promise.resolve();
     }

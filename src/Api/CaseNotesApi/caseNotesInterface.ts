@@ -1,4 +1,4 @@
 export interface ICaseNotesApi {
-    getCaseNotes(companyName: string): Promise<string>;
-    updateCaseNotes(companyName: string, updatedCaseNotes: string): Promise<void>;
+    getCaseNotes(companyId: string): Promise<string>;
+    updateCaseNotes(companyId: string, updatedCaseNotes: string): Promise<void>;
 }
