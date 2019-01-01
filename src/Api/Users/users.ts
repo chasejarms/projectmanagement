@@ -29,7 +29,9 @@ export class UsersApi implements IUsersApi {
         throw new Error("Method not implemented.");
     }
 
-    public updateUser(companyName: string, user: IUser): Promise<IUser> {
-        throw new Error("Method not implemented.");
+    public async updateUser(user: IUser): Promise<IUser> {
+        const updateUserCloudFunction = firebase.functions().httpsCallable('updateUser');
+        const updatedUser = await updateUserCloudFunction(user);
+        return updatedUser.data;
     }
 }

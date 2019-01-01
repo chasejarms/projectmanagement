@@ -54,8 +54,9 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
         users: [],
         additionalCheckpoints: new Set([]),
         checkpoints: [],
-        addingUser: false,
+        addingOrUpdatingUser: false,
         isUpdate: false,
+        idOfUserBeingUpdated: '',
     };
 
     public handleChange = handleChange(this);
@@ -254,15 +255,15 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                         <Button
                             color="primary"
                             onClick={this.handleClose}
-                            disabled={this.state.addingUser}
+                            disabled={this.state.addingOrUpdatingUser}
                         >
                             Cancel
                         </Button>
                         <AsyncButton
                             color="secondary"
                             onClick={this.handleSave}
-                            disabled={this.controlsAreInvalid() || this.state.addingUser}
-                            asyncActionInProgress={this.state.addingUser}
+                            disabled={this.controlsAreInvalid() || this.state.addingOrUpdatingUser}
+                            asyncActionInProgress={this.state.addingOrUpdatingUser}
                         >
                             {this.state.isUpdate ? 'Update User' : 'Add User'}
                         </AsyncButton>
@@ -319,6 +320,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
         this.setState({
             open: true,
             isUpdate: false,
+            idOfUserBeingUpdated: '',
         });
     }
 
@@ -340,6 +342,8 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                 .markAsUntouched()
                 .markAsValid()
                 .markAsPristine(),
+                userRole: user.type,
+                idOfUserBeingUpdated: user.id,
             })
         }
     }
@@ -369,23 +373,51 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
         });
 
         this.setState({
-            addingUser: true,
+            addingOrUpdatingUser: true,
         })
 
-        const addedUser = await Api.userApi.addUser({
-            companyId,
-            fullName: this.state.userFullName.value,
-            email: this.state.userEmail.value,
-            type: this.state.userRole as any,
-            scanCheckpoints,
-            mustResetPassword: true,
-        })
+        if (this.state.isUpdate) {
+            const user = this.state.users.filter((compareUser) => {
+                return compareUser.id === this.state.idOfUserBeingUpdated;
+            })[0];
 
-        this.setState({
-            addingUser: false,
-            open: false,
-            users: this.state.users.concat([addedUser]),
-        })
+            const userToUpdate = await Api.userApi.updateUser({
+                ...user,
+                fullName: this.state.userFullName.value,
+                email: this.state.userEmail.value,
+                type: this.state.userRole as any,
+                scanCheckpoints,
+            })
+
+            const users = this.state.users.map((compareUser) => {
+                if (compareUser.id === userToUpdate.id) {
+                    return userToUpdate;
+                } else {
+                    return compareUser;
+                }
+            })
+
+            this.setState({
+                users,
+                addingOrUpdatingUser: false,
+                open: false,
+            });
+        } else {
+            const addedUser = await Api.userApi.addUser({
+                companyId,
+                fullName: this.state.userFullName.value,
+                email: this.state.userEmail.value,
+                type: this.state.userRole as any,
+                scanCheckpoints,
+                mustResetPassword: true,
+            })
+    
+            this.setState({
+                addingOrUpdatingUser: false,
+                open: false,
+                users: this.state.users.concat([addedUser]),
+            })
+        }
     }
 }
 

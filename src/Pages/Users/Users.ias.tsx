@@ -16,8 +16,9 @@ export interface IUsersPresentationState {
     users: IUser[];
     additionalCheckpoints: Set<string>;
     checkpoints: IWorkflowCheckpoint[];
-    addingUser: boolean;
+    addingOrUpdatingUser: boolean;
     isUpdate: boolean;
+    idOfUserBeingUpdated: string;
 }
 
 export const createUsersPresentationClasses = (

@@ -59,7 +59,7 @@ export class MockUsersApi implements IUsersApi {
         return true;
     }
 
-    public async updateUser(companyName: string, userToUpdate: IUser): Promise<IUser> {
+    public async updateUser(userToUpdate: IUser): Promise<IUser> {
         const users = await this.getUsers('does not matter');
         const usersWithUpdatedUser = users.map((user) => {
             if (userToUpdate.id !== user.id) {
