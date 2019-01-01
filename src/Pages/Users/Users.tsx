@@ -28,6 +28,7 @@ import { withRouter } from 'react-router';
 import { emailValidator } from 'src/Validators/email.validator';
 import Api from '../../Api/api';
 import { FormControlState } from '../../Classes/formControlState';
+import { AsyncButton } from '../../Components/AsyncButton/AsyncButton';
 import { IUser } from '../../Models/user';
 import { handleChange } from '../../Utils/handleChange';
 import { requiredValidator } from '../../Validators/required.validator';
@@ -53,6 +54,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
         users: [],
         additionalCheckpoints: new Set([]),
         checkpoints: [],
+        addingUser: false,
     };
 
     public handleChange = handleChange(this);
@@ -82,7 +84,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
         } = createUsersPresentationClasses(this.props, this.state);
 
         const mappedUsers = this.state.users.map((user: IUser) => (
-                <TableRow key={user.id} className={userRow}>
+                <TableRow key={user.uid} className={userRow}>
                     <TableCell>{user.fullName}</TableCell>
                     <TableCell>{user.email}</TableCell>
                     <TableCell>{user.type}</TableCell>
@@ -191,7 +193,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                         <FormControl>
                             <InputLabel htmlFor="role">Role</InputLabel>
                             <Select
-                                name="newUserRole"
+                                name="userRole"
                                 className={dialogControl}
                                 inputProps={{
                                     id: 'role',
@@ -230,8 +232,21 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                         }
                     </DialogContent>
                     <DialogActions>
-                        <Button color="primary" onClick={this.handleClose}>Cancel</Button>
-                        <Button color="secondary" onClick={this.handleSave} disabled={this.controlsAreInvalid()}>Add User</Button>
+                        <Button
+                            color="primary"
+                            onClick={this.handleClose}
+                            disabled={this.state.addingUser}
+                        >
+                            Cancel
+                        </Button>
+                        <AsyncButton
+                            color="secondary"
+                            onClick={this.handleSave}
+                            disabled={this.controlsAreInvalid() || this.state.addingUser}
+                            asyncActionInProgress={this.state.addingUser}
+                        >
+                            Add User
+                        </AsyncButton>
                     </DialogActions>
                 </Dialog>
             </div>
@@ -309,13 +324,26 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
             scanCheckpoints.push(checkpoint);
         });
 
-        await Api.userApi.addUser({
+        this.setState({
+            addingUser: true,
+        })
+
+        const addedUser = await Api.userApi.addUser({
             companyId,
             fullName: this.state.userFullName.value,
             email: this.state.userEmail.value,
             type: this.state.userRole as any,
             scanCheckpoints,
             mustResetPassword: true,
+        })
+
+        // tslint:disable-next-line:no-console
+        console.log(addedUser);
+
+        this.setState({
+            addingUser: false,
+            open: false,
+            users: this.state.users.concat([addedUser]),
         })
     }
 }

@@ -80,5 +80,8 @@ export const createUserLocal = (passedInAdmin: admin.app.App) => functions.https
         userId: createdUserDocumentSnapshot.id,
     })
 
-    return userToCreate;
+    return {
+        ...userToCreate,
+        id: createdUserDocumentSnapshot.id,
+    };
 })

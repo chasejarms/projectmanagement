@@ -15,6 +15,7 @@ export interface IUsersPresentationState {
     users: IUser[];
     additionalCheckpoints: Set<string>;
     checkpoints: any[];
+    addingUser: boolean;
 }
 
 export const createUsersPresentationClasses = (

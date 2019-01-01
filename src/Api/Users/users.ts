@@ -22,7 +22,7 @@ export class UsersApi implements IUsersApi {
     public async addUser(userCreateRequest: IUserCreateRequest): Promise<IUser> {
         const createUserCloudFunction = firebase.functions().httpsCallable('createUser');
         const user = await createUserCloudFunction(userCreateRequest);
-        return user as any;
+        return user.data;
     }
 
     public deleteUser(companyName: string, userId: string): Promise<boolean> {

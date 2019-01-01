@@ -63,6 +63,6 @@ exports.createUserLocal = (passedInAdmin) => functions.https.onCall((data, conte
         firebaseAuthenticationId: userRecord.uid,
         userId: createdUserDocumentSnapshot.id,
     });
-    return userToCreate;
+    return Object.assign({}, userToCreate, { id: createdUserDocumentSnapshot.id });
 }));
 //# sourceMappingURL=createUser.js.map
