@@ -55,6 +55,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
         additionalCheckpoints: new Set([]),
         checkpoints: [],
         addingUser: false,
+        isUpdate: false,
     };
 
     public handleChange = handleChange(this);
@@ -96,7 +97,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
         } = createUsersPresentationClasses(this.props, this.state);
 
         const mappedUsers = this.state.users.map((user: IUser) => (
-                <TableRow key={user.uid} className={userRow}>
+                <TableRow key={user.uid} className={userRow} onClick={this.openExistingUserDialog(user)}>
                     <TableCell>{user.fullName}</TableCell>
                     <TableCell>{user.email}</TableCell>
                     <TableCell>{user.type}</TableCell>
@@ -263,7 +264,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                             disabled={this.controlsAreInvalid() || this.state.addingUser}
                             asyncActionInProgress={this.state.addingUser}
                         >
-                            Add User
+                            {this.state.isUpdate ? 'Update User' : 'Add User'}
                         </AsyncButton>
                     </DialogActions>
                 </Dialog>
@@ -315,7 +316,32 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
     }
 
     private openNewUserDialog = () => {
-        this.setState({ open: true });
+        this.setState({
+            open: true,
+            isUpdate: false,
+        });
+    }
+
+    private openExistingUserDialog = (user: IUser) => {
+        return () => {
+            this.setState({
+                open: true,
+                isUpdate: true,
+                additionalCheckpoints: new Set(user.scanCheckpoints!),
+                userFullName: this.state.userFullName.setValue(
+                    user.fullName,
+                )
+                .markAsUntouched()
+                .markAsValid()
+                .markAsPristine(),
+                userEmail: this.state.userEmail.setValue(
+                    user.email,
+                )
+                .markAsUntouched()
+                .markAsValid()
+                .markAsPristine(),
+            })
+        }
     }
 
     private handleClose = () => {
