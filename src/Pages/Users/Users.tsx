@@ -5,11 +5,12 @@ import {
     DialogContent,
     DialogTitle,
     FormControl,
+    FormHelperText,
     IconButton,
+    Input,
     InputLabel,
     MenuItem,
     Select,
-    TextField,
     Toolbar,
     Tooltip,
     Typography,
@@ -24,17 +25,31 @@ import AddIcon from '@material-ui/icons/Add';
 import ClearIcon from '@material-ui/icons/Clear';
 import * as React from 'react';
 import { withRouter } from 'react-router';
+import { emailValidator } from 'src/Validators/email.validator';
 import Api from '../../Api/api';
+import { FormControlState } from '../../Classes/formControlState';
 import { IUser } from '../../Models/user';
 import { handleChange } from '../../Utils/handleChange';
+import { requiredValidator } from '../../Validators/required.validator';
 import { createUsersPresentationClasses, IUsersPresentationProps, IUsersPresentationState } from './Users.ias';
 
 export class UsersPresentation extends React.Component<IUsersPresentationProps, IUsersPresentationState> {
     public state: IUsersPresentationState = {
         open: false,
-        newUserFullName: '',
-        newUserEmail: '',
-        newUserRole: 'Staff',
+        userFullName: new FormControlState({
+            value: '',
+            validators: [
+                requiredValidator('The user\'s full name is required'),
+            ]
+        }).markAsInvalid(),
+        userEmail: new FormControlState({
+            value: '',
+            validators: [
+                requiredValidator('An email is required'),
+                emailValidator,
+            ]
+        }).markAsInvalid(),
+        userRole: 'Staff',
         users: [],
         additionalCheckpoints: new Set([]),
         checkpoints: [],
@@ -99,7 +114,15 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                 </div>
             )
         });
-        const showAdditionalCheckpoints = this.state.newUserRole === "Staff" || this.state.newUserRole === "Admin";
+        const showAdditionalCheckpoints = this.state.userRole === "Staff" || this.state.userRole === "Admin";
+
+        const {
+            userFullName,
+            userEmail,
+        } = this.state;
+
+        const userFullNameError = userFullName.shouldShowError() ? userFullName.errors[0] : undefined;
+        const userEmailError = userEmail.shouldShowError() ? userEmail.errors[0] : undefined;
 
         return (
             <div className={usersContainer}>
@@ -143,20 +166,28 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                 >
                     <DialogTitle>Create New User</DialogTitle>
                     <DialogContent className={dialogContent}>
-                        <TextField
-                            label="Full Name"
-                            name="newUserFullName"
-                            value={this.state.newUserFullName}
-                            className={dialogControl}
-                            onChange={this.handleChange}
-                        />
-                        <TextField
-                            label="Email"
-                            name="newUserEmail"
-                            value={this.state.newUserEmail}
-                            className={dialogControl}
-                            onChange={this.handleChange}
-                        />
+                        <FormControl required={true} className={dialogControl} error={userFullName.shouldShowError()}>
+                            <InputLabel>Full Name</InputLabel>
+                            <Input
+                                name="userFullName"
+                                value={userFullName.value}
+                                onChange={this.handleUserFullNameChange}
+                            />
+                            <FormHelperText>
+                                {userFullNameError}
+                            </FormHelperText>
+                        </FormControl>
+                        <FormControl required={true} className={dialogControl} error={userEmail.shouldShowError()}>
+                            <InputLabel>Email</InputLabel>
+                            <Input
+                                name="newUserEmail"
+                                value={userEmail.value}
+                                onChange={this.handleUserEmailChange}
+                            />
+                            <FormHelperText>
+                                {userEmailError}
+                            </FormHelperText>
+                        </FormControl>
                         <FormControl>
                             <InputLabel htmlFor="role">Role</InputLabel>
                             <Select
@@ -165,7 +196,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                                 inputProps={{
                                     id: 'role',
                                 }}
-                                value={this.state.newUserRole}
+                                value={this.state.userRole}
                                 onChange={this.handleChange}
                             >
                                 <MenuItem value={'Admin'}>Admin</MenuItem>
@@ -200,11 +231,36 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                     </DialogContent>
                     <DialogActions>
                         <Button color="primary" onClick={this.handleClose}>Cancel</Button>
-                        <Button color="secondary" onClick={this.handleSave}>Add User</Button>
+                        <Button color="secondary" onClick={this.handleSave} disabled={this.controlsAreInvalid()}>Add User</Button>
                     </DialogActions>
                 </Dialog>
             </div>
         )
+    }
+
+    private controlsAreInvalid = () => {
+        const {
+            userEmail,
+            userFullName,
+        } = this.state;
+
+        return userEmail.invalid || userFullName.invalid;
+    }
+
+    private handleUserFullNameChange = (event: any) => {
+        const userFullName = event.target.value;
+        const userFullNameControl = this.state.userFullName.setValue(userFullName);
+        this.setState({
+            userFullName: userFullNameControl,
+        })
+    }
+
+    private handleUserEmailChange = (event: any) => {
+        const userEmail = event.target.value;
+        const userEmailControl = this.state.userEmail.setValue(userEmail);
+        this.setState({
+            userEmail: userEmailControl,
+        })
     }
 
     private removeCheckpointItem = (checkpointName: string) => {
@@ -232,38 +288,35 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
     private handleClose = () => {
         this.setState({
             open: false,
-            newUserFullName: '',
-            newUserEmail: '',
-            newUserRole: 'Staff',
+            userFullName: this.state.userFullName
+                .setValue('')
+                .markAsUntouched()
+                .markAsPristine()
+                .markAsInvalid(),
+            userEmail: this.state.userEmail
+                .setValue('')
+                .markAsUntouched()
+                .markAsPristine()
+                .markAsInvalid(),
+            userRole: 'Staff',
         });
     }
 
-    private handleSave = () => {
-        const companyName = this.props.match.path.split('/')[2];
+    private handleSave = async() => {
+        const companyId = this.props.match.path.split('/')[2];
         const scanCheckpoints: string[] = [];
         this.state.additionalCheckpoints.forEach((checkpoint) => {
             scanCheckpoints.push(checkpoint);
         });
 
-        Api.userApi.addUser(companyName, {
-            fullName: this.state.newUserFullName,
-            email: this.state.newUserEmail,
-            type: this.state.newUserRole as any,
-            id: '1',
+        await Api.userApi.addUser({
+            companyId,
+            fullName: this.state.userFullName.value,
+            email: this.state.userEmail.value,
+            type: this.state.userRole as any,
             scanCheckpoints,
-            mustResetPassword: false,
-            uid: '5',
+            mustResetPassword: true,
         })
-
-        Api.userApi.getUsers(companyName).then((users) => {
-            this.setState({
-                open: false,
-                newUserFullName: '',
-                newUserEmail: '',
-                newUserRole: 'Staff',
-                users,
-            });
-        });
     }
 }
 

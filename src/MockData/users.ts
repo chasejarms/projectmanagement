@@ -33,4 +33,4 @@ export const users: IUser[] = [
         uid: '678',
         mustResetPassword: false,
     }
-]
+] as any;

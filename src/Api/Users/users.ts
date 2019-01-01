@@ -1,5 +1,6 @@
+import * as firebase from 'firebase';
 import { db } from '../../firebase';
-import { IUser } from './../../Models/user';
+import { IUser, IUserCreateRequest } from './../../Models/user';
 import { IUsersApi } from './usersApiInterface';
 
 export class UsersApi implements IUsersApi {
@@ -18,8 +19,10 @@ export class UsersApi implements IUsersApi {
         });
     }
 
-    public async addUser(companyName: string, user: IUser): Promise<IUser> {
-        throw new Error("Method not implemented.");
+    public async addUser(userCreateRequest: IUserCreateRequest): Promise<IUser> {
+        const createUserCloudFunction = firebase.functions().httpsCallable('createUser');
+        const user = await createUserCloudFunction(userCreateRequest);
+        return user as any;
     }
 
     public deleteUser(companyName: string, userId: string): Promise<boolean> {

@@ -1,5 +1,6 @@
 import { css } from 'emotion';
 import { RouteComponentProps } from 'react-router'
+import { FormControlState } from 'src/Classes/formControlState';
 import { IUser } from '../../Models/user';
 
 // tslint:disable-next-line:no-empty-interface
@@ -8,9 +9,9 @@ export interface IUsersPresentationProps extends RouteComponentProps<{}> {}
 // tslint:disable-next-line:no-empty-interface
 export interface IUsersPresentationState {
     open: boolean;
-    newUserFullName: string;
-    newUserEmail: string;
-    newUserRole: string;
+    userFullName: FormControlState<string>;
+    userEmail: FormControlState<string>;
+    userRole: string;
     users: IUser[];
     additionalCheckpoints: Set<string>;
     checkpoints: any[];
