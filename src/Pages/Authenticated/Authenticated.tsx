@@ -16,6 +16,7 @@ import PeopleIcon from '@material-ui/icons/People';
 import * as React from 'react';
 import { withRouter } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
+import Api from '../../Api/api';
 import { CaseNotesTemplate } from '../CaseNotesTemplate/CaseNotesTemplate';
 import { Project } from '../Project/Project';
 import { ProjectCreation } from '../ProjectCreation/ProjectCreation';
@@ -179,7 +180,8 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
     //     this.props.history.push(`/company/${companyName}/userSettings`);
     // }
 
-    private logout = () => {
+    private logout = async() => {
+        await Api.authenticationApi.logout();
         this.props.history.push('/login');
     }
 

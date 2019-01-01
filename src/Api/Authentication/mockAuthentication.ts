@@ -24,4 +24,8 @@ export class MockAuthenticationApi implements IAuthenticationApi {
     public login(): Promise<boolean> {
         return Promise.resolve(true);
     }
+
+    public logout(): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
 }
