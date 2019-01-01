@@ -14,12 +14,13 @@ export const signUpLocal = (passedInAdmin: admin.app.App) => functions.https.onC
             password: data.password,
         })
 
-        const createCompanyPromise = firebase.collection('companies').add({
+        const companyDocumentReference = await firebase.collection('companies').add({
             companyName: data.companyName,
         })
 
 
-        const createUserPromise = firebase.collection('users').add({
+        const userDocumentReference = await firebase.collection('users').add({
+            companyId: companyDocumentReference.id,
             email: data.email,
             fullName: data.fullName,
             type: 'Admin',
@@ -27,14 +28,6 @@ export const signUpLocal = (passedInAdmin: admin.app.App) => functions.https.onC
             mustResetPassword: false,
             uid: firebaseAuthenticationUser.uid,
         })
-
-        const [
-            companyDocumentReference,
-            userDocumentReference,
-        ] = await Promise.all([
-            createCompanyPromise,
-            createUserPromise,
-        ]);
 
         const caseNotesTemplateDocumentReference = await firebase.collection('caseNotesTemplate').add({ notes: '' });
         const createCompanyWorkflowPromise = firebase.collection('companyWorkflows').add({

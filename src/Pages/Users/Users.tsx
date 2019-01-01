@@ -43,14 +43,10 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
     public handleChange = handleChange(this);
 
     public async componentWillMount(): Promise<void> {
-        const companyName = this.props.match.path.split('/')[2];
-        // tslint:disable-next-line:no-console
-        console.log(companyName);
-        const users = await Api.userApi.getUsers(companyName);
-        // const workflow = Api.workflowApi.getWorkflow(companyName);
+        const companyId = this.props.match.path.split('/')[2];
+        const users = await Api.userApi.getUsers(companyId);
         this.setState({
             users,
-            // checkpoints: workflow.checkpoints,
         });
     }
 

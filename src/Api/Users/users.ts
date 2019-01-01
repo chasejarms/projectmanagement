@@ -3,18 +3,19 @@ import { IUser } from './../../Models/user';
 import { IUsersApi } from './usersApiInterface';
 
 export class UsersApi implements IUsersApi {
-    public async getUsers(companyName: string): Promise<IUser[]> {
-        const usersQuerySnapshot = await db.collection('companies').doc(companyName).collection('users').get();
-        const users: any[] = [];
-        usersQuerySnapshot.forEach((querySnapshot) => {
-            const userData = querySnapshot.data();
-            users.push({
+    public async getUsers(companyId: string): Promise<IUser[]> {
+        const usersQuerySnapshot = await db.collection('users')
+            .where('companyId', '==', companyId)
+            .orderBy('fullName', 'asc')
+            .get();
+
+        return usersQuerySnapshot.docs.map((querySnapshot) => {
+            const userData = querySnapshot.data() as IUser;
+            return {
                 ...userData,
                 id: querySnapshot.id,
-            });
+            }
         });
-
-        return users;
     }
 
     public async addUser(companyName: string, user: IUser): Promise<IUser> {
