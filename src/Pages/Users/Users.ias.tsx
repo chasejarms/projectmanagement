@@ -3,11 +3,12 @@ import { RouteComponentProps } from 'react-router'
 import { IWorkflowCheckpoint } from '../..//Models/workflow';
 import { FormControlState } from '../../Classes/formControlState';
 import { IUser } from '../../Models/user';
+import { IUserSliceOfState } from '../../Redux/Reducers/userReducer';
 
-// tslint:disable-next-line:no-empty-interface
-export interface IUsersPresentationProps extends RouteComponentProps<{}> {}
+export interface IUsersPresentationProps extends RouteComponentProps<{}> {
+    userState: IUserSliceOfState;
+}
 
-// tslint:disable-next-line:no-empty-interface
 export interface IUsersPresentationState {
     open: boolean;
     userFullName: FormControlState<string>;

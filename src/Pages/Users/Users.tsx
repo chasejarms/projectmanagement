@@ -23,12 +23,14 @@ import TableRow from '@material-ui/core/TableRow';
 import AddIcon from '@material-ui/icons/Add';
 import ClearIcon from '@material-ui/icons/Clear';
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { emailValidator } from 'src/Validators/email.validator';
 import Api from '../../Api/api';
 import { FormControlState } from '../../Classes/formControlState';
 import { AsyncButton } from '../../Components/AsyncButton/AsyncButton';
 import { IUser } from '../../Models/user';
+import { IAppState } from '../../Redux/Reducers/rootReducer';
 import { handleChange } from '../../Utils/handleChange';
 import { requiredValidator } from '../../Validators/required.validator';
 import { createUsersPresentationClasses, IUsersPresentationProps, IUsersPresentationState } from './Users.ias';
@@ -258,7 +260,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                                 <AsyncButton
                                     color="secondary"
                                     onClick={this.handleDelete}
-                                    disabled={this.state.addingOrUpdatingUser || this.state.deletingUser}
+                                    disabled={this.state.addingOrUpdatingUser || this.state.deletingUser || this.isSameUser()}
                                     asyncActionInProgress={this.state.deletingUser}
                                 >
                                     Delete
@@ -449,6 +451,16 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
 
 
     }
+
+    private isSameUser = (): boolean => {
+        const companyId = this.props.match.path.split('/')[2];
+        return this.props.userState[companyId].id === this.state.idOfUserBeingUpdated;
+    }
 }
 
-export const Users = withRouter(UsersPresentation);
+const mapStateToProps = ({ userState }: IAppState) => ({
+    userState
+});
+
+const connectedComponent = connect(mapStateToProps)(UsersPresentation);
+export const Users = withRouter(connectedComponent);
