@@ -17,6 +17,7 @@ export interface IUsersPresentationState {
     additionalCheckpoints: Set<string>;
     checkpoints: IWorkflowCheckpoint[];
     addingOrUpdatingUser: boolean;
+    deletingUser: boolean;
     isUpdate: boolean;
     idOfUserBeingUpdated: string;
 }
@@ -99,6 +100,11 @@ export const createUsersPresentationClasses = (
         display: 'inline-block',
     });
 
+    const dialogActionButtons = css({
+        display: 'flex',
+        justifyContent: 'space-between',
+    });
+
     return {
         fabButton,
         dialogContent,
@@ -113,5 +119,6 @@ export const createUsersPresentationClasses = (
         potentialCheckpointsContainer,
         potentialCheckpointsSelect,
         automaticScanCheckpoints,
+        dialogActionButtons,
     };
 }

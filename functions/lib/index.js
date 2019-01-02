@@ -7,6 +7,7 @@ const createCase_1 = require("./functions/createCase");
 const slimProjectFromProject_1 = require("./functions/slimProjectFromProject");
 const createUser_1 = require("./functions/createUser");
 const updateUser_1 = require("./functions/updateUser");
+const deleteUser_1 = require("./functions/deleteUser");
 const app = admin.initializeApp({
     credential: admin.credential.applicationDefault(),
     databaseURL: 'https://project-management-develop.firebaseio.com',
@@ -19,4 +20,5 @@ exports.slimProjectFromProjectUpdate = slimProjectFromProject_1.slimProjectFromP
 exports.deleteSlimProject = slimProjectFromProject_1.deleteSlimProjectLocal(app);
 exports.createUser = createUser_1.createUserLocal(app);
 exports.updateUser = updateUser_1.updateUserLocal(app);
+exports.deleteUser = deleteUser_1.deleteUserLocal(app);
 //# sourceMappingURL=index.js.map

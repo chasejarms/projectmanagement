@@ -1,7 +1,7 @@
 import * as firebase from 'firebase';
 import { db } from '../../firebase';
 import { IUser, IUserCreateRequest } from './../../Models/user';
-import { IUsersApi } from './usersApiInterface';
+import { IDeleteUserRequest, IUsersApi } from './usersApiInterface';
 
 export class UsersApi implements IUsersApi {
     public async getUsers(companyId: string): Promise<IUser[]> {
@@ -25,8 +25,9 @@ export class UsersApi implements IUsersApi {
         return user.data;
     }
 
-    public deleteUser(companyName: string, userId: string): Promise<boolean> {
-        throw new Error("Method not implemented.");
+    public async deleteUser(deleteUserRequest: IDeleteUserRequest): Promise<void> {
+        const deleteUserCloudFunction = firebase.functions().httpsCallable('deleteUser');
+        await deleteUserCloudFunction(deleteUserRequest);
     }
 
     public async updateUser(user: IUser): Promise<IUser> {

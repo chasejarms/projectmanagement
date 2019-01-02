@@ -10,6 +10,7 @@ import {
 } from './functions/slimProjectFromProject';
 import { createUserLocal } from './functions/createUser';
 import { updateUserLocal } from './functions/updateUser';
+import { deleteUserLocal } from './functions/deleteUser';
 
 const app = admin.initializeApp({
     credential: admin.credential.applicationDefault(),
@@ -24,3 +25,4 @@ export const slimProjectFromProjectUpdate = slimProjectFromProjectUpdateLocal(ap
 export const deleteSlimProject = deleteSlimProjectLocal(app);
 export const createUser = createUserLocal(app);
 export const updateUser = updateUserLocal(app);
+export const deleteUser = deleteUserLocal(app);

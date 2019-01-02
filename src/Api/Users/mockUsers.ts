@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import { mockApiKey } from '../mockApi.key';
 import { users as mockUsers } from './../../MockData/users';
 import { IUser, IUserCreateRequest } from './../../Models/user';
-import { IUsersApi } from './usersApiInterface';
+import { IDeleteUserRequest, IUsersApi } from './usersApiInterface';
 
 export const companyUsersKey = `${mockApiKey}projectUsers`;
 
@@ -47,16 +47,15 @@ export class MockUsersApi implements IUsersApi {
         return _.cloneDeep(addedUser as any);
     }
 
-    public async deleteUser(companyName: string, userId: string): Promise<boolean> {
+    public async deleteUser(deleteUserRequest: IDeleteUserRequest): Promise<void> {
         const users = await this.getUsers('does not matter');
         const usersWithoutDeletedUsers = users.filter((user) => {
-            return user.id !== userId;
+            return user.id !== deleteUserRequest.id;
         });
         localStorage.setItem(
             companyUsersKey,
             JSON.stringify(usersWithoutDeletedUsers),
         );
-        return true;
     }
 
     public async updateUser(userToUpdate: IUser): Promise<IUser> {

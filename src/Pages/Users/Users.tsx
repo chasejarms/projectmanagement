@@ -1,5 +1,4 @@
 import {
-    Button,
     Dialog,
     DialogActions,
     DialogContent,
@@ -57,6 +56,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
         addingOrUpdatingUser: false,
         isUpdate: false,
         idOfUserBeingUpdated: '',
+        deletingUser: false,
     };
 
     public handleChange = handleChange(this);
@@ -95,6 +95,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
             potentialCheckpointsContainer,
             potentialCheckpointsSelect,
             automaticScanCheckpoints,
+            dialogActionButtons,
         } = createUsersPresentationClasses(this.props, this.state);
 
         const mappedUsers = this.state.users.map((user: IUser) => (
@@ -251,18 +252,23 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                             ) : undefined
                         }
                     </DialogContent>
-                    <DialogActions>
-                        <Button
-                            color="primary"
-                            onClick={this.handleClose}
-                            disabled={this.state.addingOrUpdatingUser}
-                        >
-                            Cancel
-                        </Button>
+                    <DialogActions className={dialogActionButtons}>
+                        <div>
+                            {this.state.isUpdate ? (
+                                <AsyncButton
+                                    color="secondary"
+                                    onClick={this.handleDelete}
+                                    disabled={this.state.addingOrUpdatingUser || this.state.deletingUser}
+                                    asyncActionInProgress={this.state.deletingUser}
+                                >
+                                    Delete
+                                </AsyncButton>
+                            ) : undefined}
+                        </div>
                         <AsyncButton
                             color="secondary"
                             onClick={this.handleSave}
-                            disabled={this.controlsAreInvalid() || this.state.addingOrUpdatingUser}
+                            disabled={this.controlsAreInvalid() || this.state.addingOrUpdatingUser || this.state.deletingUser}
                             asyncActionInProgress={this.state.addingOrUpdatingUser}
                         >
                             {this.state.isUpdate ? 'Update User' : 'Add User'}
@@ -411,13 +417,37 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                 scanCheckpoints,
                 mustResetPassword: true,
             })
-    
+
             this.setState({
                 addingOrUpdatingUser: false,
                 open: false,
                 users: this.state.users.concat([addedUser]),
             })
         }
+    }
+
+    private handleDelete = async() => {
+        const companyId = this.props.match.path.split('/')[2];
+        this.setState({
+            deletingUser: true,
+        })
+
+        await Api.userApi.deleteUser({
+            companyId,
+            id: this.state.idOfUserBeingUpdated,
+        })
+
+        const usersWithoutDeletedUser = this.state.users.filter((user) => {
+            return user.id !== this.state.idOfUserBeingUpdated;
+        });
+
+        this.setState({
+            deletingUser: false,
+            open: false,
+            users: usersWithoutDeletedUser,
+        })
+
+
     }
 }
 
