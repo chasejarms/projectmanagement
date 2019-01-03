@@ -11,6 +11,7 @@ import {
 import { createUserLocal } from './functions/createUser';
 import { updateUserLocal } from './functions/updateUser';
 import { deleteUserLocal } from './functions/deleteUser';
+import { onCreateOrUpdateUserLocal } from './functions/onUserWrite';
 
 const app = admin.initializeApp({
     credential: admin.credential.applicationDefault(),
@@ -26,3 +27,4 @@ export const deleteSlimProject = deleteSlimProjectLocal(app);
 export const createUser = createUserLocal(app);
 export const updateUser = updateUserLocal(app);
 export const deleteUser = deleteUserLocal(app);
+export const onCreateOrUpdateUser = onCreateOrUpdateUserLocal(app);

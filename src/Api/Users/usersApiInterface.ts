@@ -6,8 +6,9 @@ export interface IDeleteUserRequest {
 }
 
 export interface IUsersApi {
-    getUsers(companyName: string): Promise<IUser[]>;
+    getUsers(companyId: string): Promise<IUser[]>;
     addUser(user: IUserCreateRequest): Promise<IUser>;
     deleteUser(deleteUserRequest: IDeleteUserRequest): Promise<void>;
     updateUser(user: IUser): Promise<IUser>;
+    searchDoctorUsers(companyId: string, searchString: string): Promise<IUser[]>;
 }

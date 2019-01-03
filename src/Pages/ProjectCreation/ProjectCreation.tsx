@@ -4,6 +4,8 @@ import {
     FormHelperText,
     Input,
     InputLabel,
+    MenuItem,
+    MenuList,
     Paper,
     Step,
     StepLabel,
@@ -21,10 +23,12 @@ import { ICaseCreateRequest } from '../../Api/Projects/projectsInterface';
 import { FormControlState } from '../../Classes/formControlState';
 import { ICase } from '../../Models/case';
 import { IProjectCreationProjectUser } from '../../Models/projectUser';
+import { IUser } from '../../Models/user';
 import { addProjectUserActionCreator, resetProjectCreation } from '../../Redux/ActionCreators/projectCreationActionCreators';
 import { deleteProjectUserActionCreator, getInitialCheckpoints, setCaseNameCreator, updateProjectUserActionCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
 import { IAppState } from '../../Redux/Reducers/rootReducer';
 import { handleChange } from '../../Utils/handleChange';
+import { doctorRequiredValidator } from '../../Validators/doctorRequired.validator';
 import { requiredValidator } from '../../Validators/required.validator';
 import {
     createProjectCreationClasses,
@@ -53,7 +57,18 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                 requiredValidator('A case delivery date is required'),
             ]
         }),
+        doctorSelection: new FormControlState({
+            value: {
+                id: '',
+                name: '',
+            },
+            validators: [
+                doctorRequiredValidator('A doctor is required'),
+            ],
+        }),
         projectNotes: '',
+        doctorNameSearch: '',
+        potentialDoctors: [] as IUser[],
     };
 
     public handleChange = handleChange(this);
@@ -226,6 +241,32 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         })
     }
 
+    private handleDoctorNameSearchChange = async(event: any) => {
+        const companyId = this.props.match.path.split('/')[2];
+
+        const searchString = event.target.value;
+        this.setState({
+            doctorNameSearch: searchString,
+        })
+
+        const potentialDoctors = await Api.userApi.searchDoctorUsers(companyId, searchString);
+
+        this.setState({
+            potentialDoctors,
+        })
+    }
+
+    private selectDoctor = (doctor: IUser) => () => {
+        const updatedSelectedDoctor = this.state.doctorSelection.setValue({
+            id: doctor.id,
+            name: doctor.fullName,
+        });
+
+        this.setState({
+            doctorSelection: updatedSelectedDoctor,
+        })
+    };
+
     private getStepActiveContent(): any {
         const {
             stepperContent,
@@ -237,6 +278,9 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             projectNotesInput,
             addAttachmentButtonContainer,
             caseDeadline,
+            caseDoctorContainer,
+            potentialDoctorPaper,
+            menuPopover,
         } = createProjectCreationClasses(this.props, this.state);
 
         const companyId = this.props.match.path.split('/')[2];
@@ -262,7 +306,42 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                 </div>
             )
         } else if (this.state.activeStep === 1 && !doctorIsUser) {
-            return <div>This is the page where the company will select the doctor</div>
+            return (
+                <div className={`${stepperContent} ${projectNameContainer} ${caseDoctorContainer}`}>
+                    <Paper>
+                        <FormControl className={projectName}>
+                            <InputLabel>Search Doctors</InputLabel>
+                            <Input
+                                name="doctorNameSearch"
+                                value={this.state.doctorNameSearch}
+                                onChange={this.handleDoctorNameSearchChange}
+                            />
+                        </FormControl>
+                    </Paper>
+                    <Paper className={potentialDoctorPaper}>
+                        <FormControl className={projectName} disabled={true}>
+                            <InputLabel>Selected Doctor</InputLabel>
+                            <Input
+                                name="selectedDoctor"
+                                value={this.state.doctorSelection.value.name}
+                            />
+                        </FormControl>
+                        {this.state.doctorNameSearch && this.state.potentialDoctors.length ? (
+                            <Paper className={menuPopover}>
+                                <MenuList>
+                                    {this.state.potentialDoctors.map((potentialDoctor) => {
+                                        return (
+                                            <MenuItem key={potentialDoctor.id} onClick={this.selectDoctor(potentialDoctor)}>
+                                                {potentialDoctor.fullName} - {potentialDoctor.email}
+                                            </MenuItem>
+                                        )
+                                    })}
+                                </MenuList>
+                            </Paper>
+                        ) : undefined}
+                    </Paper>
+                </div>
+            );
         } else if (this.state.activeStep === 1 && doctorIsUser || this.state.activeStep === 2 && !doctorIsUser) {
             return (
                 <div className={`${stepperContent} ${projectNameContainer}`}>

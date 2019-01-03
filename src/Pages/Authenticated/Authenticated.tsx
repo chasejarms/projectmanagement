@@ -184,7 +184,7 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
     private logout = async() => {
         const { companyName } = this.props.match.params as any;
         await Api.authenticationApi.logout();
-        this.props.removeUserForComponent(companyName)
+        this.props.removeUserForCompany(companyName)
         this.props.history.push('/login');
     }
 

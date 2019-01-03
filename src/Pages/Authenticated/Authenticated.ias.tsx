@@ -3,7 +3,7 @@ import { css } from 'emotion';
 import { RouteComponentProps } from 'react-router';
 
 export interface IAuthenticatedProps extends RouteComponentProps<{}>, WithTheme {
-    removeUserForComponent: (companyId: string) => void,
+    removeUserForCompany: (companyId: string) => void,
 }
 // tslint:disable-next-line:no-empty-interface
 export interface IAuthenticatedState {}

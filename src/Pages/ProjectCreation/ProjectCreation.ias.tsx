@@ -3,6 +3,7 @@ import { css } from 'emotion';
 import { RouteComponentProps } from 'react-router';
 import { FormControlState } from '../../Classes/formControlState';
 import { IProjectCreationProjectUser } from '../../Models/projectUser';
+import { ISlimDoctor } from '../../Models/slimDoctor';
 import { IUser } from '../../Models/user';
 import { IWorkflowCheckpoint } from '../../Models/workflow';
 import { IProjectCreationSliceOfState } from '../../Redux/Reducers/projectCreationReducer';
@@ -34,6 +35,9 @@ export interface IProjectCreationState {
     popperIsOpen: boolean;
     caseDeadline: FormControlState<Date>;
     projectNotes: string;
+    doctorSelection: FormControlState<ISlimDoctor>;
+    doctorNameSearch: string;
+    potentialDoctors: IUser[];
 }
 
 export const createProjectCreationClasses = (
@@ -275,6 +279,21 @@ export const createProjectCreationClasses = (
         
     });
 
+    const caseDoctorContainer = css({
+        flexDirection: 'row',
+    })
+
+    const potentialDoctorPaper = css({
+        marginLeft: 16,
+        position: 'relative',
+    });
+
+    const menuPopover = css({
+        position: 'absolute',
+        width: 432,
+        marginTop: 16,
+    });
+
     return {
         projectCreationContainer,
         stepperContainer,
@@ -314,5 +333,8 @@ export const createProjectCreationClasses = (
         projectNotesContainer,
         projectNotesInput,
         addAttachmentButtonContainer,
+        caseDoctorContainer,
+        potentialDoctorPaper,
+        menuPopover,
     };
 }

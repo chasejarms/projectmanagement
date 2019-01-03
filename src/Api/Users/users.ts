@@ -35,4 +35,22 @@ export class UsersApi implements IUsersApi {
         const updatedUser = await updateUserCloudFunction(user);
         return updatedUser.data;
     }
+
+    public async searchDoctorUsers(companyId: string, searchString: string): Promise<IUser[]> {
+        const updatedSearchString = searchString.toLowerCase();
+        const userQuerySnapshot = await db.collection('users')
+            .where('companyId', '==', companyId)
+            .where('type', '==', 'Customer')
+            .where('nameSearchValues', 'array-contains', updatedSearchString)
+            .orderBy('nameSearchValues', 'asc')
+            .limit(5)
+            .get();
+
+        return userQuerySnapshot.docs.map((userDoc) => {
+            return {
+                ...userDoc.data() as IUser,
+                id: userDoc.id,
+            }
+        });
+    }
 }

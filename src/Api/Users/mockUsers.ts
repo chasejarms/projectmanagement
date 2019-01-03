@@ -73,4 +73,8 @@ export class MockUsersApi implements IUsersApi {
         )
         return userToUpdate;
     }
+
+    public searchDoctorUsers(companyId: string, searchString: string): Promise<IUser[]> {
+        throw new Error('Method not implemented');
+    }
 }
