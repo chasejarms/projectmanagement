@@ -43,7 +43,7 @@ export class UsersApi implements IUsersApi {
             .where('type', '==', 'Customer')
             .where('nameSearchValues', 'array-contains', updatedSearchString)
             .orderBy('nameSearchValues', 'asc')
-            .limit(5)
+            .limit(3)
             .get();
 
         return userQuerySnapshot.docs.map((userDoc) => {

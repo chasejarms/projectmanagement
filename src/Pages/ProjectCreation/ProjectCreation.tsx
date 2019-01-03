@@ -65,7 +65,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             validators: [
                 doctorRequiredValidator('A doctor is required'),
             ],
-        }),
+        }).markAsInvalid(),
         projectNotes: '',
         doctorNameSearch: '',
         potentialDoctors: [] as IUser[],
@@ -159,12 +159,18 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
 
         const {
             caseDeadline,
+            doctorSelection,
         } = this.state;
+
+        const companyId = this.props.match.path.split('/')[2];
+        const doctorIsUser = this.props.userState[companyId].type === 'Customer';
 
         if (this.state.activeStep === 0) {
             return !caseName.invalid;
-        } else if (this.state.activeStep === 1) {
-            return !caseName.invalid && !caseDeadline.invalid;
+        } else if (this.state.activeStep === 1 && !doctorIsUser) {
+            return !doctorSelection.invalid;
+        } else if ((this.state.activeStep === 1 && doctorIsUser) || (this.state.activeStep === 2 && !doctorIsUser)) {
+            return !caseDeadline.invalid;
         } else {
             return true;
         }
