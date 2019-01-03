@@ -7,6 +7,8 @@ export interface ICaseCreateRequest {
     deadline: string;
     notes: string;
     attachmentUrls: string[];
+    doctor?: string;
+    companyId: string;
 }
 
 export interface ISlimCasesSearchRequest {

@@ -22,6 +22,7 @@ interface ICase {
 }
 
 export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https.onCall(async(data: IProjectCreateData, context) => {
+    console.log('data: ', data);
     const firestore = passedInAdmin.firestore();
     const uid = context.auth.uid;
     console.log('uid is: ', uid);
@@ -46,13 +47,14 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
     const userType = companyUserDocumentSnapshot.data().type;
     console.log('userType: ', userType);
 
-    const isAdminOrStaff = userType === 'admin' || userType === 'staff';
+    const isAdminOrStaff = userType === 'Admin' || userType === 'Staff';
     console.log('isAdminOrStaff: ', isAdminOrStaff);
 
     // get the doctor if the requesting user is not the doctor
     // also get the workflow
     // also create all of the checkpoint items
-    const doctor = '1234';
+    const doctor = isAdminOrStaff ? data.doctor : companyUserDocumentSnapshot.id;
+    console.log('doctor: ', doctor);
     const caseCheckpoints = ['1234'];
 
     const caseToCreate: ICase = {
@@ -65,6 +67,8 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
         created: new Date().toUTCString(),
         caseCheckpoints,
     };
+
+    console.log('caseToCreate: ', caseToCreate);
 
     const caseDocumentReference = await firestore.collection('cases').add(caseToCreate);
 

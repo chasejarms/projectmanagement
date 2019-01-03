@@ -184,7 +184,18 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             deadline: this.state.caseDeadline.value.toUTCString(),
             notes: this.state.projectNotes,
             attachmentUrls: [],
+            companyId,
         };
+
+        // tslint:disable-next-line:no-console
+        console.log('id: ',this.state.doctorSelection.value.id)
+        if (this.state.doctorSelection.value.id) {
+            projectCreateRequest['doctor'] = this.state.doctorSelection.value.id;
+        }
+
+        // tslint:disable-next-line:no-console
+        console.log(projectCreateRequest);
+
         Api.projectsApi.createProject(companyId, projectCreateRequest).then((project: ICase) => {
             this.props.history.push(`/company/${companyId}/project/${project.id}`);
         });

@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const functions = require("firebase-functions");
 exports.createCaseLocal = (passedInAdmin) => functions.https.onCall((data, context) => __awaiter(this, void 0, void 0, function* () {
+    console.log('data: ', data);
     const firestore = passedInAdmin.firestore();
     const uid = context.auth.uid;
     console.log('uid is: ', uid);
@@ -27,12 +28,13 @@ exports.createCaseLocal = (passedInAdmin) => functions.https.onCall((data, conte
     }
     const userType = companyUserDocumentSnapshot.data().type;
     console.log('userType: ', userType);
-    const isAdminOrStaff = userType === 'admin' || userType === 'staff';
+    const isAdminOrStaff = userType === 'Admin' || userType === 'Staff';
     console.log('isAdminOrStaff: ', isAdminOrStaff);
     // get the doctor if the requesting user is not the doctor
     // also get the workflow
     // also create all of the checkpoint items
-    const doctor = '1234';
+    const doctor = isAdminOrStaff ? data.doctor : companyUserDocumentSnapshot.id;
+    console.log('doctor: ', doctor);
     const caseCheckpoints = ['1234'];
     const caseToCreate = {
         complete: false,
@@ -44,6 +46,7 @@ exports.createCaseLocal = (passedInAdmin) => functions.https.onCall((data, conte
         created: new Date().toUTCString(),
         caseCheckpoints,
     };
+    console.log('caseToCreate: ', caseToCreate);
     const caseDocumentReference = yield firestore.collection('cases').add(caseToCreate);
     return caseDocumentReference.id;
 }));
