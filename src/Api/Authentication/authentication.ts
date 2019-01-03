@@ -46,7 +46,7 @@ export class AuthenticationApi implements IAuthenticationApi {
     public async login(
         email: string,
         password: string,
-    ): Promise<any> {
+    ): Promise<firebase.auth.UserCredential> {
         return await firebase.auth().signInWithEmailAndPassword(email, password);
     }
 

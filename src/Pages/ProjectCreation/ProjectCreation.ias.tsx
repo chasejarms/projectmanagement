@@ -6,6 +6,7 @@ import { IProjectCreationProjectUser } from '../../Models/projectUser';
 import { IUser } from '../../Models/user';
 import { IWorkflowCheckpoint } from '../../Models/workflow';
 import { IProjectCreationSliceOfState } from '../../Redux/Reducers/projectCreationReducer';
+import { IUserSliceOfState } from '../../Redux/Reducers/userReducer';
 
 // tslint:disable-next-line:no-empty-interface
 export interface IProjectCreationProps extends WithTheme, RouteComponentProps<{}> {
@@ -16,6 +17,7 @@ export interface IProjectCreationProps extends WithTheme, RouteComponentProps<{}
     addProjectUser: (projectUser: IProjectCreationProjectUser) => void;
     updateProjectUser: (projectUser: IProjectCreationProjectUser, index: number) => void;
     deleteProjectUser: (index: number) => void;
+    userState: IUserSliceOfState;
 }
 // tslint:disable-next-line:no-empty-interface
 export interface IProjectCreationState {

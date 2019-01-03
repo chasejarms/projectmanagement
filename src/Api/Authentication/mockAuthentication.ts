@@ -21,7 +21,7 @@ export class MockAuthenticationApi implements IAuthenticationApi {
         });
     }
 
-    public login(): Promise<boolean> {
+    public login(): Promise<any> {
         return Promise.resolve(true);
     }
 

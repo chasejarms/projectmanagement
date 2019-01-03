@@ -74,8 +74,8 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
 
     public componentWillMount = (): void => {
 
-        const companyName = this.props.match.path.split('/')[2];
-        Api.caseNotesApi.getCaseNotes(companyName).then((caseNotes) => {
+        const companyId = this.props.match.path.split('/')[2];
+        Api.caseNotesApi.getCaseNotes(companyId).then((caseNotes) => {
             this.setState({
                 projectNotes: caseNotes,
             });
@@ -83,6 +83,8 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
     }
 
     public render() {
+        const companyId = this.props.match.path.split('/')[2];
+
         const {
             projectCreationContainer,
             stepperContainer,
@@ -100,6 +102,11 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                                 <Step>
                                     <StepLabel>Case Name</StepLabel>
                                 </Step>
+                                { this.props.userState[companyId].type === 'Customer' ? undefined : (
+                                    <Step>
+                                        <StepLabel>Choose Doctor</StepLabel>
+                                    </Step>
+                                )}
                                 <Step>
                                     <StepLabel>Case Delivery Date</StepLabel>
                                 </Step>
@@ -163,6 +170,8 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
     }
 
     private createActionButtons(): any {
+        const companyId = this.props.match.path.split('/')[2];
+
         const {
             actionButtonContainer,
             baseActionButton,
@@ -178,7 +187,9 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             </Button>
         ) : undefined;
 
-        const nextButton = this.state.activeStep !== 2 ? (
+        const lastActiveStep = this.props.userState[companyId].type === 'Customer' ? 2 : 3;
+
+        const nextButton = this.state.activeStep !== lastActiveStep ? (
             <Button
                 className={baseActionButton}
                 variant="contained"
@@ -189,7 +200,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             </Button>
         ) : undefined;
 
-        const saveButton = this.state.activeStep === 2 ? (
+        const saveButton = this.state.activeStep === lastActiveStep ? (
             <Button
                 className={baseActionButton}
                 variant="contained"
@@ -228,6 +239,9 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             caseDeadline,
         } = createProjectCreationClasses(this.props, this.state);
 
+        const companyId = this.props.match.path.split('/')[2];
+        const doctorIsUser = this.props.userState[companyId].type === 'Customer';
+
         if (this.state.activeStep === 0) {
             const { caseName } = this.props.projectCreation;
             return (
@@ -247,7 +261,9 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                     </Paper>
                 </div>
             )
-        } else if (this.state.activeStep === 1) {
+        } else if (this.state.activeStep === 1 && !doctorIsUser) {
+            return <div>This is the page where the company will select the doctor</div>
+        } else if (this.state.activeStep === 1 && doctorIsUser || this.state.activeStep === 2 && !doctorIsUser) {
             return (
                 <div className={`${stepperContent} ${projectNameContainer}`}>
                     <Paper>
@@ -264,7 +280,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                     </Paper>
                 </div>
             );
-        } else if (this.state.activeStep === 2) {
+        } else if (this.state.activeStep === 2 && doctorIsUser || this.state.activeStep === 3 && !doctorIsUser) {
 
             return (
                 <div className={`${stepperContent} ${usersContainer}`}>
@@ -293,8 +309,9 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
     }
 }
 
-const mapStateToProps = ({ projectCreation }: IAppState) => ({
+const mapStateToProps = ({ projectCreation, userState }: IAppState) => ({
     projectCreation,
+    userState,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({

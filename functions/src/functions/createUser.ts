@@ -73,12 +73,14 @@ export const createUserLocal = (passedInAdmin: admin.app.App) => functions.https
 
     const createdUserDocumentSnapshot = await firestore.collection('users').add(userToCreate);
 
-    await firestore.collection('companyUserJoin').add({
-        companyId: data.companyId,
-        companyName: companyDocumentSnapshot.data().companyName,
-        firebaseAuthenticationId: userRecord.uid,
-        userId: createdUserDocumentSnapshot.id,
-    })
+    await firestore.collection('companyUserJoin')
+        .doc(`${data.companyId}_${userRecord.uid}`)
+        .set({
+            companyId: data.companyId,
+            companyName: companyDocumentSnapshot.data().companyName,
+            firebaseAuthenticationUid: userRecord.uid,
+            userId: createdUserDocumentSnapshot.id,
+        });
 
     return {
         ...userToCreate,

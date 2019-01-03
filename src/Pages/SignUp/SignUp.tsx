@@ -140,34 +140,38 @@ export class SignUpPresentation extends React.Component<
         );
     }
 
-    private signUp = () => {
+    private signUp = async() => {
         this.setState({
             signUpActionInProgress: true,
         });
-        Api.authenticationApi.signUp(
-            this.state.companyName.value,
-            this.state.fullName!.value,
-            this.state.email.value,
-            this.state.password.value,
-        ).then(() => {
-            this.setState({
-                signUpActionInProgress: false,
-            });
-            this.redirectToCompanySelection();
-        }).catch((error) => {
+        try {
+            await Api.authenticationApi.signUp(
+                this.state.companyName.value,
+                this.state.fullName!.value,
+                this.state.email.value,
+                this.state.password.value,
+            )
+
+            const userCredential = await Api.authenticationApi.login(
+                this.state.email.value,
+                this.state.password.value,
+            )
+
+            this.redirectToCompanySelection(userCredential.user!.uid);
+        } catch (error) {
             const newEmailControl = this.state.email.createCopy()
-                .markAsInvalid()
-                .setError(error.message);
+            .markAsInvalid()
+            .setError(error.message);
 
             this.setState({
                 email: newEmailControl,
                 signUpActionInProgress: false,
             });
-        });
+        }
     }
 
-    private redirectToCompanySelection(): void {
-        this.props.history.push('companySelection');
+    private redirectToCompanySelection(uid: string): void {
+        this.props.history.push(`companySelection?uid=${uid}`);
     }
 
     private handleFormControlChange = (event: any): void => {

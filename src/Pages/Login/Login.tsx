@@ -95,19 +95,21 @@ export class LoginPresentation extends React.Component<
         );
     }
 
-    private login = () => {
+    private login = async() => {
         this.setState({
             loginActionInProgress: true,
         });
-        Api.authenticationApi.login(
-            this.state.email.value,
-            this.state.password.value,
-        ).then(() => {
+        try {
+            const userCredential = await Api.authenticationApi.login(
+                this.state.email.value,
+                this.state.password.value);
+
             this.setState({
                 loginActionInProgress: false,
             });
-            this.redirectToCompanySelection();
-        }).catch(() => {
+
+            this.redirectToCompanySelection(userCredential.user!.uid);
+        } catch (e) {
             const newEmailControl = this.state.email.createCopy()
                 .markAsInvalid()
                 .setError('The username or password is invalid');
@@ -116,11 +118,11 @@ export class LoginPresentation extends React.Component<
                 email: newEmailControl,
                 loginActionInProgress: false,
             });
-        });
+        }
     }
 
-    private redirectToCompanySelection(): void {
-        this.props.history.push('companySelection');
+    private redirectToCompanySelection(uid: string): void {
+        this.props.history.push(`companySelection?uid=${uid}`);
     }
 
     private handleFormControlChange = (event: any): void => {

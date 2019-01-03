@@ -57,10 +57,12 @@ exports.createUserLocal = (passedInAdmin) => functions.https.onCall((data, conte
         uid: userRecord.uid,
     };
     const createdUserDocumentSnapshot = yield firestore.collection('users').add(userToCreate);
-    yield firestore.collection('companyUserJoin').add({
+    yield firestore.collection('companyUserJoin')
+        .doc(`${data.companyId}_${userRecord.uid}`)
+        .set({
         companyId: data.companyId,
         companyName: companyDocumentSnapshot.data().companyName,
-        firebaseAuthenticationId: userRecord.uid,
+        firebaseAuthenticationUid: userRecord.uid,
         userId: createdUserDocumentSnapshot.id,
     });
     return Object.assign({}, userToCreate, { id: createdUserDocumentSnapshot.id });

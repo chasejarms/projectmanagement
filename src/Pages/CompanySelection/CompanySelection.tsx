@@ -9,7 +9,6 @@ import {
 import * as React from 'react';
 import Api from '../../Api/api';
 
-import * as firebase from 'firebase';
 import { withRouter } from 'react-router';
 import { createCompanySelectionPresentationClasses, ICompanySelectionPresentationProps, ICompanySelectionPresentationState } from './CompanySelection.ias';
 
@@ -19,21 +18,22 @@ class CompanySelectionPresentation extends React.Component<ICompanySelectionPres
         companiesQuerySnapshot: null,
     }
 
-    public componentWillMount(): void {
-        firebase.auth().onAuthStateChanged(async(user) => {
-            if (user) {
-                const companiesQuerySnapshot = await Api.companySelectionApi.getCompaniesForCurrentUser(user.uid);
-                if (companiesQuerySnapshot.size === 1) {
-                    const onlyCompanyDocumentSnapshot = companiesQuerySnapshot.docs[0];
-                    const companyId = onlyCompanyDocumentSnapshot.data().companyId;
-                    this.props.history.push(`/company/${companyId}`);
-                } else {
-                    this.setState({
-                        companiesQuerySnapshot,
-                    })
-                }
-            }
-        });
+    public async componentWillMount(): Promise<void> {
+        const uid = this.props.location.search.split('uid=')[1];
+        // tslint:disable-next-line:no-console
+        console.log(uid);
+        const companiesQuerySnapshot = await Api.companySelectionApi.getCompaniesForCurrentUser(uid);
+        // tslint:disable-next-line:no-console
+        console.log('querySnapshot: ', companiesQuerySnapshot);
+        if (companiesQuerySnapshot.size === 1) {
+            const onlyCompanyDocumentSnapshot = companiesQuerySnapshot.docs[0];
+            const companyId = onlyCompanyDocumentSnapshot.data().companyId;
+            this.props.history.push(`/company/${companyId}`);
+        } else {
+            this.setState({
+                companiesQuerySnapshot,
+            })
+        }
     }
 
     public render() {

@@ -7,15 +7,16 @@ import {
     Tooltip,
 } from '@material-ui/core';
 import { withTheme } from '@material-ui/core';
-// import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import ListIcon from '@material-ui/icons/List';
 import NoteIcon from '@material-ui/icons/Note';
 import PeopleIcon from '@material-ui/icons/People';
 import * as React from 'react';
+import { connect, Dispatch } from 'react-redux';
 import { withRouter } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
+import { removeUserForCompany } from 'src/Redux/ActionCreators/userActionCreators';
 import Api from '../../Api/api';
 import { CaseNotesTemplate } from '../CaseNotesTemplate/CaseNotesTemplate';
 import { Project } from '../Project/Project';
@@ -181,7 +182,9 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
     // }
 
     private logout = async() => {
+        const { companyName } = this.props.match.params as any;
         await Api.authenticationApi.logout();
+        this.props.removeUserForComponent(companyName)
         this.props.history.push('/login');
     }
 
@@ -191,4 +194,11 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
     }
 }
 
-export const Authenticated = withRouter(withTheme() (AuthenticatedPresentation));
+const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
+    removeUserForCompany: (companyId: string) => {
+        dispatch(removeUserForCompany(companyId));
+    },
+})
+
+const connectedComponent = connect(undefined, mapDispatchToProps)(AuthenticatedPresentation as any);
+export const Authenticated = withRouter(withTheme() (connectedComponent as any) as any);
