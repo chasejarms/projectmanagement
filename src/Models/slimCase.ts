@@ -7,5 +7,5 @@ export interface ISlimCase {
     doctor: string;
     doctorName: string;
     created: string;
-    showNewInfoFrom: 'doctor' | 'lab' | null;
+    showNewInfoFrom: 'Doctor' | 'Lab' | null;
 }

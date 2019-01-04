@@ -20,6 +20,7 @@ interface ICase {
     created: string;
     caseCheckpoints: string[];
     companyId: string;
+    showNewInfoFrom: 'Doctor' | 'Lab' | null;
 }
 
 export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https.onCall(async(data: IProjectCreateData, context) => {
@@ -82,6 +83,7 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
         created: new Date().toUTCString(),
         caseCheckpoints: createdCheckpointDocumentIds,
         companyId: data.companyId,
+        showNewInfoFrom: isAdminOrStaff ? 'Doctor' : 'Lab',
     };
 
     console.log('caseToCreate: ', caseToCreate);

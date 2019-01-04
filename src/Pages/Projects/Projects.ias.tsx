@@ -1,8 +1,11 @@
 import { css } from 'emotion';
 import { RouteComponentProps } from "react-router";
+import { IUserSliceOfState } from 'src/Redux/Reducers/userReducer';
 import { ISlimCase } from '../../Models/slimCase';
 
-export interface IProjectsPresentationProps extends RouteComponentProps<{}> {}
+export interface IProjectsPresentationProps extends RouteComponentProps<{}> {
+    userState: IUserSliceOfState;
+}
 
 // tslint:disable-next-line:no-empty-interface
 export interface IProjectsPresentationState {

@@ -10,6 +10,7 @@ interface ISlimCase {
     doctorName: string;
     created: string;
     companyId: string;
+    showNewInfoFrom: 'Doctor' | 'Lab' | null;
 }
 
 export const slimCaseFromCaseChanges = (passedInAdmin: admin.app.App) => functions.firestore.document('cases/{caseId}').onWrite(async(change, context) => {
@@ -60,5 +61,6 @@ export const slimCaseFromCaseChanges = (passedInAdmin: admin.app.App) => functio
         doctorName,
         created: after.data().created,
         companyId: after.data().companyId,
+        showNewInfoFrom: after.data().showNewInfoFrom,
     } as ISlimCase)
 });

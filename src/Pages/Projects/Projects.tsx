@@ -13,8 +13,10 @@ import TableRow from '@material-ui/core/TableRow';
 import AddIcon from '@material-ui/icons/Add';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { ISlimCasesSearchRequest } from 'src/Api/Projects/projectsInterface';
+import { IAppState } from 'src/Redux/Reducers/rootReducer';
 import Api from '../../Api/api';
 import { createProjectsPresentationClasses, IProjectsPresentationProps, IProjectsPresentationState } from './Projects.ias';
 
@@ -47,7 +49,15 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         } = createProjectsPresentationClasses(this.props, this.state);
 
         const mappedProjects = this.state.slimCases.map(slimCase => {
-            const newInfoCell = slimCase.showNewInfoFrom === null ? <TableCell/> : (
+            // tslint:disable-next-line:no-console
+            console.log(slimCase);
+            const companyId = this.props.match.path.split('/')[2];
+            const userIsDoctor = this.props.userState[companyId].type === 'Customer';
+            const newInfoFromDoctor = slimCase.showNewInfoFrom === 'Doctor';
+            const newInfoFromLab = slimCase.showNewInfoFrom === 'Lab';
+
+            const shouldShowNotification = (userIsDoctor && newInfoFromLab) || (!userIsDoctor && newInfoFromDoctor);
+            const newInfoCell = shouldShowNotification ? <TableCell/> : (
                 <TableCell>
                     <NotificationsIcon/>
                 </TableCell>
@@ -132,4 +142,9 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
     }
 }
 
-export const Projects = withRouter(ProjectsPresentation);
+const mapStateToProps = ({ userState }: IAppState) => ({
+    userState,
+});
+
+const connectedComponent = connect(mapStateToProps, undefined)(ProjectsPresentation as any);
+export const Projects = withRouter(connectedComponent as any);
