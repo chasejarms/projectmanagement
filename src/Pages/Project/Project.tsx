@@ -1,4 +1,4 @@
-import { withTheme } from '@material-ui/core';
+import { FormControl, FormHelperText, Input, InputLabel, withTheme } from '@material-ui/core';
 import {
     Button,
     Paper,
@@ -13,17 +13,36 @@ import {
 } from '@material-ui/core';
 import DoneIcon from '@material-ui/icons/Done';
 import * as _ from 'lodash';
+import { DateFormatInput } from 'material-ui-next-pickers';
 import * as React from 'react';
 import { withRouter } from 'react-router';
+import { FormControlState } from 'src/Classes/formControlState';
+import { AsyncButton } from 'src/Components/AsyncButton/AsyncButton';
+import { requiredValidator } from 'src/Validators/required.validator';
 import Api from '../../Api/api';
-import { ICase } from '../../Models/case';
 import { ICheckpoint } from '../../Models/checkpoint';
 import { createProjectPresentationClasses, IProjectPresentationProps, IProjectPresentationState } from './Project.ias';
 
 class ProjectPresentation extends React.Component<IProjectPresentationProps, IProjectPresentationState> {
     public state: IProjectPresentationState = {
         checkpoints: null,
-        project: null,
+        projectInformationIsLoading: true,
+        caseName: new FormControlState({
+            value: '',
+            validators: [
+                requiredValidator('A case name is required'),
+            ],
+        }),
+        caseDeadline: new FormControlState({
+            value: new Date(),
+            validators: [
+                requiredValidator('The case deadline is required'),
+            ],
+        }),
+        notes: new FormControlState({
+            value: '',
+        }),
+        attachmentUrls: [],
         open: false,
     }
 
@@ -37,8 +56,17 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
 
         const project = await Api.projectsApi.getProject(caseId);
 
+        const caseNameControl = this.state.caseName.setValue(project.name);
+        const caseDeadlineAsDate = new Date(project.deadline);
+        const caseDeadlineControl = this.state.caseDeadline.setValue(caseDeadlineAsDate);
+        const notesControl = this.state.notes.setValue(project.notes);
+
         this.setState({
-            project,
+            attachmentUrls: project.attachmentUrls,
+            caseName: caseNameControl,
+            caseDeadline: caseDeadlineControl,
+            notes: notesControl,
+            projectInformationIsLoading: false,
         });
 
         const checkpoints = await Api.projectsApi.getProjectCheckpoints({
@@ -52,7 +80,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
     }
 
     public render() {
-        if (!this.state.project) {
+        if (this.state.projectInformationIsLoading) {
             return <div>Loading</div>
         }
 
@@ -68,6 +96,8 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             qrCodeButtonContainer,
             addAttachmentButton,
             addAttachmentInput,
+            qrCodeButton,
+            caseInformationToolbar,
         } = createProjectPresentationClasses(this.props, this.state, this.props.theme);
 
         // tslint:disable-next-line:no-console
@@ -118,14 +148,14 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                             <Button
 
                                 className={seeAttachmentsButton}
-                                variant="contained"
                                 color="secondary">
-                                See Attachments ({(this.state.project! as ICase).attachmentUrls.length})
+                                See Attachments ({this.state.attachmentUrls.length})
                             </Button>
                             <Button
                                 className={addAttachmentButton}
+                                color="secondary"
                                 variant="contained"
-                                color="secondary">
+                            >
                                 <input
                                     type="file"
                                     className={addAttachmentInput}
@@ -139,44 +169,66 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                 <div className={halfWidthProjectContainer}>
                     <Paper className={evenPaper}>
                         <div>
-                            <TextField
+                            <Toolbar className={caseInformationToolbar}>
+                                <Typography variant="title">
+                                    Case Information
+                                </Typography>
+                                <Button
+                                    className={qrCodeButton}
+                                    onClick={this.showQrCodeDialog}
+                                    color="secondary">
+                                    Print QR Code
+                                </Button>
+                            </Toolbar>
+                            <FormControl fullWidth={true} error={this.state.caseName.shouldShowError()}>
+                                <InputLabel>Case Name</InputLabel>
+                                <Input
+                                    name="projectName"
+                                    value={this.state.caseName.value}
+                                    onChange={this.handleCaseNameChange}
+                                />
+                                <FormHelperText>
+                                    {this.state.caseName.shouldShowError() ? this.state.caseName.errors[0] : undefined}
+                                </FormHelperText>
+                            </FormControl>
+                            <DateFormatInput
                                 fullWidth={true}
-                                className={fieldSpacing}
-                                label="Case Name"
-                                name="projectName"
-                                value={(this.state.project! as any).name}
-                                onChange={this.handleProjectNameChange}
-                            />
-                            <TextField
-                                fullWidth={true}
-                                className={fieldSpacing}
-                                id="date"
-                                type="date"
-                                value="2018-10-10"
                                 label="Case Delivery Date"
+                                className={fieldSpacing}
                                 name="caseDeadline"
+                                value={this.state.caseDeadline.value}
+                                onChange={this.handleCaseDeadlineChange}
+                                min={new Date()}
+                                error={this.state.caseDeadline.shouldShowError() ? this.state.caseDeadline.errors[0] : undefined}
                             />
                             <TextField
                                 fullWidth={true}
                                 multiline={true}
                                 label="Case Notes"
                                 name="projectNotes"
-                                value={(this.state.project as any).notes}
+                                value={this.state.notes.value}
                                 onChange={this.handleNotesChange}
                             />
                         </div>
                         <div className={qrCodeButtonContainer}>
-                            <Button
-                                onClick={this.showQrCodeDialog}
+                            <AsyncButton
+                                disabled={this.atLeastOneControlIsInvalid()}
+                                asyncActionInProgress={false}
+                                color="secondary"
                                 variant="contained"
-                                color="secondary">
-                                Print QR Code
-                            </Button>
+                                onClick={this.updateProject}
+                            >
+                                Update Project Information
+                            </AsyncButton>
                         </div>
                     </Paper>
                 </div>
             </div>
         );
+    }
+
+    private atLeastOneControlIsInvalid = (): boolean => {
+        return this.state.caseName.invalid || this.state.caseDeadline.invalid || this.state.notes.invalid;
     }
 
     private handleFileSelection = (event: any): void => {
@@ -186,15 +238,12 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
 
         Api.projectsApi.uploadFile(companyName, projectId, file).then((uploadTaskSnapshot) => {
             const downloadUrl = uploadTaskSnapshot.downloadURL;
-            const attachments = _.cloneDeep((this.state.project! as ICase).attachmentUrls);
+            const attachmentUrls = _.cloneDeep(this.state.attachmentUrls);
             if (downloadUrl) {
-                attachments.push(downloadUrl);
+                attachmentUrls.push(downloadUrl);
             }
             this.setState({
-                project: {
-                    ...this.state.project! as ICase,
-                    attachments,
-                }
+                attachmentUrls,
             })
         });
     }
@@ -205,27 +254,31 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         })
     }
 
-    // private handleClose = (): void => {
-    //     this.setState({
-    //         open: false,
-    //     })
-    // }
+    private updateProject = (): void => {
+        // something
+    }
 
-    private handleProjectNameChange = (event: any): void => {
+    private handleCaseDeadlineChange = (event: any): void => {
+        const newCaseDeadline = new Date(event.target.value);
+        const updatedCaseDeadlineControl = this.state.caseDeadline.setValue(newCaseDeadline);
         this.setState({
-            project: {
-                ...this.state.project as any,
-                name: event.target.value,
-            }
+            caseDeadline: updatedCaseDeadlineControl,
+        });
+    }
+
+    private handleCaseNameChange = (event: any): void => {
+        const newCaseName = event.target.value;
+        const updatedCaseNameControl = this.state.caseName.setValue(newCaseName);
+        this.setState({
+            caseName: updatedCaseNameControl,
         })
     }
 
     private handleNotesChange = (event: any): void => {
+        const newCaseNotes = event.target.value;
+        const updatedCaseNotesControl = this.state.notes.setValue(newCaseNotes);
         this.setState({
-            project: {
-                ...this.state.project as any,
-                notes: event.target.value,
-            }
+            notes: updatedCaseNotesControl,
         })
     }
 }

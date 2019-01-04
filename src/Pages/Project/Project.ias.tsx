@@ -1,14 +1,19 @@
 import { Theme, WithTheme } from '@material-ui/core';
 import { css } from 'emotion';
 import { RouteComponentProps } from 'react-router';
+import { FormControlState } from 'src/Classes/formControlState';
 import { ICheckpoint } from 'src/Models/checkpoint';
-import { ICase } from '../../Models/case';
+// import { ICase } from '../../Models/case';
 
 // tslint:disable-next-line:no-empty-interface
 export interface IProjectPresentationProps extends RouteComponentProps<{}>, WithTheme {}
 
 export interface IProjectPresentationState {
-    project: ICase | null;
+    caseName: FormControlState<string>;
+    caseDeadline: FormControlState<Date>;
+    notes: FormControlState<string>;
+    projectInformationIsLoading: boolean;
+    attachmentUrls: string[];
     checkpoints: ICheckpoint[] | null;
     open: boolean;
 }
@@ -34,6 +39,7 @@ export const createProjectPresentationClasses = (
         flexGrow: 1,
         marginRight: 32,
         padding: 16,
+        paddingTop: 0,
         height: '100%',
         boxSizing: 'border-box',
         overflowY: 'auto',
@@ -116,6 +122,17 @@ export const createProjectPresentationClasses = (
         paddingTop: 100,
     });
 
+    const qrCodeButton = css({
+        marginLeft: 8,
+    });
+
+    const caseInformationToolbar = css({
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        padding: 0,
+    });
+
     return {
         projectContainer,
         tabs,
@@ -132,5 +149,7 @@ export const createProjectPresentationClasses = (
         qrCodeButtonContainer,
         addAttachmentButton,
         addAttachmentInput,
+        qrCodeButton,
+        caseInformationToolbar,
     };
 }
