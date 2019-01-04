@@ -30,12 +30,24 @@ exports.createCaseLocal = (passedInAdmin) => functions.https.onCall((data, conte
     console.log('userType: ', userType);
     const isAdminOrStaff = userType === 'Admin' || userType === 'Staff';
     console.log('isAdminOrStaff: ', isAdminOrStaff);
-    // get the doctor if the requesting user is not the doctor
-    // also get the workflow
-    // also create all of the checkpoint items
+    const companyWorkflowsQuerySnapshot = yield firestore.collection('companyWorkflows')
+        .where('companyId', '==', data.companyId)
+        .get();
+    const workflowCheckpoints = companyWorkflowsQuerySnapshot.docs[0].data().workflowCheckpoints;
+    const checkpointCreationPromises = workflowCheckpoints.map((linkedWorkflowCheckpoint) => {
+        return firestore.collection('caseCheckpoints').add({
+            complete: false,
+            completedDate: null,
+            completedBy: null,
+            linkedWorkflowCheckpoint,
+        });
+    });
+    const createdCheckpointDocumentReferences = yield Promise.all(checkpointCreationPromises);
+    const createdCheckpointDocumentIds = createdCheckpointDocumentReferences.map((documentReference) => {
+        return documentReference.id;
+    });
     const doctor = isAdminOrStaff ? data.doctor : companyUserDocumentSnapshot.id;
     console.log('doctor: ', doctor);
-    const caseCheckpoints = ['1234'];
     const caseToCreate = {
         complete: false,
         deadline: data.deadline,
@@ -44,7 +56,8 @@ exports.createCaseLocal = (passedInAdmin) => functions.https.onCall((data, conte
         notes: data.notes,
         attachmentUrls: data.attachmentUrls,
         created: new Date().toUTCString(),
-        caseCheckpoints,
+        caseCheckpoints: createdCheckpointDocumentIds,
+        companyId: data.companyId,
     };
     console.log('caseToCreate: ', caseToCreate);
     const caseDocumentReference = yield firestore.collection('cases').add(caseToCreate);

@@ -18,6 +18,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { Dispatch } from 'redux';
+import { AsyncButton } from 'src/Components/AsyncButton/AsyncButton';
 import Api from '../../Api/api';
 import { ICaseCreateRequest } from '../../Api/Projects/projectsInterface';
 import { FormControlState } from '../../Classes/formControlState';
@@ -69,6 +70,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         projectNotes: '',
         doctorNameSearch: '',
         potentialDoctors: [] as IUser[],
+        createProjectInProgress: false,
     };
 
     public handleChange = handleChange(this);
@@ -176,7 +178,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         }
     }
 
-    private createProject = () => {
+    private createProject = async() => {
         const companyId = this.props.match.path.split('/')[2];
 
         const projectCreateRequest: ICaseCreateRequest = {
@@ -196,9 +198,19 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         // tslint:disable-next-line:no-console
         console.log(projectCreateRequest);
 
-        Api.projectsApi.createProject(companyId, projectCreateRequest).then((project: ICase) => {
-            this.props.history.push(`/company/${companyId}/project/${project.id}`);
-        });
+        this.setState({
+            createProjectInProgress: true,
+        })
+
+        try {
+            await Api.projectsApi.createProject(companyId, projectCreateRequest).then((project: ICase) => {
+                this.props.history.push(`/company/${companyId}/project/${project.id}`);
+            });
+        } catch {
+            this.setState({
+                createProjectInProgress: false,
+            })
+        }
     }
 
     private createActionButtons(): any {
@@ -207,10 +219,12 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         const {
             actionButtonContainer,
             baseActionButton,
+            asyncActionButton,
         } = createProjectCreationClasses(this.props, this.state);
 
         const backButton = this.state.activeStep !== 0 ? (
             <Button
+                disabled={this.state.createProjectInProgress}
                 className={baseActionButton}
                 variant="contained"
                 onClick={this.onBackClick}
@@ -227,19 +241,22 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                 variant="contained"
                 onClick={this.onNextClick}
                 color="secondary"
-                disabled={!this.previousStepsAreValid()}>
+                disabled={!this.previousStepsAreValid() || this.state.createProjectInProgress}>
                 Next
             </Button>
         ) : undefined;
 
         const saveButton = this.state.activeStep === lastActiveStep ? (
-            <Button
-                className={baseActionButton}
-                variant="contained"
-                onClick={this.createProject}
-                color="secondary">
-                Create Project
-            </Button>
+            <div className={asyncActionButton}>
+                 <AsyncButton
+                    asyncActionInProgress={this.state.createProjectInProgress}
+                    disabled={this.state.createProjectInProgress}
+                    variant="contained"
+                    onClick={this.createProject}
+                    color="secondary">
+                    Create Project
+                </AsyncButton>
+            </div>
         ) : undefined;
 
         return (
@@ -393,6 +410,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                         </div>
                         <div className={addAttachmentButtonContainer}>
                             <Button
+                                disabled={this.state.createProjectInProgress}
                                 variant="contained"
                                 color="secondary">
                                 Add An Attachment

@@ -19,6 +19,7 @@ interface ICase {
     attachmentUrls: string[];
     created: string;
     caseCheckpoints: string[];
+    companyId: string;
 }
 
 export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https.onCall(async(data: IProjectCreateData, context) => {
@@ -50,12 +51,26 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
     const isAdminOrStaff = userType === 'Admin' || userType === 'Staff';
     console.log('isAdminOrStaff: ', isAdminOrStaff);
 
-    // get the doctor if the requesting user is not the doctor
-    // also get the workflow
-    // also create all of the checkpoint items
+    const companyWorkflowsQuerySnapshot = await firestore.collection('companyWorkflows')
+        .where('companyId', '==', data.companyId)
+        .get();
+
+    const workflowCheckpoints: string[] = companyWorkflowsQuerySnapshot.docs[0].data().workflowCheckpoints;
+    const checkpointCreationPromises = workflowCheckpoints.map((linkedWorkflowCheckpoint) => {
+        return firestore.collection('caseCheckpoints').add({
+            complete: false,
+            completedDate: null,
+            completedBy: null,
+            linkedWorkflowCheckpoint,
+        })
+    });
+    const createdCheckpointDocumentReferences = await Promise.all(checkpointCreationPromises);
+    const createdCheckpointDocumentIds = createdCheckpointDocumentReferences.map((documentReference) => {
+        return documentReference.id;
+    });
+
     const doctor = isAdminOrStaff ? data.doctor : companyUserDocumentSnapshot.id;
     console.log('doctor: ', doctor);
-    const caseCheckpoints = ['1234'];
 
     const caseToCreate: ICase = {
         complete: false,
@@ -65,7 +80,8 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
         notes: data.notes,
         attachmentUrls: data.attachmentUrls,
         created: new Date().toUTCString(),
-        caseCheckpoints,
+        caseCheckpoints: createdCheckpointDocumentIds,
+        companyId: data.companyId,
     };
 
     console.log('caseToCreate: ', caseToCreate);

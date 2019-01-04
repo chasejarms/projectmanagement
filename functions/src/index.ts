@@ -1,12 +1,10 @@
 import * as admin from 'firebase-admin';
 
 import { signUpLocal } from './functions/signUp';
-import { getSlimCasesLocal } from './functions/getSlimCases';
+import { getCasesLocal } from './functions/getCases';
 import { createCaseLocal } from './functions/createCase';
 import {
-    slimProjectFromProjectCreateLocal,
-    slimProjectFromProjectUpdateLocal,
-    deleteSlimProjectLocal,
+    slimCaseFromCaseChanges
 } from './functions/slimProjectFromProject';
 import { createUserLocal } from './functions/createUser';
 import { updateUserLocal } from './functions/updateUser';
@@ -19,11 +17,9 @@ const app = admin.initializeApp({
 })
 
 export const signUp = signUpLocal(app);
-export const getSlimCases = getSlimCasesLocal(app);
+export const getCases = getCasesLocal(app);
 export const createCase = createCaseLocal(app);
-export const slimProjectFromProjectCreate = slimProjectFromProjectCreateLocal(app);
-export const slimProjectFromProjectUpdate = slimProjectFromProjectUpdateLocal(app);
-export const deleteSlimProject = deleteSlimProjectLocal(app);
+export const slimCaseFromCase = slimCaseFromCaseChanges(app);
 export const createUser = createUserLocal(app);
 export const updateUser = updateUserLocal(app);
 export const deleteUser = deleteUserLocal(app);

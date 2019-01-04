@@ -1,57 +1,47 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const functions = require("firebase-functions");
-exports.slimProjectFromProjectCreateLocal = (passedInAdmin) => functions.firestore.document('companies/{companyName}/cases/{caseId}').onCreate((document, context) => {
-    const project = document.data(); // as ICase
-    console.log('project: ', project);
-    const currentCheckpoint = project.checkpoints.find((checkpoint) => !checkpoint.complete).name;
-    console.log('currentCheckpoint: ', currentCheckpoint);
-    const slimProject = {
-        projectName: project.name,
-        currentCheckpoint,
-        deadline: project.deadline,
-        showNewInfoFrom: null,
-    }; // ISlimCase
-    console.log('slimProject: ', slimProject);
-    const companyName = context.params.companyName;
-    console.log('companyName: ', companyName);
-    const caseId = context.params.caseId;
-    console.log('caseId: ', caseId);
-    return passedInAdmin.firestore()
-        .collection('companies')
-        .doc(companyName)
-        .collection('slimProjects')
-        .doc(caseId)
-        .set(slimProject);
-});
-exports.slimProjectFromProjectUpdateLocal = (passedInAdmin) => functions.firestore.document('companies/{companyName}/cases/{caseId}').onUpdate((change, context) => {
-    const project = change.after.data(); // ICase
-    const currentCheckpoint = project.checkpoints.find((checkpoint) => !checkpoint.complete).name;
-    const slimProject = {
-        projectId: project.id,
-        projectName: project.name,
-        currentCheckpoint,
-        deadline: project.deadline,
-        showNewInfoFrom: null,
-    }; // ISlimCase
-    const companyName = context.params.companyName;
-    const caseId = context.params.caseId;
-    return passedInAdmin.firestore()
-        .collection('companies')
-        .doc(companyName)
-        .collection('slimProjects')
-        .doc(caseId)
-        .set(slimProject);
-});
-exports.deleteSlimProjectLocal = (passedInAdmin) => functions.firestore.document('companies/{companyName}/cases/{caseId}').onDelete((document, context) => {
-    const project = document.data(); // ICase
-    const companyName = context.params.companyName;
-    const caseId = context.params.caseId;
-    return passedInAdmin.firestore()
-        .collection('companies')
-        .doc(companyName)
-        .collection('slimProjects')
-        .doc(caseId)
-        .delete();
-});
+exports.slimCaseFromCaseChanges = (passedInAdmin) => functions.firestore.document('cases/{caseId}').onWrite((change, context) => __awaiter(this, void 0, void 0, function* () {
+    const { before, after, } = change;
+    console.log('case before: ', before.data());
+    console.log('case after: ', after.data());
+    if (!after.exists) {
+        return passedInAdmin.firestore().collection('slimCases').doc(context.params.caseId).delete();
+    }
+    const getCheckpointsPromises = (after.data().caseCheckpoints).map((caseCheckpointId) => {
+        return passedInAdmin.firestore().collection('caseCheckpoints').doc(caseCheckpointId).get();
+    });
+    const checkpointDocumentSnapshots = yield Promise.all(getCheckpointsPromises);
+    let currentCheckpointName = '';
+    for (const checkpointDocumentSnapshot of checkpointDocumentSnapshots) {
+        console.log('compare checkpoint: ', checkpointDocumentSnapshot.data());
+        const checkpointIsComplete = checkpointDocumentSnapshot.data().complete;
+        if (!checkpointIsComplete) {
+            const currentWorkflowCheckpointDocument = yield passedInAdmin.firestore().collection('workflowCheckpoints').doc(checkpointDocumentSnapshot.data().linkedWorkflowCheckpoint).get();
+            console.log('current workflow checkpoint: ', currentWorkflowCheckpointDocument.data());
+            currentCheckpointName = currentWorkflowCheckpointDocument.data().name;
+            break;
+        }
+    }
+    const doctorDocumentReference = yield passedInAdmin.firestore().collection('users').doc(after.data().doctor).get();
+    const doctorName = doctorDocumentReference.data().fullName;
+    return yield passedInAdmin.firestore().collection('slimCases').doc(context.params.caseId).set({
+        currentCheckpointName,
+        caseId: after.id,
+        name: after.data().name,
+        deadline: after.data().deadline,
+        doctor: after.data().doctor,
+        doctorName,
+        created: after.data().created,
+        companyId: after.data().companyId,
+    });
+}));
 //# sourceMappingURL=slimProjectFromProject.js.map

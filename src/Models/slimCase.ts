@@ -4,7 +4,7 @@ export interface ISlimCase {
     caseId: string;
     name: string;
     deadline: string;
-    doctorId: string;
+    doctor: string;
     doctorName: string;
     created: string;
     showNewInfoFrom: 'doctor' | 'lab' | null;

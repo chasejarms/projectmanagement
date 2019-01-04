@@ -38,6 +38,7 @@ export interface IProjectCreationState {
     doctorSelection: FormControlState<ISlimDoctor>;
     doctorNameSearch: string;
     potentialDoctors: IUser[];
+    createProjectInProgress: boolean;
 }
 
 export const createProjectCreationClasses = (
@@ -73,6 +74,10 @@ export const createProjectCreationClasses = (
         marginLeft: 16,
         paddingLeft: 24,
         paddingRight: 24,
+    });
+
+    const asyncActionButton = css({
+        marginLeft: 16,
     });
 
     const projectNameContainer = css({
@@ -336,5 +341,6 @@ export const createProjectCreationClasses = (
         caseDoctorContainer,
         potentialDoctorPaper,
         menuPopover,
+        asyncActionButton,
     };
 }

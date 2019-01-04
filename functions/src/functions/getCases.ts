@@ -1,17 +1,17 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 
-interface ISlimCasesSearchRequest {
+interface ICasesSearchRequest {
     companyId: string;
     limit: number;
     startAfter?: FirebaseFirestore.DocumentSnapshot
 }
 
-export const getSlimCasesLocal = (passedInAdmin: admin.app.App) => functions.https.onCall(async({
+export const getCasesLocal = (passedInAdmin: admin.app.App) => functions.https.onCall(async({
     companyId,
     limit,
     startAfter,
-}: ISlimCasesSearchRequest, context) => {
+}: ICasesSearchRequest, context) => {
     const firestore = passedInAdmin.firestore();
     // check if the user is an admin or staff
     const uid = context.auth.uid;
@@ -37,7 +37,7 @@ export const getSlimCasesLocal = (passedInAdmin: admin.app.App) => functions.htt
     const userType = companyUserDocumentSnapshot.data().type;
     console.log('userType: ', userType);
 
-    const isAdminOrStaff = userType === 'admin' || userType === 'staff';
+    const isAdminOrStaff = userType === 'Admin' || userType === 'Staff';
     console.log('isAdminOrStaff: ', isAdminOrStaff);
 
     let slimCases: FirebaseFirestore.QuerySnapshot;
@@ -57,16 +57,16 @@ export const getSlimCasesLocal = (passedInAdmin: admin.app.App) => functions.htt
         }
     } else {
         if (!!startAfter) {
-            // only return the cases associated with that particular doctor
+            // only return the slimCases associated with that particular doctor
             slimCases = await firestore.collection('slimCases')
-                .where('doctorId', '==', userId)
+                .where('doctor', '==', userId)
                 .orderBy('deadline', 'asc')
                 .limit(limit)
                 .startAfter(startAfter)
                 .get();
         } else {
             slimCases = await firestore.collection('slimCases')
-                .where('doctorId', '==', userId)
+                .where('doctor', '==', userId)
                 .orderBy('deadline', 'asc')
                 .limit(limit)
                 .get();
@@ -75,7 +75,10 @@ export const getSlimCasesLocal = (passedInAdmin: admin.app.App) => functions.htt
 
     const slimCasesList = [];
     slimCases.forEach((document) => {
-        slimCasesList.push(document.data());
+        slimCasesList.push({
+            ...document.data(),
+            id: document.id,
+        })
     })
     console.log('slimCasesList: ', slimCasesList);
     return slimCasesList;

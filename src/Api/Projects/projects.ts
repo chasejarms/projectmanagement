@@ -6,7 +6,7 @@ import { ICaseApi, ICaseCreateRequest, ISlimCasesSearchRequest } from './project
 
 export class ProjectsApi implements ICaseApi {
     public async getSlimCases(slimCasesSearchRequest: ISlimCasesSearchRequest): Promise<ISlimCase[]> {
-        const slimProjectsCloudFunction = firebase.functions().httpsCallable('getSlimCases');
+        const slimProjectsCloudFunction = firebase.functions().httpsCallable('getCases');
         let slimProjectsResult: firebase.functions.HttpsCallableResult;
         try {
             slimProjectsResult = await slimProjectsCloudFunction(slimCasesSearchRequest);
