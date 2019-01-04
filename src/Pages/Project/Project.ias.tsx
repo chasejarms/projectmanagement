@@ -1,6 +1,7 @@
 import { Theme, WithTheme } from '@material-ui/core';
 import { css } from 'emotion';
 import { RouteComponentProps } from 'react-router';
+import { ICheckpoint } from 'src/Models/checkpoint';
 import { ICase } from '../../Models/case';
 
 // tslint:disable-next-line:no-empty-interface
@@ -8,6 +9,7 @@ export interface IProjectPresentationProps extends RouteComponentProps<{}>, With
 
 export interface IProjectPresentationState {
     project: ICase | null;
+    checkpoints: ICheckpoint[] | null;
     open: boolean;
 }
 

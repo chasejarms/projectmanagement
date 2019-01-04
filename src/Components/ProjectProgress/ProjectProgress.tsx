@@ -12,8 +12,7 @@ class PresentationProjectProgress extends React.Component<IProjectProgressProps,
     }
 
     public componentDidMount(): void {
-        const projectId = this.props.match.params['projectId']
-        Api.projectsApi.getProjectCheckpoints('does not matter', projectId).then((checkpoints) => {
+        Api.projectsApi.getProjectCheckpoints([]).then((checkpoints) => {
             this.setState({
                 checkpoints,
             });

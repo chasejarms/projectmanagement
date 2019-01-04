@@ -21,7 +21,8 @@ import { ICheckpoint } from '../../Models/checkpoint';
 import { createProjectPresentationClasses, IProjectPresentationProps, IProjectPresentationState } from './Project.ias';
 
 class ProjectPresentation extends React.Component<IProjectPresentationProps, IProjectPresentationState> {
-    public state = {
+    public state: IProjectPresentationState = {
+        checkpoints: null,
         project: null,
         open: false,
     }
@@ -30,17 +31,20 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         super(props);
     }
 
-    public componentWillMount(): void {
-        const projectId = this.props.match.params['projectId'];
-        const companyName = this.props.match.path.split('/')[2];
+    public async componentWillMount(): Promise<void> {
+        const caseId = this.props.match.params['projectId'];
 
-        Api.projectsApi.getProject(companyName, projectId).then((project) => {
-            // tslint:disable-next-line:no-console
-            console.log(project);
-            this.setState({
-                project,
-            });
+        const project = await Api.projectsApi.getProject(caseId);
+
+        this.setState({
+            project,
         });
+
+        const checkpoints = await Api.projectsApi.getProjectCheckpoints(project.caseCheckpoints);
+
+        this.setState({
+            checkpoints,
+        })
     }
 
     public render() {
@@ -62,7 +66,10 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             addAttachmentInput,
         } = createProjectPresentationClasses(this.props, this.state, this.props.theme);
 
-        const mappedCheckpoints = (this.state.project as any).checkpoints.map((checkpoint: ICheckpoint, index: number) => (
+        // tslint:disable-next-line:no-console
+        console.log(this.state.checkpoints);
+        const mappedCheckpoints = this.state.checkpoints ? (
+            this.state.checkpoints!.map((checkpoint: ICheckpoint, index: number) => (
                 <TableRow key={index}>
                     <TableCell>{checkpoint.name}</TableCell>
                     <TableCell>{checkpoint.estimatedCompletionTime}</TableCell>
@@ -71,7 +78,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                     ) : undefined}</TableCell>
                 </TableRow>
             )
-        )
+        )) : <div/>;
 
         return (
             <div className={projectContainer}>
@@ -96,9 +103,11 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                                         <TableCell>Complete</TableCell>
                                     </TableRow>
                                 </TableHead>
-                                <TableBody>
-                                    {mappedCheckpoints}
-                                </TableBody>
+                                {this.state.checkpoints ? (
+                                    <TableBody>
+                                        {mappedCheckpoints}
+                                    </TableBody>
+                                ) : undefined}
                             </Table>
                         </div>
                         <div className={attachmentButtonsContainer}>

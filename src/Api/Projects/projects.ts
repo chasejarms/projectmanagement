@@ -32,12 +32,10 @@ export class ProjectsApi implements ICaseApi {
         } as any;
     }
 
-    public async getProject(companyId: string, projectId: string): Promise<ICase> {
+    public async getProject(caseId: string): Promise<ICase> {
         const documentReference = await firebase.firestore()
-            .collection('companies')
-            .doc(companyId)
             .collection('cases')
-            .doc(projectId)
+            .doc(caseId)
             .get();
 
         return documentReference.data()! as ICase;
@@ -51,8 +49,18 @@ export class ProjectsApi implements ICaseApi {
         return uploadTaskSnapshot;
     }
 
-    public async getProjectCheckpoints(companyId: string, projectId: string): Promise<ICheckpoint[]> {
-        throw new Error("Method not implemented.");
+    public async getProjectCheckpoints(caseCheckpoints: string[]): Promise<ICheckpoint[]> {
+        const caseCheckpointPromises = caseCheckpoints.map((caseCheckpointId) => {
+            return firebase.firestore().collection('caseCheckpoints')
+                .doc(caseCheckpointId)
+                .get();
+        });
+
+        const caseDocumentReferences = await Promise.all(caseCheckpointPromises);
+
+        return caseDocumentReferences.map((caseDocumentReference) => {
+            return caseDocumentReference.data() as ICheckpoint;
+        });
     }
 
     public updateProject(companyId: string, project: ICase): ICase {

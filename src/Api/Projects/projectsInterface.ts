@@ -20,8 +20,8 @@ export interface ISlimCasesSearchRequest {
 export interface ICaseApi {
     getSlimCases(slimCaseSearchRequest: ISlimCasesSearchRequest): Promise<ISlimCase[]>;
     createProject(companyId: string, projectCreateRequest: ICaseCreateRequest): Promise<ICase>;
-    getProject(companyName: string, projectId: string): Promise<ICase>;
-    getProjectCheckpoints(companyName: string, projectId: string): Promise<ICheckpoint[]>;
+    getProject(projectId: string): Promise<ICase>;
+    getProjectCheckpoints(caseCheckpoints: string[]): Promise<ICheckpoint[]>;
     uploadFile(companyName: string, projectId: string, file: File): Promise<firebase.storage.UploadTaskSnapshot>;
     updateProject(companyName: string, project: ICase): ICase;
 }

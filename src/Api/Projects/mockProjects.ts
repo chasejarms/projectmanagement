@@ -41,12 +41,12 @@ export class MockProjectsApi implements ICaseApi {
         return createdLargeProject;
     }
 
-    public async getProjectCheckpoints(companyName: string, projectId: string): Promise<ICheckpoint[]> {
+    public async getProjectCheckpoints(caseCheckpoints: string[]): Promise<ICheckpoint[]> {
         // const project = await this.getProject(companyName, projectId);
         return [];
     }
 
-    public getProject(companyName: string, projectId: string): Promise<ICase> {
+    public getProject(projectId: string): Promise<ICase> {
         const stringifiedProject = localStorage.getItem(largeProjectsKey + projectId);
         const project = JSON.parse(stringifiedProject!);
         return project;
