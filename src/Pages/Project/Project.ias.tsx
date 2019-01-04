@@ -16,6 +16,8 @@ export interface IProjectPresentationState {
     attachmentUrls: string[];
     checkpoints: ICheckpoint[] | null;
     open: boolean;
+    caseId: string;
+    updateCaseInformationInProgress: boolean;
 }
 
 export const createProjectPresentationClasses = (

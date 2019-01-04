@@ -44,6 +44,8 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         }),
         attachmentUrls: [],
         open: false,
+        caseId: '',
+        updateCaseInformationInProgress: false,
     }
 
     constructor(props: IProjectPresentationProps) {
@@ -67,6 +69,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             caseDeadline: caseDeadlineControl,
             notes: notesControl,
             projectInformationIsLoading: false,
+            caseId: project.id,
         });
 
         const checkpoints = await Api.projectsApi.getProjectCheckpoints({
@@ -212,8 +215,8 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                         </div>
                         <div className={qrCodeButtonContainer}>
                             <AsyncButton
-                                disabled={this.atLeastOneControlIsInvalid()}
-                                asyncActionInProgress={false}
+                                asyncActionInProgress={this.state.updateCaseInformationInProgress}
+                                disabled={this.state.updateCaseInformationInProgress || this.atLeastOneControlIsInvalid()}
                                 color="secondary"
                                 variant="contained"
                                 onClick={this.updateProject}
@@ -254,12 +257,23 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         })
     }
 
-    private updateProject = (): void => {
-        // something
+    private updateProject = async(): Promise<void> => {
+        this.setState({
+            updateCaseInformationInProgress: true,
+        })
+
+        await Api.projectsApi.updateCaseInformation(this.state.caseId, {
+            name: this.state.caseName.value,
+            deadline: this.state.caseDeadline.value.toUTCString(),
+            notes: this.state.notes.value,
+        })
+
+        this.setState({
+            updateCaseInformationInProgress: false,
+        })
     }
 
-    private handleCaseDeadlineChange = (event: any): void => {
-        const newCaseDeadline = new Date(event.target.value);
+    private handleCaseDeadlineChange = (newCaseDeadline: Date): void => {
         const updatedCaseDeadlineControl = this.state.caseDeadline.setValue(newCaseDeadline);
         this.setState({
             caseDeadline: updatedCaseDeadlineControl,

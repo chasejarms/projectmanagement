@@ -5,7 +5,7 @@ import { ICase } from './../../Models/case';
 import { ICheckpoint } from './../../Models/checkpoint';
 import { ISlimCase } from './../../Models/slimCase';
 import { mockApiKey } from './../mockApi.key';
-import { ICaseApi, IGetCaseCheckpointsRequest, ISlimCasesSearchRequest } from './projectsInterface';
+import { ICaseApi, IGetCaseCheckpointsRequest, ISlimCasesSearchRequest, IUpdateCaseInformationRequest } from './projectsInterface';
 import { ICaseCreateRequest } from './projectsInterface';
 
 export const slimProjectsKey = `${mockApiKey}slimProjects`;
@@ -58,6 +58,10 @@ export class MockProjectsApi implements ICaseApi {
     }
 
     public uploadFile(companyName: string, projectId: string, file: File): Promise<firebase.storage.UploadTaskSnapshot> {
+        throw new Error("Method not implemented");
+    }
+
+    public updateCaseInformation(caseId: string, updateCaseInformationRequest: IUpdateCaseInformationRequest): Promise<void> {
         throw new Error("Method not implemented");
     }
 

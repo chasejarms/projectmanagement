@@ -22,6 +22,12 @@ export interface IGetCaseCheckpointsRequest {
     caseId: string;
 }
 
+export interface IUpdateCaseInformationRequest {
+    name: string;
+    deadline: string;
+    notes: string;
+}
+
 export interface ICaseApi {
     getSlimCases(slimCaseSearchRequest: ISlimCasesSearchRequest): Promise<ISlimCase[]>;
     createProject(companyId: string, projectCreateRequest: ICaseCreateRequest): Promise<ICase>;
@@ -29,4 +35,5 @@ export interface ICaseApi {
     getProjectCheckpoints(getCaseRequest: IGetCaseCheckpointsRequest): Promise<IAugmentedCheckpoint[]>;
     uploadFile(companyName: string, projectId: string, file: File): Promise<firebase.storage.UploadTaskSnapshot>;
     updateProject(companyName: string, project: ICase): ICase;
+    updateCaseInformation(caseId: string, updateCaseInformationRequest: IUpdateCaseInformationRequest): Promise<void>;
 }

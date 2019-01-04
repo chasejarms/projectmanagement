@@ -2,7 +2,7 @@ import * as firebase from 'firebase';
 import { IAugmentedCheckpoint } from 'src/Models/augmentedCheckpoint';
 import { ICase } from './../../Models/case';
 import { ISlimCase } from './../../Models/slimCase';
-import { ICaseApi, ICaseCreateRequest, IGetCaseCheckpointsRequest, ISlimCasesSearchRequest } from './projectsInterface';
+import { ICaseApi, ICaseCreateRequest, IGetCaseCheckpointsRequest, ISlimCasesSearchRequest, IUpdateCaseInformationRequest } from './projectsInterface';
 
 export class ProjectsApi implements ICaseApi {
     public async getSlimCases(slimCasesSearchRequest: ISlimCasesSearchRequest): Promise<ISlimCase[]> {
@@ -38,7 +38,10 @@ export class ProjectsApi implements ICaseApi {
             .doc(caseId)
             .get();
 
-        return documentReference.data()! as ICase;
+        return {
+            ...documentReference.data(),
+            id: caseId,
+        } as ICase;
     }
 
     public async uploadFile(companyId: string, projectId: string, file: File): Promise<firebase.storage.UploadTaskSnapshot> {
@@ -57,6 +60,11 @@ export class ProjectsApi implements ICaseApi {
 
     public updateProject(companyId: string, project: ICase): ICase {
         throw new Error("Method not implemented");
+    }
+
+    public async updateCaseInformation(caseId: string, updateCaseInformationRequest: IUpdateCaseInformationRequest): Promise<void> {
+        await firebase.firestore().collection('cases').doc(caseId)
+            .set(updateCaseInformationRequest, { merge: true });
     }
 
 }
