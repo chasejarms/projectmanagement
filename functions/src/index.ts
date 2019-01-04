@@ -10,6 +10,7 @@ import { createUserLocal } from './functions/createUser';
 import { updateUserLocal } from './functions/updateUser';
 import { deleteUserLocal } from './functions/deleteUser';
 import { onCreateOrUpdateUserLocal } from './functions/onUserWrite';
+import { getCheckpointsLocal } from './functions/getCheckpointsForCase';
 
 const app = admin.initializeApp({
     credential: admin.credential.applicationDefault(),
@@ -24,3 +25,4 @@ export const createUser = createUserLocal(app);
 export const updateUser = updateUserLocal(app);
 export const deleteUser = deleteUserLocal(app);
 export const onCreateOrUpdateUser = onCreateOrUpdateUserLocal(app);
+export const getCaseCheckpoints = getCheckpointsLocal(app);

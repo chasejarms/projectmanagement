@@ -33,6 +33,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
 
     public async componentWillMount(): Promise<void> {
         const caseId = this.props.match.params['projectId'];
+        const companyId = this.props.location.pathname.split('/')[2];
 
         const project = await Api.projectsApi.getProject(caseId);
 
@@ -40,7 +41,10 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             project,
         });
 
-        const checkpoints = await Api.projectsApi.getProjectCheckpoints(project.caseCheckpoints);
+        const checkpoints = await Api.projectsApi.getProjectCheckpoints({
+            caseId,
+            companyId,
+        });
 
         this.setState({
             checkpoints,

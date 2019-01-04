@@ -1,10 +1,11 @@
 import * as _ from 'lodash';
+import { IAugmentedCheckpoint } from 'src/Models/augmentedCheckpoint';
 import { slimCases as mockSlimProjects } from './../../MockData/slimProjects';
 import { ICase } from './../../Models/case';
 import { ICheckpoint } from './../../Models/checkpoint';
 import { ISlimCase } from './../../Models/slimCase';
 import { mockApiKey } from './../mockApi.key';
-import { ICaseApi, ISlimCasesSearchRequest } from './projectsInterface';
+import { ICaseApi, IGetCaseCheckpointsRequest, ISlimCasesSearchRequest } from './projectsInterface';
 import { ICaseCreateRequest } from './projectsInterface';
 
 export const slimProjectsKey = `${mockApiKey}slimProjects`;
@@ -41,7 +42,7 @@ export class MockProjectsApi implements ICaseApi {
         return createdLargeProject;
     }
 
-    public async getProjectCheckpoints(caseCheckpoints: string[]): Promise<ICheckpoint[]> {
+    public async getProjectCheckpoints(getCaseRequest: IGetCaseCheckpointsRequest): Promise<IAugmentedCheckpoint[]> {
         // const project = await this.getProject(companyName, projectId);
         return [];
     }

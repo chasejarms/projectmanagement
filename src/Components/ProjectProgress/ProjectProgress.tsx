@@ -12,7 +12,7 @@ class PresentationProjectProgress extends React.Component<IProjectProgressProps,
     }
 
     public componentDidMount(): void {
-        Api.projectsApi.getProjectCheckpoints([]).then((checkpoints) => {
+        Api.projectsApi.getProjectCheckpoints({} as any).then((checkpoints) => {
             this.setState({
                 checkpoints,
             });

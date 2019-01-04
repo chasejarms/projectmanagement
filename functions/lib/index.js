@@ -9,6 +9,7 @@ const createUser_1 = require("./functions/createUser");
 const updateUser_1 = require("./functions/updateUser");
 const deleteUser_1 = require("./functions/deleteUser");
 const onUserWrite_1 = require("./functions/onUserWrite");
+const getCheckpointsForCase_1 = require("./functions/getCheckpointsForCase");
 const app = admin.initializeApp({
     credential: admin.credential.applicationDefault(),
     databaseURL: 'https://project-management-develop.firebaseio.com',
@@ -21,4 +22,5 @@ exports.createUser = createUser_1.createUserLocal(app);
 exports.updateUser = updateUser_1.updateUserLocal(app);
 exports.deleteUser = deleteUser_1.deleteUserLocal(app);
 exports.onCreateOrUpdateUser = onUserWrite_1.onCreateOrUpdateUserLocal(app);
+exports.getCaseCheckpoints = getCheckpointsForCase_1.getCheckpointsLocal(app);
 //# sourceMappingURL=index.js.map

@@ -1,8 +1,8 @@
 import * as firebase from 'firebase';
+import { IAugmentedCheckpoint } from 'src/Models/augmentedCheckpoint';
 import { ICase } from './../../Models/case';
-import { ICheckpoint } from './../../Models/checkpoint';
 import { ISlimCase } from './../../Models/slimCase';
-import { ICaseApi, ICaseCreateRequest, ISlimCasesSearchRequest } from './projectsInterface';
+import { ICaseApi, ICaseCreateRequest, IGetCaseCheckpointsRequest, ISlimCasesSearchRequest } from './projectsInterface';
 
 export class ProjectsApi implements ICaseApi {
     public async getSlimCases(slimCasesSearchRequest: ISlimCasesSearchRequest): Promise<ISlimCase[]> {
@@ -49,18 +49,10 @@ export class ProjectsApi implements ICaseApi {
         return uploadTaskSnapshot;
     }
 
-    public async getProjectCheckpoints(caseCheckpoints: string[]): Promise<ICheckpoint[]> {
-        const caseCheckpointPromises = caseCheckpoints.map((caseCheckpointId) => {
-            return firebase.firestore().collection('caseCheckpoints')
-                .doc(caseCheckpointId)
-                .get();
-        });
-
-        const caseDocumentReferences = await Promise.all(caseCheckpointPromises);
-
-        return caseDocumentReferences.map((caseDocumentReference) => {
-            return caseDocumentReference.data() as ICheckpoint;
-        });
+    public async getProjectCheckpoints(getCaseCheckpointsRequest: IGetCaseCheckpointsRequest): Promise<IAugmentedCheckpoint[]> {
+        const getCaseCheckpointsCloudFunction = firebase.functions().httpsCallable('getCaseCheckpoints');
+        const getCaseCheckpointsResponse = await getCaseCheckpointsCloudFunction(getCaseCheckpointsRequest);
+        return getCaseCheckpointsResponse.data;
     }
 
     public updateProject(companyId: string, project: ICase): ICase {

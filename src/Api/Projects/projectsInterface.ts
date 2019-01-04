@@ -1,5 +1,5 @@
+import { IAugmentedCheckpoint } from './../../Models/augmentedCheckpoint';
 import { ICase } from './../../Models/case';
-import { ICheckpoint } from './../../Models/checkpoint';
 import { ISlimCase } from './../../Models/slimCase';
 
 export interface ICaseCreateRequest {
@@ -17,11 +17,16 @@ export interface ISlimCasesSearchRequest {
     startAfter?: FirebaseFirestore.DocumentSnapshot,
 }
 
+export interface IGetCaseCheckpointsRequest {
+    companyId: string;
+    caseId: string;
+}
+
 export interface ICaseApi {
     getSlimCases(slimCaseSearchRequest: ISlimCasesSearchRequest): Promise<ISlimCase[]>;
     createProject(companyId: string, projectCreateRequest: ICaseCreateRequest): Promise<ICase>;
     getProject(projectId: string): Promise<ICase>;
-    getProjectCheckpoints(caseCheckpoints: string[]): Promise<ICheckpoint[]>;
+    getProjectCheckpoints(getCaseRequest: IGetCaseCheckpointsRequest): Promise<IAugmentedCheckpoint[]>;
     uploadFile(companyName: string, projectId: string, file: File): Promise<firebase.storage.UploadTaskSnapshot>;
     updateProject(companyName: string, project: ICase): ICase;
 }
