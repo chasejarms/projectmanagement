@@ -12,6 +12,7 @@ import { deleteUserLocal } from './functions/deleteUser';
 import { onCreateOrUpdateUserLocal } from './functions/onUserWrite';
 import { getCheckpointsLocal } from './functions/getCheckpointsForCase';
 import { linkFileToProjectLocal } from './functions/linkFileToProject';
+import { createThumbnailFromImageLocal } from './functions/createThumbnailFromImage';
 
 const app = admin.initializeApp({
     credential: admin.credential.applicationDefault(),
@@ -28,3 +29,4 @@ export const deleteUser = deleteUserLocal(app);
 export const onCreateOrUpdateUser = onCreateOrUpdateUserLocal(app);
 export const getCaseCheckpoints = getCheckpointsLocal(app);
 export const linkFileToProject = linkFileToProjectLocal(app);
+export const createThumbnailFromImage = createThumbnailFromImageLocal(app);
