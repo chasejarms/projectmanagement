@@ -31,7 +31,7 @@ export class AsyncButton extends React.Component<IAsyncButtonProps, IAsyncButton
             <div>
                 <Button
                     {...buttonProps}
-                    className={materialButton}>
+                    className={`${materialButton} ${this.props.className}`}>
                     {this.props.children}
                     {progressOrEmpty}
                 </Button>

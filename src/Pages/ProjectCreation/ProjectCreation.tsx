@@ -73,6 +73,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         createProjectInProgress: false,
         attachmentUrls: [],
         uniqueCaseId: '',
+        uploadingAttachmentInProgress: false,
     };
 
     public handleChange = handleChange(this);
@@ -255,7 +256,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             <div className={asyncActionButton}>
                  <AsyncButton
                     asyncActionInProgress={this.state.createProjectInProgress}
-                    disabled={this.state.createProjectInProgress}
+                    disabled={this.state.createProjectInProgress || this.state.uploadingAttachmentInProgress}
                     variant="contained"
                     onClick={this.createProject}
                     color="secondary">
@@ -307,8 +308,15 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
     };
 
     private handleFileSelection = async (event: any): Promise<void> => {
+        if (event.target.files.length < 0) {
+            return;
+        }
         const file = event.target.files[0];
         const companyId = this.props.match.path.split('/')[2];
+
+        this.setState({
+            uploadingAttachmentInProgress: true,
+        })
 
         const uploadTaskSnapshot = await Api.projectsApi.uploadFile(companyId, this.state.uniqueCaseId, file);
 
@@ -326,6 +334,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
 
         this.setState({
             attachmentUrls,
+            uploadingAttachmentInProgress: false,
         })
     }
 
@@ -448,8 +457,9 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                                 Add An Attachment
                             </Button> */}
 
-                            <Button
-                                disabled={this.state.createProjectInProgress}
+                            <AsyncButton
+                                disabled={this.state.createProjectInProgress || this.state.uploadingAttachmentInProgress}
+                                asyncActionInProgress={this.state.uploadingAttachmentInProgress}
                                 color="secondary"
                                 variant="contained"
                                 className={addAttachmentButton}
@@ -460,7 +470,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                                     className={addAttachmentInput}
                                 />
                                 Add An Attachment
-                            </Button>
+                            </AsyncButton>
                         </div>
                     </Paper>
                 </div>

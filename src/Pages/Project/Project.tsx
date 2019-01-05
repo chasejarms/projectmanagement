@@ -46,6 +46,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         open: false,
         caseId: '',
         updateCaseInformationInProgress: false,
+        addAttachmentInProgress: false,
     }
 
     constructor(props: IProjectPresentationProps) {
@@ -154,7 +155,9 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                                 color="secondary">
                                 See Attachments ({this.state.attachmentUrls.length})
                             </Button>
-                            <Button
+                            <AsyncButton
+                                disabled={this.state.addAttachmentInProgress}
+                                asyncActionInProgress={this.state.addAttachmentInProgress}
                                 className={addAttachmentButton}
                                 color="secondary"
                                 variant="contained"
@@ -165,7 +168,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                                     onChange={this.handleFileSelection}
                                 />
                                 Add An Attachment
-                            </Button>
+                            </AsyncButton>
                         </div>
                     </Paper>
                 </div>
@@ -216,7 +219,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                         <div className={qrCodeButtonContainer}>
                             <AsyncButton
                                 asyncActionInProgress={this.state.updateCaseInformationInProgress}
-                                disabled={this.state.updateCaseInformationInProgress || this.atLeastOneControlIsInvalid()}
+                                disabled={this.state.updateCaseInformationInProgress || this.atLeastOneControlIsInvalid() || this.state.addAttachmentInProgress}
                                 color="secondary"
                                 variant="contained"
                                 onClick={this.updateProject}
@@ -239,6 +242,10 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         const companyName = this.props.match.path.split('/')[2];
         const projectId = this.props.match.params['projectId'];
 
+        this.setState({
+            addAttachmentInProgress: true,
+        })
+
         const uploadTaskSnapshot = await Api.projectsApi.uploadFile(companyName, projectId, file);
 
         const fullPath = uploadTaskSnapshot.metadata.fullPath;
@@ -248,6 +255,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         }
         this.setState({
             attachmentUrls,
+            addAttachmentInProgress: false,
         })
     }
 

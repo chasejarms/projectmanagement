@@ -18,6 +18,7 @@ export interface IProjectPresentationState {
     open: boolean;
     caseId: string;
     updateCaseInformationInProgress: boolean;
+    addAttachmentInProgress: boolean;
 }
 
 export const createProjectPresentationClasses = (

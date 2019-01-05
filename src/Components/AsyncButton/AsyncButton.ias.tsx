@@ -5,6 +5,7 @@ import { css } from 'emotion';
 export interface IAsyncButtonProps extends ButtonProps {
     disabled?: boolean;
     asyncActionInProgress?: boolean;
+    className?: string;
 }
 // tslint:disable-next-line:no-empty-interface
 export interface IAsyncButtonState {}
