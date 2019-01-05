@@ -234,21 +234,21 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         return this.state.caseName.invalid || this.state.caseDeadline.invalid || this.state.notes.invalid;
     }
 
-    private handleFileSelection = (event: any): void => {
+    private handleFileSelection = async(event: any): Promise<void> => {
         const file = event.target.files[0];
         const companyName = this.props.match.path.split('/')[2];
         const projectId = this.props.match.params['projectId'];
 
-        Api.projectsApi.uploadFile(companyName, projectId, file).then((uploadTaskSnapshot) => {
-            const downloadUrl = uploadTaskSnapshot.downloadURL;
-            const attachmentUrls = _.cloneDeep(this.state.attachmentUrls);
-            if (downloadUrl) {
-                attachmentUrls.push(downloadUrl);
-            }
-            this.setState({
-                attachmentUrls,
-            })
-        });
+        const uploadTaskSnapshot = await Api.projectsApi.uploadFile(companyName, projectId, file);
+
+        const fullPath = uploadTaskSnapshot.metadata.fullPath;
+        const attachmentUrls = _.cloneDeep(this.state.attachmentUrls);
+        if (fullPath) {
+            attachmentUrls.push(fullPath);
+        }
+        this.setState({
+            attachmentUrls,
+        })
     }
 
     private showQrCodeDialog = (): void => {
