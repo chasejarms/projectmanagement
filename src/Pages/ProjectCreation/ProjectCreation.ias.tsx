@@ -39,6 +39,8 @@ export interface IProjectCreationState {
     doctorNameSearch: string;
     potentialDoctors: IUser[];
     createProjectInProgress: boolean;
+    attachmentUrls: string[];
+    uniqueCaseId: string;
 }
 
 export const createProjectCreationClasses = (
@@ -299,6 +301,18 @@ export const createProjectCreationClasses = (
         marginTop: 16,
     });
 
+    const addAttachmentButton = css({
+        position: 'relative',
+        overflow: 'hidden',
+    });
+
+    const addAttachmentInput = css({
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        paddingTop: 100,
+    });
+
     return {
         projectCreationContainer,
         stepperContainer,
@@ -342,5 +356,7 @@ export const createProjectCreationClasses = (
         potentialDoctorPaper,
         menuPopover,
         asyncActionButton,
+        addAttachmentButton,
+        addAttachmentInput,
     };
 }

@@ -9,6 +9,7 @@ export interface ICaseCreateRequest {
     attachmentUrls: string[];
     doctor?: string;
     companyId: string;
+    idForCase: string;
 }
 
 export interface ISlimCasesSearchRequest {

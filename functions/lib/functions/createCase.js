@@ -60,8 +60,7 @@ exports.createCaseLocal = (passedInAdmin) => functions.https.onCall((data, conte
         companyId: data.companyId,
         showNewInfoFrom: isAdminOrStaff ? 'Doctor' : 'Lab',
     };
-    console.log('caseToCreate: ', caseToCreate);
-    const caseDocumentReference = yield firestore.collection('cases').add(caseToCreate);
-    return caseDocumentReference.id;
+    const caseDocumentReference = yield firestore.collection('cases').doc(data.idForCase).set(caseToCreate);
+    return data.idForCase;
 }));
 //# sourceMappingURL=createCase.js.map

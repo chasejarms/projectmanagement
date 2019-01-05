@@ -44,9 +44,9 @@ export class ProjectsApi implements ICaseApi {
         } as ICase;
     }
 
-    public async uploadFile(companyId: string, projectId: string, file: File): Promise<firebase.storage.UploadTaskSnapshot> {
+    public async uploadFile(companyId: string, caseId: string, file: File): Promise<firebase.storage.UploadTaskSnapshot> {
         const storageRef = firebase.storage().ref();
-        const updatedStorageRef = storageRef.child(`${companyId}/${projectId}/${file.name}`);
+        const updatedStorageRef = storageRef.child(`${companyId}/${caseId}/${file.name}`);
         const uploadTaskSnapshot: firebase.storage.UploadTaskSnapshot = await updatedStorageRef.put(file);
 
         return uploadTaskSnapshot;

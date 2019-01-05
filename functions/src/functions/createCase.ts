@@ -6,8 +6,9 @@ interface IProjectCreateData {
     deadline: string;
     notes: string;
     attachmentUrls: string[];
-    companyId: string;
     doctor?: string;
+    companyId: string;
+    idForCase: string;
 }
 
 interface ICase {
@@ -86,9 +87,7 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
         showNewInfoFrom: isAdminOrStaff ? 'Doctor' : 'Lab',
     };
 
-    console.log('caseToCreate: ', caseToCreate);
+    const caseDocumentReference = await firestore.collection('cases').doc(data.idForCase).set(caseToCreate);
 
-    const caseDocumentReference = await firestore.collection('cases').add(caseToCreate);
-
-    return caseDocumentReference.id;
+    return data.idForCase;
 });

@@ -13,6 +13,7 @@ import {
     TextField,
     withTheme,
 } from '@material-ui/core';
+import * as _ from 'lodash';
 import {DateFormatInput} from 'material-ui-next-pickers'
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -39,10 +40,9 @@ import {
 
 export class ProjectCreationPresentation extends React.Component<IProjectCreationProps, IProjectCreationState> {
     public myRef: React.RefObject<{}>;
-    public state = {
+    public state: IProjectCreationState = {
         open: false,
-        activeStep: 0,
-        caseName: '',
+        activeStep: 3,
         checkpoints: [],
         userName: '',
         checkpointStatus: '',
@@ -71,6 +71,8 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         doctorNameSearch: '',
         potentialDoctors: [] as IUser[],
         createProjectInProgress: false,
+        attachmentUrls: [],
+        uniqueCaseId: '',
     };
 
     public handleChange = handleChange(this);
@@ -90,6 +92,10 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
     }
 
     public componentWillMount = (): void => {
+        const uniqueCaseId = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        this.setState({
+            uniqueCaseId,
+        })
 
         const companyId = this.props.match.path.split('/')[2];
         Api.caseNotesApi.getCaseNotes(companyId).then((caseNotes) => {
@@ -185,18 +191,17 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             name: this.props.projectCreation.caseName.value,
             deadline: this.state.caseDeadline.value.toUTCString(),
             notes: this.state.projectNotes,
-            attachmentUrls: [],
+            attachmentUrls: this.state.attachmentUrls,
             companyId,
+            idForCase: this.state.uniqueCaseId,
         };
 
-        // tslint:disable-next-line:no-console
-        console.log('id: ',this.state.doctorSelection.value.id)
         if (this.state.doctorSelection.value.id) {
             projectCreateRequest['doctor'] = this.state.doctorSelection.value.id;
         }
 
         // tslint:disable-next-line:no-console
-        console.log(projectCreateRequest);
+        console.log('projectCreateRequest: ', projectCreateRequest);
 
         this.setState({
             createProjectInProgress: true,
@@ -301,6 +306,29 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         })
     };
 
+    private handleFileSelection = async (event: any): Promise<void> => {
+        const file = event.target.files[0];
+        const companyId = this.props.match.path.split('/')[2];
+
+        const uploadTaskSnapshot = await Api.projectsApi.uploadFile(companyId, this.state.uniqueCaseId, file);
+
+        // tslint:disable-next-line:no-console
+        console.log(uploadTaskSnapshot);
+
+        const fullPath = uploadTaskSnapshot.metadata.fullPath;
+        const attachmentUrls = _.cloneDeep(this.state.attachmentUrls);
+        if (fullPath) {
+            attachmentUrls.push(fullPath);
+        }
+
+        // tslint:disable-next-line:no-console
+        console.log('attachmentUrls: ', attachmentUrls);
+
+        this.setState({
+            attachmentUrls,
+        })
+    }
+
     private getStepActiveContent(): any {
         const {
             stepperContent,
@@ -315,6 +343,8 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             caseDoctorContainer,
             potentialDoctorPaper,
             menuPopover,
+            addAttachmentButton,
+            addAttachmentInput,
         } = createProjectCreationClasses(this.props, this.state);
 
         const companyId = this.props.match.path.split('/')[2];
@@ -409,10 +439,26 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                             />
                         </div>
                         <div className={addAttachmentButtonContainer}>
-                            <Button
+                            {/* <Button
+                                type="file"
                                 disabled={this.state.createProjectInProgress}
                                 variant="contained"
-                                color="secondary">
+                                color="secondary"
+                                onClick={this.handleFileSelection}>
+                                Add An Attachment
+                            </Button> */}
+
+                            <Button
+                                disabled={this.state.createProjectInProgress}
+                                color="secondary"
+                                variant="contained"
+                                className={addAttachmentButton}
+                            >
+                                <input
+                                    type="file"
+                                    onChange={this.handleFileSelection}
+                                    className={addAttachmentInput}
+                                />
                                 Add An Attachment
                             </Button>
                         </div>
