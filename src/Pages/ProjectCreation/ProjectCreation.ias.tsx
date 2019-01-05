@@ -1,6 +1,7 @@
 import { WithTheme } from '@material-ui/core';
 import { css } from 'emotion';
 import { RouteComponentProps } from 'react-router';
+import { IAttachmentMetadata } from 'src/Models/attachmentMetadata';
 import { FormControlState } from '../../Classes/formControlState';
 import { IProjectCreationProjectUser } from '../../Models/projectUser';
 import { ISlimDoctor } from '../../Models/slimDoctor';
@@ -39,7 +40,7 @@ export interface IProjectCreationState {
     doctorNameSearch: string;
     potentialDoctors: IUser[];
     createProjectInProgress: boolean;
-    attachmentUrls: string[];
+    attachmentUrls: IAttachmentMetadata[];
     uniqueCaseId: string;
     uploadingAttachmentInProgress: boolean;
 }

@@ -1,3 +1,5 @@
+import { IAttachmentMetadata } from "./attachmentMetadata";
+
 export interface ICase {
     id: string;
     complete: boolean;
@@ -5,7 +7,7 @@ export interface ICase {
     doctor: string;
     name: string;
     notes: string;
-    attachmentUrls: string[];
+    attachmentUrls: IAttachmentMetadata[];
     created: string;
     caseCheckpoints: string[];
 }

@@ -248,10 +248,14 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
 
         const uploadTaskSnapshot = await Api.projectsApi.uploadFile(companyName, projectId, file);
 
-        const fullPath = uploadTaskSnapshot.metadata.fullPath;
+        const path = uploadTaskSnapshot.metadata.fullPath;
+        const contentType = uploadTaskSnapshot.metadata.contentType as string;
         const attachmentUrls = _.cloneDeep(this.state.attachmentUrls);
-        if (fullPath) {
-            attachmentUrls.push(fullPath);
+        if (path) {
+            attachmentUrls.push({
+                path,
+                contentType,
+            });
         }
         this.setState({
             attachmentUrls,

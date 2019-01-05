@@ -2,6 +2,7 @@ import { Theme, WithTheme } from '@material-ui/core';
 import { css } from 'emotion';
 import { RouteComponentProps } from 'react-router';
 import { FormControlState } from 'src/Classes/formControlState';
+import { IAttachmentMetadata } from 'src/Models/attachmentMetadata';
 import { ICheckpoint } from 'src/Models/checkpoint';
 // import { ICase } from '../../Models/case';
 
@@ -13,7 +14,7 @@ export interface IProjectPresentationState {
     caseDeadline: FormControlState<Date>;
     notes: FormControlState<string>;
     projectInformationIsLoading: boolean;
-    attachmentUrls: string[];
+    attachmentUrls: IAttachmentMetadata[];
     checkpoints: ICheckpoint[] | null;
     open: boolean;
     caseId: string;

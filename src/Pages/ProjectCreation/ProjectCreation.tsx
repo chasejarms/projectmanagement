@@ -323,10 +323,14 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         // tslint:disable-next-line:no-console
         console.log(uploadTaskSnapshot);
 
-        const fullPath = uploadTaskSnapshot.metadata.fullPath;
+        const path = uploadTaskSnapshot.metadata.fullPath;
+        const contentType = uploadTaskSnapshot.metadata.contentType as string;
         const attachmentUrls = _.cloneDeep(this.state.attachmentUrls);
-        if (fullPath) {
-            attachmentUrls.push(fullPath);
+        if (path) {
+            attachmentUrls.push({
+                path,
+                contentType,
+            });
         }
 
         // tslint:disable-next-line:no-console

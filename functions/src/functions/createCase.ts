@@ -1,11 +1,16 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 
+interface IAttachmentMetadata {
+    path: string;
+    contentType: string;
+}
+
 interface IProjectCreateData {
     name: string;
     deadline: string;
     notes: string;
-    attachmentUrls: string[];
+    attachmentUrls: IAttachmentMetadata[];
     doctor?: string;
     companyId: string;
     idForCase: string;
@@ -17,7 +22,7 @@ interface ICase {
     doctor: string;
     name: string;
     notes: string;
-    attachmentUrls: string[];
+    attachmentUrls: IAttachmentMetadata[];
     created: string;
     caseCheckpoints: string[];
     companyId: string;

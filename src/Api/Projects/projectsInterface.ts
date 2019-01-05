@@ -1,3 +1,4 @@
+import { IAttachmentMetadata } from 'src/Models/attachmentMetadata';
 import { IAugmentedCheckpoint } from './../../Models/augmentedCheckpoint';
 import { ICase } from './../../Models/case';
 import { ISlimCase } from './../../Models/slimCase';
@@ -6,7 +7,7 @@ export interface ICaseCreateRequest {
     name: string;
     deadline: string;
     notes: string;
-    attachmentUrls: string[];
+    attachmentUrls: IAttachmentMetadata[];
     doctor?: string;
     companyId: string;
     idForCase: string;
