@@ -15,7 +15,7 @@ export interface IWorkflowPresentationState {
     checkpointDescription: string;
     estimatedCompletionTime: FormControlState<string>;
     visibleToDoctor: boolean;
-    workflow: IWorkflow | undefined;
+    workflow: IWorkflow;
     isUpdate: boolean;
     checkpointId: string;
     removingWorkflowCheckpoint: boolean;

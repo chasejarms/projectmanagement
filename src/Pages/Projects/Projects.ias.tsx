@@ -9,7 +9,7 @@ export interface IProjectsPresentationProps extends RouteComponentProps<{}> {
 
 // tslint:disable-next-line:no-empty-interface
 export interface IProjectsPresentationState {
-    slimCases?: ISlimCase[];
+    slimCases: ISlimCase[];
 }
 
 export const createProjectsPresentationClasses = (

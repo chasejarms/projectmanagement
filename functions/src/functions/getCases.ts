@@ -45,12 +45,14 @@ export const getCasesLocal = (passedInAdmin: admin.app.App) => functions.https.o
     if (isAdminOrStaff) {
         if (!!startAfter) {
             slimCases = await firestore.collection('slimCases')
+                .where('companyId', '==', companyId)
                 .orderBy('deadline', 'asc')
                 .limit(limit)
                 .startAfter(startAfter)
                 .get();
         } else {
             slimCases = await firestore.collection('slimCases')
+                .where('companyId', '==', companyId)
                 .orderBy('deadline', 'asc')
                 .limit(limit)
                 .get();
@@ -59,6 +61,7 @@ export const getCasesLocal = (passedInAdmin: admin.app.App) => functions.https.o
         if (!!startAfter) {
             // only return the slimCases associated with that particular doctor
             slimCases = await firestore.collection('slimCases')
+                .where('companyId', '==', companyId)
                 .where('doctor', '==', userId)
                 .orderBy('deadline', 'asc')
                 .limit(limit)
@@ -66,6 +69,7 @@ export const getCasesLocal = (passedInAdmin: admin.app.App) => functions.https.o
                 .get();
         } else {
             slimCases = await firestore.collection('slimCases')
+                .where('companyId', '==', companyId)
                 .where('doctor', '==', userId)
                 .orderBy('deadline', 'asc')
                 .limit(limit)

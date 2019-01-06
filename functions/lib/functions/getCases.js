@@ -34,6 +34,7 @@ exports.getCasesLocal = (passedInAdmin) => functions.https.onCall(({ companyId, 
     if (isAdminOrStaff) {
         if (!!startAfter) {
             slimCases = yield firestore.collection('slimCases')
+                .where('companyId', '==', companyId)
                 .orderBy('deadline', 'asc')
                 .limit(limit)
                 .startAfter(startAfter)
@@ -41,6 +42,7 @@ exports.getCasesLocal = (passedInAdmin) => functions.https.onCall(({ companyId, 
         }
         else {
             slimCases = yield firestore.collection('slimCases')
+                .where('companyId', '==', companyId)
                 .orderBy('deadline', 'asc')
                 .limit(limit)
                 .get();
@@ -50,6 +52,7 @@ exports.getCasesLocal = (passedInAdmin) => functions.https.onCall(({ companyId, 
         if (!!startAfter) {
             // only return the slimCases associated with that particular doctor
             slimCases = yield firestore.collection('slimCases')
+                .where('companyId', '==', companyId)
                 .where('doctor', '==', userId)
                 .orderBy('deadline', 'asc')
                 .limit(limit)
@@ -58,6 +61,7 @@ exports.getCasesLocal = (passedInAdmin) => functions.https.onCall(({ companyId, 
         }
         else {
             slimCases = yield firestore.collection('slimCases')
+                .where('companyId', '==', companyId)
                 .where('doctor', '==', userId)
                 .orderBy('deadline', 'asc')
                 .limit(limit)

@@ -1,6 +1,5 @@
 import {
     Checkbox,
-    CircularProgress,
     Dialog,
     DialogActions,
     DialogContent,
@@ -48,7 +47,7 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
             validators: [requiredValidator('An estimated completion time is required')],
         }),
         visibleToDoctor: false,
-        workflow: undefined,
+        workflow: [],
         isUpdate: false,
         checkpointId: '',
         removingWorkflowCheckpoint: false,
@@ -79,20 +78,7 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
             workflowContainer,
             workflowRow,
             workflowPaper,
-            loadingContainer,
         } = createWorkflowPresentationClasses(this.props, this.state);
-
-        if (!this.state.workflow) {
-            return (
-                <div className={loadingContainer}>
-                    <CircularProgress
-                        color="primary"
-                        size={64}
-                        thickness={3}
-                    />
-                </div>
-            )
-        }
 
         const mappedCheckpoints = this.state.workflow.map((checkpoint, index) => (
                 <TableRow key={checkpoint.id} className={workflowRow}>

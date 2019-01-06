@@ -8,8 +8,9 @@ export interface ICaseNotesTemplateProps extends RouteComponentProps<any> {}
 
 // tslint:disable-next-line:no-empty-interface
 export interface ICaseNotesTemplateState {
-    notes?: FormControlState<string>;
+    notes: FormControlState<string>;
     caseNotesSaveInProgress: boolean;
+    initialLoadInProgress: boolean;
 }
 
 export const createCaseNotesTemplateClasses = (

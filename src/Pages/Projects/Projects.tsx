@@ -21,7 +21,9 @@ import Api from '../../Api/api';
 import { createProjectsPresentationClasses, IProjectsPresentationProps, IProjectsPresentationState } from './Projects.ias';
 
 export class ProjectsPresentation extends React.Component<IProjectsPresentationProps, IProjectsPresentationState> {
-    public state: IProjectsPresentationState = {}
+    public state: IProjectsPresentationState = {
+        slimCases: [],
+    }
 
     public async componentWillMount(): Promise<void> {
         const companyId = this.props.match.path.split('/')[2];
@@ -37,10 +39,6 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
     }
 
     public render() {
-        if (!this.state.slimCases) {
-            return <div/>;
-        }
-
         const {
             rowStyling,
             projectsContainer,
@@ -49,8 +47,6 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         } = createProjectsPresentationClasses(this.props, this.state);
 
         const mappedProjects = this.state.slimCases.map(slimCase => {
-            // tslint:disable-next-line:no-console
-            console.log(slimCase);
             const companyId = this.props.match.path.split('/')[2];
             const userIsDoctor = this.props.userState[companyId].type === 'Customer';
             const newInfoFromDoctor = slimCase.showNewInfoFrom === 'Doctor';

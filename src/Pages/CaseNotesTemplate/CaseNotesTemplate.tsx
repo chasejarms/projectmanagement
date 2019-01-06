@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 import {
-    CircularProgress,
     Paper,
     TextField,
     Typography,
@@ -15,18 +14,20 @@ import { createCaseNotesTemplateClasses, ICaseNotesTemplateProps, ICaseNotesTemp
 
 export class CaseNotesTemplatePresentation extends React.Component<ICaseNotesTemplateProps, ICaseNotesTemplateState> {
     public state: ICaseNotesTemplateState = {
-        notes: undefined,
+        notes: new FormControlState({
+            value: '',
+        }),
         caseNotesSaveInProgress: false,
+        initialLoadInProgress: true,
     };
 
     public componentWillMount = (): void => {
         const companyId = this.props.match.path.split('/')[2];
         Api.caseNotesApi.getCaseNotes(companyId).then((caseNotes) => {
-            const caseNotesControl = new FormControlState({
-                value: caseNotes,
-            });
+            const updatedCaseNotesControl = this.state.notes.setValue(caseNotes);
             this.setState({
-                notes: caseNotesControl,
+                notes: updatedCaseNotesControl,
+                initialLoadInProgress: false,
             });
         });
     }
@@ -38,21 +39,8 @@ export class CaseNotesTemplatePresentation extends React.Component<ICaseNotesTem
             caseNotesPaper,
             caseNotesSubheading,
             caseNotesField,
-            loadingPageContainer,
             asyncButtonContainer,
         } = createCaseNotesTemplateClasses(this.props, this.state);
-
-        if (this.state.notes === undefined) {
-            return (
-                <div className={loadingPageContainer}>
-                    <CircularProgress
-                        color="secondary"
-                        size={64}
-                        thickness={3}
-                        />
-                </div>
-            )
-        }
 
         return (
             <div className={caseNotesContainer}>
@@ -62,6 +50,7 @@ export class CaseNotesTemplatePresentation extends React.Component<ICaseNotesTem
                         The case notes template is what a doctor will first see when they create a case in the system. Use this to get any information you would need about a particular case.
                     </Typography>
                     <TextField
+                        disabled={this.state.initialLoadInProgress}
                         className={caseNotesField}
                         rows={10}
                         multiline={true}
@@ -73,7 +62,7 @@ export class CaseNotesTemplatePresentation extends React.Component<ICaseNotesTem
                     <div className={asyncButtonContainer}>
                         <AsyncButton
                             color="secondary"
-                            disabled={this.state.caseNotesSaveInProgress || !this.state.notes!.touched }
+                            disabled={this.state.caseNotesSaveInProgress || !this.state.notes!.touched || this.state.initialLoadInProgress }
                             asyncActionInProgress={this.state.caseNotesSaveInProgress}
                             onClick={this.saveCaseNotes}
                         >
