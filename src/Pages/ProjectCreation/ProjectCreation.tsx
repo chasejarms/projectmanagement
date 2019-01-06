@@ -13,6 +13,7 @@ import {
     TextField,
     withTheme,
 } from '@material-ui/core';
+import * as firebase from 'firebase';
 import * as _ from 'lodash';
 import {DateFormatInput} from 'material-ui-next-pickers'
 import * as React from 'react';
@@ -74,6 +75,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         attachmentUrls: [],
         uniqueCaseId: '',
         uploadingAttachmentInProgress: false,
+        srcUrls: [],
     };
 
     public handleChange = handleChange(this);
@@ -333,8 +335,33 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             });
         }
 
-        // tslint:disable-next-line:no-console
-        console.log('attachmentUrls: ', attachmentUrls);
+        const storageRef = await firebase.storage().ref();
+        const [
+            companyIdInFile,
+            caseIdInFile,
+            ...actualFileName
+        ] = attachmentUrls[attachmentUrls.length - 1].path.split('/');
+
+        const fileNameWithoutSeparation = actualFileName.join('');
+        const spaceRef = await storageRef.child(`${companyIdInFile}/${caseIdInFile}/thumb@512_${fileNameWithoutSeparation}`);
+        let attempts: number = 0;
+        let downloadUrl: any;
+        while (attempts < 15) {
+            try {
+                downloadUrl = await spaceRef.getDownloadURL();
+                const srcUrlsClone = _.cloneDeep(this.state.srcUrls);
+
+                this.setState({
+                    attachmentUrls,
+                    uploadingAttachmentInProgress: false,
+                    srcUrls: srcUrlsClone.concat([downloadUrl]),
+                })
+                return;
+            } catch (e) {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                attempts += 1;
+            }
+        }
 
         this.setState({
             attachmentUrls,
@@ -476,6 +503,9 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                                 Add An Attachment
                             </AsyncButton>
                         </div>
+                        {this.state.srcUrls.map((src, index) => {
+                            return <img key={index} src={src}/>
+                        })}
                     </Paper>
                 </div>
             )

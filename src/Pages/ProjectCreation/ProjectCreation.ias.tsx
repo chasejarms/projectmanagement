@@ -41,6 +41,7 @@ export interface IProjectCreationState {
     potentialDoctors: IUser[];
     createProjectInProgress: boolean;
     attachmentUrls: IAttachmentMetadata[];
+    srcUrls: string[];
     uniqueCaseId: string;
     uploadingAttachmentInProgress: boolean;
 }

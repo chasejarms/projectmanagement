@@ -20,11 +20,16 @@ const fs = require("fs-extra");
 exports.createThumbnailFromImageLocal = (passedInAdmin) => functions.storage
     .object()
     .onFinalize((object) => __awaiter(this, void 0, void 0, function* () {
+    console.log('object: ', object);
     const bucket = gcs.bucket(object.bucket);
     const filePath = object.name;
+    console.log('filePath: ', filePath);
     const fileName = filePath.split('/').pop();
+    console.log('fileName: ', fileName);
     const bucketDir = path_1.dirname(filePath);
-    const workingDir = path_1.join(os_1.tmpdir(), 'thumbs');
+    console.log('bucketDir: ', bucketDir);
+    const uniqueWorkingDir = `${Math.random().toString(36).substr(2, 9)}`;
+    const workingDir = path_1.join(os_1.tmpdir(), uniqueWorkingDir);
     const tmpFilePath = path_1.join(workingDir, 'source.png');
     const fileIsAThumbnail = fileName.includes('thumb@');
     const fileIsNotAnImage = !object.contentType.includes('image');
@@ -37,16 +42,20 @@ exports.createThumbnailFromImageLocal = (passedInAdmin) => functions.storage
     // 1. Ensure the thumbnail dir exists
     yield fs.ensureDir(workingDir);
     // 2. Download source file
+    console.log('tmpFilePath: ', tmpFilePath);
     yield bucket.file(filePath).download({
         destination: tmpFilePath,
     });
-    // 3. Resize the images and define an array of upload promises
-    const sizes = [64, 128, 256];
+    // 3. Resize the images and defines an array of upload promises
+    const sizes = [64, 128, 256, 512];
     const uploadPromises = sizes.map((size) => __awaiter(this, void 0, void 0, function* () {
         const thumbnailName = `thumb@${size}_${fileName}`;
         const thumbnailPath = path_1.join(workingDir, thumbnailName);
+        console.log('thumbnailPath: ', thumbnailPath);
         yield sharp(tmpFilePath)
-            .resize(size, size)
+            .resize(size, size, {
+            fit: 'inside',
+        })
             .toFile(thumbnailPath);
         return bucket.upload(thumbnailPath, {
             destination: path_1.join(bucketDir, thumbnailName),
@@ -55,6 +64,6 @@ exports.createThumbnailFromImageLocal = (passedInAdmin) => functions.storage
     // 4. Run the upload operations
     yield Promise.all(uploadPromises);
     // 5. Cleanup remove the tmp/thumbs from the filesystem
-    return fs.remove(workingDir);
+    return fs.remove(uniqueWorkingDir);
 }));
 //# sourceMappingURL=createThumbnailFromImage.js.map

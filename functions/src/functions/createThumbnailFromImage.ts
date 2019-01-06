@@ -19,12 +19,18 @@ import * as fs from 'fs-extra';
 export const createThumbnailFromImageLocal = (passedInAdmin: admin.app.App) => functions.storage
     .object()
     .onFinalize(async object => {
+        console.log('object: ', object);
         const bucket = gcs.bucket(object.bucket);
         const filePath = object.name;
+        console.log('filePath: ', filePath);
         const fileName = filePath.split('/').pop();
+        console.log('fileName: ', fileName);
         const bucketDir = dirname(filePath);
+        console.log('bucketDir: ', bucketDir);
 
-        const workingDir = join(tmpdir(), 'thumbs');
+        const uniqueWorkingDir = `${Math.random().toString(36).substr(2, 9)}`;
+
+        const workingDir = join(tmpdir(), uniqueWorkingDir);
         const tmpFilePath = join(workingDir, 'source.png')
 
         const fileIsAThumbnail = fileName.includes('thumb@');
@@ -42,19 +48,23 @@ export const createThumbnailFromImageLocal = (passedInAdmin: admin.app.App) => f
         await fs.ensureDir(workingDir);
 
         // 2. Download source file
+        console.log('tmpFilePath: ', tmpFilePath);
         await bucket.file(filePath).download({
             destination: tmpFilePath,
         })
 
-        // 3. Resize the images and define an array of upload promises
-        const sizes = [64, 128, 256];
+        // 3. Resize the images and defines an array of upload promises
+        const sizes = [64, 128, 256, 512];
 
         const uploadPromises = sizes.map(async size => {
             const thumbnailName = `thumb@${size}_${fileName}`;
             const thumbnailPath = join(workingDir, thumbnailName);
+            console.log('thumbnailPath: ', thumbnailPath);
 
             await sharp(tmpFilePath)
-                .resize(size, size)
+                .resize(size, size, {
+                    fit: 'inside',
+                })
                 .toFile(thumbnailPath);
 
             return bucket.upload(thumbnailPath, {
@@ -66,5 +76,5 @@ export const createThumbnailFromImageLocal = (passedInAdmin: admin.app.App) => f
         await Promise.all(uploadPromises);
 
         // 5. Cleanup remove the tmp/thumbs from the filesystem
-        return fs.remove(workingDir);
+        return fs.remove(uniqueWorkingDir);
     });
