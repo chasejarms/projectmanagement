@@ -9,8 +9,9 @@ import firebase, { db } from '../../firebase';
 import { createRouteGuardClasses, IRouteGuardPresentationProps, IRouteGuardPresentationState } from './RouteGuard.ias';
 
 class RouteGuardPresentation extends React.Component<IRouteGuardPresentationProps, IRouteGuardPresentationState> {
-  public state = {
+  public state: IRouteGuardPresentationState = {
     userCanViewPage: undefined,
+    unsubscribe: undefined,
   };
 
   constructor(props: IRouteGuardPresentationProps) {
@@ -25,6 +26,13 @@ class RouteGuardPresentation extends React.Component<IRouteGuardPresentationProp
       this.setViewRights(user);
     } else {
       this.verifyUserIsAdmin();
+    }
+  }
+
+  public componentWillUnmount(): void {
+    if (this.state.unsubscribe) {
+      const unsubscribe = this.state.unsubscribe;
+      unsubscribe();
     }
   }
 
@@ -62,7 +70,7 @@ class RouteGuardPresentation extends React.Component<IRouteGuardPresentationProp
   }
 
   private verifyUserIsAdmin(): void {
-    firebase.auth().onAuthStateChanged(async(user) => {
+    const unsubscribe = firebase.auth().onAuthStateChanged(async(user) => {
       if (!user) {
         this.setState({
           userCanViewPage: false,
@@ -103,6 +111,10 @@ class RouteGuardPresentation extends React.Component<IRouteGuardPresentationProp
       const userData = userDocumentSnapshot.data()! as IUser;
       this.setViewRights(userData);
     });
+
+    this.setState({
+      unsubscribe,
+    })
   }
 
   private setViewRights = (user: IUser) => {

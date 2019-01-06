@@ -3,6 +3,8 @@ import { RouteComponentProps } from 'react-router';
 import { IUser } from '../../Models/user';
 import { IUserSliceOfState } from '../../Redux/Reducers/userReducer';
 
+import * as _ from 'firebase';
+
 export interface IRouteGuardPresentationProps extends RouteComponentProps<{}> {
   path: string;
   component: React.ComponentClass;
@@ -13,6 +15,7 @@ export interface IRouteGuardPresentationProps extends RouteComponentProps<{}> {
 
 export interface IRouteGuardPresentationState {
   userCanViewPage: boolean | undefined;
+  unsubscribe: firebase.Unsubscribe | undefined;
 }
 
 export const createRouteGuardClasses = (

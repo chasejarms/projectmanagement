@@ -84,10 +84,6 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
     }
 
     public render() {
-        if (this.state.projectInformationIsLoading) {
-            return <div>Loading</div>
-        }
-
         const {
             attachmentButtonsContainer,
             projectContainer,
@@ -150,13 +146,13 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                         </div>
                         <div className={attachmentButtonsContainer}>
                             <Button
-
+                                disabled={this.state.projectInformationIsLoading}
                                 className={seeAttachmentsButton}
                                 color="secondary">
                                 See Attachments ({this.state.attachmentUrls.length})
                             </Button>
                             <AsyncButton
-                                disabled={this.state.addAttachmentInProgress}
+                                disabled={this.state.addAttachmentInProgress || this.state.projectInformationIsLoading}
                                 asyncActionInProgress={this.state.addAttachmentInProgress}
                                 className={addAttachmentButton}
                                 color="secondary"
@@ -180,13 +176,14 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                                     Case Information
                                 </Typography>
                                 <Button
+                                    disabled={this.state.projectInformationIsLoading}
                                     className={qrCodeButton}
                                     onClick={this.showQrCodeDialog}
                                     color="secondary">
                                     Print QR Code
                                 </Button>
                             </Toolbar>
-                            <FormControl fullWidth={true} error={this.state.caseName.shouldShowError()}>
+                            <FormControl fullWidth={true} error={this.state.caseName.shouldShowError()} disabled={this.state.projectInformationIsLoading}>
                                 <InputLabel>Case Name</InputLabel>
                                 <Input
                                     name="projectName"
@@ -198,6 +195,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                                 </FormHelperText>
                             </FormControl>
                             <DateFormatInput
+                                disabled={this.state.projectInformationIsLoading}
                                 fullWidth={true}
                                 label="Case Delivery Date"
                                 className={fieldSpacing}
@@ -208,6 +206,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                                 error={this.state.caseDeadline.shouldShowError() ? this.state.caseDeadline.errors[0] : undefined}
                             />
                             <TextField
+                                disabled={this.state.projectInformationIsLoading}
                                 fullWidth={true}
                                 multiline={true}
                                 label="Case Notes"
@@ -219,7 +218,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                         <div className={qrCodeButtonContainer}>
                             <AsyncButton
                                 asyncActionInProgress={this.state.updateCaseInformationInProgress}
-                                disabled={this.state.updateCaseInformationInProgress || this.atLeastOneControlIsInvalid() || this.state.addAttachmentInProgress}
+                                disabled={this.state.updateCaseInformationInProgress || this.atLeastOneControlIsInvalid() || this.state.addAttachmentInProgress || this.state.projectInformationIsLoading}
                                 color="secondary"
                                 variant="contained"
                                 onClick={this.updateProject}
