@@ -331,6 +331,18 @@ export const createProjectCreationClasses = (
         overflow: 'hidden',
     });
 
+    const iconContainer = css({
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100%',
+        width: '100%',
+    })
+
+    const documentIcon = css({
+        fontSize: '4em',
+    })
+
     return {
         projectCreationContainer,
         stepperContainer,
@@ -379,5 +391,7 @@ export const createProjectCreationClasses = (
         imgContainer,
         img,
         imagePaper,
+        iconContainer,
+        documentIcon,
     };
 }

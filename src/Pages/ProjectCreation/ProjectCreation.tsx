@@ -13,6 +13,7 @@ import {
     TextField,
     withTheme,
 } from '@material-ui/core';
+import DocumentIcon from '@material-ui/icons/Description';
 import * as firebase from 'firebase';
 import * as _ from 'lodash';
 import {DateFormatInput} from 'material-ui-next-pickers'
@@ -335,38 +336,48 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             });
         }
 
-        const storageRef = await firebase.storage().ref();
-        const [
-            companyIdInFile,
-            caseIdInFile,
-            ...actualFileName
-        ] = attachmentUrls[attachmentUrls.length - 1].path.split('/');
+        if (contentType.startsWith('image/')) {
+            const storageRef = await firebase.storage().ref();
+            const [
+                companyIdInFile,
+                caseIdInFile,
+                ...actualFileName
+            ] = attachmentUrls[attachmentUrls.length - 1].path.split('/');
 
-        const fileNameWithoutSeparation = actualFileName.join('');
-        const spaceRef = await storageRef.child(`${companyIdInFile}/${caseIdInFile}/thumb@512_${fileNameWithoutSeparation}`);
-        let attempts: number = 0;
-        let downloadUrl: any;
-        while (attempts < 15) {
-            try {
-                downloadUrl = await spaceRef.getDownloadURL();
-                const srcUrlsClone = _.cloneDeep(this.state.srcUrls);
+            const fileNameWithoutSeparation = actualFileName.join('');
+            const spaceRef = await storageRef.child(`${companyIdInFile}/${caseIdInFile}/thumb@512_${fileNameWithoutSeparation}`);
+            let attempts: number = 0;
+            let downloadUrl: any;
+            while (attempts < 15) {
+                try {
+                    downloadUrl = await spaceRef.getDownloadURL();
+                    const srcUrlsClone = _.cloneDeep(this.state.srcUrls);
 
-                this.setState({
-                    attachmentUrls,
-                    uploadingAttachmentInProgress: false,
-                    srcUrls: srcUrlsClone.concat([downloadUrl]),
-                })
-                return;
-            } catch (e) {
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                attempts += 1;
+                    this.setState({
+                        attachmentUrls,
+                        uploadingAttachmentInProgress: false,
+                        srcUrls: srcUrlsClone.concat([downloadUrl]),
+                    })
+                    return;
+                } catch (e) {
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    attempts += 1;
+                }
             }
-        }
 
-        this.setState({
-            attachmentUrls,
-            uploadingAttachmentInProgress: false,
-        })
+            this.setState({
+                attachmentUrls,
+                uploadingAttachmentInProgress: false,
+            })
+        } else {
+            const srcUrlsClone = _.cloneDeep(this.state.srcUrls);
+            srcUrlsClone.push(`contentType:${contentType}`)
+            this.setState({
+                attachmentUrls,
+                srcUrls: srcUrlsClone,
+                uploadingAttachmentInProgress: false,
+            })
+        }
     }
 
     private getStepActiveContent(): any {
@@ -388,6 +399,8 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             imgContainer,
             img,
             imagePaper,
+            iconContainer,
+            documentIcon,
         } = createProjectCreationClasses(this.props, this.state);
 
         const companyId = this.props.match.path.split('/')[2];
@@ -510,7 +523,13 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                             {this.state.srcUrls.map((src, index) => {
                                 return (
                                     <Paper key={index} className={imagePaper}>
-                                        <img src={src} className={img}/>
+                                        {src.startsWith('contentType:') ? (
+                                            <div className={iconContainer}>
+                                                <DocumentIcon className={documentIcon} color="secondary"/>
+                                            </div>
+                                        ) : (
+                                            <img src={src} className={img}/>
+                                        )}
                                     </Paper>
                                 )
                             })}
