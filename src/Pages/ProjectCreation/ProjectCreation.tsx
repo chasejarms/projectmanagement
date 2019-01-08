@@ -310,7 +310,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
     };
 
     private handleFileSelection = async (event: any): Promise<void> => {
-        if (event.target.files.length < 0) {
+        if (event.target.files.length < 1) {
             return;
         }
         const file = event.target.files[0];

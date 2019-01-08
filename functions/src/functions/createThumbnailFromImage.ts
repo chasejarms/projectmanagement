@@ -23,18 +23,20 @@ export const createThumbnailFromImageLocal = (passedInAdmin: admin.app.App) => f
         const bucket = gcs.bucket(object.bucket);
         const filePath = object.name;
         console.log('filePath: ', filePath);
+
         const fileName = filePath.split('/').pop();
         console.log('fileName: ', fileName);
+
         const bucketDir = dirname(filePath);
         console.log('bucketDir: ', bucketDir);
 
         const uniqueWorkingDir = `${Math.random().toString(36).substr(2, 9)}`;
 
         const workingDir = join(tmpdir(), uniqueWorkingDir);
-        const tmpFilePath = join(workingDir, 'source.png')
+        const tmpFilePath = join(workingDir, fileName);
 
         const fileIsAThumbnail = fileName.includes('thumb@');
-        const fileIsNotAnImage = !object.contentType.includes('image');
+        const fileIsNotAnImage = !object.contentType.startsWith('image/');
 
         console.log('file is a thumbnail: ', fileIsAThumbnail);
         console.log('file is not an image: ', fileIsNotAnImage);
@@ -63,7 +65,7 @@ export const createThumbnailFromImageLocal = (passedInAdmin: admin.app.App) => f
 
             await sharp(tmpFilePath)
                 .resize(size, size, {
-                    fit: 'inside',
+                    fit: 'contain',
                 })
                 .toFile(thumbnailPath);
 

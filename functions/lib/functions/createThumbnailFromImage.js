@@ -30,9 +30,9 @@ exports.createThumbnailFromImageLocal = (passedInAdmin) => functions.storage
     console.log('bucketDir: ', bucketDir);
     const uniqueWorkingDir = `${Math.random().toString(36).substr(2, 9)}`;
     const workingDir = path_1.join(os_1.tmpdir(), uniqueWorkingDir);
-    const tmpFilePath = path_1.join(workingDir, 'source.png');
+    const tmpFilePath = path_1.join(workingDir, fileName);
     const fileIsAThumbnail = fileName.includes('thumb@');
-    const fileIsNotAnImage = !object.contentType.includes('image');
+    const fileIsNotAnImage = !object.contentType.startsWith('image/');
     console.log('file is a thumbnail: ', fileIsAThumbnail);
     console.log('file is not an image: ', fileIsNotAnImage);
     if (fileIsAThumbnail || fileIsNotAnImage) {
@@ -54,7 +54,7 @@ exports.createThumbnailFromImageLocal = (passedInAdmin) => functions.storage
         console.log('thumbnailPath: ', thumbnailPath);
         yield sharp(tmpFilePath)
             .resize(size, size, {
-            fit: 'inside',
+            fit: 'contain',
         })
             .toFile(thumbnailPath);
         return bucket.upload(thumbnailPath, {
