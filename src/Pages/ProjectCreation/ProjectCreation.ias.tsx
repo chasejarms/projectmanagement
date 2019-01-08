@@ -316,6 +316,21 @@ export const createProjectCreationClasses = (
         paddingTop: 100,
     });
 
+    const imgContainer = css({
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr 1fr 1fr',
+        gridGap: 16,
+        margin: 16,
+    });
+
+    const img = css({
+        width: '100%',
+    });
+
+    const imagePaper = css({
+        overflow: 'hidden',
+    });
+
     return {
         projectCreationContainer,
         stepperContainer,
@@ -361,5 +376,8 @@ export const createProjectCreationClasses = (
         asyncActionButton,
         addAttachmentButton,
         addAttachmentInput,
+        imgContainer,
+        img,
+        imagePaper,
     };
 }

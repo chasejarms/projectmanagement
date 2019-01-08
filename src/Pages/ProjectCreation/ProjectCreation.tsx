@@ -43,7 +43,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
     public myRef: React.RefObject<{}>;
     public state: IProjectCreationState = {
         open: false,
-        activeStep: 0,
+        activeStep: 3,
         checkpoints: [],
         userName: '',
         checkpointStatus: '',
@@ -385,6 +385,9 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             menuPopover,
             addAttachmentButton,
             addAttachmentInput,
+            imgContainer,
+            img,
+            imagePaper,
         } = createProjectCreationClasses(this.props, this.state);
 
         const companyId = this.props.match.path.split('/')[2];
@@ -503,9 +506,15 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                                 Add An Attachment
                             </AsyncButton>
                         </div>
-                        {this.state.srcUrls.map((src, index) => {
-                            return <img key={index} src={src}/>
-                        })}
+                        <div className={imgContainer}>
+                            {this.state.srcUrls.map((src, index) => {
+                                return (
+                                    <Paper key={index} className={imagePaper}>
+                                        <img src={src} className={img}/>
+                                    </Paper>
+                                )
+                            })}
+                        </div>
                     </Paper>
                 </div>
             )
