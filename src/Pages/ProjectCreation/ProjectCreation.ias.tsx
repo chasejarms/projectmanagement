@@ -327,8 +327,9 @@ export const createProjectCreationClasses = (
             content: '""',
             width: 0,
             paddingBottom: '100%',
-            gridRow: 1 / 1,
-            gridColumn: 1 / 1,
+            gridRow: '1/1',
+            gridColumn: '1/1',
+            height: 0,
         },
         '& > *:first-child': {
             gridRow: '1/1',
@@ -350,11 +351,38 @@ export const createProjectCreationClasses = (
         alignItems: 'center',
         height: '100%',
         width: '100%',
+        position: 'relative',
     })
 
     const documentIcon = css({
         fontSize: '4em',
     })
+
+    const documentFilePath = css({
+        width: '100%',
+        display: 'block',
+        justifyContent: 'center',
+        alignItems: 'center',
+        bottom: 0,
+        color: 'white',
+        overflow: 'hidden',
+        whiteSpace: 'nowrap',
+        textOverflow: 'ellipsis',
+    });
+
+    const documentFilePathContainer = css({
+        position: 'absolute',
+        width: '100%',
+        display: 'block',
+        textOverflow: 'ellipsis',
+        height: 50,
+        backgroundColor: 'black',
+        opacity: .5,
+        bottom: 0,
+        paddingLeft: 8,
+        paddingRight: 8,
+        boxSizing: 'border-box',
+    });
 
     return {
         projectCreationContainer,
@@ -406,5 +434,7 @@ export const createProjectCreationClasses = (
         imagePaper,
         iconContainer,
         documentIcon,
+        documentFilePath,
+        documentFilePathContainer,
     };
 }

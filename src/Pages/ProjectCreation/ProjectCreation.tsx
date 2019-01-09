@@ -401,6 +401,8 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             imagePaper,
             iconContainer,
             documentIcon,
+            documentFilePath,
+            documentFilePathContainer,
         } = createProjectCreationClasses(this.props, this.state);
 
         const companyId = this.props.match.path.split('/')[2];
@@ -522,11 +524,16 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                         {this.state.srcUrls.length > 0 ? (
                             <div className={imgContainer}>
                                 {this.state.srcUrls.map((src, index) => {
+                                    const originalImagePathArray = this.state.attachmentUrls[index].path.split('/')
+                                    const originalImagePath = originalImagePathArray[originalImagePathArray.length - 1];
                                     return (
                                         <Paper key={index} className={imagePaper}>
                                             {src.startsWith('contentType:') ? (
                                                 <div className={iconContainer}>
                                                     <DocumentIcon className={documentIcon} color="secondary"/>
+                                                    <div className={documentFilePathContainer}>
+                                                        <p className={documentFilePath}>{originalImagePath}</p>
+                                                    </div>
                                                 </div>
                                             ) : (
                                                 <img src={src} className={img}/>
