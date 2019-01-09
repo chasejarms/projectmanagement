@@ -321,6 +321,19 @@ export const createProjectCreationClasses = (
         gridTemplateColumns: '1fr 1fr 1fr 1fr',
         gridGap: 16,
         margin: 16,
+        gridRow: '1/1',
+        gridColumn: '1/1',
+        '&::before': {
+            content: '""',
+            width: 0,
+            paddingBottom: '100%',
+            gridRow: 1 / 1,
+            gridColumn: 1 / 1,
+        },
+        '& > *:first-child': {
+            gridRow: '1/1',
+            gridColumn: '1/1',
+        }
     });
 
     const img = css({

@@ -519,21 +519,23 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                                 Add An Attachment
                             </AsyncButton>
                         </div>
-                        <div className={imgContainer}>
-                            {this.state.srcUrls.map((src, index) => {
-                                return (
-                                    <Paper key={index} className={imagePaper}>
-                                        {src.startsWith('contentType:') ? (
-                                            <div className={iconContainer}>
-                                                <DocumentIcon className={documentIcon} color="secondary"/>
-                                            </div>
-                                        ) : (
-                                            <img src={src} className={img}/>
-                                        )}
-                                    </Paper>
-                                )
-                            })}
-                        </div>
+                        {this.state.srcUrls.length > 0 ? (
+                            <div className={imgContainer}>
+                                {this.state.srcUrls.map((src, index) => {
+                                    return (
+                                        <Paper key={index} className={imagePaper}>
+                                            {src.startsWith('contentType:') ? (
+                                                <div className={iconContainer}>
+                                                    <DocumentIcon className={documentIcon} color="secondary"/>
+                                                </div>
+                                            ) : (
+                                                <img src={src} className={img}/>
+                                            )}
+                                        </Paper>
+                                    )
+                                })}
+                            </div>
+                        ) : undefined}
                     </Paper>
                 </div>
             )
