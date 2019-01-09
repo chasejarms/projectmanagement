@@ -44,6 +44,7 @@ export interface IProjectCreationState {
     srcUrls: string[];
     uniqueCaseId: string;
     uploadingAttachmentInProgress: boolean;
+    filePath: string | string[];
 }
 
 export const createProjectCreationClasses = (
@@ -341,8 +342,26 @@ export const createProjectCreationClasses = (
         width: '100%',
     });
 
+    const cancelIconContainer = css({
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        padding: 8,
+        '&:hover': {
+            cursor: 'pointer',
+        }
+    });
+
+    const cancelIcon = css({
+        fontSize: 32,
+    });
+
     const imagePaper = css({
         overflow: 'hidden',
+        position: 'relative',
+        [`&:hover ${cancelIconContainer}`]: {
+            display: 'block',
+        }
     });
 
     const iconContainer = css({
@@ -368,6 +387,7 @@ export const createProjectCreationClasses = (
         overflow: 'hidden',
         whiteSpace: 'nowrap',
         textOverflow: 'ellipsis',
+        paddingTop: 14,
     });
 
     const documentFilePathContainer = css({
@@ -436,5 +456,7 @@ export const createProjectCreationClasses = (
         documentIcon,
         documentFilePath,
         documentFilePathContainer,
+        cancelIconContainer,
+        cancelIcon,
     };
 }

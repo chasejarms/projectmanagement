@@ -38,4 +38,5 @@ export interface ICaseApi {
     uploadFile(companyName: string, projectId: string, file: File): Promise<firebase.storage.UploadTaskSnapshot>;
     updateProject(companyName: string, project: ICase): ICase;
     updateCaseInformation(caseId: string, updateCaseInformationRequest: IUpdateCaseInformationRequest): Promise<void>;
+    removeFile(fileName: string): Promise<void>;
 }

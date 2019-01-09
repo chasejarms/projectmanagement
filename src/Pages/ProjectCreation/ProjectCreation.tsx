@@ -11,8 +11,10 @@ import {
     StepLabel,
     Stepper,
     TextField,
+    Typography,
     withTheme,
 } from '@material-ui/core';
+import CancelIcon from '@material-ui/icons/CancelOutlined';
 import DocumentIcon from '@material-ui/icons/Description';
 import * as firebase from 'firebase';
 import * as _ from 'lodash';
@@ -77,6 +79,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         uniqueCaseId: '',
         uploadingAttachmentInProgress: false,
         srcUrls: [],
+        filePath: '',
     };
 
     public handleChange = handleChange(this);
@@ -311,6 +314,8 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
     };
 
     private handleFileSelection = async (event: any): Promise<void> => {
+        // tslint:disable-next-line:no-console
+        console.log('event: ', event);
         if (event.target.files.length < 1) {
             return;
         }
@@ -319,6 +324,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
 
         this.setState({
             uploadingAttachmentInProgress: true,
+            filePath: '',
         })
 
         const uploadTaskSnapshot = await Api.projectsApi.uploadFile(companyId, this.state.uniqueCaseId, file);
@@ -380,6 +386,17 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         }
     }
 
+    private removeImage = (path: string, index: number) => async() => {
+        const attachmentUrls = this.state.attachmentUrls.filter((val, compareIndex) => compareIndex !== index);
+        const srcUrls = this.state.srcUrls.filter((val, compareIndex) => compareIndex !== index);
+        this.setState({
+            attachmentUrls,
+            srcUrls,
+        })
+
+        await Api.projectsApi.removeFile(path);
+    }
+
     private getStepActiveContent(): any {
         const {
             stepperContent,
@@ -403,6 +420,8 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             documentIcon,
             documentFilePath,
             documentFilePathContainer,
+            cancelIconContainer,
+            cancelIcon,
         } = createProjectCreationClasses(this.props, this.state);
 
         const companyId = this.props.match.path.split('/')[2];
@@ -497,15 +516,6 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                             />
                         </div>
                         <div className={addAttachmentButtonContainer}>
-                            {/* <Button
-                                type="file"
-                                disabled={this.state.createProjectInProgress}
-                                variant="contained"
-                                color="secondary"
-                                onClick={this.handleFileSelection}>
-                                Add An Attachment
-                            </Button> */}
-
                             <AsyncButton
                                 disabled={this.state.createProjectInProgress || this.state.uploadingAttachmentInProgress}
                                 asyncActionInProgress={this.state.uploadingAttachmentInProgress}
@@ -516,6 +526,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                                 <input
                                     type="file"
                                     onChange={this.handleFileSelection}
+                                    value={this.state.filePath}
                                     className={addAttachmentInput}
                                 />
                                 Add An Attachment
@@ -532,12 +543,15 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                                                 <div className={iconContainer}>
                                                     <DocumentIcon className={documentIcon} color="secondary"/>
                                                     <div className={documentFilePathContainer}>
-                                                        <p className={documentFilePath}>{originalImagePath}</p>
+                                                        <Typography variant="body1" className={documentFilePath}>{originalImagePath}</Typography>
                                                     </div>
                                                 </div>
                                             ) : (
                                                 <img src={src} className={img}/>
                                             )}
+                                            <div className={cancelIconContainer} onClick={this.removeImage(this.state.attachmentUrls[index].path, index)}>
+                                                <CancelIcon className={cancelIcon} color="secondary"/>
+                                            </div>
                                         </Paper>
                                     )
                                 })}

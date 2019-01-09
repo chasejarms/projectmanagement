@@ -52,6 +52,11 @@ export class ProjectsApi implements ICaseApi {
         return uploadTaskSnapshot;
     }
 
+    public async removeFile(fileName: string): Promise<void> {
+        const storageRef = firebase.storage().ref(fileName);
+        await storageRef.delete();
+    }
+
     public async getProjectCheckpoints(getCaseCheckpointsRequest: IGetCaseCheckpointsRequest): Promise<IAugmentedCheckpoint[]> {
         const getCaseCheckpointsCloudFunction = firebase.functions().httpsCallable('getCaseCheckpoints');
         const getCaseCheckpointsResponse = await getCaseCheckpointsCloudFunction(getCaseCheckpointsRequest);

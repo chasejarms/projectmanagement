@@ -61,6 +61,10 @@ export class MockProjectsApi implements ICaseApi {
         throw new Error("Method not implemented");
     }
 
+    public removeFile(filePath: string): Promise<void> {
+        throw new Error("Method not implemented");
+    }
+
     public updateCaseInformation(caseId: string, updateCaseInformationRequest: IUpdateCaseInformationRequest): Promise<void> {
         throw new Error("Method not implemented");
     }
