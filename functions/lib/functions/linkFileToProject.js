@@ -13,16 +13,34 @@ exports.linkFileToProjectLocal = (passedInAdmin) => functions.storage
     .object()
     .onFinalize((object) => __awaiter(this, void 0, void 0, function* () {
     const filePath = object.name;
+    // we don't add thumbnails back to the project
+    if (filePath.includes('thumb@')) {
+        return Promise.resolve();
+    }
     const [companyId, caseId,] = filePath.split('/');
     console.log('caseId: ', caseId);
     const caseDocumentReference = passedInAdmin.firestore().collection('cases').doc(caseId);
     const caseDocumentSnapshot = yield caseDocumentReference.get();
+    console.log('case exists: ', caseDocumentSnapshot.exists);
     if (caseDocumentSnapshot.exists) {
-        console.log('case exists: ', caseDocumentSnapshot.exists);
         const currentAttachmentUrls = caseDocumentSnapshot.data().attachmentUrls;
+        let updatedAttachmentUrls;
+        if (object.timeDeleted) {
+            console.log('attachment was deleted');
+            updatedAttachmentUrls = currentAttachmentUrls.filter((attachment) => {
+                attachment.path !== filePath;
+            });
+        }
+        else {
+            console.log('attachment was added');
+            updatedAttachmentUrls = currentAttachmentUrls.concat([{
+                    path: filePath,
+                    contentType: object.contentType,
+                }]);
+        }
         console.log('currentAttachmentUrls: ', currentAttachmentUrls);
         return yield passedInAdmin.firestore().collection('cases').doc(caseId).set({
-            attachmentUrls: currentAttachmentUrls.concat([filePath]),
+            attachmentUrls: updatedAttachmentUrls,
         }, { merge: true });
     }
     return Promise.resolve();

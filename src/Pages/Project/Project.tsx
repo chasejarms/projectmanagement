@@ -11,13 +11,17 @@ import {
     Toolbar,
     Typography,
 } from '@material-ui/core';
+import CancelIcon from '@material-ui/icons/CancelOutlined';
+import DocumentIcon from '@material-ui/icons/Description';
 import DoneIcon from '@material-ui/icons/Done';
+import * as firebase from 'firebase';
 import * as _ from 'lodash';
 import { DateFormatInput } from 'material-ui-next-pickers';
 import * as React from 'react';
 import { withRouter } from 'react-router';
 import { FormControlState } from 'src/Classes/formControlState';
 import { AsyncButton } from 'src/Components/AsyncButton/AsyncButton';
+import { IAttachmentMetadata } from 'src/Models/attachmentMetadata';
 import { requiredValidator } from 'src/Validators/required.validator';
 import Api from '../../Api/api';
 import { ICheckpoint } from '../../Models/checkpoint';
@@ -50,6 +54,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         filePath: '',
         dialogIsOpen: false,
         dialogError: '',
+        srcUrls: [],
     }
 
     constructor(props: IProjectPresentationProps) {
@@ -66,6 +71,9 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         const caseDeadlineAsDate = new Date(project.deadline);
         const caseDeadlineControl = this.state.caseDeadline.setValue(caseDeadlineAsDate);
         const notesControl = this.state.notes.setValue(project.notes);
+        // tslint:disable-next-line:no-console
+        console.log(project.attachmentUrls);
+        this.createSrcUrls(project.attachmentUrls);
 
         this.setState({
             attachmentUrls: project.attachmentUrls,
@@ -93,7 +101,6 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             evenPaper,
             secondPaper,
             fieldSpacing,
-            halfWidthProjectContainer,
             seeAttachmentsButton,
             workflowToolbar,
             qrCodeButtonContainer,
@@ -101,6 +108,17 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             addAttachmentInput,
             qrCodeButton,
             caseInformationToolbar,
+            progressAndInformationContainer,
+            attachmentsContainer,
+            imgContainer,
+            imagePaper,
+            cancelIconContainer,
+            iconContainer,
+            documentIcon,
+            documentFilePathContainer,
+            documentFilePath,
+            img,
+            cancelIcon,
         } = createProjectPresentationClasses(this.props, this.state, this.props.theme);
 
         // tslint:disable-next-line:no-console
@@ -119,7 +137,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
 
         return (
             <div className={projectContainer}>
-                <div className={halfWidthProjectContainer}>
+                <div className={progressAndInformationContainer}>
                     <Paper className={secondPaper}>
                         <div>
                             <Toolbar className={workflowToolbar}>
@@ -148,12 +166,14 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                             </Table>
                         </div>
                         <div className={attachmentButtonsContainer}>
-                            <Button
-                                disabled={this.state.projectInformationIsLoading}
-                                className={seeAttachmentsButton}
-                                color="secondary">
-                                See Attachments ({this.state.attachmentUrls.length})
-                            </Button>
+                            { this.state.attachmentUrls.length > 0 ? (
+                                <Button
+                                    disabled={this.state.projectInformationIsLoading}
+                                    className={seeAttachmentsButton}
+                                    color="secondary">
+                                    See Attachments ({this.state.attachmentUrls.length})
+                                </Button>
+                            ) : undefined}
                             <AsyncButton
                                 disabled={this.state.addAttachmentInProgress || this.state.projectInformationIsLoading}
                                 asyncActionInProgress={this.state.addAttachmentInProgress}
@@ -171,8 +191,6 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                             </AsyncButton>
                         </div>
                     </Paper>
-                </div>
-                <div className={halfWidthProjectContainer}>
                     <Paper className={evenPaper}>
                         <div>
                             <Toolbar className={caseInformationToolbar}>
@@ -243,8 +261,74 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                         </DialogActions>
                     </Dialog>
                 </div>
+                {this.state.srcUrls.length > 0 ? (
+                    <div className={attachmentsContainer}>
+                        <Paper>
+                            <div className={imgContainer}>
+                                    {this.state.srcUrls.map((src, index) => {
+                                        const originalImagePathArray = this.state.attachmentUrls[index].path.split('/')
+                                        const originalImagePath = originalImagePathArray[originalImagePathArray.length - 1];
+                                        return (
+                                            <Paper key={index} className={imagePaper}>
+                                                {src.startsWith('contentType:') ? (
+                                                    <div className={iconContainer}>
+                                                        <DocumentIcon className={documentIcon} color="secondary"/>
+                                                        <div className={documentFilePathContainer}>
+                                                            <Typography variant="body1" className={documentFilePath}>{originalImagePath}</Typography>
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <img src={src} className={img}/>
+                                                )}
+                                                <div className={cancelIconContainer} onClick={this.removeImage(this.state.attachmentUrls[index].path, index)}>
+                                                    <CancelIcon className={cancelIcon} color="secondary"/>
+                                                </div>
+                                            </Paper>
+                                        )
+                                    })}
+                            </div>
+                        </Paper>
+                    </div>
+                ) : undefined}
             </div>
         );
+    }
+
+    private createSrcUrls = async(attachmentsMetadata: IAttachmentMetadata[]) => {
+        const storageRef = await firebase.storage().ref();
+        const downloadURLPromises = attachmentsMetadata.map((attachmentMetadata) => {
+            const path = attachmentMetadata.path;
+            const contentType = attachmentMetadata.contentType;
+
+            if (contentType.startsWith('image/')) {
+                const [
+                    companyIdInFile,
+                    caseIdInFile,
+                    ...actualFileName
+                ] = path.split('/');
+
+                const fileNameWithoutSeparation = actualFileName.join('');
+                return storageRef.child(`${companyIdInFile}/${caseIdInFile}/thumb@512_${fileNameWithoutSeparation}`).getDownloadURL();
+            } else {
+                return Promise.resolve(`contentType:${contentType}`);
+            }
+        });
+
+        const downloadUrls = await Promise.all(downloadURLPromises);
+        this.setState({
+            srcUrls: downloadUrls,
+        })
+    }
+
+    private removeImage = (path: string, index: number) => async() => {
+        const attachmentUrls = this.state.attachmentUrls.filter((val, compareIndex) => compareIndex !== index);
+        const srcUrls = this.state.srcUrls.filter((val, compareIndex) => compareIndex !== index);
+        this.setState({
+            attachmentUrls,
+            srcUrls,
+        })
+
+        await Api.projectsApi.removeFile(path);
     }
 
     private atLeastOneControlIsInvalid = (): boolean => {

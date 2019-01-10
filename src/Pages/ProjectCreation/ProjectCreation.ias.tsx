@@ -344,6 +344,10 @@ export const createProjectCreationClasses = (
         width: '100%',
     });
 
+    const cancelIcon = css({
+        fontSize: 32,
+    });
+
     const cancelIconContainer = css({
         position: 'absolute',
         top: 0,
@@ -352,10 +356,6 @@ export const createProjectCreationClasses = (
         '&:hover': {
             cursor: 'pointer',
         }
-    });
-
-    const cancelIcon = css({
-        fontSize: 32,
     });
 
     const imagePaper = css({

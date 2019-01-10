@@ -23,6 +23,7 @@ export interface IProjectPresentationState {
     filePath: string;
     dialogIsOpen: boolean;
     dialogError: string;
+    srcUrls: string[];
 }
 
 export const createProjectPresentationClasses = (
@@ -30,21 +31,33 @@ export const createProjectPresentationClasses = (
     state: IProjectPresentationState,
     theme: Theme,
 ) => {
+    const attachmentsContainer = css({
+        width: '100%',
+        boxSizing: 'border-box',
+        paddingLeft: 32,
+        paddingRight: 32,
+        paddingBottom: 32,
+    });
+
+    const progressAndInformationContainer = css({
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gridColumnGap: 32,
+        width: '100%',
+        height: '100vh',
+        padding: 32,
+        boxSizing: 'border-box',
+    });
+
     const projectContainer = css({
         height: '100vh',
-        boxSizing: 'border-box',
-        display: 'flex',
-        flexDirection: 'row',
-        paddingTop: 32,
-        paddingLeft: 32,
-        paddingBottom: 32,
+        overflowY: 'auto',
     })
 
     const evenPaper = css({
         display: 'flex',
         flexDirection: 'column',
         flexGrow: 1,
-        marginRight: 32,
         padding: 16,
         paddingTop: 0,
         height: '100%',
@@ -58,7 +71,6 @@ export const createProjectPresentationClasses = (
         flexDirection: 'column',
         flexGrow: 1,
         justifyContent: 'space-between',
-        marginRight: 32,
         height: '100%',
         boxSizing: 'border-box',
         overflowY: 'auto',
@@ -87,10 +99,6 @@ export const createProjectPresentationClasses = (
 
     const nonSelectedTab = css({
         color: 'white',
-    });
-
-    const halfWidthProjectContainer = css({
-        flex: 1,
     });
 
     const attachmentButtonsContainer = css({
@@ -140,6 +148,93 @@ export const createProjectPresentationClasses = (
         padding: 0,
     });
 
+    const imgContainer = css({
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr 1fr 1fr',
+        gridGap: 16,
+        gridRow: '1/1',
+        gridColumn: '1/1',
+        '&::before': {
+            content: '""',
+            width: 0,
+            paddingBottom: '100%',
+            gridRow: '1/1',
+            gridColumn: '1/1',
+            height: 0,
+        },
+        '& > *:first-child': {
+            gridRow: '1/1',
+            gridColumn: '1/1',
+        },
+        padding: 16,
+    });
+
+    const cancelIconContainer = css({
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        padding: 8,
+        '&:hover': {
+            cursor: 'pointer',
+        }
+    });
+
+    const imagePaper = css({
+        overflow: 'hidden',
+        position: 'relative',
+        [`&:hover ${cancelIconContainer}`]: {
+            display: 'block',
+        }
+    });
+
+    const iconContainer = css({
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100%',
+        width: '100%',
+        position: 'relative',
+    })
+
+    const documentIcon = css({
+        fontSize: '4em',
+    })
+
+    const documentFilePathContainer = css({
+        position: 'absolute',
+        width: '100%',
+        display: 'block',
+        textOverflow: 'ellipsis',
+        height: 50,
+        backgroundColor: 'black',
+        opacity: .5,
+        bottom: 0,
+        paddingLeft: 8,
+        paddingRight: 8,
+        boxSizing: 'border-box',
+    });
+
+    const documentFilePath = css({
+        width: '100%',
+        display: 'block',
+        justifyContent: 'center',
+        alignItems: 'center',
+        bottom: 0,
+        color: 'white',
+        overflow: 'hidden',
+        whiteSpace: 'nowrap',
+        textOverflow: 'ellipsis',
+        paddingTop: 14,
+    });
+
+    const img = css({
+        width: '100%',
+    });
+
+    const cancelIcon = css({
+        fontSize: 32,
+    });
+
     return {
         projectContainer,
         tabs,
@@ -149,7 +244,6 @@ export const createProjectPresentationClasses = (
         evenPaper,
         secondPaper,
         fieldSpacing,
-        halfWidthProjectContainer,
         attachmentButtonsContainer,
         seeAttachmentsButton,
         workflowToolbar,
@@ -158,5 +252,16 @@ export const createProjectPresentationClasses = (
         addAttachmentInput,
         qrCodeButton,
         caseInformationToolbar,
+        progressAndInformationContainer,
+        attachmentsContainer,
+        imgContainer,
+        imagePaper,
+        cancelIconContainer,
+        iconContainer,
+        documentIcon,
+        documentFilePathContainer,
+        documentFilePath,
+        img,
+        cancelIcon,
     };
 }

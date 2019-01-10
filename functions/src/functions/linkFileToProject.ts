@@ -1,10 +1,21 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 
+interface IAttachmentMetadata {
+    path: string;
+    contentType: string;
+}
+
 export const linkFileToProjectLocal = (passedInAdmin: admin.app.App) => functions.storage
     .object()
     .onFinalize(async object => {
         const filePath = object.name;
+
+        // we don't add thumbnails back to the project
+        if (filePath.includes('thumb@')) {
+            return Promise.resolve();
+        }
+
         const [
             companyId,
             caseId,
@@ -15,15 +26,30 @@ export const linkFileToProjectLocal = (passedInAdmin: admin.app.App) => function
         const caseDocumentReference = passedInAdmin.firestore().collection('cases').doc(caseId);
 
         const caseDocumentSnapshot = await caseDocumentReference.get();
+        console.log('case exists: ', caseDocumentSnapshot.exists);
 
         if (caseDocumentSnapshot.exists) {
-            console.log('case exists: ', caseDocumentSnapshot.exists);
-            const currentAttachmentUrls = caseDocumentSnapshot.data().attachmentUrls;
+            const currentAttachmentUrls: IAttachmentMetadata[] = caseDocumentSnapshot.data().attachmentUrls;
+
+            let updatedAttachmentUrls: IAttachmentMetadata[];
+
+            if (object.timeDeleted) {
+                console.log('attachment was deleted');
+                updatedAttachmentUrls = currentAttachmentUrls.filter((attachment) => {
+                    attachment.path !== filePath;
+                });
+            } else {
+                console.log('attachment was added');
+                updatedAttachmentUrls = currentAttachmentUrls.concat([{
+                    path: filePath,
+                    contentType: object.contentType,
+                }]);
+            }
 
             console.log('currentAttachmentUrls: ', currentAttachmentUrls);
 
             return await passedInAdmin.firestore().collection('cases').doc(caseId).set({
-                attachmentUrls: currentAttachmentUrls.concat([filePath]),
+                attachmentUrls: updatedAttachmentUrls,
             }, { merge: true });
         }
 
