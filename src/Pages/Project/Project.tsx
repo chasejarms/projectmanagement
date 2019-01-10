@@ -1,4 +1,4 @@
-import { FormControl, FormHelperText, Input, InputLabel, withTheme } from '@material-ui/core';
+import { Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormHelperText, Input, InputLabel, withTheme } from '@material-ui/core';
 import {
     Button,
     Paper,
@@ -47,6 +47,9 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         caseId: '',
         updateCaseInformationInProgress: false,
         addAttachmentInProgress: false,
+        filePath: '',
+        dialogIsOpen: false,
+        dialogError: '',
     }
 
     constructor(props: IProjectPresentationProps) {
@@ -161,6 +164,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                                 <input
                                     type="file"
                                     className={addAttachmentInput}
+                                    value={this.state.filePath}
                                     onChange={this.handleFileSelection}
                                 />
                                 Add An Attachment
@@ -227,6 +231,17 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                             </AsyncButton>
                         </div>
                     </Paper>
+                    <Dialog
+                        open={this.state.dialogIsOpen}
+                    >
+                        <DialogTitle>Error Uploading File</DialogTitle>
+                        <DialogContent>{this.state.dialogError}</DialogContent>
+                        <DialogActions>
+                            <Button onClick={this.closeErrorDialog}>
+                                Close
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
                 </div>
             </div>
         );
@@ -236,16 +251,57 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         return this.state.caseName.invalid || this.state.caseDeadline.invalid || this.state.notes.invalid;
     }
 
+    private closeErrorDialog = () => {
+        this.setState({
+            dialogError: '',
+            dialogIsOpen: false,
+        })
+    }
+
     private handleFileSelection = async(event: any): Promise<void> => {
+        // tslint:disable-next-line:no-console
+        console.log('event: ', event);
+        if (event.target.files.length < 1) {
+            return;
+        }
         const file = event.target.files[0];
-        const companyName = this.props.match.path.split('/')[2];
+        const companyId = this.props.match.path.split('/')[2];
         const projectId = this.props.match.params['projectId'];
+
+        const fileNameAlreadyExists = this.state.attachmentUrls.filter((attachmentUrl) => {
+            // tslint:disable-next-line:no-console
+            console.log(attachmentUrl);
+            const attachmentUrlPieces = attachmentUrl.path.split('/');
+            const compareFileName = attachmentUrlPieces[attachmentUrlPieces.length -1];
+            return compareFileName === file.name;
+        }).length > 0;
+
+        if (fileNameAlreadyExists) {
+            this.setState({
+                dialogIsOpen: true,
+                dialogError: 'A file with that name has already been uploaded.',
+            });
+            return;
+        }
+
+        const fileIsLargerThan5MB = file.size > (5 * 1000000);
+        if (fileIsLargerThan5MB) {
+            this.setState({
+                dialogIsOpen: true,
+                dialogError: 'The maximum file size is 5MB.',
+            });
+            return;
+        }
 
         this.setState({
             addAttachmentInProgress: true,
+            filePath: '',
         })
 
-        const uploadTaskSnapshot = await Api.projectsApi.uploadFile(companyName, projectId, file);
+        const uploadTaskSnapshot = await Api.projectsApi.uploadFile(companyId, projectId, file);
+
+        // tslint:disable-next-line:no-console
+        console.log(uploadTaskSnapshot);
 
         const path = uploadTaskSnapshot.metadata.fullPath;
         const contentType = uploadTaskSnapshot.metadata.contentType as string;
@@ -256,6 +312,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                 contentType,
             });
         }
+
         this.setState({
             attachmentUrls,
             addAttachmentInProgress: false,

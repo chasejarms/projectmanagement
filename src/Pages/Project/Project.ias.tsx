@@ -20,6 +20,9 @@ export interface IProjectPresentationState {
     caseId: string;
     updateCaseInformationInProgress: boolean;
     addAttachmentInProgress: boolean;
+    filePath: string;
+    dialogIsOpen: boolean;
+    dialogError: string;
 }
 
 export const createProjectPresentationClasses = (
