@@ -45,6 +45,8 @@ export interface IProjectCreationState {
     uniqueCaseId: string;
     uploadingAttachmentInProgress: boolean;
     filePath: string | string[];
+    dialogError: string;
+    dialogIsOpen: boolean;
 }
 
 export const createProjectCreationClasses = (

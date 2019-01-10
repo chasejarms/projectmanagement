@@ -1,5 +1,9 @@
 import {
     Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
     FormControl,
     FormHelperText,
     Input,
@@ -80,6 +84,8 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         uploadingAttachmentInProgress: false,
         srcUrls: [],
         filePath: '',
+        dialogError: '',
+        dialogIsOpen: false,
     };
 
     public handleChange = handleChange(this);
@@ -322,6 +328,29 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         const file = event.target.files[0];
         const companyId = this.props.match.path.split('/')[2];
 
+        const fileNameAlreadyExists = this.state.attachmentUrls.filter((attachmentUrl) => {
+            const attachmentUrlPieces = attachmentUrl.path.split('/');
+            const compareFileName = attachmentUrlPieces[attachmentUrlPieces.length -1];
+            return compareFileName === file.name;
+        }).length > 0;
+
+        if (fileNameAlreadyExists) {
+            this.setState({
+                dialogIsOpen: true,
+                dialogError: 'A file with that name has already been uploaded.',
+            });
+            return;
+        }
+
+        const fileIsLargerThan5MB = file.size > (5 * 1000000);
+        if (fileIsLargerThan5MB) {
+            this.setState({
+                dialogIsOpen: true,
+                dialogError: 'The maximum file size is 5MB.',
+            });
+            return;
+        }
+
         this.setState({
             uploadingAttachmentInProgress: true,
             filePath: '',
@@ -395,6 +424,13 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         })
 
         await Api.projectsApi.removeFile(path);
+    }
+
+    private closeErrorDialog = () => {
+        this.setState({
+            dialogIsOpen: false,
+            dialogError: '',
+        })
     }
 
     private getStepActiveContent(): any {
@@ -558,6 +594,17 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                             </div>
                         ) : undefined}
                     </Paper>
+                    <Dialog
+                        open={this.state.dialogIsOpen}
+                    >
+                        <DialogTitle>Error Uploading File</DialogTitle>
+                        <DialogContent>{this.state.dialogError}</DialogContent>
+                        <DialogActions>
+                            <Button onClick={this.closeErrorDialog}>
+                                Close
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
                 </div>
             )
         }
