@@ -12,6 +12,7 @@ import {
     Typography,
 } from '@material-ui/core';
 import CancelIcon from '@material-ui/icons/CancelOutlined';
+import DownloadIcon from '@material-ui/icons/CloudDownload';
 import DocumentIcon from '@material-ui/icons/Description';
 import DoneIcon from '@material-ui/icons/Done';
 import * as firebase from 'firebase';
@@ -56,6 +57,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         dialogIsOpen: false,
         dialogError: '',
         srcUrls: [],
+        indexOfHoveredItem: null,
     }
 
     constructor(props: IProjectPresentationProps) {
@@ -121,6 +123,8 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             img,
             cancelIcon,
             attachmentToolbar,
+            downloadIconContainer,
+            downloadIcon,
         } = createProjectPresentationClasses(this.props, this.state, this.props.theme);
 
         // tslint:disable-next-line:no-console
@@ -275,7 +279,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                                         const originalImagePathArray = this.state.attachmentUrls[index].path.split('/')
                                         const originalImagePath = originalImagePathArray[originalImagePathArray.length - 1];
                                         return (
-                                            <Paper key={index} className={imagePaper}>
+                                            <Paper key={index} className={imagePaper} onMouseEnter={this.setHoverItem(index)} onMouseLeave={this.removeHoverItem}>
                                                 {src.startsWith('contentType:') ? (
                                                     <div className={iconContainer}>
                                                         <DocumentIcon className={documentIcon} color="secondary"/>
@@ -286,9 +290,16 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                                                 ) : (
                                                     <img src={src} className={img}/>
                                                 )}
-                                                <div className={cancelIconContainer} onClick={this.removeImage(this.state.attachmentUrls[index].path, index)}>
-                                                    <CancelIcon className={cancelIcon} color="secondary"/>
-                                                </div>
+                                                {this.state.indexOfHoveredItem === index ? (
+                                                    <div className={downloadIconContainer} onClick={this.downloadImage(this.state.attachmentUrls[index].path)}>
+                                                        <DownloadIcon className={downloadIcon} color="secondary"/>
+                                                    </div>
+                                                ): undefined}
+                                                {this.state.indexOfHoveredItem === index ? (
+                                                    <div className={cancelIconContainer} onClick={this.removeImage(this.state.attachmentUrls[index].path, index)}>
+                                                        <CancelIcon className={cancelIcon} color="secondary"/>
+                                                    </div>
+                                                ) : undefined}
                                             </Paper>
                                         )
                                     })}
@@ -298,6 +309,45 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                 ) : undefined}
             </div>
         );
+    }
+
+    private downloadImage = (path: string) => async() => {
+        const storage = firebase.storage();
+
+        const downloadUrl = await storage.ref(path).getDownloadURL() as string;
+
+        // tslint:disable-next-line:no-console
+        console.log('getting download url');
+
+
+        const xhr = new XMLHttpRequest();
+        xhr.responseType = 'blob';
+        xhr.onload = (event) => {
+            const a = document.createElement('a');
+            a.href = window.URL.createObjectURL(xhr.response);
+            const fileNameSplit = path.split('/');
+            const originalFileName = fileNameSplit[fileNameSplit.length - 1];
+            a.download = originalFileName;
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+        };
+        // tslint:disable-next-line:no-console
+        console.log('downloadUrl: ', downloadUrl);
+        xhr.open('GET', downloadUrl);
+        xhr.send();
+    }
+
+    private setHoverItem = (index: number) => () => {
+        this.setState({
+            indexOfHoveredItem: index,
+        })
+    }
+
+    private removeHoverItem = () => {
+        this.setState({
+            indexOfHoveredItem: null,
+        })
     }
 
     private createSrcUrls = async(attachmentsMetadata: IAttachmentMetadata[]) => {

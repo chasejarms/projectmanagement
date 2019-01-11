@@ -24,6 +24,7 @@ export interface IProjectPresentationState {
     dialogIsOpen: boolean;
     dialogError: string;
     srcUrls: string[];
+    indexOfHoveredItem: null | number;
 }
 
 export const createProjectPresentationClasses = (
@@ -187,12 +188,19 @@ export const createProjectPresentationClasses = (
         }
     });
 
+    const downloadIconContainer = css({
+        position: 'absolute',
+        top: 0,
+        right: 53,
+        padding: 8,
+        '&:hover': {
+            cursor: 'pointer',
+        }
+    });
+
     const imagePaper = css({
         overflow: 'hidden',
         position: 'relative',
-        [`&:hover ${cancelIconContainer}`]: {
-            display: 'block',
-        }
     });
 
     const iconContainer = css({
@@ -243,7 +251,12 @@ export const createProjectPresentationClasses = (
         fontSize: 32,
     });
 
+    const downloadIcon = css({
+        fontSize: 32,
+    })
+
     return {
+        downloadIcon,
         attachmentToolbar,
         projectContainer,
         tabs,
@@ -272,5 +285,6 @@ export const createProjectPresentationClasses = (
         documentFilePath,
         img,
         cancelIcon,
+        downloadIconContainer,
     };
 }
