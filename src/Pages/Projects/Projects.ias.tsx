@@ -1,5 +1,6 @@
 import { css } from 'emotion';
 import { RouteComponentProps } from "react-router";
+import { IQRCodeKeys } from 'src/Components/QRCodeDisplay/QRCodeDisplay.ias';
 import { IUserSliceOfState } from 'src/Redux/Reducers/userReducer';
 import { ISlimCase } from '../../Models/slimCase';
 
@@ -10,6 +11,7 @@ export interface IProjectsPresentationProps extends RouteComponentProps<{}> {
 // tslint:disable-next-line:no-empty-interface
 export interface IProjectsPresentationState {
     slimCases: ISlimCase[];
+    qrCodeKeys: IQRCodeKeys[] | null;
 }
 
 export const createProjectsPresentationClasses = (

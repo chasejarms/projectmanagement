@@ -253,6 +253,15 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                         </DialogActions>
                     </Dialog>
                 </div>
+                <QRCodeDisplay
+                    qrCodes={[
+                        {
+                            caseId: this.state.caseId,
+                            caseDeadline: this.prettyPrintDate(this.state.caseDeadline.value),
+                            caseName: this.state.caseName.value,
+                        }
+                    ]}
+                />
                 {this.state.srcUrls.length > 0 ? (
                     <div className={attachmentsContainer}>
                         <Paper>
@@ -306,15 +315,6 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                                     })}
                             </div>
                         </Paper>
-                        <QRCodeDisplay
-                            qrCodes={[
-                                {
-                                    caseId: this.state.caseId,
-                                    caseDeadline: this.prettyPrintDate(this.state.caseDeadline.value),
-                                    caseName: this.state.caseName.value,
-                                }
-                            ]}
-                        />
                     </div>
                 ) : undefined}
             </div>

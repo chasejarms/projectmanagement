@@ -10,4 +10,5 @@ export interface ICase {
     attachmentUrls: IAttachmentMetadata[];
     created: string;
     caseCheckpoints: string[];
+    hasStarted: boolean;
 }

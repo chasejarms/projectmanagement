@@ -27,18 +27,24 @@ export const createQRCodeDisplayClasses = (
         right: 0,
         zIndex: 99999,
         boxSizing: 'border-box',
-        padding: 16,
+        padding: 32,
     })
 
     const qrCodeContainer = css({
-        display: 'grid',
+        display: 'inline-grid',
         gridRowGap: 8,
         textAlign: 'center',
         width: 128,
+        marginRight: 32,
     })
+
+    const individualQRCodeContainer = css({
+        display: 'inline-block',
+    });
 
     return {
         qrCodesContainer,
         qrCodeContainer,
+        individualQRCodeContainer,
     };
 }

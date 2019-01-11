@@ -72,4 +72,18 @@ export class ProjectsApi implements ICaseApi {
             .set(updateCaseInformationRequest, { merge: true });
     }
 
+    public async getNewCases(companyId: string): Promise<ICase[]> {
+        const casesQuerySnapshot = await firebase.firestore().collection('cases')
+            .where('companyId', '==', companyId)
+            .where('hasStarted', '==', false)
+            .orderBy('name', 'asc')
+            .get();
+        return casesQuerySnapshot.docs.map((doc) => {
+            return {
+                id: doc.id,
+                ...doc.data(),
+            } as ICase;
+        });
+    }
+
 }

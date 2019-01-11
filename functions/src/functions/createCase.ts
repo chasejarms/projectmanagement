@@ -27,6 +27,7 @@ interface ICase {
     caseCheckpoints: string[];
     companyId: string;
     showNewInfoFrom: 'Doctor' | 'Lab' | null;
+    hasStarted: boolean;
 }
 
 export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https.onCall(async(data: IProjectCreateData, context) => {
@@ -90,6 +91,7 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
         caseCheckpoints: createdCheckpointDocumentIds,
         companyId: data.companyId,
         showNewInfoFrom: isAdminOrStaff ? 'Doctor' : 'Lab',
+        hasStarted: false,
     };
 
     const caseDocumentReference = await firestore.collection('cases').doc(data.idForCase).set(caseToCreate);

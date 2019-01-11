@@ -36,6 +36,7 @@ export class MockProjectsApi implements ICaseApi {
             notes: projectCreateRequest.notes,
             attachmentUrls: [],
             created: Date.now().toString(),
+            hasStarted: true,
         }
         this.createSlimProjectFromProject(project);
         const createdLargeProject = this.createLargeProjectFromProject(project);
@@ -66,6 +67,11 @@ export class MockProjectsApi implements ICaseApi {
     }
 
     public updateCaseInformation(caseId: string, updateCaseInformationRequest: IUpdateCaseInformationRequest): Promise<void> {
+        throw new Error("Method not implemented");
+    }
+
+
+    public async getNewCases(companyId: string): Promise<ICase[]> {
         throw new Error("Method not implemented");
     }
 

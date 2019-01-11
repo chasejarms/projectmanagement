@@ -12,10 +12,13 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import AddIcon from '@material-ui/icons/Add';
 import NotificationsIcon from '@material-ui/icons/Notifications';
+import PrintIcon from '@material-ui/icons/Print';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { ISlimCasesSearchRequest } from 'src/Api/Projects/projectsInterface';
+import { QRCodeDisplay } from 'src/Components/QRCodeDisplay/QRCodeDisplay';
+import { IQRCodeKeys } from 'src/Components/QRCodeDisplay/QRCodeDisplay.ias';
 import { IAppState } from 'src/Redux/Reducers/rootReducer';
 import Api from '../../Api/api';
 import { createProjectsPresentationClasses, IProjectsPresentationProps, IProjectsPresentationState } from './Projects.ias';
@@ -23,6 +26,7 @@ import { createProjectsPresentationClasses, IProjectsPresentationProps, IProject
 export class ProjectsPresentation extends React.Component<IProjectsPresentationProps, IProjectsPresentationState> {
     public state: IProjectsPresentationState = {
         slimCases: [],
+        qrCodeKeys: null,
     }
 
     public async componentWillMount(): Promise<void> {
@@ -78,15 +82,26 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                         <Typography variant="title">
                             Cases
                         </Typography>
-                        <Tooltip title="New Case" placement="left">
-                            <IconButton
-                                aria-label="New Case"
-                                onClick={this.navigateToCreateProjectPage}
-                                color="secondary"
-                            >
-                                <AddIcon />
-                            </IconButton>
-                        </Tooltip>
+                        <div>
+                            <Tooltip title="Print New Project QR Codes" placement="left">
+                                <IconButton
+                                    aria-label="Print QR Codes"
+                                    onClick={this.printQRCodes}
+                                    color="secondary"
+                                >
+                                    <PrintIcon />
+                                </IconButton>
+                            </Tooltip>
+                            <Tooltip title="New Case" placement="left">
+                                <IconButton
+                                    aria-label="New Case"
+                                    onClick={this.navigateToCreateProjectPage}
+                                    color="secondary"
+                                >
+                                    <AddIcon />
+                                </IconButton>
+                            </Tooltip>
+                        </div>
                     </Toolbar>
                     <Table>
                         <TableHead>
@@ -102,8 +117,37 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                         </TableBody>
                     </Table>
                 </Paper>
+                {this.state.qrCodeKeys ? (
+                    <QRCodeDisplay qrCodes={this.state.qrCodeKeys}/>
+                ) : undefined}
             </div>
         )
+    }
+
+    private printQRCodes = async() => {
+        const companyId = this.props.match.path.split('/')[2];
+
+        const cases = await Api.projectsApi.getNewCases(companyId);
+        // tslint:disable-next-line:no-console
+        console.log('cases: ', cases);
+        const qrCodeKeys: IQRCodeKeys[] = cases.map((project) => {
+            return {
+                caseId: project.id,
+                caseName: project.name,
+                caseDeadline: this.makeDeadlinePretty(new Date(project.deadline)),
+            }
+        })
+
+        // tslint:disable-next-line:no-console
+        console.log('qrCodeKeys: ', qrCodeKeys);
+
+        this.setState({
+            qrCodeKeys,
+        })
+
+        setTimeout(() => {
+            window.print();
+        }, 1000);
     }
 
     private makeDeadlinePretty = (date: Date): string => {
