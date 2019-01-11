@@ -13,6 +13,7 @@ exports.linkFileToProjectLocal = (passedInAdmin) => functions.storage
     .object()
     .onFinalize((object) => __awaiter(this, void 0, void 0, function* () {
     const filePath = object.name;
+    console.log('filePath: ', filePath);
     // we don't add thumbnails back to the project
     if (filePath.includes('thumb@')) {
         return Promise.resolve();

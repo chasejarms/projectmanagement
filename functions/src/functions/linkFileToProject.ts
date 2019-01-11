@@ -10,6 +10,7 @@ export const linkFileToProjectLocal = (passedInAdmin: admin.app.App) => function
     .object()
     .onFinalize(async object => {
         const filePath = object.name;
+        console.log('filePath: ', filePath);
 
         // we don't add thumbnails back to the project
         if (filePath.includes('thumb@')) {

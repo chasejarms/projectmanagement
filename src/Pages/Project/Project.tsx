@@ -16,6 +16,7 @@ import DocumentIcon from '@material-ui/icons/Description';
 import DoneIcon from '@material-ui/icons/Done';
 import * as firebase from 'firebase';
 import * as _ from 'lodash';
+import { cloneDeep } from 'lodash';
 import { DateFormatInput } from 'material-ui-next-pickers';
 import * as React from 'react';
 import { withRouter } from 'react-router';
@@ -390,6 +391,35 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         const path = uploadTaskSnapshot.metadata.fullPath;
         const contentType = uploadTaskSnapshot.metadata.contentType as string;
         const attachmentUrls = _.cloneDeep(this.state.attachmentUrls);
+
+        const storageRef = await firebase.storage().ref();
+        const srcUrlsCopy = cloneDeep(this.state.srcUrls);
+
+        let downloadUrl: string;
+        if (contentType.startsWith('image/')) {
+            const [
+                companyIdInFile,
+                caseIdInFile,
+                ...actualFileName
+            ] = path.split('/');
+
+            const fileNameWithoutSeparation = actualFileName.join('');
+            let attempts: number = 0;
+            while (attempts < 15) {
+                try {
+                    downloadUrl = await storageRef.child(`${companyIdInFile}/${caseIdInFile}/thumb@512_${fileNameWithoutSeparation}`).getDownloadURL();
+                    if (downloadUrl) {
+                        break;
+                    }
+                } catch (e) {
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    attempts += 1;
+                };
+            }
+        } else {
+            downloadUrl = `contentType:${contentType}`;
+        }
+
         if (path) {
             attachmentUrls.push({
                 path,
@@ -397,9 +427,12 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             });
         }
 
+        // tslint:disable-next-line:no-console
+        console.log('setting state');
         this.setState({
             attachmentUrls,
             addAttachmentInProgress: false,
+            srcUrls: srcUrlsCopy.concat([downloadUrl!]),
         })
     }
 
