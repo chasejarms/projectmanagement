@@ -119,6 +119,14 @@ export const createProjectPresentationClasses = (
         paddingRight: 10,
     });
 
+    const attachmentToolbar = css({
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingRight: 16,
+        paddingLeft: 16,
+    })
+
     const qrCodeButtonContainer = css({
         display: 'flex',
         flexDirection: 'row',
@@ -236,6 +244,7 @@ export const createProjectPresentationClasses = (
     });
 
     return {
+        attachmentToolbar,
         projectContainer,
         tabs,
         tabsContentContainer,

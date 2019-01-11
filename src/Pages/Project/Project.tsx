@@ -97,12 +97,12 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
 
     public render() {
         const {
-            attachmentButtonsContainer,
+            // attachmentButtonsContainer,
             projectContainer,
             evenPaper,
             secondPaper,
             fieldSpacing,
-            seeAttachmentsButton,
+            // seeAttachmentsButton,
             workflowToolbar,
             qrCodeButtonContainer,
             addAttachmentButton,
@@ -120,6 +120,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             documentFilePath,
             img,
             cancelIcon,
+            attachmentToolbar,
         } = createProjectPresentationClasses(this.props, this.state, this.props.theme);
 
         // tslint:disable-next-line:no-console
@@ -166,7 +167,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                                 ) : undefined}
                             </Table>
                         </div>
-                        <div className={attachmentButtonsContainer}>
+                        {/* <div className={attachmentButtonsContainer}>
                             { this.state.attachmentUrls.length > 0 ? (
                                 <Button
                                     disabled={this.state.projectInformationIsLoading}
@@ -175,22 +176,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                                     See Attachments ({this.state.attachmentUrls.length})
                                 </Button>
                             ) : undefined}
-                            <AsyncButton
-                                disabled={this.state.addAttachmentInProgress || this.state.projectInformationIsLoading}
-                                asyncActionInProgress={this.state.addAttachmentInProgress}
-                                className={addAttachmentButton}
-                                color="secondary"
-                                variant="contained"
-                            >
-                                <input
-                                    type="file"
-                                    className={addAttachmentInput}
-                                    value={this.state.filePath}
-                                    onChange={this.handleFileSelection}
-                                />
-                                Add An Attachment
-                            </AsyncButton>
-                        </div>
+                        </div> */}
                     </Paper>
                     <Paper className={evenPaper}>
                         <div>
@@ -265,6 +251,25 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                 {this.state.srcUrls.length > 0 ? (
                     <div className={attachmentsContainer}>
                         <Paper>
+                            <Toolbar className={attachmentToolbar}>
+                                <Typography variant="title">
+                                    Attachments
+                                </Typography>
+                                <AsyncButton
+                                    disabled={this.state.addAttachmentInProgress || this.state.projectInformationIsLoading}
+                                    asyncActionInProgress={this.state.addAttachmentInProgress}
+                                    className={addAttachmentButton}
+                                    color="secondary"
+                                >
+                                    <input
+                                        type="file"
+                                        className={addAttachmentInput}
+                                        value={this.state.filePath}
+                                        onChange={this.handleFileSelection}
+                                    />
+                                    Add An Attachment
+                                </AsyncButton>
+                            </Toolbar>
                             <div className={imgContainer}>
                                     {this.state.srcUrls.map((src, index) => {
                                         const originalImagePathArray = this.state.attachmentUrls[index].path.split('/')
