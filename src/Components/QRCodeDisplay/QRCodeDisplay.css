@@ -1,0 +1,9 @@
+.qr-code-display {
+    display: none;
+}
+
+@media print {
+    .qr-code-display {
+        display: block;
+    }
+}

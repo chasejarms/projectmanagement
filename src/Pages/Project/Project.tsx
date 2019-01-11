@@ -23,6 +23,7 @@ import * as React from 'react';
 import { withRouter } from 'react-router';
 import { FormControlState } from 'src/Classes/formControlState';
 import { AsyncButton } from 'src/Components/AsyncButton/AsyncButton';
+import { QRCodeDisplay } from 'src/Components/QRCodeDisplay/QRCodeDisplay';
 import { IAttachmentMetadata } from 'src/Models/attachmentMetadata';
 import { requiredValidator } from 'src/Validators/required.validator';
 import Api from '../../Api/api';
@@ -305,10 +306,23 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                                     })}
                             </div>
                         </Paper>
+                        <QRCodeDisplay
+                            caseId={this.state.caseId}
+                            caseDeadline={this.prettyPrintDate(this.state.caseDeadline.value)}
+                            caseName={this.state.caseName.value}
+                        />
                     </div>
                 ) : undefined}
             </div>
         );
+    }
+
+    private prettyPrintDate = (date: Date) => {
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        const year = date.getFullYear();
+
+        return `${month}/${day}/${year}`;
     }
 
     private downloadImage = (path: string) => async() => {
@@ -492,9 +506,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
     }
 
     private showQrCodeDialog = (): void => {
-        this.setState({
-            open: true,
-        })
+        window.print();
     }
 
     private updateProject = async(): Promise<void> => {
