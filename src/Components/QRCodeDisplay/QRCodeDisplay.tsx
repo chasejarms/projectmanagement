@@ -18,15 +18,23 @@ export class QRCodeDisplay extends React.Component<IQRCodeDisplayProps, IQRCodeD
 
         return (
             <div className={`${qrCodesContainer} qr-code-display`}>
-                <div className={qrCodeContainer}>
-                    <Typography variant="body1">
-                        {this.props.caseName}
-                    </Typography>
-                    <Typography variant="body1">
-                        {this.props.caseDeadline}
-                    </Typography>
-                    <QRCode size={128} value={this.props.caseId}/>
-                </div>
+                {this.props.qrCodes.map(({
+                    caseName,
+                    caseDeadline,
+                    caseId,
+                }) => {
+                    return (
+                        <div className={qrCodeContainer} key={caseId}>
+                            <Typography variant="body1">
+                                {caseName}
+                            </Typography>
+                            <Typography variant="body1">
+                                {caseDeadline}
+                            </Typography>
+                            <QRCode size={128} value={caseId}/>
+                        </div>
+                    )
+                })}
             </div>
         )
     }

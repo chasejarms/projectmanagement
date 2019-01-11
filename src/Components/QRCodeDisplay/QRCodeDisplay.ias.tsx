@@ -4,6 +4,10 @@ import { css } from 'emotion';
 export interface IQRCodeDisplayState {}
 // tslint:disable-next-line:no-empty-interface
 export interface IQRCodeDisplayProps {
+    qrCodes: IQRCodeKeys[];
+}
+
+export interface IQRCodeKeys {
     caseId: string;
     caseName: string;
     caseDeadline: string;

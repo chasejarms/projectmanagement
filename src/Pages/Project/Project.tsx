@@ -307,9 +307,13 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                             </div>
                         </Paper>
                         <QRCodeDisplay
-                            caseId={this.state.caseId}
-                            caseDeadline={this.prettyPrintDate(this.state.caseDeadline.value)}
-                            caseName={this.state.caseName.value}
+                            qrCodes={[
+                                {
+                                    caseId: this.state.caseId,
+                                    caseDeadline: this.prettyPrintDate(this.state.caseDeadline.value),
+                                    caseName: this.state.caseName.value,
+                                }
+                            ]}
                         />
                     </div>
                 ) : undefined}
