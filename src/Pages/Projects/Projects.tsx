@@ -27,17 +27,23 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
     public state: IProjectsPresentationState = {
         slimCases: [],
         qrCodeKeys: null,
+        loadingSlimCases: true,
+        moreCasesExist: true,
     }
 
     public async componentWillMount(): Promise<void> {
         const companyId = this.props.match.path.split('/')[2];
         const slimCasesSearchRequest: ISlimCasesSearchRequest = {
             companyId,
-            limit: 50,
+            limit: 5,
         }
+
         Api.projectsApi.getSlimCases(slimCasesSearchRequest).then((slimCases) => {
+            const moreCasesExist = slimCases.length === 5;
             this.setState({
                 slimCases,
+                loadingSlimCases: false,
+                moreCasesExist,
             })
         });
     }
@@ -48,6 +54,8 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
             projectsContainer,
             projectsToolbarContainer,
             projectsPaper,
+            tableBody,
+            tableContainer,
         } = createProjectsPresentationClasses(this.props, this.state);
 
         const mappedProjects = this.state.slimCases.map(slimCase => {
@@ -103,19 +111,21 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                             </Tooltip>
                         </div>
                     </Toolbar>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Case Name</TableCell>
-                                <TableCell>Current Checkpoint</TableCell>
-                                <TableCell>Case Deadline</TableCell>
-                                <TableCell/>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody >
-                            {mappedProjects}
-                        </TableBody>
-                    </Table>
+                    <div className={tableContainer}>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Case Name</TableCell>
+                                    <TableCell>Current Checkpoint</TableCell>
+                                    <TableCell>Case Deadline</TableCell>
+                                    <TableCell/>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody className={tableBody}>
+                                {mappedProjects}
+                            </TableBody>
+                        </Table>
+                    </div>
                 </Paper>
                 {this.state.qrCodeKeys ? (
                     <QRCodeDisplay qrCodes={this.state.qrCodeKeys}/>

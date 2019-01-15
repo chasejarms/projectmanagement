@@ -1,3 +1,4 @@
+import { markProjectAsStartedLocal } from './functions/markProjectAsStarted';
 import * as admin from 'firebase-admin';
 
 import { signUpLocal } from './functions/signUp';
@@ -30,3 +31,4 @@ export const onCreateOrUpdateUser = onCreateOrUpdateUserLocal(app);
 export const getCaseCheckpoints = getCheckpointsLocal(app);
 export const linkFileToProject = linkFileToProjectLocal(app);
 export const createThumbnailFromImage = createThumbnailFromImageLocal(app);
+export const markProjectAsStarted = markProjectAsStartedLocal(app);

@@ -70,6 +70,7 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
             completedDate: null,
             completedBy: null,
             linkedWorkflowCheckpoint,
+            caseId: data.idForCase,
         })
     });
     const createdCheckpointDocumentReferences = await Promise.all(checkpointCreationPromises);

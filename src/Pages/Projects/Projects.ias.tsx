@@ -12,6 +12,8 @@ export interface IProjectsPresentationProps extends RouteComponentProps<{}> {
 export interface IProjectsPresentationState {
     slimCases: ISlimCase[];
     qrCodeKeys: IQRCodeKeys[] | null;
+    loadingSlimCases: boolean;
+    moreCasesExist: boolean;
 }
 
 export const createProjectsPresentationClasses = (
@@ -46,7 +48,26 @@ export const createProjectsPresentationClasses = (
     });
 
     const projectsPaper = css({
-        overflow: 'hidden',
+        maxHeight: '100%',
+        flexDirection: 'column',
+        display: 'flex',
+    });
+
+    const tableBody = css({
+        overflowY: 'auto',
+    });
+
+    const table = css({
+        display: 'flex',
+    });
+
+    const tableContainer = css({
+        display: 'block',
+        overflowY: 'scroll',
+    });
+
+    const hiddenDiv = css({
+        visibility: 'hidden',
     });
 
     return {
@@ -55,5 +76,9 @@ export const createProjectsPresentationClasses = (
         fabButton,
         projectsToolbarContainer,
         projectsPaper,
+        tableBody,
+        table,
+        tableContainer,
+        hiddenDiv,
     };
 }

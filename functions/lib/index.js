@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const markProjectAsStarted_1 = require("./functions/markProjectAsStarted");
 const admin = require("firebase-admin");
 const signUp_1 = require("./functions/signUp");
 const getCases_1 = require("./functions/getCases");
@@ -27,4 +28,5 @@ exports.onCreateOrUpdateUser = onUserWrite_1.onCreateOrUpdateUserLocal(app);
 exports.getCaseCheckpoints = getCheckpointsForCase_1.getCheckpointsLocal(app);
 exports.linkFileToProject = linkFileToProject_1.linkFileToProjectLocal(app);
 exports.createThumbnailFromImage = createThumbnailFromImage_1.createThumbnailFromImageLocal(app);
+exports.markProjectAsStarted = markProjectAsStarted_1.markProjectAsStartedLocal(app);
 //# sourceMappingURL=index.js.map
