@@ -271,19 +271,19 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
 
     private makeDeadlinePretty = (date: Date): string => {
         const today = new Date();
-        const todayCalendarDay = today.getDate() + 1;
-        const tomorrowCalendarDay = today.getDate() + 2;
+        const todayCalendarDay = today.getDate();
+        const tomorrowCalendarDay = today.getDate() + 1;
 
-        const dateCalendarDay = date.getDate() + 1;
-        const tomorrowDateCalendarDay = date.getDate() + 2;
+        const dateCalendarDay = date.getDate();
+        const tomorrowDateCalendarDay = date.getDate() + 1;
 
         if (todayCalendarDay === dateCalendarDay) {
             return 'Today';
         } else if (tomorrowCalendarDay === tomorrowDateCalendarDay) {
             return 'Tomorrow';
         } else {
-            const dateCalendarMonth = today.getMonth() + 1;
-            const dateCalendarYear = today.getFullYear();
+            const dateCalendarMonth = date.getMonth() + 1;
+            const dateCalendarYear = date.getFullYear();
 
             return `${dateCalendarMonth}/${dateCalendarDay}/${dateCalendarYear}`;
         }
