@@ -157,26 +157,37 @@ export const createProjectPresentationClasses = (
         padding: 0,
     });
 
-    const imgContainer = css({
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr 1fr 1fr',
-        gridGap: 16,
-        gridRow: '1/1',
-        gridColumn: '1/1',
-        '&::before': {
-            content: '""',
-            width: 0,
-            paddingBottom: '100%',
+    let imgContainer: string;
+
+    if (state.srcUrls.length > 0) {
+        imgContainer = css({
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr 1fr 1fr',
+            gridGap: 16,
             gridRow: '1/1',
             gridColumn: '1/1',
-            height: 0,
-        },
-        '& > *:first-child': {
-            gridRow: '1/1',
-            gridColumn: '1/1',
-        },
-        padding: 16,
-    });
+            '&::before': {
+                content: '""',
+                width: 0,
+                paddingBottom: '100%',
+                gridRow: '1/1',
+                gridColumn: '1/1',
+                height: 0,
+            },
+            '& > *:first-child': {
+                gridRow: '1/1',
+                gridColumn: '1/1',
+            },
+            padding: 16,
+        });
+    } else {
+        imgContainer = css({
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: 240,
+        });
+    }
 
     const cancelIconContainer = css({
         position: 'absolute',

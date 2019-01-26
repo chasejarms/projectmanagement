@@ -274,6 +274,9 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                             </AsyncButton>
                         </Toolbar>
                         <div className={imgContainer}>
+                                {this.state.srcUrls.length > 0 ? undefined : (
+                                    <Typography>No attachments have been added</Typography>
+                                )}
                                 {this.state.srcUrls.map((src, index) => {
                                     const originalImagePathArray = this.state.attachmentUrls[index].path.split('/')
                                     const originalImagePath = originalImagePathArray[originalImagePathArray.length - 1];
