@@ -34,7 +34,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         loadingSlimCases: true,
         moreCasesExist: true,
         page: 0,
-        limit: 5,
+        limit: 20,
         startingSlimCases: [],
     }
 
