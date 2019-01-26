@@ -172,16 +172,6 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                                 ) : undefined}
                             </Table>
                         </div>
-                        {/* <div className={attachmentButtonsContainer}>
-                            { this.state.attachmentUrls.length > 0 ? (
-                                <Button
-                                    disabled={this.state.projectInformationIsLoading}
-                                    className={seeAttachmentsButton}
-                                    color="secondary">
-                                    See Attachments ({this.state.attachmentUrls.length})
-                                </Button>
-                            ) : undefined}
-                        </div> */}
                     </Paper>
                     <Paper className={evenPaper}>
                         <div>
@@ -262,61 +252,59 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                         }
                     ]}
                 />
-                {this.state.srcUrls.length > 0 ? (
-                    <div className={attachmentsContainer}>
-                        <Paper>
-                            <Toolbar className={attachmentToolbar}>
-                                <Typography variant="title">
-                                    Attachments
-                                </Typography>
-                                <AsyncButton
-                                    disabled={this.state.addAttachmentInProgress || this.state.projectInformationIsLoading}
-                                    asyncActionInProgress={this.state.addAttachmentInProgress}
-                                    className={addAttachmentButton}
-                                    color="secondary"
-                                >
-                                    <input
-                                        type="file"
-                                        className={addAttachmentInput}
-                                        value={this.state.filePath}
-                                        onChange={this.handleFileSelection}
-                                    />
-                                    Add An Attachment
-                                </AsyncButton>
-                            </Toolbar>
-                            <div className={imgContainer}>
-                                    {this.state.srcUrls.map((src, index) => {
-                                        const originalImagePathArray = this.state.attachmentUrls[index].path.split('/')
-                                        const originalImagePath = originalImagePathArray[originalImagePathArray.length - 1];
-                                        return (
-                                            <Paper key={index} className={imagePaper} onMouseEnter={this.setHoverItem(index)} onMouseLeave={this.removeHoverItem}>
-                                                {src.startsWith('contentType:') ? (
-                                                    <div className={iconContainer}>
-                                                        <DocumentIcon className={documentIcon} color="secondary"/>
-                                                        <div className={documentFilePathContainer}>
-                                                            <Typography variant="body1" className={documentFilePath}>{originalImagePath}</Typography>
-                                                        </div>
+                <div className={attachmentsContainer}>
+                    <Paper>
+                        <Toolbar className={attachmentToolbar}>
+                            <Typography variant="title">
+                                Attachments
+                            </Typography>
+                            <AsyncButton
+                                disabled={this.state.addAttachmentInProgress || this.state.projectInformationIsLoading}
+                                asyncActionInProgress={this.state.addAttachmentInProgress}
+                                className={addAttachmentButton}
+                                color="secondary"
+                            >
+                                <input
+                                    type="file"
+                                    className={addAttachmentInput}
+                                    value={this.state.filePath}
+                                    onChange={this.handleFileSelection}
+                                />
+                                Add An Attachment
+                            </AsyncButton>
+                        </Toolbar>
+                        <div className={imgContainer}>
+                                {this.state.srcUrls.map((src, index) => {
+                                    const originalImagePathArray = this.state.attachmentUrls[index].path.split('/')
+                                    const originalImagePath = originalImagePathArray[originalImagePathArray.length - 1];
+                                    return (
+                                        <Paper key={index} className={imagePaper} onMouseEnter={this.setHoverItem(index)} onMouseLeave={this.removeHoverItem}>
+                                            {src.startsWith('contentType:') ? (
+                                                <div className={iconContainer}>
+                                                    <DocumentIcon className={documentIcon} color="secondary"/>
+                                                    <div className={documentFilePathContainer}>
+                                                        <Typography variant="body1" className={documentFilePath}>{originalImagePath}</Typography>
                                                     </div>
-                                                ) : (
-                                                    <img src={src} className={img}/>
-                                                )}
-                                                {this.state.indexOfHoveredItem === index ? (
-                                                    <div className={downloadIconContainer} onClick={this.downloadImage(this.state.attachmentUrls[index].path)}>
-                                                        <DownloadIcon className={downloadIcon} color="secondary"/>
-                                                    </div>
-                                                ): undefined}
-                                                {this.state.indexOfHoveredItem === index ? (
-                                                    <div className={cancelIconContainer} onClick={this.removeImage(this.state.attachmentUrls[index].path, index)}>
-                                                        <CancelIcon className={cancelIcon} color="secondary"/>
-                                                    </div>
-                                                ) : undefined}
-                                            </Paper>
-                                        )
-                                    })}
-                            </div>
-                        </Paper>
-                    </div>
-                ) : undefined}
+                                                </div>
+                                            ) : (
+                                                <img src={src} className={img}/>
+                                            )}
+                                            {this.state.indexOfHoveredItem === index ? (
+                                                <div className={downloadIconContainer} onClick={this.downloadImage(this.state.attachmentUrls[index].path)}>
+                                                    <DownloadIcon className={downloadIcon} color="secondary"/>
+                                                </div>
+                                            ): undefined}
+                                            {this.state.indexOfHoveredItem === index ? (
+                                                <div className={cancelIconContainer} onClick={this.removeImage(this.state.attachmentUrls[index].path, index)}>
+                                                    <CancelIcon className={cancelIcon} color="secondary"/>
+                                                </div>
+                                            ) : undefined}
+                                        </Paper>
+                                    )
+                                })}
+                        </div>
+                    </Paper>
+                </div>
             </div>
         );
     }
