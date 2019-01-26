@@ -1,4 +1,4 @@
-import { Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormHelperText, Input, InputLabel, withTheme } from '@material-ui/core';
+import { Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormHelperText, Input, InputLabel, withTheme } from '@material-ui/core';
 import {
     Button,
     Paper,
@@ -20,15 +20,18 @@ import * as _ from 'lodash';
 import { cloneDeep } from 'lodash';
 import { DateFormatInput } from 'material-ui-next-pickers';
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { FormControlState } from 'src/Classes/formControlState';
 import { AsyncButton } from 'src/Components/AsyncButton/AsyncButton';
 import { QRCodeDisplay } from 'src/Components/QRCodeDisplay/QRCodeDisplay';
 import { IAttachmentMetadata } from 'src/Models/attachmentMetadata';
+import { IAppState } from 'src/Redux/Reducers/rootReducer';
 import { requiredValidator } from 'src/Validators/required.validator';
 import Api from '../../Api/api';
 import { ICheckpoint } from '../../Models/checkpoint';
 import { createProjectPresentationClasses, IProjectPresentationProps, IProjectPresentationState } from './Project.ias';
+
 
 class ProjectPresentation extends React.Component<IProjectPresentationProps, IProjectPresentationState> {
     public state: IProjectPresentationState = {
@@ -128,18 +131,28 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             downloadIcon,
         } = createProjectPresentationClasses(this.props, this.state, this.props.theme);
 
-        // tslint:disable-next-line:no-console
-        console.log(this.state.checkpoints);
+        const companyId = this.props.location.pathname.split('/')[2];
+        const userIsDoctor = this.props.userState[companyId].type === 'Customer';
         const mappedCheckpoints = this.state.checkpoints ? (
-            this.state.checkpoints!.map((checkpoint: ICheckpoint, index: number) => (
-                <TableRow key={index}>
-                    <TableCell>{checkpoint.name}</TableCell>
-                    <TableCell>{checkpoint.estimatedCompletionTime}</TableCell>
-                    <TableCell>{checkpoint.complete ? (
-                        <DoneIcon/>
-                    ) : undefined}</TableCell>
-                </TableRow>
-            )
+            this.state.checkpoints!.map((checkpoint: ICheckpoint, index: number) => {
+                return (
+                    <TableRow key={index}>
+                        <TableCell>{checkpoint.name}</TableCell>
+                        <TableCell>{checkpoint.estimatedCompletionTime}</TableCell>
+                        <TableCell>
+                            {userIsDoctor && checkpoint.complete ? (
+                                <DoneIcon/>
+                            ) : !userIsDoctor ? (
+                                <Checkbox
+                                    checked={checkpoint.complete}
+                                    onChange={this.handleCheckpointChange(checkpoint, index)}
+                                    color="primary"
+                                />
+                            ) : undefined}
+                        </TableCell>
+                    </TableRow>
+                )
+            }
         )) : <div/>;
 
         return (
@@ -310,6 +323,28 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                 </div>
             </div>
         );
+    }
+
+    private handleCheckpointChange = (checkpoint: ICheckpoint, index: number) => async() => {
+        const checkpoints = this.state.checkpoints!.map((compareCheckpoint, compareIndex) => {
+            if (index === compareIndex) {
+                return {
+                    ...checkpoint,
+                    complete: !compareCheckpoint.complete,
+                }
+            } else {
+                return compareCheckpoint;
+            }
+        })
+
+        this.setState({
+            checkpoints,
+        })
+
+        const companyId = this.props.location.pathname.split('/')[2];
+        const currentUserUid = this.props.userState[companyId].uid;
+        const completedBy = !checkpoint.complete ? currentUserUid : undefined;
+        await Api.projectsApi.updateCaseCheckpoint(checkpoint.id, !checkpoint.complete, completedBy)
     }
 
     private prettyPrintDate = (date: Date) => {
@@ -544,4 +579,10 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
     }
 }
 
-export const Project = withRouter(withTheme()(ProjectPresentation));
+const mapStateToProps = ({ userState }: IAppState) => ({
+    userState
+});
+
+
+const connectedComponent = connect(mapStateToProps)(ProjectPresentation as any);
+export const Project = withRouter(withTheme()(connectedComponent as any) as any);

@@ -1,4 +1,5 @@
 export interface IAugmentedCheckpoint {
+    id: string;
     complete: boolean;
     completedDate: Date | null;
     completedBy: string | null;

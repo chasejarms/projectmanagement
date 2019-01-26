@@ -191,6 +191,7 @@ export class CheckpointsPresentation extends React.Component<ICheckpointsProps, 
 
     private handleSave = () => {
         const newCheckpoint: ICheckpoint = {
+            id: '',
             name: this.state.checkpointName,
             complete: false,
             estimatedCompletionTime: '1 day',

@@ -4,10 +4,14 @@ import { RouteComponentProps } from 'react-router';
 import { FormControlState } from 'src/Classes/formControlState';
 import { IAttachmentMetadata } from 'src/Models/attachmentMetadata';
 import { ICheckpoint } from 'src/Models/checkpoint';
+import { IUserSliceOfState } from 'src/Redux/Reducers/userReducer';
 // import { ICase } from '../../Models/case';
 
 // tslint:disable-next-line:no-empty-interface
-export interface IProjectPresentationProps extends RouteComponentProps<{}>, WithTheme {}
+export interface IProjectPresentationProps extends RouteComponentProps<{}>, WithTheme {
+    userState: IUserSliceOfState;
+
+}
 
 export interface IProjectPresentationState {
     caseName: FormControlState<string>;

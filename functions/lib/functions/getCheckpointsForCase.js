@@ -40,11 +40,11 @@ exports.getCheckpointsLocal = (passedInAdmin) => functions.https.onCall(({ caseI
         return firestore.collection('caseCheckpoints').doc(caseCheckpointId).get();
     });
     const caseCheckpointDocumentSnapshots = yield Promise.all(getCaseCheckpointsPromises);
-    const caseCheckpointData = caseCheckpointDocumentSnapshots.map((caseCheckpointDocumentSnapshot) => {
-        return caseCheckpointDocumentSnapshot.data();
+    const caseCheckpointDataWithId = caseCheckpointDocumentSnapshots.map((caseCheckpointDocumentSnapshot) => {
+        return Object.assign({}, caseCheckpointDocumentSnapshot.data(), { id: caseCheckpointDocumentSnapshot.id });
     });
-    console.log('caseCheckpointData: ', caseCheckpointData);
-    const companyWorkflowCheckpointPromises = caseCheckpointData.map(({ linkedWorkflowCheckpoint }) => {
+    console.log('caseCheckpointDataWithId: ', caseCheckpointDataWithId);
+    const companyWorkflowCheckpointPromises = caseCheckpointDataWithId.map(({ linkedWorkflowCheckpoint }) => {
         return firestore.collection('workflowCheckpoints').doc(linkedWorkflowCheckpoint).get();
     });
     const companyWorkflowCheckpointSnapshots = yield Promise.all(companyWorkflowCheckpointPromises);
@@ -53,9 +53,9 @@ exports.getCheckpointsLocal = (passedInAdmin) => functions.https.onCall(({ caseI
         return acc;
     }, {});
     console.log('workflowCheckpointDataDictionary: ', workflowCheckpointDataDictionary);
-    const unfilteredCheckpoints = caseCheckpointData.map((caseCheckpoint) => {
+    const unfilteredCheckpoints = caseCheckpointDataWithId.map((caseCheckpoint) => {
         const associatedWorkflowCheckpoint = workflowCheckpointDataDictionary[caseCheckpoint.linkedWorkflowCheckpoint];
-        return Object.assign({}, caseCheckpoint, associatedWorkflowCheckpoint);
+        return Object.assign({}, caseCheckpoint, associatedWorkflowCheckpoint, { id: caseCheckpoint.id });
     });
     console.log('unfilteredCheckpoints: ', unfilteredCheckpoints);
     if (isAdminOrStaff) {

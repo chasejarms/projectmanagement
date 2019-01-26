@@ -75,6 +75,10 @@ export class MockProjectsApi implements ICaseApi {
         throw new Error("Method not implemented");
     }
 
+    public async updateCaseCheckpoint(checkpointId: string, complete: boolean, completedBy?: string): Promise<boolean> {
+        throw new Error("Method not implemented");
+    }
+
     private setUpSlimProjects(defaultProject: boolean, projectsAlreadyExist: boolean) {
         if (defaultProject && !projectsAlreadyExist) {
             localStorage.setItem(

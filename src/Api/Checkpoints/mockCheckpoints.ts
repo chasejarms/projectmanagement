@@ -11,6 +11,7 @@ export class MockCheckpointsApi implements ICheckpointsApi {
         const initialCheckpoints: ICheckpoint[] = workflow.map((workflowCheckpoint, index) => {
 
             const checkpoint: ICheckpoint = {
+                id: '',
                 name: workflowCheckpoint.name,
                 estimatedCompletionTime: '1 days',
                 visibleToDoctor: true,

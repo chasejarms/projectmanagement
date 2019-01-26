@@ -7,6 +7,7 @@ interface IGetCaseCheckpointsData {
 }
 
 interface IAugmentedCheckpoint {
+    id: string;
     complete: boolean;
     completedDate: Date | null;
     completedBy: string | null;
@@ -17,6 +18,7 @@ interface IAugmentedCheckpoint {
 }
 
 interface ICaseCheckpoint {
+    id: string;
     complete: boolean;
     completedDate: Date | null;
     completedBy: string | null;
@@ -75,13 +77,16 @@ export const getCheckpointsLocal = (passedInAdmin: admin.app.App) => functions.h
 
     const caseCheckpointDocumentSnapshots = await Promise.all(getCaseCheckpointsPromises);
 
-    const caseCheckpointData = caseCheckpointDocumentSnapshots.map((caseCheckpointDocumentSnapshot) => {
-        return caseCheckpointDocumentSnapshot.data();
+    const caseCheckpointDataWithId = caseCheckpointDocumentSnapshots.map((caseCheckpointDocumentSnapshot) => {
+        return {
+            ...caseCheckpointDocumentSnapshot.data(),
+            id: caseCheckpointDocumentSnapshot.id,
+        } as any;
     });
 
-    console.log('caseCheckpointData: ', caseCheckpointData);
+    console.log('caseCheckpointDataWithId: ', caseCheckpointDataWithId);
 
-    const companyWorkflowCheckpointPromises = caseCheckpointData.map(({ linkedWorkflowCheckpoint }) => {
+    const companyWorkflowCheckpointPromises = caseCheckpointDataWithId.map(({ linkedWorkflowCheckpoint }) => {
         return firestore.collection('workflowCheckpoints').doc(linkedWorkflowCheckpoint).get();
     })
 
@@ -94,11 +99,12 @@ export const getCheckpointsLocal = (passedInAdmin: admin.app.App) => functions.h
 
     console.log('workflowCheckpointDataDictionary: ', workflowCheckpointDataDictionary);
 
-    const unfilteredCheckpoints: IAugmentedCheckpoint[] = caseCheckpointData.map((caseCheckpoint: ICaseCheckpoint) => {
+    const unfilteredCheckpoints: IAugmentedCheckpoint[] = caseCheckpointDataWithId.map((caseCheckpoint: ICaseCheckpoint) => {
         const associatedWorkflowCheckpoint = workflowCheckpointDataDictionary[caseCheckpoint.linkedWorkflowCheckpoint];
         return {
             ...caseCheckpoint,
             ...associatedWorkflowCheckpoint,
+            id: caseCheckpoint.id,
         }
     })
 
