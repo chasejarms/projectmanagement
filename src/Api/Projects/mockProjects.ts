@@ -13,13 +13,13 @@ export const largeProjectsKey = `${mockApiKey}largeProjects`;
 
 export class MockProjectsApi implements ICaseApi {
     constructor(defaultProject: boolean) {
-        this.getSlimCases('does not matter' as any).then((projects) => {
+        this.getSlimCases('does not matter' as any, '', '').then((projects) => {
             const projectsAlreadyExist = !!projects && !!projects.length;
             this.setUpSlimProjects(defaultProject, projectsAlreadyExist);
         });
     }
 
-    public getSlimCases(slimCasesSearchRequest: ISlimCasesSearchRequest): Promise<ISlimCase[]> {
+    public getSlimCases(slimCasesSearchRequest: ISlimCasesSearchRequest, userType: string, userId: string): Promise<ISlimCase[]> {
         const stringifiedSlimProjects = localStorage.getItem(slimProjectsKey);
         const slimProjects = JSON.parse(stringifiedSlimProjects!);
         return Promise.resolve(_.cloneDeep(slimProjects));
@@ -132,7 +132,7 @@ export class MockProjectsApi implements ICaseApi {
             created: deadline.toUTCString(),
         } as any;
 
-        const existingSlimProjects = await this.getSlimCases('does not matter' as any);
+        const existingSlimProjects = await this.getSlimCases('does not matter' as any, '', '');
         const slimProjectsWithNewProject = existingSlimProjects.concat([slimProjectToUpdate]);
         const stringifiedSlimProjects = JSON.stringify(slimProjectsWithNewProject);
         localStorage.setItem(

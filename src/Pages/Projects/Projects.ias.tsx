@@ -70,6 +70,13 @@ export const createProjectsPresentationClasses = (
         visibility: 'hidden',
     });
 
+    const arrowContainer = css({
+        display: 'flex',
+        width: '100%',
+        height: '100%',
+        justifyContent: 'flex-end',
+    });
+
     return {
         rowStyling,
         projectsContainer,
@@ -80,5 +87,6 @@ export const createProjectsPresentationClasses = (
         table,
         tableContainer,
         hiddenDiv,
+        arrowContainer,
     };
 }

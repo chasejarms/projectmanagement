@@ -4,7 +4,7 @@ import * as admin from 'firebase-admin';
 interface ICasesSearchRequest {
     companyId: string;
     limit: number;
-    startAfter?: FirebaseFirestore.DocumentSnapshot
+    startAfter: string;
 }
 
 export const getCasesLocal = (passedInAdmin: admin.app.App) => functions.https.onCall(async({

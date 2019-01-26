@@ -1,5 +1,6 @@
 import {
     IconButton,
+    TableFooter,
     Toolbar,
     Tooltip,
     Typography,
@@ -11,6 +12,8 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import AddIcon from '@material-ui/icons/Add';
+import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
+import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import PrintIcon from '@material-ui/icons/Print';
 import * as React from 'react';
@@ -38,7 +41,10 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
             limit: 5,
         }
 
-        Api.projectsApi.getSlimCases(slimCasesSearchRequest).then((slimCases) => {
+        const userType = this.props.userState[companyId].type;
+        const userId = this.props.userState[companyId].uid;
+
+        Api.projectsApi.getSlimCases(slimCasesSearchRequest, userType, userId).then((slimCases) => {
             const moreCasesExist = slimCases.length === 5;
             this.setState({
                 slimCases,
@@ -55,6 +61,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
             projectsToolbarContainer,
             projectsPaper,
             tableBody,
+            arrowContainer,
             tableContainer,
         } = createProjectsPresentationClasses(this.props, this.state);
 
@@ -124,6 +131,20 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                             <TableBody className={tableBody}>
                                 {mappedProjects}
                             </TableBody>
+                            <TableFooter>
+                                <TableRow>
+                                    <TableCell colSpan={4}>
+                                        <div className={arrowContainer}>
+                                            <IconButton onClick={this.loadPreviousCases}>
+                                                <KeyboardArrowLeftIcon/>
+                                            </IconButton>
+                                            <IconButton onClick={this.loadNextCases}>
+                                                <KeyboardArrowRightIcon/>
+                                            </IconButton>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            </TableFooter>
                         </Table>
                     </div>
                 </Paper>
@@ -132,6 +153,14 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                 ) : undefined}
             </div>
         )
+    }
+
+    private loadPreviousCases = () => {
+        //
+    }
+
+    private loadNextCases = () => {
+        //
     }
 
     private printQRCodes = async() => {

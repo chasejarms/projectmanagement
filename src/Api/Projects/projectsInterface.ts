@@ -31,7 +31,7 @@ export interface IUpdateCaseInformationRequest {
 }
 
 export interface ICaseApi {
-    getSlimCases(slimCaseSearchRequest: ISlimCasesSearchRequest): Promise<ISlimCase[]>;
+    getSlimCases(slimCaseSearchRequest: ISlimCasesSearchRequest, userType: string, userId: string): Promise<ISlimCase[]>;
     createProject(companyId: string, projectCreateRequest: ICaseCreateRequest): Promise<ICase>;
     getProject(projectId: string): Promise<ICase>;
     getProjectCheckpoints(getCaseRequest: IGetCaseCheckpointsRequest): Promise<IAugmentedCheckpoint[]>;

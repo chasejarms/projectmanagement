@@ -1,20 +1,35 @@
 import * as firebase from 'firebase';
+import { db } from 'src/firebase';
 import { IAugmentedCheckpoint } from 'src/Models/augmentedCheckpoint';
 import { ICase } from './../../Models/case';
 import { ISlimCase } from './../../Models/slimCase';
 import { ICaseApi, ICaseCreateRequest, IGetCaseCheckpointsRequest, ISlimCasesSearchRequest, IUpdateCaseInformationRequest } from './projectsInterface';
 
 export class ProjectsApi implements ICaseApi {
-    public async getSlimCases(slimCasesSearchRequest: ISlimCasesSearchRequest): Promise<ISlimCase[]> {
-        const slimProjectsCloudFunction = firebase.functions().httpsCallable('getCases');
-        let slimProjectsResult: firebase.functions.HttpsCallableResult;
-        try {
-            slimProjectsResult = await slimProjectsCloudFunction(slimCasesSearchRequest);
-        } catch (error) {
-            return Promise.reject(error.message);
+    public async getSlimCases(slimCasesSearchRequest: ISlimCasesSearchRequest, userType: string, userId: string): Promise<ISlimCase[]> {
+        let query: any = db.collection('slimCases')
+            .where('companyId', '==', slimCasesSearchRequest.companyId)
+            .orderBy('deadline', 'asc')
+            .limit(slimCasesSearchRequest.limit);
+
+        if (userType === 'Customer') {
+            query = query.where('doctor', '==', userId)
         }
 
-        return slimProjectsResult.data;
+        if (slimCasesSearchRequest.startAfter) {
+            query = query.startAfter(slimCasesSearchRequest.startAfter);
+        }
+
+        const slimCases = await query.get();
+        const slimCasesList: ISlimCase[] = [];
+        slimCases.forEach((document: any) => {
+            slimCasesList.push({
+                ...document.data(),
+                id: document.id,
+            })
+        })
+
+        return slimCasesList;
     }
 
     public async createProject(companyId: string, projectCreateRequest: ICaseCreateRequest): Promise<ICase> {
