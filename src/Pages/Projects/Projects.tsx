@@ -22,6 +22,7 @@ import { withRouter } from 'react-router';
 import { ISlimCasesSearchRequest } from 'src/Api/Projects/projectsInterface';
 import { QRCodeDisplay } from 'src/Components/QRCodeDisplay/QRCodeDisplay';
 import { IQRCodeKeys } from 'src/Components/QRCodeDisplay/QRCodeDisplay.ias';
+import { ISlimCase } from 'src/Models/slimCase';
 import { IAppState } from 'src/Redux/Reducers/rootReducer';
 import Api from '../../Api/api';
 import { createProjectsPresentationClasses, IProjectsPresentationProps, IProjectsPresentationState } from './Projects.ias';
@@ -32,24 +33,36 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         qrCodeKeys: null,
         loadingSlimCases: true,
         moreCasesExist: true,
+        page: 0,
+        limit: 5,
+        startingSlimCases: [],
     }
 
     public async componentWillMount(): Promise<void> {
         const companyId = this.props.match.path.split('/')[2];
         const slimCasesSearchRequest: ISlimCasesSearchRequest = {
             companyId,
-            limit: 5,
+            limit: this.state.limit,
         }
 
         const userType = this.props.userState[companyId].type;
         const userId = this.props.userState[companyId].uid;
 
-        Api.projectsApi.getSlimCases(slimCasesSearchRequest, userType, userId).then((slimCases) => {
+        Api.projectsApi.getSlimCases(slimCasesSearchRequest, userType, userId).then((slimCaseDocumentSnapshots) => {
+            const slimCases: ISlimCase[] = [];
+            slimCaseDocumentSnapshots.forEach((document) => {
+                slimCases.push({
+                    caseId: document.id,
+                    document,
+                    ...document.data() as any,
+                })
+            });
             const moreCasesExist = slimCases.length === 5;
             this.setState({
                 slimCases,
                 loadingSlimCases: false,
                 moreCasesExist,
+                startingSlimCases: [slimCases[0]],
             })
         });
     }
@@ -135,10 +148,10 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                                 <TableRow>
                                     <TableCell colSpan={4}>
                                         <div className={arrowContainer}>
-                                            <IconButton onClick={this.loadPreviousCases}>
+                                            <IconButton onClick={this.loadPreviousCases} disabled={this.state.page === 0}>
                                                 <KeyboardArrowLeftIcon/>
                                             </IconButton>
-                                            <IconButton onClick={this.loadNextCases}>
+                                            <IconButton onClick={this.loadNextCases} disabled={this.noMoreCasesAvailable()}>
                                                 <KeyboardArrowRightIcon/>
                                             </IconButton>
                                         </div>
@@ -156,11 +169,78 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
     }
 
     private loadPreviousCases = () => {
-        //
+        if (this.state.page === 0) {
+            return;
+        }
+
+        const companyId = this.props.match.path.split('/')[2];
+        const slimCasesSearchRequest: ISlimCasesSearchRequest = {
+            companyId,
+            limit: this.state.limit,
+            startAt: this.state.startingSlimCases[this.state.page - 1].document,
+        }
+
+        const userType = this.props.userState[companyId].type;
+        const userId = this.props.userState[companyId].uid;
+
+        Api.projectsApi.getSlimCases(slimCasesSearchRequest, userType, userId).then((slimCaseDocumentSnapshots) => {
+            const slimCases: ISlimCase[] = [];
+            slimCaseDocumentSnapshots.forEach((document) => {
+                slimCases.push({
+                    caseId: document.id,
+                    document,
+                    ...document.data() as any,
+                })
+            });
+            const moreCasesExist = slimCases.length === 5;
+            this.setState({
+                slimCases,
+                loadingSlimCases: false,
+                moreCasesExist,
+                page: this.state.page - 1,
+            })
+        });
     }
 
     private loadNextCases = () => {
-        //
+        if (this.noMoreCasesAvailable()) {
+            return;
+        }
+
+        const companyId = this.props.match.path.split('/')[2];
+        const slimCasesSearchRequest: ISlimCasesSearchRequest = {
+            companyId,
+            limit: this.state.limit,
+            startAfter: this.state.slimCases[this.state.slimCases.length - 1].document,
+        }
+
+        const userType = this.props.userState[companyId].type;
+        const userId = this.props.userState[companyId].uid;
+
+        Api.projectsApi.getSlimCases(slimCasesSearchRequest, userType, userId).then((slimCaseDocumentSnapshots) => {
+            const slimCases: ISlimCase[] = [];
+            slimCaseDocumentSnapshots.forEach((document) => {
+                slimCases.push({
+                    caseId: document.id,
+                    document,
+                    ...document.data() as any,
+                })
+            });
+            const moreCasesExist = slimCases.length === 5;
+            const startingSlimCases = this.state.startingSlimCases;
+            startingSlimCases[this.state.page + 1] = slimCases[0];
+            this.setState({
+                slimCases,
+                loadingSlimCases: false,
+                moreCasesExist,
+                page: this.state.page + 1,
+                startingSlimCases,
+            })
+        });
+    }
+
+    private noMoreCasesAvailable = () => {
+        return this.state.slimCases.length !== this.state.limit;
     }
 
     private printQRCodes = async() => {

@@ -2,15 +2,14 @@ import * as firebase from 'firebase';
 import { db } from 'src/firebase';
 import { IAugmentedCheckpoint } from 'src/Models/augmentedCheckpoint';
 import { ICase } from './../../Models/case';
-import { ISlimCase } from './../../Models/slimCase';
+// import { ISlimCase } from './../../Models/slimCase';
 import { ICaseApi, ICaseCreateRequest, IGetCaseCheckpointsRequest, ISlimCasesSearchRequest, IUpdateCaseInformationRequest } from './projectsInterface';
 
 export class ProjectsApi implements ICaseApi {
-    public async getSlimCases(slimCasesSearchRequest: ISlimCasesSearchRequest, userType: string, userId: string): Promise<ISlimCase[]> {
+    public async getSlimCases(slimCasesSearchRequest: ISlimCasesSearchRequest, userType: string, userId: string): Promise<FirebaseFirestore.QueryDocumentSnapshot[]> {
         let query: any = db.collection('slimCases')
             .where('companyId', '==', slimCasesSearchRequest.companyId)
             .orderBy('deadline', 'asc')
-            .limit(slimCasesSearchRequest.limit);
 
         if (userType === 'Customer') {
             query = query.where('doctor', '==', userId)
@@ -20,13 +19,14 @@ export class ProjectsApi implements ICaseApi {
             query = query.startAfter(slimCasesSearchRequest.startAfter);
         }
 
-        const slimCases = await query.get();
-        const slimCasesList: ISlimCase[] = [];
+        if (slimCasesSearchRequest.startAt) {
+            query = query.startAt(slimCasesSearchRequest.startAt);
+        }
+
+        const slimCases = await query.limit(slimCasesSearchRequest.limit).get();
+        const slimCasesList: FirebaseFirestore.QueryDocumentSnapshot[] = [];
         slimCases.forEach((document: any) => {
-            slimCasesList.push({
-                ...document.data(),
-                id: document.id,
-            })
+            slimCasesList.push(document);
         })
 
         return slimCasesList;

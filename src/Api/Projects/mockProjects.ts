@@ -19,7 +19,7 @@ export class MockProjectsApi implements ICaseApi {
         });
     }
 
-    public getSlimCases(slimCasesSearchRequest: ISlimCasesSearchRequest, userType: string, userId: string): Promise<ISlimCase[]> {
+    public getSlimCases(slimCasesSearchRequest: ISlimCasesSearchRequest, userType: string, userId: string): Promise<any[]> {
         const stringifiedSlimProjects = localStorage.getItem(slimProjectsKey);
         const slimProjects = JSON.parse(stringifiedSlimProjects!);
         return Promise.resolve(_.cloneDeep(slimProjects));

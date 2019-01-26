@@ -14,6 +14,9 @@ export interface IProjectsPresentationState {
     qrCodeKeys: IQRCodeKeys[] | null;
     loadingSlimCases: boolean;
     moreCasesExist: boolean;
+    page: number;
+    limit: number;
+    startingSlimCases: ISlimCase[];
 }
 
 export const createProjectsPresentationClasses = (

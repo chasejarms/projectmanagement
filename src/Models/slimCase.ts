@@ -8,4 +8,5 @@ export interface ISlimCase {
     doctorName: string;
     created: string;
     showNewInfoFrom: 'Doctor' | 'Lab' | null;
+    document: FirebaseFirestore.QueryDocumentSnapshot;
 }

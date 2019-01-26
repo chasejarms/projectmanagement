@@ -1,7 +1,7 @@
 import { IAttachmentMetadata } from 'src/Models/attachmentMetadata';
 import { IAugmentedCheckpoint } from './../../Models/augmentedCheckpoint';
 import { ICase } from './../../Models/case';
-import { ISlimCase } from './../../Models/slimCase';
+// import { ISlimCase } from './../../Models/slimCase';
 
 export interface ICaseCreateRequest {
     name: string;
@@ -17,6 +17,7 @@ export interface ISlimCasesSearchRequest {
     companyId: string;
     limit: number;
     startAfter?: FirebaseFirestore.DocumentSnapshot,
+    startAt?: FirebaseFirestore.DocumentSnapshot,
 }
 
 export interface IGetCaseCheckpointsRequest {
@@ -31,7 +32,7 @@ export interface IUpdateCaseInformationRequest {
 }
 
 export interface ICaseApi {
-    getSlimCases(slimCaseSearchRequest: ISlimCasesSearchRequest, userType: string, userId: string): Promise<ISlimCase[]>;
+    getSlimCases(slimCaseSearchRequest: ISlimCasesSearchRequest, userType: string, userId: string): Promise<FirebaseFirestore.QueryDocumentSnapshot[]>;
     createProject(companyId: string, projectCreateRequest: ICaseCreateRequest): Promise<ICase>;
     getProject(projectId: string): Promise<ICase>;
     getProjectCheckpoints(getCaseRequest: IGetCaseCheckpointsRequest): Promise<IAugmentedCheckpoint[]>;
