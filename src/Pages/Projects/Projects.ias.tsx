@@ -17,6 +17,7 @@ export interface IProjectsPresentationState {
     page: number;
     limit: number;
     startingSlimCases: ISlimCase[];
+    retrievingQRCodes: boolean;
 }
 
 export const createProjectsPresentationClasses = (

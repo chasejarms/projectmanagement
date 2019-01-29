@@ -36,6 +36,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         page: 0,
         limit: 20,
         startingSlimCases: [],
+        retrievingQRCodes: false,
     }
 
     public async componentWillMount(): Promise<void> {
@@ -113,6 +114,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                         <div>
                             <Tooltip title="Print New Project QR Codes" placement="left">
                                 <IconButton
+                                    disabled={this.state.retrievingQRCodes}
                                     aria-label="Print QR Codes"
                                     onClick={this.printQRCodes}
                                     color="secondary"
@@ -246,6 +248,10 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
     private printQRCodes = async() => {
         const companyId = this.props.match.path.split('/')[2];
 
+        this.setState({
+            retrievingQRCodes: true,
+        })
+
         const cases = await Api.projectsApi.getNewCases(companyId);
         // tslint:disable-next-line:no-console
         console.log('cases: ', cases);
@@ -265,6 +271,9 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         })
 
         setTimeout(() => {
+            this.setState({
+                retrievingQRCodes: false,
+            })
             window.print();
         }, 1000);
     }
