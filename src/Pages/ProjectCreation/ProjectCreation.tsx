@@ -118,6 +118,10 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         });
     }
 
+    public componentWillUnmount = (): void => {
+        this.props.resetProjectCreation();
+    }
+
     public render() {
         const companyId = this.props.match.path.split('/')[2];
 
