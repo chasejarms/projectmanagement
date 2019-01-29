@@ -10,9 +10,7 @@ interface IUserCreateRequest {
     scanCheckpoints?: string[];
 }
 
-export const createUserLocal = (passedInAdmin: admin.app.App) => functions.https.onCall(async(data: IUserCreateRequest, context) => {
-    const firestore = passedInAdmin.firestore();
-    const auth = passedInAdmin.auth();
+export const createUserLocal = (auth: admin.auth.Auth, firestore: FirebaseFirestore.Firestore) => functions.https.onCall(async(data: IUserCreateRequest, context) => {
     const uid = context.auth.uid;
     console.log('uid is: ', uid);
 

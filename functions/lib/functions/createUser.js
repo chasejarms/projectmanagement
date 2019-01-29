@@ -9,9 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const functions = require("firebase-functions");
-exports.createUserLocal = (passedInAdmin) => functions.https.onCall((data, context) => __awaiter(this, void 0, void 0, function* () {
-    const firestore = passedInAdmin.firestore();
-    const auth = passedInAdmin.auth();
+exports.createUserLocal = (auth, firestore) => functions.https.onCall((data, context) => __awaiter(this, void 0, void 0, function* () {
     const uid = context.auth.uid;
     console.log('uid is: ', uid);
     const userQueryPromise = firestore.collection('users')
