@@ -12,7 +12,7 @@ export const markProjectAsStartedLocal = (passedInAdmin: admin.app.App) => funct
     }
 
     const project = await passedInAdmin.firestore().collection('cases').doc(after.data().caseId).get();
-    if (project.data().hasStarted) {
+    if (!project.data().hasStarted) {
         await passedInAdmin.firestore().collection('cases').doc(after.data().caseId).set({
             hasStarted: true,
         }, { merge: true });

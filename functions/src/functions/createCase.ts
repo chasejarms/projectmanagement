@@ -65,13 +65,15 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
 
     const workflowCheckpoints: string[] = companyWorkflowsQuerySnapshot.docs[0].data().workflowCheckpoints;
     const checkpointCreationPromises = workflowCheckpoints.map((linkedWorkflowCheckpoint) => {
-        return firestore.collection('caseCheckpoints').add({
+        const caseCheckpointToAdd = {
             complete: false,
             completedDate: null,
             completedBy: null,
-            linkedWorkflowCheckpoint,
             caseId: data.idForCase,
-        })
+            linkedWorkflowCheckpoint,
+        }
+        console.log('case checkpoint to add: ', caseCheckpointToAdd);
+        return firestore.collection('caseCheckpoints').add(caseCheckpointToAdd);
     });
     const createdCheckpointDocumentReferences = await Promise.all(checkpointCreationPromises);
     const createdCheckpointDocumentIds = createdCheckpointDocumentReferences.map((documentReference) => {

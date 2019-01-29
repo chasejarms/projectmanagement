@@ -15,7 +15,7 @@ exports.markProjectAsStartedLocal = (passedInAdmin) => functions.firestore.docum
         return Promise.resolve();
     }
     const project = yield passedInAdmin.firestore().collection('cases').doc(after.data().caseId).get();
-    if (project.data().hasStarted) {
+    if (!project.data().hasStarted) {
         yield passedInAdmin.firestore().collection('cases').doc(after.data().caseId).set({
             hasStarted: true,
         }, { merge: true });
