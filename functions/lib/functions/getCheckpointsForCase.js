@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const functions = require("firebase-functions");
+const userTypes_1 = require("../models/userTypes");
 exports.getCheckpointsLocal = (passedInAdmin) => functions.https.onCall(({ caseId, companyId, }, context) => __awaiter(this, void 0, void 0, function* () {
     console.log('caseId: ', caseId);
     console.log('companyId: ', companyId);
@@ -32,7 +33,7 @@ exports.getCheckpointsLocal = (passedInAdmin) => functions.https.onCall(({ caseI
     }
     const userType = companyUserDocumentSnapshot.data().type;
     console.log('userType: ', userType);
-    const isAdminOrStaff = userType === 'Admin' || userType === 'Staff';
+    const isAdminOrStaff = userType === userTypes_1.UserType.Admin || userType === userTypes_1.UserType.Staff;
     console.log('isAdminOrStaff: ', isAdminOrStaff);
     const project = yield firestore.collection('cases').doc(caseId).get();
     const caseCheckpoints = project.data().caseCheckpoints;

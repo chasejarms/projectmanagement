@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const functions = require("firebase-functions");
+const userTypes_1 = require("../models/userTypes");
 exports.createUserLocal = (auth, firestore) => functions.https.onCall((data, context) => __awaiter(this, void 0, void 0, function* () {
     const uid = context.auth.uid;
     console.log('uid is: ', uid);
@@ -28,7 +29,7 @@ exports.createUserLocal = (auth, firestore) => functions.https.onCall((data, con
         userWeAreTryingToCreatePromise,
         companyDocumentPromise,
     ]);
-    const isAdmin = userQuerySnapshot.docs[0].data().type === 'Admin';
+    const isAdmin = userQuerySnapshot.docs[0].data().type === userTypes_1.UserType.Admin;
     if (!isAdmin) {
         throw new functions.https.HttpsError('permission-denied', 'You are not an admin user');
     }

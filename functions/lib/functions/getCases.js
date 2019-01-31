@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const functions = require("firebase-functions");
+const userTypes_1 = require("../models/userTypes");
 exports.getCasesLocal = (passedInAdmin) => functions.https.onCall(({ companyId, limit, startAfter, }, context) => __awaiter(this, void 0, void 0, function* () {
     const firestore = passedInAdmin.firestore();
     // check if the user is an admin or staff
@@ -28,7 +29,7 @@ exports.getCasesLocal = (passedInAdmin) => functions.https.onCall(({ companyId, 
     }
     const userType = companyUserDocumentSnapshot.data().type;
     console.log('userType: ', userType);
-    const isAdminOrStaff = userType === 'Admin' || userType === 'Staff';
+    const isAdminOrStaff = userType === userTypes_1.UserType.Admin || userType === userTypes_1.UserType.Staff;
     console.log('isAdminOrStaff: ', isAdminOrStaff);
     let slimCases;
     if (isAdminOrStaff) {

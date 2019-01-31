@@ -22,6 +22,7 @@ export const linkFileToProjectLocal = (passedInAdmin: admin.app.App) => function
             caseId,
         ] = filePath.split('/');
 
+        console.log('companyId: ', companyId);
         console.log('caseId: ', caseId);
 
         const caseDocumentReference = passedInAdmin.firestore().collection('cases').doc(caseId);

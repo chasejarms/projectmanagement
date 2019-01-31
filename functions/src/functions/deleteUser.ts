@@ -28,7 +28,6 @@ export const deleteUserLocal = (passedInAdmin: admin.app.App) => functions.https
     const [
         userQuerySnapshot,
         userWeAreTryingToDeleteSnapshot,
-        companyDocumentSnapshot,
     ] = await Promise.all([
         userQueryPromise,
         userWeAreTryingToDeletePromise,

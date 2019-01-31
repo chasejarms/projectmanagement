@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const functions = require("firebase-functions");
+const userTypes_1 = require("../models/userTypes");
 exports.deleteUserLocal = (passedInAdmin) => functions.https.onCall((deleteUserRequest, context) => __awaiter(this, void 0, void 0, function* () {
     const firestore = passedInAdmin.firestore();
     const uid = context.auth.uid;
@@ -23,22 +24,22 @@ exports.deleteUserLocal = (passedInAdmin) => functions.https.onCall((deleteUserR
     const companyDocumentPromise = firestore.collection('companies')
         .doc(deleteUserRequest.companyId)
         .get();
-    const [userQuerySnapshot, userWeAreTryingToDeleteSnapshot, companyDocumentSnapshot,] = yield Promise.all([
+    const [userQuerySnapshot, userWeAreTryingToDeleteSnapshot,] = yield Promise.all([
         userQueryPromise,
         userWeAreTryingToDeletePromise,
         companyDocumentPromise,
     ]);
-    const isAdmin = userQuerySnapshot.docs[0].data().type === 'Admin';
+    const isAdmin = userQuerySnapshot.docs[0].data().type === userTypes_1.UserType.Admin;
     if (!isAdmin) {
         throw new functions.https.HttpsError('permission-denied', 'You are not an admin user');
     }
     if (!userWeAreTryingToDeleteSnapshot.exists) {
         throw new functions.https.HttpsError('invalid-argument', 'That user you are trying to delete does not exist');
     }
-    if (userWeAreTryingToDeleteSnapshot.data().type === 'Admin') {
+    if (userWeAreTryingToDeleteSnapshot.data().type === userTypes_1.UserType.Admin) {
         const adminUsersQuerySnapshot = yield firestore.collection('users')
             .where('companyId', '==', deleteUserRequest.companyId)
-            .where('type', '==', 'Admin')
+            .where('type', '==', userTypes_1.UserType.Admin)
             .limit(2)
             .get();
         if (adminUsersQuerySnapshot.size < 1) {

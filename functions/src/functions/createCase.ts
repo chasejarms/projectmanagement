@@ -1,4 +1,4 @@
-import { ShowNewInfoFromType } from './../../../src/Models/showNewInfoFromTypes';
+import { ShowNewInfoFromType } from '../models/showNewInfoFromTypes';
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { UserType } from '../models/userTypes';
@@ -99,7 +99,7 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
         hasStarted: false,
     };
 
-    const caseDocumentReference = await firestore.collection('cases').doc(data.idForCase).set(caseToCreate);
+    await firestore.collection('cases').doc(data.idForCase).set(caseToCreate);
 
     return data.idForCase;
 });

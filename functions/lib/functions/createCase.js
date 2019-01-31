@@ -8,7 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const showNewInfoFromTypes_1 = require("../models/showNewInfoFromTypes");
 const functions = require("firebase-functions");
+const userTypes_1 = require("../models/userTypes");
 exports.createCaseLocal = (passedInAdmin) => functions.https.onCall((data, context) => __awaiter(this, void 0, void 0, function* () {
     console.log('data: ', data);
     const firestore = passedInAdmin.firestore();
@@ -28,7 +30,7 @@ exports.createCaseLocal = (passedInAdmin) => functions.https.onCall((data, conte
     }
     const userType = companyUserDocumentSnapshot.data().type;
     console.log('userType: ', userType);
-    const isAdminOrStaff = userType === 'Admin' || userType === 'Staff';
+    const isAdminOrStaff = userType === userTypes_1.UserType.Admin || userType === userTypes_1.UserType.Staff;
     console.log('isAdminOrStaff: ', isAdminOrStaff);
     const companyWorkflowsQuerySnapshot = yield firestore.collection('companyWorkflows')
         .where('companyId', '==', data.companyId)
@@ -61,10 +63,10 @@ exports.createCaseLocal = (passedInAdmin) => functions.https.onCall((data, conte
         created: new Date().toUTCString(),
         caseCheckpoints: createdCheckpointDocumentIds,
         companyId: data.companyId,
-        showNewInfoFrom: isAdminOrStaff ? 'Doctor' : 'Lab',
+        showNewInfoFrom: isAdminOrStaff ? showNewInfoFromTypes_1.ShowNewInfoFromType.Doctor : showNewInfoFromTypes_1.ShowNewInfoFromType.Lab,
         hasStarted: false,
     };
-    const caseDocumentReference = yield firestore.collection('cases').doc(data.idForCase).set(caseToCreate);
+    yield firestore.collection('cases').doc(data.idForCase).set(caseToCreate);
     return data.idForCase;
 }));
 //# sourceMappingURL=createCase.js.map

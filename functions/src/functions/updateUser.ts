@@ -15,6 +15,7 @@ interface IUser {
 }
 
 export const updateUserLocal = (passedInAdmin: admin.app.App) => functions.https.onCall(async(data: IUser, context) => {
+    console.log('update user is being called');
     const firestore = passedInAdmin.firestore();
     const uid = context.auth.uid;
     console.log('uid is: ', uid);
@@ -50,7 +51,10 @@ export const updateUserLocal = (passedInAdmin: admin.app.App) => functions.https
     const userBeforeUpdate = userWeAreTryingToUpdateSnapshot.docs[0].data() as IUser;
     const updatedUser = {};
 
+    console.log('updatedUser before checking type: ', updatedUser);
+
     if (userBeforeUpdate.type === UserType.Admin && data.type !== UserType.Admin) {
+        console.log('trying to change the last admin user');
         const adminUsersQuerySnapshot = await firestore.collection('users')
             .where('companyId', '==', data.companyId)
             .where('type', '==', UserType.Admin)
@@ -78,6 +82,8 @@ export const updateUserLocal = (passedInAdmin: admin.app.App) => functions.https
         updatedUser['scanCheckpoints'] = data.scanCheckpoints;
     }
 
+    console.log('updatedUser: ', updatedUser);
+
     const dataScanCheckpoints = new Set(data.scanCheckpoints);
     // tslint:disable-next-line:prefer-for-of
     for (let i = 0; i < userBeforeUpdate.scanCheckpoints.length; i++) {
@@ -100,9 +106,16 @@ export const updateUserLocal = (passedInAdmin: admin.app.App) => functions.https
                 merge: true,
             })
 
+        console.log('returned value: ', {
+            ...userWeAreTryingToUpdateSnapshot.docs[0].data(),
+            ...updatedUser,
+            id: userWeAreTryingToUpdateSnapshot.docs[0].id,
+        })
+
         return {
             ...userWeAreTryingToUpdateSnapshot.docs[0].data(),
             ...updatedUser,
+            id: userWeAreTryingToUpdateSnapshot.docs[0].id,
         }
     }
 })

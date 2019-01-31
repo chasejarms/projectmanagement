@@ -2,10 +2,10 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { UserType } from '../models/userTypes';
 
-interface IGetCaseCheckpointsData {
-    caseId: string;
-    companyId: string;
-}
+// interface IGetCaseCheckpointsData {
+//     caseId: string;
+//     companyId: string;
+// }
 
 interface IAugmentedCheckpoint {
     id: string;

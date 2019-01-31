@@ -9,7 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const functions = require("firebase-functions");
+const userTypes_1 = require("../models/userTypes");
 exports.updateUserLocal = (passedInAdmin) => functions.https.onCall((data, context) => __awaiter(this, void 0, void 0, function* () {
+    console.log('update user is being called');
     const firestore = passedInAdmin.firestore();
     const uid = context.auth.uid;
     console.log('uid is: ', uid);
@@ -25,7 +27,7 @@ exports.updateUserLocal = (passedInAdmin) => functions.https.onCall((data, conte
         userQueryPromise,
         userWeAreTryingToUpdate,
     ]);
-    const isAdmin = userQuerySnapshot.docs[0].data().type === 'Admin';
+    const isAdmin = userQuerySnapshot.docs[0].data().type === userTypes_1.UserType.Admin;
     if (!isAdmin) {
         throw new functions.https.HttpsError('permission-denied', 'You are not an admin user');
     }
@@ -34,10 +36,12 @@ exports.updateUserLocal = (passedInAdmin) => functions.https.onCall((data, conte
     }
     const userBeforeUpdate = userWeAreTryingToUpdateSnapshot.docs[0].data();
     const updatedUser = {};
-    if (userBeforeUpdate.type === 'Admin' && data.type !== 'Admin') {
+    console.log('updatedUser before checking type: ', updatedUser);
+    if (userBeforeUpdate.type === userTypes_1.UserType.Admin && data.type !== userTypes_1.UserType.Admin) {
+        console.log('trying to change the last admin user');
         const adminUsersQuerySnapshot = yield firestore.collection('users')
             .where('companyId', '==', data.companyId)
-            .where('type', '==', 'Admin')
+            .where('type', '==', userTypes_1.UserType.Admin)
             .limit(2)
             .get();
         if (adminUsersQuerySnapshot.size < 1) {
@@ -56,6 +60,7 @@ exports.updateUserLocal = (passedInAdmin) => functions.https.onCall((data, conte
     if (userBeforeUpdate.scanCheckpoints.length !== data.scanCheckpoints.length) {
         updatedUser['scanCheckpoints'] = data.scanCheckpoints;
     }
+    console.log('updatedUser: ', updatedUser);
     const dataScanCheckpoints = new Set(data.scanCheckpoints);
     // tslint:disable-next-line:prefer-for-of
     for (let i = 0; i < userBeforeUpdate.scanCheckpoints.length; i++) {
@@ -74,7 +79,8 @@ exports.updateUserLocal = (passedInAdmin) => functions.https.onCall((data, conte
             .set(updatedUser, {
             merge: true,
         });
-        return Object.assign({}, userWeAreTryingToUpdateSnapshot.docs[0].data(), updatedUser);
+        console.log('returned value: ', Object.assign({}, userWeAreTryingToUpdateSnapshot.docs[0].data(), updatedUser, { id: userWeAreTryingToUpdateSnapshot.docs[0].id }));
+        return Object.assign({}, userWeAreTryingToUpdateSnapshot.docs[0].data(), updatedUser, { id: userWeAreTryingToUpdateSnapshot.docs[0].id });
     }
 }));
 //# sourceMappingURL=updateUser.js.map

@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const functions = require("firebase-functions");
+const userTypes_1 = require("../models/userTypes");
 exports.signUpLocal = (passedInAdmin) => functions.https.onCall((data, context) => __awaiter(this, void 0, void 0, function* () {
     const auth = passedInAdmin.auth();
     try {
@@ -27,7 +28,7 @@ exports.signUpLocal = (passedInAdmin) => functions.https.onCall((data, context) 
             companyId: companyDocumentReference.id,
             email: data.email,
             fullName: data.fullName,
-            type: 'Admin',
+            type: userTypes_1.UserType.Admin,
             scanCheckpoints: [],
             mustResetPassword: false,
             uid: firebaseAuthenticationUser.uid,
