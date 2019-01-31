@@ -64,11 +64,15 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         indexOfHoveredItem: null,
     }
 
+    // tslint:disable-next-line:variable-name
+    public _isMounted: boolean;
+
     constructor(props: IProjectPresentationProps) {
         super(props);
     }
 
     public async componentWillMount(): Promise<void> {
+        this._isMounted = true;
         const caseId = this.props.match.params['projectId'];
         const companyId = this.props.location.pathname.split('/')[2];
 
@@ -82,23 +86,31 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         console.log(project.attachmentUrls);
         this.createSrcUrls(project.attachmentUrls);
 
-        this.setState({
-            attachmentUrls: project.attachmentUrls,
-            caseName: caseNameControl,
-            caseDeadline: caseDeadlineControl,
-            notes: notesControl,
-            projectInformationIsLoading: false,
-            caseId: project.id,
-        });
+        if (this._isMounted) {
+            this.setState({
+                attachmentUrls: project.attachmentUrls,
+                caseName: caseNameControl,
+                caseDeadline: caseDeadlineControl,
+                notes: notesControl,
+                projectInformationIsLoading: false,
+                caseId: project.id,
+            });
+        }
 
         const checkpoints = await Api.projectsApi.getProjectCheckpoints({
             caseId,
             companyId,
         });
 
-        this.setState({
-            checkpoints,
-        })
+        if (this._isMounted) {
+            this.setState({
+                checkpoints,
+            })
+        }
+    }
+
+    public componentWillUnmount(): void {
+        this._isMounted = false;
     }
 
     public render() {
@@ -415,9 +427,11 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         });
 
         const downloadUrls = await Promise.all(downloadURLPromises);
-        this.setState({
-            srcUrls: downloadUrls,
-        })
+        if (this._isMounted) {
+            this.setState({
+                srcUrls: downloadUrls,
+            })
+        }
     }
 
     private removeImage = (path: string, index: number) => async() => {
@@ -461,10 +475,12 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         }).length > 0;
 
         if (fileNameAlreadyExists) {
-            this.setState({
-                dialogIsOpen: true,
-                dialogError: 'A file with that name has already been uploaded.',
-            });
+            if (this._isMounted) {
+                this.setState({
+                    dialogIsOpen: true,
+                    dialogError: 'A file with that name has already been uploaded.',
+                });
+            }
             return;
         }
 
@@ -528,11 +544,13 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
 
         // tslint:disable-next-line:no-console
         console.log('setting state');
-        this.setState({
-            attachmentUrls,
-            addAttachmentInProgress: false,
-            srcUrls: srcUrlsCopy.concat([downloadUrl!]),
-        })
+        if (this._isMounted) {
+            this.setState({
+                attachmentUrls,
+                addAttachmentInProgress: false,
+                srcUrls: srcUrlsCopy.concat([downloadUrl!]),
+            })
+        }
     }
 
     private showQrCodeDialog = (): void => {
@@ -550,9 +568,11 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             notes: this.state.notes.value,
         })
 
-        this.setState({
-            updateCaseInformationInProgress: false,
-        })
+        if (this._isMounted) {
+            this.setState({
+                updateCaseInformationInProgress: false,
+            })
+        }
     }
 
     private handleCaseDeadlineChange = (newCaseDeadline: Date): void => {

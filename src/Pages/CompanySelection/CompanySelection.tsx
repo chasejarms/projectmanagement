@@ -18,7 +18,11 @@ class CompanySelectionPresentation extends React.Component<ICompanySelectionPres
         companiesQuerySnapshot: null,
     }
 
+    // tslint:disable-next-line:variable-name
+    public _isMounted: boolean;
+
     public async componentWillMount(): Promise<void> {
+        this._isMounted = true;
         const uid = this.props.location.search.split('uid=')[1];
         // tslint:disable-next-line:no-console
         console.log(uid);
@@ -30,10 +34,16 @@ class CompanySelectionPresentation extends React.Component<ICompanySelectionPres
             const companyId = onlyCompanyDocumentSnapshot.data().companyId;
             this.props.history.push(`/company/${companyId}`);
         } else {
-            this.setState({
-                companiesQuerySnapshot,
-            })
+            if (this._isMounted) {
+                this.setState({
+                    companiesQuerySnapshot,
+                })
+            }
         }
+    }
+
+    public componentWillUnmount(): void {
+        this._isMounted = false;
     }
 
     public render() {

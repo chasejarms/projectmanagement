@@ -39,7 +39,11 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         retrievingQRCodes: false,
     }
 
+    // tslint:disable-next-line:variable-name
+    public _isMounted: boolean;
+
     public async componentWillMount(): Promise<void> {
+        this._isMounted = true;
         const companyId = this.props.match.path.split('/')[2];
         const slimCasesSearchRequest: ISlimCasesSearchRequest = {
             companyId,
@@ -59,13 +63,19 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                 })
             });
             const moreCasesExist = slimCases.length === 5;
-            this.setState({
-                slimCases,
-                loadingSlimCases: false,
-                moreCasesExist,
-                startingSlimCases: [slimCases[0]],
-            })
+            if (this._isMounted) {
+                this.setState({
+                    slimCases,
+                    loadingSlimCases: false,
+                    moreCasesExist,
+                    startingSlimCases: [slimCases[0]],
+                })
+            }
         });
+    }
+
+    public componentWillUnmount(): void {
+        this._isMounted = false;
     }
 
     public render() {
@@ -195,12 +205,14 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                 })
             });
             const moreCasesExist = slimCases.length === 5;
-            this.setState({
-                slimCases,
-                loadingSlimCases: false,
-                moreCasesExist,
-                page: this.state.page - 1,
-            })
+            if (this._isMounted) {
+                this.setState({
+                    slimCases,
+                    loadingSlimCases: false,
+                    moreCasesExist,
+                    page: this.state.page - 1,
+                })
+            }
         });
     }
 
@@ -231,13 +243,15 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
             const moreCasesExist = slimCases.length === 5;
             const startingSlimCases = this.state.startingSlimCases;
             startingSlimCases[this.state.page + 1] = slimCases[0];
-            this.setState({
-                slimCases,
-                loadingSlimCases: false,
-                moreCasesExist,
-                page: this.state.page + 1,
-                startingSlimCases,
-            })
+            if (this._isMounted) {
+                this.setState({
+                    slimCases,
+                    loadingSlimCases: false,
+                    moreCasesExist,
+                    page: this.state.page + 1,
+                    startingSlimCases,
+                })
+            }
         });
     }
 
@@ -248,9 +262,11 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
     private printQRCodes = async() => {
         const companyId = this.props.match.path.split('/')[2];
 
-        this.setState({
-            retrievingQRCodes: true,
-        })
+        if (this._isMounted) {
+            this.setState({
+                retrievingQRCodes: true,
+            })
+        }
 
         const cases = await Api.projectsApi.getNewCases(companyId);
         // tslint:disable-next-line:no-console
@@ -266,14 +282,18 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         // tslint:disable-next-line:no-console
         console.log('qrCodeKeys: ', qrCodeKeys);
 
-        this.setState({
-            qrCodeKeys,
-        })
+        if (this._isMounted) {
+            this.setState({
+                qrCodeKeys,
+            })
+        }
 
         setTimeout(() => {
-            this.setState({
-                retrievingQRCodes: false,
-            })
+            if (this._isMounted) {
+                this.setState({
+                    retrievingQRCodes: false,
+                })
+            }
             window.print();
         }, 1000);
     }

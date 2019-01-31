@@ -88,6 +88,9 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         dialogIsOpen: false,
     };
 
+    // tslint:disable-next-line:variable-name
+    public _isMounted: boolean;
+
     public handleChange = handleChange(this);
 
     constructor(props: IProjectCreationProps) {
@@ -105,20 +108,26 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
     }
 
     public componentWillMount = (): void => {
+        this._isMounted = true;
         const uniqueCaseId = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-        this.setState({
-            uniqueCaseId,
-        })
+        if (this._isMounted) {
+            this.setState({
+                uniqueCaseId,
+            })
+        }
 
         const companyId = this.props.match.path.split('/')[2];
         Api.caseNotesApi.getCaseNotes(companyId).then((caseNotes) => {
-            this.setState({
-                projectNotes: caseNotes,
-            });
+            if (this._isMounted) {
+                this.setState({
+                    projectNotes: caseNotes,
+                });
+            }
         });
     }
 
     public componentWillUnmount = (): void => {
+        this._isMounted = false;
         this.props.resetProjectCreation();
     }
 
@@ -166,15 +175,19 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
     }
 
     private onNextClick = () => {
-        this.setState({
-            activeStep: this.state.activeStep + 1,
-        })
+        if (this._isMounted) {
+            this.setState({
+                activeStep: this.state.activeStep + 1,
+            })
+        }
     }
 
     private onBackClick = () => {
-        this.setState({
-            activeStep: this.state.activeStep - 1,
-        })
+        if (this._isMounted) {
+            this.setState({
+                activeStep: this.state.activeStep - 1,
+            })
+        }
     }
 
     private previousStepsAreValid = () => {
@@ -220,18 +233,22 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         // tslint:disable-next-line:no-console
         console.log('projectCreateRequest: ', projectCreateRequest);
 
-        this.setState({
-            createProjectInProgress: true,
-        })
+        if (this._isMounted) {
+            this.setState({
+                createProjectInProgress: true,
+            })
+        }
 
         try {
             await Api.projectsApi.createProject(companyId, projectCreateRequest).then((project: ICase) => {
                 this.props.history.push(`/company/${companyId}/project/${project.id}`);
             });
         } catch {
-            this.setState({
-                createProjectInProgress: false,
-            })
+            if (this._isMounted) {
+                this.setState({
+                    createProjectInProgress: false,
+                })
+            }
         }
     }
 
@@ -292,24 +309,30 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
 
     private handleCaseDeadlineChange = (newCaseDeadline: Date): void => {
         const newCaseDeadlineControl = this.state.caseDeadline.createCopy().setValue(newCaseDeadline);
-        this.setState({
-            caseDeadline: newCaseDeadlineControl,
-        })
+        if (this._isMounted) {
+            this.setState({
+                caseDeadline: newCaseDeadlineControl,
+            })
+        }
     }
 
     private handleDoctorNameSearchChange = async(event: any) => {
         const companyId = this.props.match.path.split('/')[2];
 
         const searchString = event.target.value;
-        this.setState({
-            doctorNameSearch: searchString,
-        })
+        if (this._isMounted) {
+            this.setState({
+                doctorNameSearch: searchString,
+            })
+        }
 
         const potentialDoctors = await Api.userApi.searchDoctorUsers(companyId, searchString);
 
-        this.setState({
-            potentialDoctors,
-        })
+        if (this._isMounted) {
+            this.setState({
+                potentialDoctors,
+            })
+        }
     }
 
     private selectDoctor = (doctor: IUser) => () => {
@@ -318,9 +341,11 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             name: doctor.fullName,
         });
 
-        this.setState({
-            doctorSelection: updatedSelectedDoctor,
-        })
+        if (this._isMounted) {
+            this.setState({
+                doctorSelection: updatedSelectedDoctor,
+            })
+        }
     };
 
     private handleFileSelection = async (event: any): Promise<void> => {
@@ -339,19 +364,23 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         }).length > 0;
 
         if (fileNameAlreadyExists) {
-            this.setState({
-                dialogIsOpen: true,
-                dialogError: 'A file with that name has already been uploaded.',
-            });
+            if (this._isMounted) {
+                this.setState({
+                    dialogIsOpen: true,
+                    dialogError: 'A file with that name has already been uploaded.',
+                });
+            }
             return;
         }
 
         const fileIsLargerThan5MB = file.size > (5 * 1000000);
         if (fileIsLargerThan5MB) {
-            this.setState({
-                dialogIsOpen: true,
-                dialogError: 'The maximum file size is 5MB.',
-            });
+            if (this._isMounted) {
+                this.setState({
+                    dialogIsOpen: true,
+                    dialogError: 'The maximum file size is 5MB.',
+                });
+            }
             return;
         }
 
@@ -392,11 +421,13 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                     downloadUrl = await spaceRef.getDownloadURL();
                     const srcUrlsClone = _.cloneDeep(this.state.srcUrls);
 
-                    this.setState({
-                        attachmentUrls,
-                        uploadingAttachmentInProgress: false,
-                        srcUrls: srcUrlsClone.concat([downloadUrl]),
-                    })
+                    if (this._isMounted) {
+                        this.setState({
+                            attachmentUrls,
+                            uploadingAttachmentInProgress: false,
+                            srcUrls: srcUrlsClone.concat([downloadUrl]),
+                        })
+                    }
                     return;
                 } catch (e) {
                     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -404,37 +435,45 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                 }
             }
 
-            this.setState({
-                attachmentUrls,
-                uploadingAttachmentInProgress: false,
-            })
+            if (this._isMounted) {
+                this.setState({
+                    attachmentUrls,
+                    uploadingAttachmentInProgress: false,
+                })
+            }
         } else {
             const srcUrlsClone = _.cloneDeep(this.state.srcUrls);
             srcUrlsClone.push(`contentType:${contentType}`)
-            this.setState({
-                attachmentUrls,
-                srcUrls: srcUrlsClone,
-                uploadingAttachmentInProgress: false,
-            })
+            if (this._isMounted) {
+                this.setState({
+                    attachmentUrls,
+                    srcUrls: srcUrlsClone,
+                    uploadingAttachmentInProgress: false,
+                })
+            }
         }
     }
 
     private removeImage = (path: string, index: number) => async() => {
         const attachmentUrls = this.state.attachmentUrls.filter((val, compareIndex) => compareIndex !== index);
         const srcUrls = this.state.srcUrls.filter((val, compareIndex) => compareIndex !== index);
-        this.setState({
-            attachmentUrls,
-            srcUrls,
-        })
+        if (this._isMounted) {
+            this.setState({
+                attachmentUrls,
+                srcUrls,
+            })
+        }
 
         await Api.projectsApi.removeFile(path);
     }
 
     private closeErrorDialog = () => {
-        this.setState({
-            dialogIsOpen: false,
-            dialogError: '',
-        })
+        if (this._isMounted) {
+            this.setState({
+                dialogIsOpen: false,
+                dialogError: '',
+            })
+        }
     }
 
     private getStepActiveContent(): any {

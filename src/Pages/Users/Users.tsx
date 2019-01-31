@@ -61,9 +61,13 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
         deletingUser: false,
     };
 
+    // tslint:disable-next-line:variable-name
+    public _isMounted: boolean;
+
     public handleChange = handleChange(this);
 
     public async componentWillMount(): Promise<void> {
+        this._isMounted = true;
         const companyId = this.props.match.path.split('/')[2];
 
         const getUsersPromise = Api.userApi.getUsers(companyId);
@@ -77,10 +81,16 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
             getWorkflowCheckpointsPromise,
         ]);
 
-        this.setState({
-            users,
-            checkpoints,
-        })
+        if (this._isMounted) {
+            this.setState({
+                users,
+                checkpoints,
+            })
+        }
+    }
+
+    public componentWillUnmount(): void {
+        this._isMounted = false;
     }
 
     public render() {
@@ -293,84 +303,98 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
     private handleUserFullNameChange = (event: any) => {
         const userFullName = event.target.value;
         const userFullNameControl = this.state.userFullName.setValue(userFullName);
-        this.setState({
-            userFullName: userFullNameControl,
-        })
+        if (this._isMounted) {
+            this.setState({
+                userFullName: userFullNameControl,
+            })
+        }
     }
 
     private handleUserEmailChange = (event: any) => {
         const userEmail = event.target.value;
         const userEmailControl = this.state.userEmail.setValue(userEmail);
-        this.setState({
-            userEmail: userEmailControl,
-        })
+        if (this._isMounted) {
+            this.setState({
+                userEmail: userEmailControl,
+            })
+        }
     }
 
     private removeCheckpointItem = (workflowCheckpointId: string) => {
         const clonedSet = new Set(this.state.additionalCheckpoints);
         clonedSet.delete(workflowCheckpointId);
         return () => {
-            this.setState({
-                additionalCheckpoints: clonedSet,
-            });
+            if (this._isMounted) {
+                this.setState({
+                    additionalCheckpoints: clonedSet,
+                });
+            }
         }
     }
 
     private handleAdditionalCheckpoint = (event: any): any => {
         const clonedSet = new Set(this.state.additionalCheckpoints);
         clonedSet.add(event.target.value);
-        this.setState({
-            additionalCheckpoints: clonedSet,
-        });
+        if (this._isMounted) {
+            this.setState({
+                additionalCheckpoints: clonedSet,
+            });
+        }
     }
 
     private openNewUserDialog = () => {
-        this.setState({
-            open: true,
-            isUpdate: false,
-            idOfUserBeingUpdated: '',
-        });
+        if (this._isMounted) {
+            this.setState({
+                open: true,
+                isUpdate: false,
+                idOfUserBeingUpdated: '',
+            });
+        }
     }
 
     private openExistingUserDialog = (user: IUser) => {
         return () => {
-            this.setState({
-                open: true,
-                isUpdate: true,
-                additionalCheckpoints: new Set(user.scanCheckpoints!),
-                userFullName: this.state.userFullName.setValue(
-                    user.fullName,
-                )
-                .markAsUntouched()
-                .markAsValid()
-                .markAsPristine(),
-                userEmail: this.state.userEmail.setValue(
-                    user.email,
-                )
-                .markAsUntouched()
-                .markAsValid()
-                .markAsPristine(),
-                userRole: user.type,
-                idOfUserBeingUpdated: user.id,
-            })
+            if (this._isMounted) {
+                this.setState({
+                    open: true,
+                    isUpdate: true,
+                    additionalCheckpoints: new Set(user.scanCheckpoints!),
+                    userFullName: this.state.userFullName.setValue(
+                        user.fullName,
+                    )
+                    .markAsUntouched()
+                    .markAsValid()
+                    .markAsPristine(),
+                    userEmail: this.state.userEmail.setValue(
+                        user.email,
+                    )
+                    .markAsUntouched()
+                    .markAsValid()
+                    .markAsPristine(),
+                    userRole: user.type,
+                    idOfUserBeingUpdated: user.id,
+                })
+            }
         }
     }
 
     private handleClose = () => {
-        this.setState({
-            open: false,
-            userFullName: this.state.userFullName
-                .setValue('')
-                .markAsUntouched()
-                .markAsPristine()
-                .markAsInvalid(),
-            userEmail: this.state.userEmail
-                .setValue('')
-                .markAsUntouched()
-                .markAsPristine()
-                .markAsInvalid(),
-            userRole: 'Staff',
-        });
+        if (this._isMounted) {
+            this.setState({
+                open: false,
+                userFullName: this.state.userFullName
+                    .setValue('')
+                    .markAsUntouched()
+                    .markAsPristine()
+                    .markAsInvalid(),
+                userEmail: this.state.userEmail
+                    .setValue('')
+                    .markAsUntouched()
+                    .markAsPristine()
+                    .markAsInvalid(),
+                userRole: 'Staff',
+            });
+        }
     }
 
     private handleSave = async() => {
@@ -380,9 +404,11 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
             scanCheckpoints.push(checkpoint);
         });
 
-        this.setState({
-            addingOrUpdatingUser: true,
-        })
+        if (this._isMounted) {
+            this.setState({
+                addingOrUpdatingUser: true,
+            })
+        }
 
         if (this.state.isUpdate) {
             const user = this.state.users.filter((compareUser) => {
@@ -405,11 +431,13 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                 }
             })
 
-            this.setState({
-                users,
-                addingOrUpdatingUser: false,
-                open: false,
-            });
+            if (this._isMounted) {
+                this.setState({
+                    users,
+                    addingOrUpdatingUser: false,
+                    open: false,
+                });
+            }
         } else {
             const addedUser = await Api.userApi.addUser({
                 companyId,
@@ -420,19 +448,23 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                 mustResetPassword: true,
             })
 
-            this.setState({
-                addingOrUpdatingUser: false,
-                open: false,
-                users: this.state.users.concat([addedUser]),
-            })
+            if (this._isMounted) {
+                this.setState({
+                    addingOrUpdatingUser: false,
+                    open: false,
+                    users: this.state.users.concat([addedUser]),
+                })
+            }
         }
     }
 
     private handleDelete = async() => {
         const companyId = this.props.match.path.split('/')[2];
-        this.setState({
-            deletingUser: true,
-        })
+        if (this._isMounted) {
+            this.setState({
+                deletingUser: true,
+            })
+        }
 
         await Api.userApi.deleteUser({
             companyId,
@@ -443,13 +475,13 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
             return user.id !== this.state.idOfUserBeingUpdated;
         });
 
-        this.setState({
-            deletingUser: false,
-            open: false,
-            users: usersWithoutDeletedUser,
-        })
-
-
+        if (this._isMounted) {
+            this.setState({
+                deletingUser: false,
+                open: false,
+                users: usersWithoutDeletedUser,
+            })
+        }
     }
 
     private isSameUser = (): boolean => {

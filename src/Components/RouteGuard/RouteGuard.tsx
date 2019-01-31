@@ -14,11 +14,15 @@ class RouteGuardPresentation extends React.Component<IRouteGuardPresentationProp
     unsubscribe: undefined,
   };
 
+  // tslint:disable-next-line:variable-name
+  private _isMounted: boolean;
+
   constructor(props: IRouteGuardPresentationProps) {
     super(props);
   }
 
   public componentWillMount(): void {
+    this._isMounted = true;
     const companyId = this.props.location.pathname.split('/')[2];
     const user = this.props.userState[companyId];
 
@@ -30,10 +34,11 @@ class RouteGuardPresentation extends React.Component<IRouteGuardPresentationProp
   }
 
   public componentWillUnmount(): void {
-    if (this.state.unsubscribe) {
-      const unsubscribe = this.state.unsubscribe;
+    const unsubscribe = this.state.unsubscribe;
+    if (unsubscribe) {
       unsubscribe();
     }
+    this._isMounted = false;
   }
 
   public render() {
@@ -72,9 +77,11 @@ class RouteGuardPresentation extends React.Component<IRouteGuardPresentationProp
   private verifyUserIsAdmin(): void {
     const unsubscribe = firebase.auth().onAuthStateChanged(async(user) => {
       if (!user) {
-        this.setState({
-          userCanViewPage: false,
-        });
+        if (this._isMounted) {
+          this.setState({
+            userCanViewPage: false,
+          });
+        }
         return;
       }
 
@@ -86,9 +93,11 @@ class RouteGuardPresentation extends React.Component<IRouteGuardPresentationProp
         .get();
 
       if (companyUserJoinQuerySnapshot.empty) {
-        this.setState({
-          userCanViewPage: false,
-        });
+        if (this._isMounted) {
+          this.setState({
+            userCanViewPage: false,
+          });
+        }
         return;
       }
 
@@ -97,9 +106,11 @@ class RouteGuardPresentation extends React.Component<IRouteGuardPresentationProp
         .get();
 
       if (!userDocumentSnapshot.exists) {
-        this.setState({
-          userCanViewPage: false,
-        });
+        if (this._isMounted) {
+          this.setState({
+            userCanViewPage: false,
+          });
+        }
         return;
       }
 
@@ -112,22 +123,28 @@ class RouteGuardPresentation extends React.Component<IRouteGuardPresentationProp
       this.setViewRights(userData);
     });
 
-    this.setState({
-      unsubscribe,
-    })
+    if (this._isMounted) {
+      this.setState({
+        unsubscribe,
+      })
+    }
   }
 
   private setViewRights = (user: IUser) => {
     const userHasRole = this.props.mustHaveRole.some((compareRole) => compareRole === user.type);
 
     if (userHasRole) {
-      this.setState({
-        userCanViewPage: true,
-      })
+      if (this._isMounted) {
+        this.setState({
+          userCanViewPage: true,
+        })
+      }
     } else {
-      this.setState({
-        userCanViewPage: false,
-      })
+      if (this._isMounted) {
+        this.setState({
+          userCanViewPage: false,
+        })
+      }
     }
   }
 }

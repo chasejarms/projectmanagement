@@ -54,6 +54,9 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
         addingOrUpdatingCheckpoint: false,
     }
 
+    // tslint:disable-next-line:variable-name
+    public _isMounted: boolean;
+
     public handleChange = handleChange(this);
 
     constructor(props: IWorkflowPresentationProps) {
@@ -62,12 +65,19 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
     }
 
     public componentWillMount(): void {
+        this._isMounted = true;
         const companyName = this.props.match.path.split('/')[2];
         Api.workflowApi.getWorkflow(companyName).then((workflow) => {
-            this.setState({
-                workflow,
-            });
+            if (this._isMounted) {
+                this.setState({
+                    workflow,
+                });
+            }
         });
+    }
+
+    public componentWillUnmount(): void {
+        this._isMounted = false;
     }
 
     public render() {
@@ -208,17 +218,21 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
     private handleCheckpointNameChange = (event: any): void => {
         const newCheckpointName = event.target.value;
         const updatedFormControlState = this.state.checkpointName.setValue(newCheckpointName);
-        this.setState({
-            checkpointName: updatedFormControlState,
-        })
+        if (this._isMounted) {
+            this.setState({
+                checkpointName: updatedFormControlState,
+            })
+        }
     }
 
     private handleEstimatedCompletionTimeChange = (event: any): void => {
         const newEstimatedCompletionTime = event.target.value;
         const updatedFormControlState = this.state.estimatedCompletionTime.setValue(newEstimatedCompletionTime);
-        this.setState({
-            estimatedCompletionTime: updatedFormControlState,
-        })
+        if (this._isMounted) {
+            this.setState({
+                estimatedCompletionTime: updatedFormControlState,
+            })
+        }
     }
 
     private workflowIsInvalid = (): boolean => {
@@ -241,9 +255,11 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
 
         updatedWorkflow.splice(futureIndex, 0, checkpointThatChangesPosition);
 
-        this.setState({
-            workflow: updatedWorkflow,
-        })
+        if (this._isMounted) {
+            this.setState({
+                workflow: updatedWorkflow,
+            })
+        }
 
         const updatedWorkflowOrderIds = updatedWorkflow.map((updatedWorkflowCheckpoint) => {
             return updatedWorkflowCheckpoint.id;
@@ -253,44 +269,50 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
     }
 
     private handleVisibleToDoctorChange = (event: any) => {
-        this.setState({
-            visibleToDoctor: event.target.checked,
-        })
+        if (this._isMounted) {
+            this.setState({
+                visibleToDoctor: event.target.checked,
+            })
+        }
     }
 
     private openNewCheckpointDialog = () => {
-        this.setState({
-            open: true,
-            estimatedCompletionTime: this.state.estimatedCompletionTime
-                .setValue('')
-                .markAsInvalid(),
-            checkpointDescription: '',
-            checkpointName: this.state.estimatedCompletionTime
-                .setValue('')
-                .markAsInvalid(),
-            isUpdate: false,
-            visibleToDoctor: false,
-        })
+        if (this._isMounted) {
+            this.setState({
+                open: true,
+                estimatedCompletionTime: this.state.estimatedCompletionTime
+                    .setValue('')
+                    .markAsInvalid(),
+                checkpointDescription: '',
+                checkpointName: this.state.estimatedCompletionTime
+                    .setValue('')
+                    .markAsInvalid(),
+                isUpdate: false,
+                visibleToDoctor: false,
+            })
+        }
     }
 
     private openCheckpointDialog = (checkpoint: IWorkflowCheckpoint, checkpointId: string) => {
         return () => {
-            this.setState({
-                open: true,
-                estimatedCompletionTime: this.state.estimatedCompletionTime
-                    .setValue(checkpoint.estimatedCompletionTime)
-                    .markAsPristine()
-                    .markAsUntouched()
-                    .markAsValid(),
-                checkpointName: this.state.checkpointName
-                    .setValue(checkpoint.name)
-                    .markAsPristine()
-                    .markAsTouched()
-                    .markAsValid(),
-                visibleToDoctor: checkpoint.visibleToDoctor,
-                isUpdate: true,
-                checkpointId,
-            })
+            if (this._isMounted) {
+                this.setState({
+                    open: true,
+                    estimatedCompletionTime: this.state.estimatedCompletionTime
+                        .setValue(checkpoint.estimatedCompletionTime)
+                        .markAsPristine()
+                        .markAsUntouched()
+                        .markAsValid(),
+                    checkpointName: this.state.checkpointName
+                        .setValue(checkpoint.name)
+                        .markAsPristine()
+                        .markAsTouched()
+                        .markAsValid(),
+                    visibleToDoctor: checkpoint.visibleToDoctor,
+                    isUpdate: true,
+                    checkpointId,
+                })
+            }
         }
     }
 
@@ -298,9 +320,11 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
         return async() => {
             const companyId = this.props.match.path.split('/')[2];
 
-            this.setState({
-                removingWorkflowCheckpoint: true,
-            })
+            if (this._isMounted) {
+                this.setState({
+                    removingWorkflowCheckpoint: true,
+                })
+            }
 
             await Api.workflowApi.removeWorkflowCheckpoint(companyId, checkpointId);
 
@@ -308,18 +332,22 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
                 return workflowCheckpoint.id !== checkpointId;
             })
 
-            this.setState({
-                open: false,
-                workflow: workflowWithoutRemovedCheckpoint,
-                removingWorkflowCheckpoint: false,
-            });
+            if (this._isMounted) {
+                this.setState({
+                    open: false,
+                    workflow: workflowWithoutRemovedCheckpoint,
+                    removingWorkflowCheckpoint: false,
+                });
+            }
         }
     }
 
     private handleClose = () => {
-        this.setState({
-            open: false,
-        })
+        if (this._isMounted) {
+            this.setState({
+                open: false,
+            })
+        }
     }
 
     private async handleSave() {
@@ -332,9 +360,11 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
                 visibleToDoctor: this.state.visibleToDoctor,
             }
 
-            this.setState({
-                addingOrUpdatingCheckpoint: true,
-            })
+            if (this._isMounted) {
+                this.setState({
+                    addingOrUpdatingCheckpoint: true,
+                })
+            }
 
             const addedCheckpoint = await Api.workflowApi.addWorkflowCheckpoint(companyId, checkpointCreateRequest);
 
@@ -342,11 +372,13 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
                 addedCheckpoint,
             ])
 
-            this.setState({
-                open: false,
-                addingOrUpdatingCheckpoint: false,
-                workflow: workflowCheckpointsWithAddedCheckpoint,
-            })
+            if (this._isMounted) {
+                this.setState({
+                    open: false,
+                    addingOrUpdatingCheckpoint: false,
+                    workflow: workflowCheckpointsWithAddedCheckpoint,
+                })
+            }
         } else {
             const checkpointUpdateRequest: IWorkflowCheckpoint = {
                 id: this.state.checkpointId,
@@ -355,9 +387,11 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
                 visibleToDoctor: this.state.visibleToDoctor,
             }
 
-            this.setState({
-                addingOrUpdatingCheckpoint: true,
-            })
+            if (this._isMounted) {
+                this.setState({
+                    addingOrUpdatingCheckpoint: true,
+                })
+            }
 
             await Api.workflowApi.updateWorkflowCheckpoint(companyId, checkpointUpdateRequest);
 
@@ -369,11 +403,13 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
                 }
             })
 
-            this.setState({
-                open: false,
-                addingOrUpdatingCheckpoint: false,
-                workflow: workflowCheckpointsWithUpdatedCheckpoint,
-            })
+            if (this._isMounted) {
+                this.setState({
+                    open: false,
+                    addingOrUpdatingCheckpoint: false,
+                    workflow: workflowCheckpointsWithUpdatedCheckpoint,
+                })
+            }
         }
     }
 }
