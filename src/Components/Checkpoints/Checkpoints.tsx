@@ -77,7 +77,7 @@ export class CheckpointsPresentation extends React.Component<ICheckpointsProps, 
                         <Typography variant="title">
                             Checkpoints
                         </Typography>
-                        <Tooltip title="New Project Checkpoint" placement="left">
+                        <Tooltip title="New Project Checkpoint" placement="left" disableFocusListener={true}>
                             <IconButton
                                 aria-label="New Project Checkpoint"
                                 onClick={this.openNewCheckpointDialog}

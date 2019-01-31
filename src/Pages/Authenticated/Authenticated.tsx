@@ -48,7 +48,7 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                     >
                         <List className={list}>
                             <div>
-                                <Tooltip title="Cases" placement="right">
+                                <Tooltip title="Cases" placement="right" disableFocusListener={true}>
                                     <ListItem
                                         button={true}
                                         className={iconContainer}
@@ -59,7 +59,7 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                                         </ListItemIcon>
                                     </ListItem>
                                 </Tooltip>
-                                <Tooltip title="Users" placement="right">
+                                <Tooltip title="Users" placement="right" disableFocusListener={true}>
                                     <ListItem
                                         button={true}
                                         className={iconContainer}
@@ -70,7 +70,7 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                                         </ListItemIcon>
                                     </ListItem>
                                 </Tooltip>
-                                <Tooltip title="Workflow" placement="right">
+                                <Tooltip title="Workflow" placement="right" disableFocusListener={true}>
                                     <ListItem
                                         button={true}
                                         className={iconContainer}
@@ -81,7 +81,7 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                                         </ListItemIcon>
                                     </ListItem>
                                 </Tooltip>
-                                <Tooltip title="Case Notes Template" placement="right">
+                                <Tooltip title="Case Notes Template" placement="right" disableFocusListener={true}>
                                     <ListItem
                                         button={true}
                                         className={iconContainer}
@@ -106,7 +106,7 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                                         </ListItemIcon>
                                     </ListItem>
                                 </Tooltip> */}
-                                <Tooltip title="Logout" placement="right">
+                                <Tooltip title="Logout" placement="right" disableFocusListener={true}>
                                     <ListItem
                                         button={true}
                                         className={iconContainer}

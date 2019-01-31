@@ -124,7 +124,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                             Cases
                         </Typography>
                         <div>
-                            <Tooltip title="Print New Project QR Codes" placement="left">
+                            <Tooltip title="Print New Project QR Codes" placement="left" disableFocusListener={true}>
                                 <IconButton
                                     disabled={this.state.retrievingQRCodes}
                                     aria-label="Print QR Codes"
@@ -134,7 +134,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                                     <PrintIcon />
                                 </IconButton>
                             </Tooltip>
-                            <Tooltip title="New Case" placement="left">
+                            <Tooltip title="New Case" placement="left" disableFocusListener={true}>
                                 <IconButton
                                     aria-label="New Case"
                                     onClick={this.navigateToCreateProjectPage}

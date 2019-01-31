@@ -129,7 +129,7 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
                         <Typography variant="title">
                             Workflow
                         </Typography>
-                        <Tooltip title="New Checkpoint" placement="left">
+                        <Tooltip title="New Checkpoint" placement="left" disableFocusListener={true}>
                             <IconButton
                                 aria-label="New Checkpoint"
                                 onClick={this.openNewCheckpointDialog}

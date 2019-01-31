@@ -167,7 +167,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                         <Typography variant="title">
                             Users
                         </Typography>
-                        <Tooltip title="New User" placement="left">
+                        <Tooltip title="New User" placement="left" disableFocusListener={true}>
                             <IconButton
                                 aria-label="New User"
                                 onClick={this.openNewUserDialog}
