@@ -199,6 +199,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                 <Dialog
                     open={this.state.open}
                     onClose={this.handleClose}
+                    onExited={this.handleExited}
                 >
                     <DialogTitle>{this.state.isUpdate ? 'Update User' : 'Create New User'}</DialogTitle>
                     <DialogContent className={dialogContent}>
@@ -292,6 +293,24 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
         )
     }
 
+    private handleExited = () => {
+        if (this._isMounted) {
+            this.setState({
+                userFullName: this.state.userFullName
+                    .setValue('')
+                    .markAsUntouched()
+                    .markAsPristine()
+                    .markAsInvalid(),
+                userEmail: this.state.userEmail
+                    .setValue('')
+                    .markAsUntouched()
+                    .markAsPristine()
+                    .markAsInvalid(),
+                userRole: UserType.Staff,
+            });
+        }
+    }
+
     private controlsAreInvalid = () => {
         const {
             userEmail,
@@ -383,17 +402,6 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
         if (this._isMounted) {
             this.setState({
                 open: false,
-                userFullName: this.state.userFullName
-                    .setValue('')
-                    .markAsUntouched()
-                    .markAsPristine()
-                    .markAsInvalid(),
-                userEmail: this.state.userEmail
-                    .setValue('')
-                    .markAsUntouched()
-                    .markAsPristine()
-                    .markAsInvalid(),
-                userRole: UserType.Staff,
             });
         }
     }
