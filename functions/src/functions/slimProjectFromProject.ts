@@ -1,3 +1,4 @@
+import { ShowNewInfoFromType } from './../models/showNewInfoFromTypes';
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 
@@ -10,7 +11,7 @@ interface ISlimCase {
     doctorName: string;
     created: string;
     companyId: string;
-    showNewInfoFrom: 'Doctor' | 'Lab' | null;
+    showNewInfoFrom: ShowNewInfoFromType.Doctor | ShowNewInfoFromType.Lab | null;
 }
 
 export const slimCaseFromCaseChanges = (passedInAdmin: admin.app.App) => functions.firestore.document('cases/{caseId}').onWrite(async(change, context) => {

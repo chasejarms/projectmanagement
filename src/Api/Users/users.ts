@@ -1,4 +1,5 @@
 import * as firebase from 'firebase';
+import { UserType } from 'src/Models/userTypes';
 import { db } from '../../firebase';
 import { IUser, IUserCreateRequest } from './../../Models/user';
 import { IDeleteUserRequest, IUsersApi } from './usersApiInterface';
@@ -40,7 +41,7 @@ export class UsersApi implements IUsersApi {
         const updatedSearchString = searchString.toLowerCase();
         const userQuerySnapshot = await db.collection('users')
             .where('companyId', '==', companyId)
-            .where('type', '==', 'Customer')
+            .where('type', '==', UserType.Doctor)
             .where('nameSearchValues', 'array-contains', updatedSearchString)
             .orderBy('nameSearchValues', 'asc')
             .limit(3)

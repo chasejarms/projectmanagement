@@ -22,7 +22,9 @@ import { withRouter } from 'react-router';
 import { ISlimCasesSearchRequest } from 'src/Api/Projects/projectsInterface';
 import { QRCodeDisplay } from 'src/Components/QRCodeDisplay/QRCodeDisplay';
 import { IQRCodeKeys } from 'src/Components/QRCodeDisplay/QRCodeDisplay.ias';
+import { ShowNewInfoFromType } from 'src/Models/showNewInfoFromTypes';
 import { ISlimCase } from 'src/Models/slimCase';
+import { UserType } from 'src/Models/userTypes';
 import { IAppState } from 'src/Redux/Reducers/rootReducer';
 import Api from '../../Api/api';
 import { createProjectsPresentationClasses, IProjectsPresentationProps, IProjectsPresentationState } from './Projects.ias';
@@ -91,9 +93,9 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
 
         const mappedProjects = this.state.slimCases.map(slimCase => {
             const companyId = this.props.match.path.split('/')[2];
-            const userIsDoctor = this.props.userState[companyId].type === 'Customer';
-            const newInfoFromDoctor = slimCase.showNewInfoFrom === 'Doctor';
-            const newInfoFromLab = slimCase.showNewInfoFrom === 'Lab';
+            const userIsDoctor = this.props.userState[companyId].type === UserType.Doctor;
+            const newInfoFromDoctor = slimCase.showNewInfoFrom === ShowNewInfoFromType.Doctor;
+            const newInfoFromLab = slimCase.showNewInfoFrom === ShowNewInfoFromType.Lab;
 
             const shouldShowNotification = (userIsDoctor && newInfoFromLab) || (!userIsDoctor && newInfoFromDoctor);
             const newInfoCell = shouldShowNotification ? <TableCell/> : (

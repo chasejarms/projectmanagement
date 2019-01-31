@@ -4,7 +4,7 @@ import { Route, Switch, withRouter } from 'react-router-dom';
 import { Authenticated } from '../Authenticated/Authenticated';
 
 import { RouteGuard } from 'src/Components/RouteGuard/RouteGuard';
-import { Roles } from '../../Models/roles';
+import { UserType } from 'src/Models/userTypes';
 import { CompanySelection } from '../CompanySelection/CompanySelection';
 import { Login } from '../Login/Login';
 import { SignUp } from '../SignUp/SignUp';
@@ -30,7 +30,7 @@ class MainPresentation extends React.Component<IMainPresentationProps, IMainPres
               component={Login}
             />
             <RouteGuard
-              mustHaveRole={[Roles.Admin, Roles.Customer, Roles.Staff]}
+              mustHaveRole={[UserType.Admin, UserType.Doctor, UserType.Staff]}
               path="/company/:companyName"
               component={Authenticated}
             />

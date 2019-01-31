@@ -1,3 +1,6 @@
+import { ShowNewInfoFromType } from './showNewInfoFromTypes';
+
+
 export interface ISlimCase {
     currentCheckpointName: string;
     currentCheckpointId: string;
@@ -7,6 +10,6 @@ export interface ISlimCase {
     doctor: string;
     doctorName: string;
     created: string;
-    showNewInfoFrom: 'Doctor' | 'Lab' | null;
+    showNewInfoFrom: ShowNewInfoFromType.Doctor | ShowNewInfoFromType.Lab | null;
     document: FirebaseFirestore.QueryDocumentSnapshot;
 }

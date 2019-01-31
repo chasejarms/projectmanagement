@@ -28,14 +28,15 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { Dispatch } from 'redux';
 import { AsyncButton } from 'src/Components/AsyncButton/AsyncButton';
+import { UserType } from 'src/Models/userTypes';
 import Api from '../../Api/api';
 import { ICaseCreateRequest } from '../../Api/Projects/projectsInterface';
 import { FormControlState } from '../../Classes/formControlState';
 import { ICase } from '../../Models/case';
 import { IProjectCreationProjectUser } from '../../Models/projectUser';
 import { IUser } from '../../Models/user';
-import { addProjectUserActionCreator, resetProjectCreation } from '../../Redux/ActionCreators/projectCreationActionCreators';
 import { deleteProjectUserActionCreator, getInitialCheckpoints, setCaseNameCreator, updateProjectUserActionCreator } from '../../Redux/ActionCreators/projectCreationActionCreators';
+import { addProjectUserActionCreator, resetProjectCreation } from '../../Redux/ActionCreators/projectCreationActionCreators';
 import { IAppState } from '../../Redux/Reducers/rootReducer';
 import { handleChange } from '../../Utils/handleChange';
 import { doctorRequiredValidator } from '../../Validators/doctorRequired.validator';
@@ -151,7 +152,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                                 <Step>
                                     <StepLabel>Case Name</StepLabel>
                                 </Step>
-                                { this.props.userState[companyId].type === 'Customer' ? undefined : (
+                                { this.props.userState[companyId].type === UserType.Doctor ? undefined : (
                                     <Step>
                                         <StepLabel>Choose Doctor</StepLabel>
                                     </Step>
@@ -201,7 +202,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         } = this.state;
 
         const companyId = this.props.match.path.split('/')[2];
-        const doctorIsUser = this.props.userState[companyId].type === 'Customer';
+        const doctorIsUser = this.props.userState[companyId].type === UserType.Doctor;
 
         if (this.state.activeStep === 0) {
             return !caseName.invalid;
@@ -272,7 +273,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             </Button>
         ) : undefined;
 
-        const lastActiveStep = this.props.userState[companyId].type === 'Customer' ? 2 : 3;
+        const lastActiveStep = this.props.userState[companyId].type === UserType.Doctor ? 2 : 3;
 
         const nextButton = this.state.activeStep !== lastActiveStep ? (
             <Button
@@ -504,7 +505,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
         } = createProjectCreationClasses(this.props, this.state);
 
         const companyId = this.props.match.path.split('/')[2];
-        const doctorIsUser = this.props.userState[companyId].type === 'Customer';
+        const doctorIsUser = this.props.userState[companyId].type === UserType.Doctor;
 
         if (this.state.activeStep === 0) {
             const { caseName } = this.props.projectCreation;

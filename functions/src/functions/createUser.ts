@@ -1,11 +1,12 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
+import { UserType } from '../models/userTypes';
 
 interface IUserCreateRequest {
     companyId: string;
     email: string;
     fullName: string;
-    type: 'Admin' | 'Staff' | 'Customer';
+    type: UserType;
     mustResetPassword: boolean;
     scanCheckpoints?: string[];
 }
@@ -38,7 +39,7 @@ export const createUserLocal = (auth: admin.auth.Auth, firestore: FirebaseFirest
         companyDocumentPromise,
     ])
 
-    const isAdmin = userQuerySnapshot.docs[0].data().type === 'Admin';
+    const isAdmin = userQuerySnapshot.docs[0].data().type === UserType.Admin;
 
     if (!isAdmin) {
         throw new functions.https.HttpsError('permission-denied', 'You are not an admin user');

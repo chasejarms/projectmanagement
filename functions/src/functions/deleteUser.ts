@@ -1,5 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
+import { UserType } from '../models/userTypes';
 
 export interface IDeleteUserRequest {
     id: string;
@@ -34,7 +35,7 @@ export const deleteUserLocal = (passedInAdmin: admin.app.App) => functions.https
         companyDocumentPromise,
     ])
 
-    const isAdmin = userQuerySnapshot.docs[0].data().type === 'Admin';
+    const isAdmin = userQuerySnapshot.docs[0].data().type === UserType.Admin;
 
     if (!isAdmin) {
         throw new functions.https.HttpsError('permission-denied', 'You are not an admin user');
@@ -44,10 +45,10 @@ export const deleteUserLocal = (passedInAdmin: admin.app.App) => functions.https
         throw new functions.https.HttpsError('invalid-argument', 'That user you are trying to delete does not exist');
     }
 
-    if (userWeAreTryingToDeleteSnapshot.data().type === 'Admin') {
+    if (userWeAreTryingToDeleteSnapshot.data().type === UserType.Admin) {
         const adminUsersQuerySnapshot = await firestore.collection('users')
             .where('companyId', '==', deleteUserRequest.companyId)
-            .where('type', '==', 'Admin')
+            .where('type', '==', UserType.Admin)
             .limit(2)
             .get()
 

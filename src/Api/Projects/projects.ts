@@ -1,6 +1,7 @@
 import * as firebase from 'firebase';
 import { db } from 'src/firebase';
 import { IAugmentedCheckpoint } from 'src/Models/augmentedCheckpoint';
+import { UserType } from 'src/Models/userTypes';
 import { ICase } from './../../Models/case';
 // import { ISlimCase } from './../../Models/slimCase';
 import { ICaseApi, ICaseCreateRequest, IGetCaseCheckpointsRequest, ISlimCasesSearchRequest, IUpdateCaseInformationRequest } from './projectsInterface';
@@ -11,7 +12,7 @@ export class ProjectsApi implements ICaseApi {
             .where('companyId', '==', slimCasesSearchRequest.companyId)
             .orderBy('deadline', 'asc')
 
-        if (userType === 'Customer') {
+        if (userType === UserType.Doctor) {
             query = query.where('doctor', '==', userId)
         }
 

@@ -1,5 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
+import { UserType } from '../models/userTypes';
 
 interface IGetCaseCheckpointsData {
     caseId: string;
@@ -65,7 +66,7 @@ export const getCheckpointsLocal = (passedInAdmin: admin.app.App) => functions.h
     const userType = companyUserDocumentSnapshot.data().type;
     console.log('userType: ', userType);
 
-    const isAdminOrStaff = userType === 'Admin' || userType === 'Staff';
+    const isAdminOrStaff = userType === UserType.Admin || userType === UserType.Staff;
     console.log('isAdminOrStaff: ', isAdminOrStaff);
 
     const project = await firestore.collection('cases').doc(caseId).get();

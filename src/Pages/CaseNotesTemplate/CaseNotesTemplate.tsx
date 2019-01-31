@@ -20,25 +20,26 @@ export class CaseNotesTemplatePresentation extends React.Component<ICaseNotesTem
         caseNotesSaveInProgress: false,
         initialLoadInProgress: true,
     };
-    private isMounted: boolean = true;
+
+    // tslint:disable-next-line:variable-name
+    private _isMounted: boolean = true;
 
     public componentDidMount = (): void => {
-        this.isMounted = true;
+        this._isMounted = true;
         const companyId = this.props.match.path.split('/')[2];
         Api.caseNotesApi.getCaseNotes(companyId).then((caseNotes) => {
-            if (!this.isMounted) {
-                return;
-            }
             const updatedCaseNotesControl = this.state.notes.setValue(caseNotes);
-            this.setState({
-                notes: updatedCaseNotesControl,
-                initialLoadInProgress: false,
-            });
+            if (this._isMounted) {
+                this.setState({
+                    notes: updatedCaseNotesControl,
+                    initialLoadInProgress: false,
+                });
+            }
         });
     }
 
     public componentWillUnmount = (): void => {
-        this.isMounted = false;
+        this._isMounted = false;
     }
 
     public render() {

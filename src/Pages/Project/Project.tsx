@@ -26,6 +26,7 @@ import { FormControlState } from 'src/Classes/formControlState';
 import { AsyncButton } from 'src/Components/AsyncButton/AsyncButton';
 import { QRCodeDisplay } from 'src/Components/QRCodeDisplay/QRCodeDisplay';
 import { IAttachmentMetadata } from 'src/Models/attachmentMetadata';
+import { UserType } from 'src/Models/userTypes';
 import { IAppState } from 'src/Redux/Reducers/rootReducer';
 import { requiredValidator } from 'src/Validators/required.validator';
 import Api from '../../Api/api';
@@ -144,7 +145,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         } = createProjectPresentationClasses(this.props, this.state, this.props.theme);
 
         const companyId = this.props.location.pathname.split('/')[2];
-        const userIsDoctor = this.props.userState[companyId].type === 'Customer';
+        const userIsDoctor = this.props.userState[companyId].type === UserType.Doctor;
         const mappedCheckpoints = this.state.checkpoints ? (
             this.state.checkpoints!.map((checkpoint: ICheckpoint, index: number) => {
                 return (

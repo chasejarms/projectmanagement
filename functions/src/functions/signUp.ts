@@ -1,5 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
+import { UserType } from '../models/userTypes';
 
 export const signUpLocal = (passedInAdmin: admin.app.App) => functions.https.onCall(async(data, context) => {
     const auth = passedInAdmin.auth();
@@ -23,7 +24,7 @@ export const signUpLocal = (passedInAdmin: admin.app.App) => functions.https.onC
             companyId: companyDocumentReference.id,
             email: data.email,
             fullName: data.fullName,
-            type: 'Admin',
+            type: UserType.Admin,
             scanCheckpoints: [],
             mustResetPassword: false,
             uid: firebaseAuthenticationUser.uid,

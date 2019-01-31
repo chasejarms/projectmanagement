@@ -25,6 +25,7 @@ import ClearIcon from '@material-ui/icons/Clear';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
+import { UserType } from 'src/Models/userTypes';
 import { emailValidator } from 'src/Validators/email.validator';
 import Api from '../../Api/api';
 import { FormControlState } from '../../Classes/formControlState';
@@ -51,7 +52,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                 emailValidator,
             ]
         }).markAsInvalid(),
-        userRole: 'Staff',
+        userRole: UserType.Staff,
         users: [],
         additionalCheckpoints: new Set([]),
         checkpoints: [],
@@ -149,7 +150,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                 </div>
             )
         });
-        const showAdditionalCheckpoints = this.state.userRole === "Staff" || this.state.userRole === "Admin";
+        const showAdditionalCheckpoints = this.state.userRole === UserType.Staff || this.state.userRole === UserType.Admin;
 
         const {
             userFullName,
@@ -234,9 +235,9 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                                 value={this.state.userRole}
                                 onChange={this.handleChange}
                             >
-                                <MenuItem value={'Admin'}>Admin</MenuItem>
-                                <MenuItem value={'Staff'}>Staff</MenuItem>
-                                <MenuItem value={'Customer'}>Customer</MenuItem>
+                                <MenuItem value={UserType.Admin}>Admin</MenuItem>
+                                <MenuItem value={UserType.Staff}>Staff</MenuItem>
+                                <MenuItem value={UserType.Doctor}>Doctor</MenuItem>
                             </Select>
                         </FormControl>
                         {
@@ -392,7 +393,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                     .markAsUntouched()
                     .markAsPristine()
                     .markAsInvalid(),
-                userRole: 'Staff',
+                userRole: UserType.Staff,
             });
         }
     }

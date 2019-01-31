@@ -1,3 +1,4 @@
+import { UserType } from 'src/Models/userTypes';
 import { companyUsersKey } from '../Users/mockUsers';
 import { IAuthenticationApi, IAuthenticationMessage } from './authenticationInterface';
 
@@ -10,7 +11,7 @@ export class MockAuthenticationApi implements IAuthenticationApi {
                 id: Date.now().toString(),
                 email,
                 name: fullName,
-                type: 'Admin',
+                type: UserType.Admin,
             }
         ]);
         const usersToSaveToStorage = JSON.stringify(usersWithSignedUpUser);
