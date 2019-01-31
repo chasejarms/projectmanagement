@@ -200,7 +200,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                     open={this.state.open}
                     onClose={this.handleClose}
                 >
-                    <DialogTitle>Create New User</DialogTitle>
+                    <DialogTitle>{this.state.isUpdate ? 'Update User' : 'Create New User'}</DialogTitle>
                     <DialogContent className={dialogContent}>
                         <FormControl required={true} className={dialogControl} error={userFullName.shouldShowError()}>
                             <InputLabel>Full Name</InputLabel>
