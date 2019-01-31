@@ -282,11 +282,11 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
                 open: true,
                 estimatedCompletionTime: this.state.estimatedCompletionTime
                     .setValue('')
-                    .markAsInvalid(),
+                    .markAsValid(),
                 checkpointDescription: '',
                 checkpointName: this.state.estimatedCompletionTime
                     .setValue('')
-                    .markAsInvalid(),
+                    .markAsValid(),
                 isUpdate: false,
                 visibleToDoctor: false,
             })
