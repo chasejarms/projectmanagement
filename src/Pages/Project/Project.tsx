@@ -1,4 +1,16 @@
-import { Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormHelperText, Input, InputLabel, withTheme } from '@material-ui/core';
+import {
+    Checkbox,
+    CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    FormControl,
+    FormHelperText,
+    Input,
+    InputLabel,
+    withTheme,
+} from '@material-ui/core';
 import {
     Button,
     Paper,
@@ -63,6 +75,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         dialogError: '',
         srcUrls: [],
         indexOfHoveredItem: null,
+        retrievingCheckpoints: true,
     }
 
     // tslint:disable-next-line:variable-name
@@ -106,6 +119,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         if (this._isMounted) {
             this.setState({
                 checkpoints,
+                retrievingCheckpoints: false,
             })
         }
     }
@@ -116,12 +130,10 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
 
     public render() {
         const {
-            // attachmentButtonsContainer,
             projectContainer,
             evenPaper,
             secondPaper,
             fieldSpacing,
-            // seeAttachmentsButton,
             workflowToolbar,
             qrCodeButtonContainer,
             addAttachmentButton,
@@ -142,6 +154,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             attachmentToolbar,
             downloadIconContainer,
             downloadIcon,
+            loadingCheckpointsContainer,
         } = createProjectPresentationClasses(this.props, this.state, this.props.theme);
 
         const companyId = this.props.location.pathname.split('/')[2];
@@ -172,6 +185,15 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             <div className={projectContainer}>
                 <div className={progressAndInformationContainer}>
                     <Paper className={secondPaper}>
+                        {this.state.retrievingCheckpoints ? (
+                            <div className={loadingCheckpointsContainer}>
+                                <CircularProgress
+                                    color="primary"
+                                    size={64}
+                                    thickness={3}
+                                />
+                            </div>
+                        ) : undefined}
                         <div>
                             <Toolbar className={workflowToolbar}>
                                 <Typography variant="title">

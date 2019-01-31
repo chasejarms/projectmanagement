@@ -29,6 +29,7 @@ export interface IProjectPresentationState {
     dialogError: string;
     srcUrls: string[];
     indexOfHoveredItem: null | number;
+    retrievingCheckpoints: boolean;
 }
 
 export const createProjectPresentationClasses = (
@@ -50,6 +51,7 @@ export const createProjectPresentationClasses = (
         gridColumnGap: 32,
         width: '100%',
         height: '100vh',
+        maxHeight: '100vh',
         padding: 32,
         boxSizing: 'border-box',
     });
@@ -79,6 +81,7 @@ export const createProjectPresentationClasses = (
         height: '100%',
         boxSizing: 'border-box',
         overflowY: 'auto',
+        position: 'relative',
     });
 
     const tabs = css({
@@ -270,7 +273,17 @@ export const createProjectPresentationClasses = (
         fontSize: 32,
     })
 
+    const loadingCheckpointsContainer = css({
+        display: 'flex',
+        position: 'absolute',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100%',
+        width: '100%',
+    })
+
     return {
+        loadingCheckpointsContainer,
         downloadIcon,
         attachmentToolbar,
         projectContainer,
