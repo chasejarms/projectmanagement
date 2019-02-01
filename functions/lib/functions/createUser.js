@@ -41,9 +41,10 @@ exports.createUserLocal = (auth, firestore) => functions.https.onCall((data, con
         userRecord = yield auth.getUserByEmail(data.email);
     }
     catch (_a) {
+        const password = Math.random().toString(36).slice(-8);
         userRecord = yield auth.createUser({
             email: data.email,
-            password: data.email,
+            password,
         });
     }
     const userToCreate = {

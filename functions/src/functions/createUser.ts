@@ -54,9 +54,10 @@ export const createUserLocal = (auth: admin.auth.Auth, firestore: FirebaseFirest
     try {
         userRecord = await auth.getUserByEmail(data.email);
     } catch {
+        const password = Math.random().toString(36).slice(-8);
         userRecord = await auth.createUser({
             email: data.email,
-            password: data.email,
+            password,
         });
     }
 
