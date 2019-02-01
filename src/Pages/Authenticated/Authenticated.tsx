@@ -24,8 +24,13 @@ import { Project } from '../Project/Project';
 import { ProjectCreation } from '../ProjectCreation/ProjectCreation';
 import { Projects } from '../Projects/Projects';
 import { Users } from '../Users/Users';
+import { UserSettings } from '../UserSettings/UserSettings';
 import { Workflow } from '../Workflow/Workflow';
-import { createAuthenticatedClasses, IAuthenticatedProps, IAuthenticatedState } from './Authenticated.ias';
+import {
+    createAuthenticatedClasses,
+    IAuthenticatedProps,
+    IAuthenticatedState,
+} from './Authenticated.ias';
 
 export class AuthenticatedPresentation extends React.Component<IAuthenticatedProps, IAuthenticatedState> {
     public render() {
@@ -155,6 +160,11 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                             path={this.props.match.url + '/caseNotesTemplate'}
                             exact={true}
                             component={CaseNotesTemplate}
+                        />
+                        <Route
+                            path={this.props.match.url + '/userSettings'}
+                            exact={true}
+                            component={UserSettings}
                         />
                     </Switch>
                 </div>
