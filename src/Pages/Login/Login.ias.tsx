@@ -9,6 +9,7 @@ export interface ILoginPresentationState {
     email: IFormControlState<string>;
     password: IFormControlState<string>;
     loginActionInProgress: boolean;
+    passwordResetInProgress: boolean;
 }
 export const createAuthenticationClasses = (
   props: ILoginPresentationProps,
@@ -41,11 +42,31 @@ export const createAuthenticationClasses = (
     marginLeft: 'auto !important',
   })
 
+  const linkObject = {
+    color: `${state.passwordResetInProgress ? props.theme.palette.grey : props.theme.palette.primary.main} !important`,
+    marginLeft: 'auto !important',
+  };
+
+  if (!state.passwordResetInProgress) {
+    linkObject['&:hover'] = {
+      textDecoration: 'underline',
+      cursor: 'pointer',
+    }
+  }
+
+  const link = css(linkObject);
+
+  const linkContainer = css({
+    display: 'flex',
+  });
+
   return {
     loginContainer,
     loginRow,
     textField,
     actionContainer,
     actionButton,
+    link,
+    linkContainer,
   };
 }

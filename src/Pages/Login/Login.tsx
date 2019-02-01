@@ -3,6 +3,7 @@ import {
     FormHelperText,
     Input,
     InputLabel,
+    Typography,
 } from '@material-ui/core';
 import { withTheme } from '@material-ui/core/styles';
 import * as React from 'react';
@@ -11,6 +12,7 @@ import { passwordValidator } from 'src/Validators/password.validator';
 import Api from '../../Api/api';
 import { FormControlState } from '../../Classes/formControlState';
 import { AsyncButton } from '../../Components/AsyncButton/AsyncButton';
+import firebase from '../../firebase';
 import { requiredValidator } from '../../Validators/required.validator';
 import { createAuthenticationClasses, ILoginPresentationProps, ILoginPresentationState } from './Login.ias';
 
@@ -34,7 +36,19 @@ export class LoginPresentation extends React.Component<
             ],
         }).markAsInvalid(),
         loginActionInProgress: false,
+        passwordResetInProgress: false,
     };
+
+    // tslint:disable-next-line:variable-name
+    public _isMounted: boolean;
+
+    public componentWillMount(): void {
+        this._isMounted = true;
+    }
+
+    public componentWillUnmount(): void {
+        this._isMounted = false;
+    }
 
     public render() {
         const {
@@ -43,6 +57,8 @@ export class LoginPresentation extends React.Component<
             textField,
             actionContainer,
             actionButton,
+            link,
+            linkContainer,
         } = createAuthenticationClasses(this.props, this.state);
 
         const {
@@ -78,6 +94,9 @@ export class LoginPresentation extends React.Component<
                         <FormHelperText>{passwordError}</FormHelperText>
                     </FormControl>
                 </div>
+                <div className={`${loginRow} ${linkContainer}`}>
+                    <Typography className={link} variant="caption" onClick={this.sendPasswordResetEmail}>Reset Password</Typography>
+                </div>
                 <div className={`${loginRow} ${actionContainer}`}>
                     <div className={actionButton}>
                         <AsyncButton
@@ -96,17 +115,21 @@ export class LoginPresentation extends React.Component<
     }
 
     private login = async() => {
-        this.setState({
-            loginActionInProgress: true,
-        });
+        if (this._isMounted) {
+            this.setState({
+                loginActionInProgress: true,
+            });
+        }
         try {
             const userCredential = await Api.authenticationApi.login(
                 this.state.email.value,
                 this.state.password.value);
 
-            this.setState({
-                loginActionInProgress: false,
-            });
+            if (this._isMounted) {
+                this.setState({
+                    loginActionInProgress: false,
+                });
+            }
 
             this.redirectToCompanySelection(userCredential.user!.uid);
         } catch (e) {
@@ -114,10 +137,12 @@ export class LoginPresentation extends React.Component<
                 .markAsInvalid()
                 .setError('The username or password is invalid');
 
-            this.setState({
-                email: newEmailControl,
-                loginActionInProgress: false,
-            });
+            if (this._isMounted) {
+                this.setState({
+                    email: newEmailControl,
+                    loginActionInProgress: false,
+                });
+            }
         }
     }
 
@@ -130,9 +155,11 @@ export class LoginPresentation extends React.Component<
         const controlToSetOnState = formControl.setValue(event.target.value);
         const name: 'fullName' | 'companyName' | 'email' | 'password' = event.target.name;
 
-        this.setState({
-            [name]: controlToSetOnState,
-        } as any);
+        if (this._isMounted) {
+            this.setState({
+                [name]: controlToSetOnState,
+            } as any);
+        }
     }
 
     private allControlsAreValid(): boolean {
@@ -142,6 +169,42 @@ export class LoginPresentation extends React.Component<
         } = this.state;
 
         return !email.invalid && !password.invalid;
+    }
+
+    private sendPasswordResetEmail = async(): Promise<void> => {
+        if (this.state.passwordResetInProgress) {
+            return;
+        }
+
+        if (this._isMounted) {
+            this.setState({
+                passwordResetInProgress: true,
+            })
+        }
+
+        const emailAddress = this.state.email.value;
+        try {
+            await firebase.auth().sendPasswordResetEmail(emailAddress);
+        } catch {
+            // tslint:disable-next-line:no-console
+            console.log('email was not sent');
+
+            if (this._isMounted) {
+                this.setState({
+                    passwordResetInProgress: false,
+                })
+            }
+            return;
+        }
+
+        if (this._isMounted) {
+            this.setState({
+                passwordResetInProgress: false,
+            })
+        }
+
+        // tslint:disable-next-line:no-console
+        console.log('email was sent');
     }
 }
 
