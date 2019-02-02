@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const functions = require("firebase-functions");
 const userTypes_1 = require("../models/userTypes");
+const sgMail = require("@sendgrid/mail");
 exports.createUserLocal = (auth, firestore) => functions.https.onCall((data, context) => __awaiter(this, void 0, void 0, function* () {
     const uid = context.auth.uid;
     console.log('uid is: ', uid);
@@ -46,6 +47,26 @@ exports.createUserLocal = (auth, firestore) => functions.https.onCall((data, con
             email: data.email,
             password,
         });
+        const SEND_GRID_API_KEY = functions.config().sendgrid.key;
+        sgMail.setApiKey(SEND_GRID_API_KEY);
+        try {
+            const msg = {
+                to: data.email,
+                from: 'noreply@shentaro.com',
+                templateId: 'd-cbbbc673651741c68a16e6d496002018',
+                substitutionWrappers: ['{{', '}}'],
+                substitutions: {
+                    fullName: data.fullName,
+                    companyName: companyDocumentSnapshot.data().companyName,
+                    email: data.email,
+                    password,
+                }
+            };
+            yield sgMail.send(msg);
+        }
+        catch (e) {
+            console.log('The send grid email did not work. Here is the email: ', e);
+        }
     }
     const userToCreate = {
         companyId: data.companyId,

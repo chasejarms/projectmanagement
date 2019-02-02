@@ -1,6 +1,7 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { UserType } from '../models/userTypes';
+import sgMail = require('@sendgrid/mail');
 
 interface IUserCreateRequest {
     companyId: string;
@@ -57,8 +58,28 @@ export const createUserLocal = (auth: admin.auth.Auth, firestore: FirebaseFirest
         const password = Math.random().toString(36).slice(-8);
         userRecord = await auth.createUser({
             email: data.email,
-            password,
+            password: 'password',
         });
+
+        const SEND_GRID_API_KEY = functions.config().sendgrid.key;
+        sgMail.setApiKey(SEND_GRID_API_KEY);
+        try {
+            const msg = {
+                to: data.email,
+                from: 'noreply@shentaro.com',
+                templateId: 'd-cbbbc673651741c68a16e6d496002018',
+                substitutionWrappers: ['{{', '}}'],
+                substitutions: {
+                    fullName: data.fullName,
+                    companyName: companyDocumentSnapshot.data().companyName,
+                    email: data.email,
+                    password,
+                }
+            }
+            await sgMail.send(msg);
+        } catch (e) {
+            console.log('The send grid email did not work. Here is the email: ', e);
+        }
     }
 
     const userToCreate = {
