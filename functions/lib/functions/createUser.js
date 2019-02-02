@@ -45,7 +45,7 @@ exports.createUserLocal = (auth, firestore) => functions.https.onCall((data, con
         const password = Math.random().toString(36).slice(-8);
         userRecord = yield auth.createUser({
             email: data.email,
-            password,
+            password: 'password',
         });
         const SEND_GRID_API_KEY = functions.config().sendgrid.key;
         sgMail.setApiKey(SEND_GRID_API_KEY);

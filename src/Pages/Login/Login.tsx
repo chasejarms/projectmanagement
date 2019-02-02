@@ -3,6 +3,7 @@ import {
     FormHelperText,
     Input,
     InputLabel,
+    Snackbar,
     Typography,
 } from '@material-ui/core';
 import { withTheme } from '@material-ui/core/styles';
@@ -37,6 +38,8 @@ export class LoginPresentation extends React.Component<
         }).markAsInvalid(),
         loginActionInProgress: false,
         passwordResetInProgress: false,
+        snackbarIsOpen: false,
+        passwordResetWasSent: false,
     };
 
     // tslint:disable-next-line:variable-name
@@ -110,8 +113,34 @@ export class LoginPresentation extends React.Component<
                         </AsyncButton>
                     </div>
                 </div>
+                <Snackbar
+                    open={this.state.snackbarIsOpen}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'center',
+                    }}
+                    autoHideDuration={5000}
+                    message={
+                        (
+                            <span>
+                                {this.state.passwordResetWasSent ? (
+                                    'Success! Check your email to reset your password.'
+                                ): (
+                                    'Oops! It looks like there was an error.'
+                                )}
+                            </span>
+                        )
+                    }
+                    onClose={this.handleSnackbarClose}
+                />
             </div>
         );
+    }
+
+    private handleSnackbarClose = (): void => {
+        this.setState({
+            snackbarIsOpen: false,
+        })
     }
 
     private login = async() => {
@@ -192,6 +221,8 @@ export class LoginPresentation extends React.Component<
             if (this._isMounted) {
                 this.setState({
                     passwordResetInProgress: false,
+                    passwordResetWasSent: false,
+                    snackbarIsOpen: true,
                 })
             }
             return;
@@ -200,6 +231,8 @@ export class LoginPresentation extends React.Component<
         if (this._isMounted) {
             this.setState({
                 passwordResetInProgress: false,
+                passwordResetWasSent: true,
+                snackbarIsOpen: true,
             })
         }
 

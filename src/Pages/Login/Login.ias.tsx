@@ -10,6 +10,8 @@ export interface ILoginPresentationState {
     password: IFormControlState<string>;
     loginActionInProgress: boolean;
     passwordResetInProgress: boolean;
+    snackbarIsOpen: boolean;
+    passwordResetWasSent: boolean;
 }
 export const createAuthenticationClasses = (
   props: ILoginPresentationProps,
