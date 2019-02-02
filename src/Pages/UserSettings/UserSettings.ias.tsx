@@ -8,6 +8,8 @@ export interface IUserSettingsState {
     firstPassword: FormControlState<string>;
     secondPassword: FormControlState<string>;
     updatingUserPassword: boolean;
+    snackbarIsOpen: boolean;
+    updatingUserPasswordIsSuccess: boolean;
 }
 
 // tslint:disable-next-line:no-empty-interface
@@ -60,6 +62,11 @@ export const createUserSettingsClasses = (
         paddingBottom: 32,
     });
 
+    const asyncButton = css({
+        position: 'relative',
+        bottom: 22,
+    });
+
     return {
         userSettingsContainer,
         userSettingsPaper,
@@ -69,5 +76,6 @@ export const createUserSettingsClasses = (
         resetPasswordContainer,
         resetPasswordNotTitleContainer,
         resetPasswordTitle,
-    };
+        asyncButton,
+    }
 }

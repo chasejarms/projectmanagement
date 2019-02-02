@@ -7,10 +7,13 @@ import {
 
 import {
     FormControl,
+    FormHelperText,
+    Input,
     InputLabel,
     MenuItem,
     Paper,
     Select,
+    Snackbar,
     TextField,
     Typography,
 } from '@material-ui/core';
@@ -44,11 +47,16 @@ export class UserSettingsPresentation extends React.Component<
             ],
         }).markAsInvalid(),
         updatingUserPassword: false,
+        snackbarIsOpen: false,
+        updatingUserPasswordIsSuccess: false,
     }
 
     public componentDidMount(): void {
         const secondPassword = this.state.secondPassword.setValue(this.state.secondPassword.value);
-        secondPassword.validators.push(this.samePasswordForConfirmDialog);
+        secondPassword.validators.push(this.samePasswordForConfirmDialog)
+        secondPassword.markAsInvalid()
+            .markAsUntouched()
+            .markAsPristine();
         this.setState({
             secondPassword,
         })
@@ -64,6 +72,7 @@ export class UserSettingsPresentation extends React.Component<
             resetPasswordNotTitleContainer,
             resetPasswordTitle,
             resetPasswordButtonContainer,
+            asyncButton,
         } = createUserSettingsClasses(this.props, this.state);
 
         const companyId = this.props.location.pathname.split('/')[2];
@@ -105,22 +114,35 @@ export class UserSettingsPresentation extends React.Component<
                     <div className={resetPasswordContainer}>
                         <Typography variant="title" className={resetPasswordTitle}>Password Reset</Typography>
                         <div className={resetPasswordNotTitleContainer}>
-                            <TextField
-                                label="New Password"
-                                value={this.state.firstPassword.value}
-                                onChange={this.handleNewPasswordChange}
-                                type="password"
+                            <FormControl
                                 disabled={this.state.updatingUserPassword}
-                            />
-                            <TextField
-                                label="Confirm Password"
-                                value={this.state.secondPassword.value}
-                                onChange={this.handleSecondPasswordChange}
-                                type="password"
+                                required={true}
+                                error={this.state.firstPassword.shouldShowError()}
+                            >
+                                <InputLabel>New Password</InputLabel>
+                                <Input
+                                    type="password"
+                                    value={this.state.firstPassword.value}
+                                    onChange={this.handleNewPasswordChange}
+                                />
+                                <FormHelperText>{this.state.firstPassword.errors[0]}</FormHelperText>
+                            </FormControl>
+                            <FormControl
                                 disabled={this.state.updatingUserPassword}
-                            />
+                                required={true}
+                                error={this.state.secondPassword.shouldShowError()}
+                            >
+                                <InputLabel>Confirm Password</InputLabel>
+                                <Input
+                                    type="password"
+                                    value={this.state.secondPassword.value}
+                                    onChange={this.handleSecondPasswordChange}
+                                />
+                                <FormHelperText>{this.state.secondPassword.errors[0]}</FormHelperText>
+                            </FormControl>
                             <div className={resetPasswordButtonContainer}>
                                 <AsyncButton
+                                    className={asyncButton}
                                     asyncActionInProgress={this.state.updatingUserPassword}
                                     disabled={this.state.updatingUserPassword || this.someControlsAreInvalid()}
                                     color="secondary"
@@ -130,11 +152,37 @@ export class UserSettingsPresentation extends React.Component<
                                     Reset Password
                                 </AsyncButton>
                             </div>
+                            <Snackbar
+                                open={this.state.snackbarIsOpen}
+                                anchorOrigin={{
+                                    vertical: 'bottom',
+                                    horizontal: 'center',
+                                }}
+                                autoHideDuration={5000}
+                                message={
+                                    (
+                                        <span>
+                                            {this.state.updatingUserPasswordIsSuccess ? (
+                                                'Success! Your password has been reset.'
+                                            ): (
+                                                'Oops! It looks like there was an error.'
+                                            )}
+                                        </span>
+                                    )
+                                }
+                                onClose={this.handleSnackbarClose}
+                            />
                         </div>
                     </div>
                 </Paper>
             </div>
         )
+    }
+
+    private handleSnackbarClose = (): void => {
+        this.setState({
+            snackbarIsOpen: false,
+        })
     }
 
     private resetUserPassword = async(): Promise<void> => {
@@ -147,14 +195,17 @@ export class UserSettingsPresentation extends React.Component<
         } catch {
             this.setState({
                 updatingUserPassword: false,
+                updatingUserPasswordIsSuccess: false,
+                snackbarIsOpen: true,
             })
             this.resetResetPasswordControls();
-            // tslint:disable-next-line:no-console
-            console.log('updating the password failed');
+            return;
         }
 
         this.setState({
             updatingUserPassword: false,
+            snackbarIsOpen: true,
+            updatingUserPasswordIsSuccess: true,
         })
         this.resetResetPasswordControls();
     }
