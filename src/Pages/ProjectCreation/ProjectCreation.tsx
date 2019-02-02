@@ -502,6 +502,8 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
             documentFilePathContainer,
             cancelIconContainer,
             cancelIcon,
+            doctorTitle,
+            doctorEmailSubtitle,
         } = createProjectCreationClasses(this.props, this.state);
 
         const companyId = this.props.match.path.split('/')[2];
@@ -553,7 +555,8 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
                                     {this.state.potentialDoctors.map((potentialDoctor) => {
                                         return (
                                             <MenuItem key={potentialDoctor.id} onClick={this.selectDoctor(potentialDoctor)}>
-                                                {potentialDoctor.fullName} - {potentialDoctor.email}
+                                                <Typography variant="subheading" className={doctorTitle}>{potentialDoctor.fullName}</Typography>
+                                                <Typography variant="caption" className={doctorEmailSubtitle}>({potentialDoctor.email})</Typography>
                                             </MenuItem>
                                         )
                                     })}

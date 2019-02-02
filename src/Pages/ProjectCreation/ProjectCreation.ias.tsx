@@ -319,6 +319,11 @@ export const createProjectCreationClasses = (
         paddingTop: 100,
     });
 
+    const doctorContainer = css({
+        display: 'flex',
+        flexDirection: 'column',
+    });
+
     const imgContainer = css({
         display: 'grid',
         gridTemplateColumns: '1fr 1fr 1fr 1fr',
@@ -406,6 +411,14 @@ export const createProjectCreationClasses = (
         boxSizing: 'border-box',
     });
 
+    const doctorTitle = css({
+        marginRight: 8,
+    });
+
+    const doctorEmailSubtitle = css({
+        overflow: 'ellipsis',
+    });
+
     return {
         projectCreationContainer,
         stepperContainer,
@@ -460,5 +473,8 @@ export const createProjectCreationClasses = (
         documentFilePathContainer,
         cancelIconContainer,
         cancelIcon,
+        doctorContainer,
+        doctorTitle,
+        doctorEmailSubtitle,
     };
 }

@@ -1,9 +1,11 @@
 import { WithTheme } from '@material-ui/core';
 import { css } from 'emotion';
 import { RouteComponentProps } from 'react-router';
+import { IUserSliceOfState } from 'src/Redux/Reducers/userReducer';
 
 export interface IAuthenticatedProps extends RouteComponentProps<{}>, WithTheme {
     removeUserForCompany: (companyId: string) => void,
+    userState: IUserSliceOfState;
 }
 // tslint:disable-next-line:no-empty-interface
 export interface IAuthenticatedState {}

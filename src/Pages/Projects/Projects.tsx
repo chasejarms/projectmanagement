@@ -91,9 +91,10 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
             tableContainer,
         } = createProjectsPresentationClasses(this.props, this.state);
 
+        const companyId = this.props.match.path.split('/')[2];
+        const userIsDoctor = this.props.userState[companyId].type === UserType.Doctor;
+
         const mappedProjects = this.state.slimCases.map(slimCase => {
-            const companyId = this.props.match.path.split('/')[2];
-            const userIsDoctor = this.props.userState[companyId].type === UserType.Doctor;
             const newInfoFromDoctor = slimCase.showNewInfoFrom === ShowNewInfoFromType.Doctor;
             const newInfoFromLab = slimCase.showNewInfoFrom === ShowNewInfoFromType.Lab;
 
@@ -124,16 +125,18 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                             Cases
                         </Typography>
                         <div>
-                            <Tooltip title="Print New Project QR Codes" placement="left" disableFocusListener={true}>
-                                <IconButton
-                                    disabled={this.state.retrievingQRCodes}
-                                    aria-label="Print QR Codes"
-                                    onClick={this.printQRCodes}
-                                    color="secondary"
-                                >
-                                    <PrintIcon />
-                                </IconButton>
-                            </Tooltip>
+                            {userIsDoctor ? undefined : (
+                                <Tooltip title="Print New Project QR Codes" placement="left" disableFocusListener={true}>
+                                    <IconButton
+                                        disabled={this.state.retrievingQRCodes}
+                                        aria-label="Print QR Codes"
+                                        onClick={this.printQRCodes}
+                                        color="secondary"
+                                    >
+                                        <PrintIcon />
+                                    </IconButton>
+                                </Tooltip>
+                            )}
                             <Tooltip title="New Case" placement="left" disableFocusListener={true}>
                                 <IconButton
                                     aria-label="New Case"

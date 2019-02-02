@@ -17,7 +17,9 @@ import * as React from 'react';
 import { connect, Dispatch } from 'react-redux';
 import { withRouter } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
+import { UserType } from 'src/Models/userTypes';
 import { removeUserForCompany } from 'src/Redux/ActionCreators/userActionCreators';
+import { IAppState } from 'src/Redux/Reducers/rootReducer';
 import Api from '../../Api/api';
 import { CaseNotesTemplate } from '../CaseNotesTemplate/CaseNotesTemplate';
 import { Project } from '../Project/Project';
@@ -45,6 +47,10 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
             pageBackgroundLayerThree,
         } = createAuthenticatedClasses(this.props, this.state);
 
+        const companyId = this.props.location.pathname.split('/')[2];
+
+        const userIsNotAdmin = this.props.userState[companyId].type !== UserType.Admin;
+
         return (
             <div className={authenticatedContainer}>
                 <div className={drawerContainer}>
@@ -65,39 +71,43 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                                         </ListItemIcon>
                                     </ListItem>
                                 </Tooltip>
-                                <Tooltip title="Users" placement="right" disableFocusListener={true}>
-                                    <ListItem
-                                        button={true}
-                                        className={iconContainer}
-                                        onClick={this.navigateToUsers}
-                                    >
-                                        <ListItemIcon>
-                                            <PeopleIcon className={iconStyling}/>
-                                        </ListItemIcon>
-                                    </ListItem>
-                                </Tooltip>
-                                <Tooltip title="Workflow" placement="right" disableFocusListener={true}>
-                                    <ListItem
-                                        button={true}
-                                        className={iconContainer}
-                                        onClick={this.navigateToWorkflow}
-                                    >
-                                        <ListItemIcon>
-                                            <ListIcon className={iconStyling}/>
-                                        </ListItemIcon>
-                                    </ListItem>
-                                </Tooltip>
-                                <Tooltip title="Case Notes Template" placement="right" disableFocusListener={true}>
-                                    <ListItem
-                                        button={true}
-                                        className={iconContainer}
-                                        onClick={this.navigateToCaseNotesTemplate}
-                                    >
-                                        <ListItemIcon>
-                                            <NoteIcon className={iconStyling}/>
-                                        </ListItemIcon>
-                                    </ListItem>
-                                </Tooltip>
+                                {userIsNotAdmin ? undefined : (
+                                    <div>
+                                        <Tooltip title="Users" placement="right" disableFocusListener={true}>
+                                            <ListItem
+                                                button={true}
+                                                className={iconContainer}
+                                                onClick={this.navigateToUsers}
+                                            >
+                                                <ListItemIcon>
+                                                    <PeopleIcon className={iconStyling}/>
+                                                </ListItemIcon>
+                                            </ListItem>
+                                        </Tooltip>
+                                        <Tooltip title="Workflow" placement="right" disableFocusListener={true}>
+                                            <ListItem
+                                                button={true}
+                                                className={iconContainer}
+                                                onClick={this.navigateToWorkflow}
+                                            >
+                                                <ListItemIcon>
+                                                    <ListIcon className={iconStyling}/>
+                                                </ListItemIcon>
+                                            </ListItem>
+                                        </Tooltip>
+                                        <Tooltip title="Case Notes Template" placement="right" disableFocusListener={true}>
+                                            <ListItem
+                                                button={true}
+                                                className={iconContainer}
+                                                onClick={this.navigateToCaseNotesTemplate}
+                                            >
+                                                <ListItemIcon>
+                                                    <NoteIcon className={iconStyling}/>
+                                                </ListItemIcon>
+                                            </ListItem>
+                                        </Tooltip>
+                                    </div>
+                                )}
                             </div>
                             <div>
                                 <Divider/>
@@ -205,11 +215,15 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
     }
 }
 
+const mapStateToProps = ({ userState }: IAppState) => ({
+    userState
+});
+
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     removeUserForCompany: (companyId: string) => {
         dispatch(removeUserForCompany(companyId));
     },
 })
 
-const connectedComponent = connect(undefined, mapDispatchToProps)(AuthenticatedPresentation as any);
-export const Authenticated = withRouter(withTheme() (connectedComponent as any) as any);
+const connectedComponent = connect(mapStateToProps, mapDispatchToProps)(withRouter(AuthenticatedPresentation as any) as any);
+export const Authenticated = withTheme() (connectedComponent as any) as any;

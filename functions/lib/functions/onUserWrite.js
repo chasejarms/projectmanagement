@@ -25,13 +25,20 @@ exports.onCreateOrUpdateUserLocal = (passedInAdmin) => functions.firestore
 }));
 function createNameSearchValues(fullName) {
     const arr = fullName.toLowerCase().split('');
+    const uniqueNameSearchValues = new Set([]);
     const nameSearchValues = [];
-    let prevKey = '';
-    for (const char of arr) {
-        const key = prevKey + char;
-        nameSearchValues.push(key);
-        prevKey = key;
+    for (let i = 0; i < arr.length; i++) {
+        for (let j = i; j < arr.length; j++) {
+            const key = arr.slice(i, j).join('');
+            console.log('The key is: ', key);
+            if (!uniqueNameSearchValues.has(key)) {
+                uniqueNameSearchValues.add(key);
+            }
+        }
     }
+    uniqueNameSearchValues.forEach((key) => {
+        nameSearchValues.push(key);
+    });
     return nameSearchValues;
 }
 //# sourceMappingURL=onUserWrite.js.map
