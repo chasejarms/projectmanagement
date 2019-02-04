@@ -87,7 +87,7 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
 
     const caseToCreate: ICase = {
         complete: false,
-        deadline: data.deadline,
+        deadline: new Date(data.deadline).toUTCString(),
         doctor,
         name: data.name,
         notes: data.notes,

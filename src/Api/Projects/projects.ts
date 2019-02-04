@@ -84,8 +84,14 @@ export class ProjectsApi implements ICaseApi {
     }
 
     public async updateCaseInformation(caseId: string, updateCaseInformationRequest: IUpdateCaseInformationRequest): Promise<void> {
+        const deadlineAsDate = new Date(updateCaseInformationRequest.deadline);
+        const deadlineAsTimestamp = new firebase.firestore.Timestamp(deadlineAsDate.getMilliseconds() / 1000, 0);
+        const caseInformation = {
+            ...updateCaseInformationRequest,
+            deadline: deadlineAsTimestamp,
+        }
         await firebase.firestore().collection('cases').doc(caseId)
-            .set(updateCaseInformationRequest, { merge: true });
+            .set(caseInformation, { merge: true });
     }
 
     public async getNewCases(companyId: string): Promise<ICase[]> {

@@ -55,7 +55,7 @@ exports.createCaseLocal = (passedInAdmin) => functions.https.onCall((data, conte
     console.log('doctor: ', doctor);
     const caseToCreate = {
         complete: false,
-        deadline: data.deadline,
+        deadline: new Date(data.deadline).toUTCString(),
         doctor,
         name: data.name,
         notes: data.notes,

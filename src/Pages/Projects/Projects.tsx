@@ -53,7 +53,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         }
 
         const userType = this.props.userState[companyId].type;
-        const userId = this.props.userState[companyId].uid;
+        const userId = this.props.userState[companyId].id;
 
         Api.projectsApi.getSlimCases(slimCasesSearchRequest, userType, userId).then((slimCaseDocumentSnapshots) => {
             const slimCases: ISlimCase[] = [];
