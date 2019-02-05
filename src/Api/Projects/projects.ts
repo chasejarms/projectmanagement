@@ -54,8 +54,14 @@ export class ProjectsApi implements ICaseApi {
             .doc(caseId)
             .get();
 
+        const createdFromRequest = documentReference.data()!.created as firebase.firestore.Timestamp;
+        const deadlineFromRequest = documentReference.data()!.deadline as firebase.firestore.Timestamp;
+
+
         return {
             ...documentReference.data(),
+            created: new firebase.firestore.Timestamp(createdFromRequest.seconds, createdFromRequest.nanoseconds),
+            deadline: new firebase.firestore.Timestamp(deadlineFromRequest.seconds, deadlineFromRequest.nanoseconds),
             id: caseId,
         } as ICase;
     }
@@ -85,7 +91,7 @@ export class ProjectsApi implements ICaseApi {
 
     public async updateCaseInformation(caseId: string, updateCaseInformationRequest: IUpdateCaseInformationRequest): Promise<void> {
         const deadlineAsDate = new Date(updateCaseInformationRequest.deadline);
-        const deadlineAsTimestamp = new firebase.firestore.Timestamp(deadlineAsDate.getMilliseconds() / 1000, 0);
+        const deadlineAsTimestamp = new firebase.firestore.Timestamp(Math.round(deadlineAsDate.getTime() / 1000), 0);
         const caseInformation = {
             ...updateCaseInformationRequest,
             deadline: deadlineAsTimestamp,

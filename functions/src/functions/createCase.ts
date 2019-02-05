@@ -1,3 +1,4 @@
+
 import { ShowNewInfoFromType } from '../models/showNewInfoFromTypes';
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
@@ -10,7 +11,7 @@ interface IAttachmentMetadata {
 
 interface IProjectCreateData {
     name: string;
-    deadline: string;
+    deadline: admin.firestore.Timestamp;
     notes: string;
     attachmentUrls: IAttachmentMetadata[];
     doctor?: string;
@@ -20,12 +21,12 @@ interface IProjectCreateData {
 
 interface ICase {
     complete: boolean;
-    deadline: string;
+    deadline: admin.firestore.Timestamp;
     doctor: string;
     name: string;
     notes: string;
     attachmentUrls: IAttachmentMetadata[];
-    created: string;
+    created: admin.firestore.Timestamp;
     caseCheckpoints: string[];
     companyId: string;
     showNewInfoFrom: ShowNewInfoFromType.Doctor | ShowNewInfoFromType.Lab | null;
@@ -85,14 +86,16 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
     const doctor = isAdminOrStaff ? data.doctor : companyUserDocumentSnapshot.id;
     console.log('doctor: ', doctor);
 
+    const nowInSeconds = Math.round(new Date().getTime() / 1000);
+    console.log('nowInSeconds: ', nowInSeconds);
     const caseToCreate: ICase = {
         complete: false,
-        deadline: new Date(data.deadline).toUTCString(),
+        deadline: data.deadline,
         doctor,
         name: data.name,
         notes: data.notes,
         attachmentUrls: data.attachmentUrls,
-        created: new Date().toUTCString(),
+        created: new admin.firestore.Timestamp(nowInSeconds, 0),
         caseCheckpoints: createdCheckpointDocumentIds,
         companyId: data.companyId,
         showNewInfoFrom: isAdminOrStaff ? ShowNewInfoFromType.Doctor : ShowNewInfoFromType.Lab,

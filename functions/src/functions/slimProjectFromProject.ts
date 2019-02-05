@@ -6,10 +6,10 @@ interface ISlimCase {
     currentCheckpointName: string;
     caseId: string;
     name: string;
-    deadline: string;
+    deadline: admin.firestore.Timestamp;
     doctor: string;
     doctorName: string;
-    created: string;
+    created: admin.firestore.Timestamp;
     companyId: string;
     showNewInfoFrom: ShowNewInfoFromType.Doctor | ShowNewInfoFromType.Lab | null;
 }

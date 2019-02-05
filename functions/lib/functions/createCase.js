@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const showNewInfoFromTypes_1 = require("../models/showNewInfoFromTypes");
 const functions = require("firebase-functions");
+const admin = require("firebase-admin");
 const userTypes_1 = require("../models/userTypes");
 exports.createCaseLocal = (passedInAdmin) => functions.https.onCall((data, context) => __awaiter(this, void 0, void 0, function* () {
     console.log('data: ', data);
@@ -53,14 +54,16 @@ exports.createCaseLocal = (passedInAdmin) => functions.https.onCall((data, conte
     });
     const doctor = isAdminOrStaff ? data.doctor : companyUserDocumentSnapshot.id;
     console.log('doctor: ', doctor);
+    const nowInSeconds = Math.round(new Date().getTime() / 1000);
+    console.log('nowInSeconds: ', nowInSeconds);
     const caseToCreate = {
         complete: false,
-        deadline: new Date(data.deadline).toUTCString(),
+        deadline: data.deadline,
         doctor,
         name: data.name,
         notes: data.notes,
         attachmentUrls: data.attachmentUrls,
-        created: new Date().toUTCString(),
+        created: new admin.firestore.Timestamp(nowInSeconds, 0),
         caseCheckpoints: createdCheckpointDocumentIds,
         companyId: data.companyId,
         showNewInfoFrom: isAdminOrStaff ? showNewInfoFromTypes_1.ShowNewInfoFromType.Doctor : showNewInfoFromTypes_1.ShowNewInfoFromType.Lab,

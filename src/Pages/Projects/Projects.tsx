@@ -16,6 +16,7 @@ import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import PrintIcon from '@material-ui/icons/Print';
+import * as firebase from 'firebase';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
@@ -58,10 +59,16 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         Api.projectsApi.getSlimCases(slimCasesSearchRequest, userType, userId).then((slimCaseDocumentSnapshots) => {
             const slimCases: ISlimCase[] = [];
             slimCaseDocumentSnapshots.forEach((document) => {
+                const data = document.data();
+                const createdFromRequest = data!.created as firebase.firestore.Timestamp;
+                const deadlineFromRequest = data!.deadline as firebase.firestore.Timestamp;
+
                 slimCases.push({
                     caseId: document.id,
                     document,
                     ...document.data() as any,
+                    created: new firebase.firestore.Timestamp(createdFromRequest.seconds, createdFromRequest.nanoseconds),
+                    deadline: new firebase.firestore.Timestamp(deadlineFromRequest.seconds, deadlineFromRequest.nanoseconds),
                 })
             });
             const moreCasesExist = slimCases.length === 5;
@@ -105,7 +112,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                 </TableCell>
             );
 
-            const date = new Date(slimCase.deadline);
+            const date = slimCase.deadline.toDate();
             const prettyDeadline = this.makeDeadlinePretty(date);
             return (
                 <TableRow key={slimCase.caseId} onClick={this.navigateToProject(slimCase.caseId)} className={rowStyling}>
@@ -203,10 +210,16 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         Api.projectsApi.getSlimCases(slimCasesSearchRequest, userType, userId).then((slimCaseDocumentSnapshots) => {
             const slimCases: ISlimCase[] = [];
             slimCaseDocumentSnapshots.forEach((document) => {
+                const data = document.data();
+                const createdFromRequest = data!.created as firebase.firestore.Timestamp;
+                const deadlineFromRequest = data!.deadline as firebase.firestore.Timestamp;
+
                 slimCases.push({
                     caseId: document.id,
                     document,
                     ...document.data() as any,
+                    created: new firebase.firestore.Timestamp(createdFromRequest.seconds, createdFromRequest.nanoseconds),
+                    deadline: new firebase.firestore.Timestamp(deadlineFromRequest.seconds, deadlineFromRequest.nanoseconds),
                 })
             });
             const moreCasesExist = slimCases.length === 5;
@@ -239,10 +252,16 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         Api.projectsApi.getSlimCases(slimCasesSearchRequest, userType, userId).then((slimCaseDocumentSnapshots) => {
             const slimCases: ISlimCase[] = [];
             slimCaseDocumentSnapshots.forEach((document) => {
+                const data = document.data();
+                const createdFromRequest = data!.created as firebase.firestore.Timestamp;
+                const deadlineFromRequest = data!.deadline as firebase.firestore.Timestamp;
+
                 slimCases.push({
                     caseId: document.id,
                     document,
                     ...document.data() as any,
+                    created: new firebase.firestore.Timestamp(createdFromRequest.seconds, createdFromRequest.nanoseconds),
+                    deadline: new firebase.firestore.Timestamp(deadlineFromRequest.seconds, deadlineFromRequest.nanoseconds),
                 })
             });
             const moreCasesExist = slimCases.length === 5;
@@ -280,7 +299,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
             return {
                 caseId: project.id,
                 caseName: project.name,
-                caseDeadline: this.makeDeadlinePretty(new Date(project.deadline)),
+                caseDeadline: this.makeDeadlinePretty(project.deadline.toDate()),
             }
         })
 

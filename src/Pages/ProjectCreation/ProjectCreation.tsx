@@ -220,7 +220,7 @@ export class ProjectCreationPresentation extends React.Component<IProjectCreatio
 
         const projectCreateRequest: ICaseCreateRequest = {
             name: this.props.projectCreation.caseName.value,
-            deadline: this.state.caseDeadline.value.toUTCString(),
+            deadline: new firebase.firestore.Timestamp(Math.round(this.state.caseDeadline.value.getTime() / 1000), 0),
             notes: this.state.projectNotes,
             attachmentUrls: this.state.attachmentUrls,
             companyId,

@@ -2,15 +2,10 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { UserType } from '../models/userTypes';
 
-// interface IGetCaseCheckpointsData {
-//     caseId: string;
-//     companyId: string;
-// }
-
 interface IAugmentedCheckpoint {
     id: string;
     complete: boolean;
-    completedDate: Date | null;
+    completedDate: admin.firestore.Timestamp | null;
     completedBy: string | null;
     linkedWorkflowCheckpoint: string;
     name: string;
@@ -21,7 +16,7 @@ interface IAugmentedCheckpoint {
 interface ICaseCheckpoint {
     id: string;
     complete: boolean;
-    completedDate: Date | null;
+    completedDate: admin.firestore.Timestamp | null;
     completedBy: string | null;
     linkedWorkflowCheckpoint: string;
 }

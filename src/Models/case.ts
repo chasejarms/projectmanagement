@@ -1,14 +1,15 @@
+import { Timestamp } from "@google-cloud/firestore";
 import { IAttachmentMetadata } from "./attachmentMetadata";
 
 export interface ICase {
     id: string;
     complete: boolean;
-    deadline: string;
+    deadline: Timestamp;
     doctor: string;
     name: string;
     notes: string;
     attachmentUrls: IAttachmentMetadata[];
-    created: string;
+    created: Timestamp;
     caseCheckpoints: string[];
     hasStarted: boolean;
 }

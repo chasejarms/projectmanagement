@@ -93,7 +93,8 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         const project = await Api.projectsApi.getProject(caseId);
 
         const caseNameControl = this.state.caseName.setValue(project.name);
-        const caseDeadlineAsDate = new Date(project.deadline);
+        window['deadline'] = project.deadline;
+        const caseDeadlineAsDate = project.deadline.toDate();
         const caseDeadlineControl = this.state.caseDeadline.setValue(caseDeadlineAsDate);
         const notesControl = this.state.notes.setValue(project.notes);
         // tslint:disable-next-line:no-console
