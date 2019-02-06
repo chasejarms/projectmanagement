@@ -17,6 +17,7 @@ import * as React from 'react';
 import { connect, Dispatch } from 'react-redux';
 import { withRouter } from 'react-router';
 import { Route, Switch } from 'react-router-dom';
+import { RouteGuard } from 'src/Components/RouteGuard/RouteGuard';
 import { UserType } from 'src/Models/userTypes';
 import { removeUserForCompany } from 'src/Redux/ActionCreators/userActionCreators';
 import { IAppState } from 'src/Redux/Reducers/rootReducer';
@@ -151,25 +152,25 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                             exact={true}
                             component={Project}
                         />
-                        <Route
+                        <RouteGuard
+                            mustHaveRole={[UserType.Admin]}
                             path={this.props.match.url + '/users'}
-                            exact={true}
                             component={Users}
                         />
-                        <Route
+                        <RouteGuard
+                            mustHaveRole={[UserType.Admin]}
                             path={this.props.match.url + '/workflow'}
-                            exact={true}
-                            component={Workflow}
+                            component={Workflow as any}
                         />
                         <Route
                             path={this.props.match.url + '/createProject'}
                             exact={true}
                             component={ProjectCreation}
                         />
-                        <Route
+                        <RouteGuard
+                            mustHaveRole={[UserType.Admin]}
                             path={this.props.match.url + '/caseNotesTemplate'}
-                            exact={true}
-                            component={CaseNotesTemplate}
+                            component={CaseNotesTemplate as any}
                         />
                         <Route
                             path={this.props.match.url + '/userSettings'}
