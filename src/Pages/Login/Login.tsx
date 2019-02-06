@@ -162,6 +162,8 @@ export class LoginPresentation extends React.Component<
 
             this.redirectToCompanySelection(userCredential.user!.uid);
         } catch (e) {
+            // tslint:disable-next-line:no-console
+            console.log(e);
             const newEmailControl = this.state.email.createCopy()
                 .markAsInvalid()
                 .setError('The username or password is invalid');

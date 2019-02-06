@@ -45,7 +45,7 @@ exports.createUserLocal = (auth, firestore) => functions.https.onCall((data, con
         const password = Math.random().toString(36).slice(-8);
         userRecord = yield auth.createUser({
             email: data.email,
-            password: 'password',
+            password,
         });
         const SEND_GRID_API_KEY = functions.config().sendgrid.key;
         sgMail.setApiKey(SEND_GRID_API_KEY);
@@ -55,14 +55,17 @@ exports.createUserLocal = (auth, firestore) => functions.https.onCall((data, con
                 from: 'noreply@shentaro.com',
                 templateId: 'd-cbbbc673651741c68a16e6d496002018',
                 substitutionWrappers: ['{{', '}}'],
-                substitutions: {
+                dynamicTemplateData: {
                     fullName: data.fullName,
                     companyName: companyDocumentSnapshot.data().companyName,
                     email: data.email,
                     password,
                 }
             };
-            yield sgMail.send(msg);
+            const sendGridResponse = yield sgMail.send(msg);
+            console.log('sendGridResponse status code: ', sendGridResponse[0].statusCode);
+            console.log('sendGridResponse status message: ', sendGridResponse[0].statusMessage);
+            console.log('sendGridResponse body: ', sendGridResponse[0].body);
         }
         catch (e) {
             console.log('The send grid email did not work. Here is the email: ', e);
