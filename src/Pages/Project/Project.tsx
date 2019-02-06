@@ -9,6 +9,7 @@ import {
     FormHelperText,
     Input,
     InputLabel,
+    Snackbar,
     withTheme,
 } from '@material-ui/core';
 import {
@@ -38,6 +39,7 @@ import { FormControlState } from 'src/Classes/formControlState';
 import { AsyncButton } from 'src/Components/AsyncButton/AsyncButton';
 import { QRCodeDisplay } from 'src/Components/QRCodeDisplay/QRCodeDisplay';
 import { IAttachmentMetadata } from 'src/Models/attachmentMetadata';
+import { ShowNewInfoFromType } from 'src/Models/showNewInfoFromTypes';
 import { UserType } from 'src/Models/userTypes';
 import { IAppState } from 'src/Redux/Reducers/rootReducer';
 import { requiredValidator } from 'src/Validators/required.validator';
@@ -76,6 +78,8 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         srcUrls: [],
         indexOfHoveredItem: null,
         retrievingCheckpoints: true,
+        projectWasSuccessfullyUpdated: false,
+        snackbarIsOpen: false,
     }
 
     // tslint:disable-next-line:variable-name
@@ -91,6 +95,17 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         const companyId = this.props.location.pathname.split('/')[2];
 
         const project = await Api.projectsApi.getProject(caseId);
+
+        const showNewInfoFromDoctor = project.showNewInfoFrom === ShowNewInfoFromType.Doctor;
+        const showNewInfoFromLab = project.showNewInfoFrom === ShowNewInfoFromType.Lab;
+
+        const userIsDoctor = this.props.userState[companyId].type === UserType.Doctor;
+
+        const shouldMarkAsShown = (showNewInfoFromDoctor && !userIsDoctor) || (showNewInfoFromLab && userIsDoctor);
+
+        if (shouldMarkAsShown) {
+            Api.projectsApi.markProjectUpdatesAsSeen(companyId, caseId);
+        }
 
         const caseNameControl = this.state.caseName.setValue(project.name);
         window['deadline'] = project.deadline;
@@ -357,8 +372,34 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                         </div>
                     </Paper>
                 </div>
+                <Snackbar
+                    open={this.state.snackbarIsOpen}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'center',
+                    }}
+                    autoHideDuration={5000}
+                    message={
+                        (
+                            <span>
+                                {this.state.projectWasSuccessfullyUpdated ? (
+                                    'Success! The project notes were updated.'
+                                ): (
+                                    'Oops! It looks like there was an error.'
+                                )}
+                            </span>
+                        )
+                    }
+                    onClose={this.handleSnackbarClose}
+                />
             </div>
         );
+    }
+
+    private handleSnackbarClose = (): void => {
+        this.setState({
+            snackbarIsOpen: false,
+        })
     }
 
     private handleCheckpointChange = (checkpoint: ICheckpoint, index: number) => async() => {
@@ -586,14 +627,29 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             updateCaseInformationInProgress: true,
         })
 
-        await Api.projectsApi.updateCaseInformation(this.state.caseId, {
-            name: this.state.caseName.value,
-            deadline: this.state.caseDeadline.value.toUTCString(),
-            notes: this.state.notes.value,
-        })
+        const companyId = this.props.location.pathname.split('/')[2];
+        const showNewInfoFrom = this.props.userState[companyId].type === UserType.Doctor ? ShowNewInfoFromType.Doctor : ShowNewInfoFromType.Lab;
+
+        try {
+            await Api.projectsApi.updateCaseInformation(this.state.caseId, {
+                name: this.state.caseName.value,
+                deadline: this.state.caseDeadline.value.toUTCString(),
+                notes: this.state.notes.value,
+            }, showNewInfoFrom)
+        } catch {
+            if (this._isMounted) {
+                this.setState({
+                    projectWasSuccessfullyUpdated: false,
+                    snackbarIsOpen: true,
+                })
+            }
+            return;
+        }
 
         if (this._isMounted) {
             this.setState({
+                snackbarIsOpen: true,
+                projectWasSuccessfullyUpdated: true,
                 updateCaseInformationInProgress: false,
             })
         }

@@ -30,6 +30,8 @@ export interface IProjectPresentationState {
     srcUrls: string[];
     indexOfHoveredItem: null | number;
     retrievingCheckpoints: boolean;
+    projectWasSuccessfullyUpdated: boolean;
+    snackbarIsOpen: boolean;
 }
 
 export const createProjectPresentationClasses = (

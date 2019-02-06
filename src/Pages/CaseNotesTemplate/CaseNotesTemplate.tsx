@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import {
     Paper,
+    Snackbar,
     TextField,
     Typography,
 } from '@material-ui/core';
@@ -19,6 +20,8 @@ export class CaseNotesTemplatePresentation extends React.Component<ICaseNotesTem
         }),
         caseNotesSaveInProgress: false,
         initialLoadInProgress: true,
+        caseNotesWereSuccessfullyUpdated: false,
+        snackbarIsOpen: false,
     };
 
     // tslint:disable-next-line:variable-name
@@ -80,8 +83,34 @@ export class CaseNotesTemplatePresentation extends React.Component<ICaseNotesTem
                         </AsyncButton>
                     </div>
                 </Paper>
+                <Snackbar
+                    open={this.state.snackbarIsOpen}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'center',
+                    }}
+                    autoHideDuration={5000}
+                    message={
+                        (
+                            <span>
+                                {this.state.caseNotesWereSuccessfullyUpdated ? (
+                                    'Success! The case notes template was successfully updated.'
+                                ): (
+                                    'Oops! It looks like there was an error.'
+                                )}
+                            </span>
+                        )
+                    }
+                    onClose={this.handleSnackbarClose}
+                />
             </div>
         )
+    }
+
+    private handleSnackbarClose = (): void => {
+        this.setState({
+            snackbarIsOpen: false,
+        })
     }
 
     private handleCaseNoteChange = (event: any): void => {
@@ -95,8 +124,18 @@ export class CaseNotesTemplatePresentation extends React.Component<ICaseNotesTem
             caseNotesSaveInProgress: true,
         })
         const companyId = this.props.match.path.split('/')[2];
-        await Api.caseNotesApi.updateCaseNotes(companyId, this.state.notes!.value);
+        try {
+            await Api.caseNotesApi.updateCaseNotes(companyId, this.state.notes!.value);
+        } catch {
+            this.setState({
+                caseNotesWereSuccessfullyUpdated: false,
+                snackbarIsOpen: true,
+            })
+            return;
+        }
         this.setState({
+            caseNotesWereSuccessfullyUpdated: true,
+            snackbarIsOpen: true,
             caseNotesSaveInProgress: false,
         })
     }

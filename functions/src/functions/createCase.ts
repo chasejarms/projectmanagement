@@ -98,7 +98,7 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
         created: new admin.firestore.Timestamp(nowInSeconds, 0),
         caseCheckpoints: createdCheckpointDocumentIds,
         companyId: data.companyId,
-        showNewInfoFrom: isAdminOrStaff ? ShowNewInfoFromType.Doctor : ShowNewInfoFromType.Lab,
+        showNewInfoFrom: isAdminOrStaff ? ShowNewInfoFromType.Lab : ShowNewInfoFromType.Doctor,
         hasStarted: false,
     };
 

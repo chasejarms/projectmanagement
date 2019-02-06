@@ -22,7 +22,7 @@ export const slimCaseFromCaseChanges = (passedInAdmin: admin.app.App) => functio
 
     console.log('case before: ', before.data());
     console.log('case after: ', after.data());
-    
+
     if (!after.exists) {
         return passedInAdmin.firestore().collection('slimCases').doc(context.params.caseId).delete();
     }

@@ -66,7 +66,7 @@ exports.createCaseLocal = (passedInAdmin) => functions.https.onCall((data, conte
         created: new admin.firestore.Timestamp(nowInSeconds, 0),
         caseCheckpoints: createdCheckpointDocumentIds,
         companyId: data.companyId,
-        showNewInfoFrom: isAdminOrStaff ? showNewInfoFromTypes_1.ShowNewInfoFromType.Doctor : showNewInfoFromTypes_1.ShowNewInfoFromType.Lab,
+        showNewInfoFrom: isAdminOrStaff ? showNewInfoFromTypes_1.ShowNewInfoFromType.Lab : showNewInfoFromTypes_1.ShowNewInfoFromType.Doctor,
         hasStarted: false,
     };
     yield firestore.collection('cases').doc(data.idForCase).set(caseToCreate);

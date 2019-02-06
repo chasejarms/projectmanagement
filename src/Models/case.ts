@@ -1,5 +1,6 @@
 import { Timestamp } from "@google-cloud/firestore";
 import { IAttachmentMetadata } from "./attachmentMetadata";
+import { ShowNewInfoFromType } from "./showNewInfoFromTypes";
 
 export interface ICase {
     id: string;
@@ -11,5 +12,6 @@ export interface ICase {
     attachmentUrls: IAttachmentMetadata[];
     created: Timestamp;
     caseCheckpoints: string[];
+    showNewInfoFrom: ShowNewInfoFromType.Doctor | ShowNewInfoFromType.Lab | null;
     hasStarted: boolean;
 }

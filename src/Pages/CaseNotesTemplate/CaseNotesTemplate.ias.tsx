@@ -11,6 +11,8 @@ export interface ICaseNotesTemplateState {
     notes: FormControlState<string>;
     caseNotesSaveInProgress: boolean;
     initialLoadInProgress: boolean;
+    snackbarIsOpen: boolean;
+    caseNotesWereSuccessfullyUpdated: boolean;
 }
 
 export const createCaseNotesTemplateClasses = (

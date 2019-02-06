@@ -106,11 +106,11 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
             const newInfoFromLab = slimCase.showNewInfoFrom === ShowNewInfoFromType.Lab;
 
             const shouldShowNotification = (userIsDoctor && newInfoFromLab) || (!userIsDoctor && newInfoFromDoctor);
-            const newInfoCell = shouldShowNotification ? <TableCell/> : (
+            const newInfoCell = shouldShowNotification ? (
                 <TableCell>
                     <NotificationsIcon/>
                 </TableCell>
-            );
+            ) : <TableCell/>;
 
             const date = slimCase.deadline.toDate();
             const prettyDeadline = this.makeDeadlinePretty(date);

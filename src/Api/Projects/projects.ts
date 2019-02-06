@@ -2,6 +2,7 @@ import * as firebase from 'firebase';
 import { db } from 'src/firebase';
 import { IAugmentedCheckpoint } from 'src/Models/augmentedCheckpoint';
 import { UserType } from 'src/Models/userTypes';
+import { ShowNewInfoFromType } from './../../../functions/src/models/showNewInfoFromTypes';
 import { ICase } from './../../Models/case';
 // import { ISlimCase } from './../../Models/slimCase';
 import { ICaseApi, ICaseCreateRequest, IGetCaseCheckpointsRequest, ISlimCasesSearchRequest, IUpdateCaseInformationRequest } from './projectsInterface';
@@ -89,12 +90,13 @@ export class ProjectsApi implements ICaseApi {
         throw new Error("Method not implemented");
     }
 
-    public async updateCaseInformation(caseId: string, updateCaseInformationRequest: IUpdateCaseInformationRequest): Promise<void> {
+    public async updateCaseInformation(caseId: string, updateCaseInformationRequest: IUpdateCaseInformationRequest, showNewInfoFrom: ShowNewInfoFromType): Promise<void> {
         const deadlineAsDate = new Date(updateCaseInformationRequest.deadline);
         const deadlineAsTimestamp = new firebase.firestore.Timestamp(Math.round(deadlineAsDate.getTime() / 1000), 0);
         const caseInformation = {
             ...updateCaseInformationRequest,
             deadline: deadlineAsTimestamp,
+            showNewInfoFrom,
         }
         await firebase.firestore().collection('cases').doc(caseId)
             .set(caseInformation, { merge: true });
@@ -126,6 +128,12 @@ export class ProjectsApi implements ICaseApi {
             }, { merge: true })
 
         return true;
+    }
+
+    public async markProjectUpdatesAsSeen(companyId: string, caseId: string): Promise<void> {
+        await firebase.firestore().collection('cases').doc(caseId).set({
+            showNewInfoFrom: null,
+        }, { merge: true });
     }
 
 }
