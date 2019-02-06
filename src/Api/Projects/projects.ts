@@ -107,9 +107,12 @@ export class ProjectsApi implements ICaseApi {
             .orderBy('name', 'asc')
             .get();
         return casesQuerySnapshot.docs.map((doc) => {
+            const currentDeadline = doc.data().deadline as firebase.firestore.Timestamp;
+            const deadlineAsTimestamp = new firebase.firestore.Timestamp(currentDeadline.seconds, currentDeadline.nanoseconds);
             return {
                 id: doc.id,
                 ...doc.data(),
+                deadline: deadlineAsTimestamp,
             } as ICase;
         });
     }
