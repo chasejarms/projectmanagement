@@ -1,5 +1,6 @@
 import { css } from 'emotion';
 import { RouteComponentProps } from 'react-router'
+import { IUnitedStatesState } from 'src/Models/unitedStatesState';
 import { IWorkflowCheckpoint } from '../..//Models/workflow';
 import { FormControlState } from '../../Classes/formControlState';
 import { IUser } from '../../Models/user';
@@ -21,6 +22,11 @@ export interface IUsersPresentationState {
     deletingUser: boolean;
     isUpdate: boolean;
     idOfUserBeingUpdated: string;
+    street: string;
+    state: IUnitedStatesState | '';
+    city: string;
+    zip: string;
+    telephone: string;
 }
 
 export const createUsersPresentationClasses = (
@@ -106,6 +112,12 @@ export const createUsersPresentationClasses = (
         justifyContent: 'space-between',
     });
 
+    const cityStateZipContainer = css({
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr 1fr',
+        gridColumnGap: '16',
+    });
+
     return {
         fabButton,
         dialogContent,
@@ -121,5 +133,6 @@ export const createUsersPresentationClasses = (
         potentialCheckpointsSelect,
         automaticScanCheckpoints,
         dialogActionButtons,
+        cityStateZipContainer,
     };
 }

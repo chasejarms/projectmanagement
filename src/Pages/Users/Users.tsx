@@ -25,6 +25,8 @@ import ClearIcon from '@material-ui/icons/Clear';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
+import { IStaffOrAdminUser } from 'src/Models/staffOrAdminUser';
+import { IUnitedStatesState } from 'src/Models/unitedStatesState';
 import { UserType } from 'src/Models/userTypes';
 import { emailValidator } from 'src/Validators/email.validator';
 import Api from '../../Api/api';
@@ -60,6 +62,11 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
         isUpdate: false,
         idOfUserBeingUpdated: '',
         deletingUser: false,
+        street: '',
+        state: '',
+        city: '',
+        zip: '',
+        telephone: '',
     };
 
     // tslint:disable-next-line:variable-name
@@ -109,6 +116,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
             potentialCheckpointsSelect,
             automaticScanCheckpoints,
             dialogActionButtons,
+            cityStateZipContainer,
         } = createUsersPresentationClasses(this.props, this.state);
 
         const mappedUsers = this.state.users.map((user: IUser) => (
@@ -150,7 +158,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                 </div>
             )
         });
-        const showAdditionalCheckpoints = this.state.userRole === UserType.Staff || this.state.userRole === UserType.Admin;
+        const userRoleIsDoctor = this.state.userRole === UserType.Doctor;
 
         const {
             userFullName,
@@ -242,7 +250,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                             </Select>
                         </FormControl>
                         {
-                            showAdditionalCheckpoints ? (
+                            userRoleIsDoctor ? undefined : (
                                 <div className={automaticScanCheckpointsContainer}>
                                     <div className={potentialCheckpointsContainer}>
                                         <FormControl disabled={checkpointItems.length === 0} className={potentialCheckpointsSelect}>
@@ -261,6 +269,66 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                                     </div>
                                     <div className={automaticScanCheckpoints}>
                                         {addedItemsWithElement}
+                                    </div>
+                                </div>
+                            )
+                        }
+                        {
+                            userRoleIsDoctor ? (
+                                <div>
+                                    <FormControl required={true} className={dialogControl}>
+                                        <InputLabel>Street</InputLabel>
+                                        <Input
+                                            name="street"
+                                            value={this.state.street}
+                                            onChange={this.handleChange}
+                                        />
+                                        <FormHelperText>
+                                            {userEmailError}
+                                        </FormHelperText>
+                                    </FormControl>
+                                    <div className={cityStateZipContainer}>
+                                        <FormControl required={true}>
+                                            <InputLabel>City</InputLabel>
+                                            <Input
+                                                name="city"
+                                                value={this.state.city}
+                                                onChange={this.handleChange}
+                                            />
+                                            <FormHelperText>
+                                                {userEmailError}
+                                            </FormHelperText>
+                                        </FormControl>
+                                        <FormControl required={true}>
+                                            <InputLabel htmlFor="state">State</InputLabel>
+                                            <Select
+                                                name="state"
+                                                inputProps={{
+                                                    id: 'state',
+                                                }}
+                                                value={this.state.state}
+                                                onChange={this.handleChange}
+                                            >
+                                                {Object.keys(IUnitedStatesState).map((unitedStatesState, index) => {
+                                                    return (
+                                                        <MenuItem value={unitedStatesState} key={index}>
+                                                            {unitedStatesState}
+                                                        </MenuItem>
+                                                    )
+                                                })}
+                                            </Select>
+                                        </FormControl>
+                                        <FormControl required={true}>
+                                            <InputLabel>Zip</InputLabel>
+                                            <Input
+                                                name="zip"
+                                                value={this.state.zip}
+                                                onChange={this.handleChange}
+                                            />
+                                            <FormHelperText>
+                                                {userEmailError}
+                                            </FormHelperText>
+                                        </FormControl>
                                     </div>
                                 </div>
                             ) : undefined
@@ -373,12 +441,15 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
     }
 
     private openExistingUserDialog = (user: IUser) => {
+        const additionalCheckpoints = user.type === UserType.Doctor ? [] : (user as IStaffOrAdminUser).scanCheckpoints;
+        const additionalCheckpointsSet = new Set(additionalCheckpoints);
+
         return () => {
             if (this._isMounted) {
                 this.setState({
                     open: true,
                     isUpdate: true,
-                    additionalCheckpoints: new Set(user.scanCheckpoints!),
+                    additionalCheckpoints: additionalCheckpointsSet,
                     userFullName: this.state.userFullName.setValue(
                         user.fullName,
                     )
