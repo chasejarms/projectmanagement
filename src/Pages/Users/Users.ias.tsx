@@ -118,6 +118,12 @@ export const createUsersPresentationClasses = (
         gridColumnGap: '16',
     });
 
+    const nameAndEmailContainer = css({
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gridColumnGap: '16',
+    })
+
     return {
         fabButton,
         dialogContent,
@@ -134,5 +140,6 @@ export const createUsersPresentationClasses = (
         automaticScanCheckpoints,
         dialogActionButtons,
         cityStateZipContainer,
+        nameAndEmailContainer,
     };
 }

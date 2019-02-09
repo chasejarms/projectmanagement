@@ -145,6 +145,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
             automaticScanCheckpoints,
             dialogActionButtons,
             cityStateZipContainer,
+            nameAndEmailContainer,
         } = createUsersPresentationClasses(this.props, this.state);
 
         const mappedUsers = this.state.users.map((user: IUser) => (
@@ -191,10 +192,20 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
         const {
             userFullName,
             userEmail,
+            city,
+            state,
+            zip,
+            street,
+            telephone,
         } = this.state;
 
         const userFullNameError = userFullName.shouldShowError() ? userFullName.errors[0] : undefined;
         const userEmailError = userEmail.shouldShowError() ? userEmail.errors[0] : undefined;
+        const cityError = city.shouldShowError() ? city.errors[0] : undefined;
+        const stateError = state.shouldShowError() ? state.errors[0] : undefined;
+        const zipError = zip.shouldShowError() ? zip.errors[0] : undefined;
+        const streetError = street.shouldShowError() ? street.errors[0] : undefined;
+        const telephoneError = telephone.shouldShowError() ? telephone.errors[0] : undefined;
 
         return (
             <div className={usersContainer}>
@@ -239,28 +250,30 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                 >
                     <DialogTitle>{this.state.isUpdate ? 'Update User' : 'Create New User'}</DialogTitle>
                     <DialogContent className={dialogContent}>
-                        <FormControl required={true} className={dialogControl} error={userFullName.shouldShowError()}>
-                            <InputLabel>Full Name</InputLabel>
-                            <Input
-                                name="userFullName"
-                                value={userFullName.value}
-                                onChange={this.handleUserFullNameChange}
-                            />
-                            <FormHelperText>
-                                {userFullNameError}
-                            </FormHelperText>
-                        </FormControl>
-                        <FormControl required={true} className={dialogControl} error={userEmail.shouldShowError()}>
-                            <InputLabel>Email</InputLabel>
-                            <Input
-                                name="newUserEmail"
-                                value={userEmail.value}
-                                onChange={this.handleUserEmailChange}
-                            />
-                            <FormHelperText>
-                                {userEmailError}
-                            </FormHelperText>
-                        </FormControl>
+                        <div className={nameAndEmailContainer}>
+                            <FormControl required={true} error={userFullName.shouldShowError()}>
+                                <InputLabel>Full Name</InputLabel>
+                                <Input
+                                    name="userFullName"
+                                    value={userFullName.value}
+                                    onChange={this.handleUserFullNameChange}
+                                />
+                                <FormHelperText>
+                                    {userFullNameError}
+                                </FormHelperText>
+                            </FormControl>
+                            <FormControl required={true} error={userEmail.shouldShowError()}>
+                                <InputLabel>Email</InputLabel>
+                                <Input
+                                    name="newUserEmail"
+                                    value={userEmail.value}
+                                    onChange={this.handleUserEmailChange}
+                                />
+                                <FormHelperText>
+                                    {userEmailError}
+                                </FormHelperText>
+                            </FormControl>
+                        </div>
                         <FormControl required={true}>
                             <InputLabel htmlFor="role">Role</InputLabel>
                             <Select
@@ -312,7 +325,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                                             onChange={this.handleStreetChange}
                                         />
                                         <FormHelperText>
-                                            {this.state.street.errors[0]}
+                                            {streetError}
                                         </FormHelperText>
                                     </FormControl>
                                     <div className={cityStateZipContainer}>
@@ -324,10 +337,10 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                                                 onChange={this.handleCityChange}
                                             />
                                             <FormHelperText>
-                                                {this.state.city.errors[0]}
+                                                {cityError}
                                             </FormHelperText>
                                         </FormControl>
-                                        <FormControl required={true}>
+                                        <FormControl required={true} error={this.state.state.shouldShowError()}>
                                             <InputLabel htmlFor="state">State</InputLabel>
                                             <Select
                                                 name="state"
@@ -345,6 +358,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                                                     )
                                                 })}
                                             </Select>
+                                            <FormHelperText>{stateError}</FormHelperText>
                                         </FormControl>
                                         <FormControl required={true} error={this.state.zip.shouldShowError()}>
                                             <InputLabel>Zip</InputLabel>
@@ -354,10 +368,21 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                                                 onChange={this.handleZipCodeChange}
                                             />
                                             <FormHelperText>
-                                                {this.state.zip.errors[0]}
+                                                {zipError}
                                             </FormHelperText>
                                         </FormControl>
                                     </div>
+                                    <FormControl className={dialogControl} required={true} error={this.state.telephone.shouldShowError()}>
+                                        <InputLabel>Telephone Number</InputLabel>
+                                        <Input
+                                            name="telephone"
+                                            value={this.state.telephone.value}
+                                            onChange={this.handleTelephoneChange}
+                                        />
+                                        <FormHelperText>
+                                            {telephoneError}
+                                        </FormHelperText>
+                                    </FormControl>
                                 </div>
                             ) : undefined
                         }
@@ -420,6 +445,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
             state,
             city,
             zip,
+            telephone,
         } = this.state;
 
         const baseControlsAreInvalid = userEmail.invalid || userFullName.invalid;
@@ -429,7 +455,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
         }
 
         if (userRole === UserType.Doctor) {
-            return street.invalid || state.invalid || city.invalid || zip.invalid;
+            return street.invalid || state.invalid || city.invalid || zip.invalid || telephone.invalid;
         }
 
         return false;
@@ -495,15 +521,15 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
         }
     }
 
-    // private handleTelephoneChange = (event: any) => {
-    //     const telephone = event.target.value;
-    //     const telephoneControl = this.state.telephone.setValue(telephone);
-    //     if (this._isMounted) {
-    //         this.setState({
-    //             telephone: telephoneControl,
-    //         })
-    //     }
-    // }
+    private handleTelephoneChange = (event: any) => {
+        const telephone = event.target.value;
+        const telephoneControl = this.state.telephone.setValue(telephone);
+        if (this._isMounted) {
+            this.setState({
+                telephone: telephoneControl,
+            })
+        }
+    }
 
     private removeCheckpointItem = (workflowCheckpointId: string) => {
         const clonedSet = new Set(this.state.additionalCheckpoints);
@@ -545,6 +571,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
         const cityValue = user.type === UserType.Doctor ? user.address.city : '';
         const stateValue = user.type === UserType.Doctor ? user.address.state : '';
         const zipValue = user.type === UserType.Doctor ? user.address.zip : '';
+        const telephoneValue = user.type === UserType.Doctor ? user.telephone : '';
 
         return () => {
             if (this._isMounted) {
@@ -571,6 +598,9 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                     ).markAsBrandNew(),
                     zip: this.state.zip.setValue(
                         zipValue,
+                    ).markAsBrandNew(),
+                    telephone: this.state.telephone.setValue(
+                        telephoneValue,
                     ).markAsBrandNew(),
                 })
             }
@@ -612,6 +642,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                     email: this.state.userEmail.value,
                     type: this.state.userRole as any,
                     address: this.getAddressFromState(),
+                    telephone: this.state.telephone.value,
                 } as IDoctorUser;
             } else {
                 userUpdateRequest = {
@@ -650,6 +681,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
 
             if (this.state.userRole === UserType.Doctor) {
                 addUserRequest.address = this.getAddressFromState();
+                addUserRequest.telephone = this.state.telephone.value;
             } else {
                 addUserRequest.scanCheckpoints = scanCheckpoints;
             }

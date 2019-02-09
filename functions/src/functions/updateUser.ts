@@ -14,6 +14,7 @@ interface IUser {
     mustResetPassword: boolean;
     scanCheckpoints: string[];
     address?: IUnitedStatesAddress;
+    telephone?: string;
 }
 
 export const updateUserLocal = (passedInAdmin: admin.app.App) => functions.https.onCall(async(data: IUser, context) => {
@@ -51,7 +52,11 @@ export const updateUserLocal = (passedInAdmin: admin.app.App) => functions.https
     }
 
     const userBeforeUpdate = userWeAreTryingToUpdateSnapshot.docs[0].data() as IUser;
-    const updatedUser = {};
+    const updatedUser = {
+        email: data.email,
+        fullName: data.fullName,
+        type: data.type,
+    };
 
     console.log('updatedUser before checking type: ', updatedUser);
 
@@ -68,36 +73,11 @@ export const updateUserLocal = (passedInAdmin: admin.app.App) => functions.https
         }
     }
 
-    if (userBeforeUpdate.email !== data.email) {
-        updatedUser['email'] = data.email;
-    }
-
-    if (userBeforeUpdate.fullName !== data.fullName) {
-        updatedUser['fullName'] = data.fullName;
-    }
-
-    if (userBeforeUpdate.type !== data.type) {
-        updatedUser['type'] = data.type;
-    }
-
-    if (userBeforeUpdate.scanCheckpoints.length !== data.scanCheckpoints.length) {
-        updatedUser['scanCheckpoints'] = data.scanCheckpoints;
-    }
-
-    if (userBeforeUpdate.address) {
+    if (updatedUser.type === UserType.Doctor) {
         updatedUser['address'] = data.address;
-    }
-
-    console.log('updatedUser: ', updatedUser);
-
-    const dataScanCheckpoints = new Set(data.scanCheckpoints);
-    // tslint:disable-next-line:prefer-for-of
-    for (let i = 0; i < userBeforeUpdate.scanCheckpoints.length; i++) {
-        const currentScanCheckpoint = userBeforeUpdate.scanCheckpoints[i];
-        if (!dataScanCheckpoints.has(currentScanCheckpoint)) {
-            updatedUser['scanCheckpoints'] = data.scanCheckpoints;
-            continue;
-        }
+        updatedUser['telephone'] = data.telephone;
+    } else {
+        updatedUser['scanCheckpoints'] = data.scanCheckpoints;
     }
 
     if (Object.keys(updatedUser).length === 0) {

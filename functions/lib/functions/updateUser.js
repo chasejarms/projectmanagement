@@ -35,7 +35,11 @@ exports.updateUserLocal = (passedInAdmin) => functions.https.onCall((data, conte
         throw new functions.https.HttpsError('invalid-argument', 'The user you are trying to update does not exist');
     }
     const userBeforeUpdate = userWeAreTryingToUpdateSnapshot.docs[0].data();
-    const updatedUser = {};
+    const updatedUser = {
+        email: data.email,
+        fullName: data.fullName,
+        type: data.type,
+    };
     console.log('updatedUser before checking type: ', updatedUser);
     if (userBeforeUpdate.type === userTypes_1.UserType.Admin && data.type !== userTypes_1.UserType.Admin) {
         console.log('trying to change the last admin user');
@@ -48,30 +52,12 @@ exports.updateUserLocal = (passedInAdmin) => functions.https.onCall((data, conte
             throw new functions.https.HttpsError('invalid-argument', 'You cannot change the last Admin user.');
         }
     }
-    if (userBeforeUpdate.email !== data.email) {
-        updatedUser['email'] = data.email;
-    }
-    if (userBeforeUpdate.fullName !== data.fullName) {
-        updatedUser['fullName'] = data.fullName;
-    }
-    if (userBeforeUpdate.type !== data.type) {
-        updatedUser['type'] = data.type;
-    }
-    if (userBeforeUpdate.scanCheckpoints.length !== data.scanCheckpoints.length) {
-        updatedUser['scanCheckpoints'] = data.scanCheckpoints;
-    }
-    if (userBeforeUpdate.address) {
+    if (updatedUser.type === userTypes_1.UserType.Doctor) {
         updatedUser['address'] = data.address;
+        updatedUser['telephone'] = data.telephone;
     }
-    console.log('updatedUser: ', updatedUser);
-    const dataScanCheckpoints = new Set(data.scanCheckpoints);
-    // tslint:disable-next-line:prefer-for-of
-    for (let i = 0; i < userBeforeUpdate.scanCheckpoints.length; i++) {
-        const currentScanCheckpoint = userBeforeUpdate.scanCheckpoints[i];
-        if (!dataScanCheckpoints.has(currentScanCheckpoint)) {
-            updatedUser['scanCheckpoints'] = data.scanCheckpoints;
-            continue;
-        }
+    else {
+        updatedUser['scanCheckpoints'] = data.scanCheckpoints;
     }
     if (Object.keys(updatedUser).length === 0) {
         return Object.assign({}, userWeAreTryingToUpdateSnapshot.docs[0].data(), { id: userWeAreTryingToUpdateSnapshot.docs[0].id });

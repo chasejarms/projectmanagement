@@ -8,4 +8,5 @@ export interface IUserCreateRequest {
     type: UserType;
     scanCheckpoints?: string[];
     address?: IUnitedStatesAddress;
+    telephone?: string;
 }

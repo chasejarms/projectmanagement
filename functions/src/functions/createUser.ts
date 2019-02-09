@@ -11,6 +11,7 @@ interface IUserCreateRequest {
     type: UserType;
     scanCheckpoints?: string[];
     address?: IUnitedStatesAddress;
+    telephone?: IUserCreateRequest;
 }
 
 export const createUserLocal = (auth: admin.auth.Auth, firestore: FirebaseFirestore.Firestore) => functions.https.onCall(async(data: IUserCreateRequest, context) => {
@@ -96,6 +97,10 @@ export const createUserLocal = (auth: admin.auth.Auth, firestore: FirebaseFirest
 
     if (data.scanCheckpoints && data.type !== UserType.Doctor) {
         (userToCreate as any).scanCheckpoints = data.scanCheckpoints;
+    }
+
+    if (data.telephone && data.type === UserType.Doctor) {
+        (userToCreate as any).telephone = data.telephone;
     }
 
     if (data.address && data.type === UserType.Doctor) {

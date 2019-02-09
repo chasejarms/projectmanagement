@@ -81,6 +81,9 @@ exports.createUserLocal = (auth, firestore) => functions.https.onCall((data, con
     if (data.scanCheckpoints && data.type !== userTypes_1.UserType.Doctor) {
         userToCreate.scanCheckpoints = data.scanCheckpoints;
     }
+    if (data.telephone && data.type === userTypes_1.UserType.Doctor) {
+        userToCreate.telephone = data.telephone;
+    }
     if (data.address && data.type === userTypes_1.UserType.Doctor) {
         userToCreate.address = data.address;
     }
