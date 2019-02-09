@@ -304,27 +304,27 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                         {
                             userRoleIsDoctor ? (
                                 <div>
-                                    <FormControl required={true} className={dialogControl}>
+                                    <FormControl required={true} className={dialogControl} error={this.state.street.shouldShowError()}>
                                         <InputLabel>Street</InputLabel>
                                         <Input
                                             name="street"
                                             value={this.state.street.value}
-                                            onChange={this.handleChange}
+                                            onChange={this.handleStreetChange}
                                         />
                                         <FormHelperText>
-                                            {userEmailError}
+                                            {this.state.street.errors[0]}
                                         </FormHelperText>
                                     </FormControl>
                                     <div className={cityStateZipContainer}>
-                                        <FormControl required={true}>
+                                        <FormControl required={true} error={this.state.city.shouldShowError()}>
                                             <InputLabel>City</InputLabel>
                                             <Input
                                                 name="city"
                                                 value={this.state.city.value}
-                                                onChange={this.handleChange}
+                                                onChange={this.handleCityChange}
                                             />
                                             <FormHelperText>
-                                                {userEmailError}
+                                                {this.state.city.errors[0]}
                                             </FormHelperText>
                                         </FormControl>
                                         <FormControl required={true}>
@@ -335,7 +335,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                                                     id: 'state',
                                                 }}
                                                 value={this.state.state.value}
-                                                onChange={this.handleChange}
+                                                onChange={this.handleStateChange}
                                             >
                                                 {Object.keys(IUnitedStatesState).map((unitedStatesState, index) => {
                                                     return (
@@ -346,15 +346,15 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                                                 })}
                                             </Select>
                                         </FormControl>
-                                        <FormControl required={true}>
+                                        <FormControl required={true} error={this.state.zip.shouldShowError()}>
                                             <InputLabel>Zip</InputLabel>
                                             <Input
                                                 name="zip"
                                                 value={this.state.zip.value}
-                                                onChange={this.handleChange}
+                                                onChange={this.handleZipCodeChange}
                                             />
                                             <FormHelperText>
-                                                {userEmailError}
+                                                {this.state.zip.errors[0]}
                                             </FormHelperText>
                                         </FormControl>
                                     </div>
@@ -394,15 +394,19 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
             this.setState({
                 userFullName: this.state.userFullName
                     .setValue('')
-                    .markAsUntouched()
-                    .markAsPristine()
+                    .markAsBrandNew()
                     .markAsInvalid(),
                 userEmail: this.state.userEmail
                     .setValue('')
-                    .markAsUntouched()
-                    .markAsPristine()
+                    .markAsBrandNew()
                     .markAsInvalid(),
                 userRole: UserType.Staff,
+                additionalCheckpoints: new Set([]),
+                street: this.state.street.setValue('').markAsBrandNew().markAsInvalid(),
+                state: this.state.state.setValue('').markAsBrandNew().markAsInvalid(),
+                city: this.state.city.setValue('').markAsBrandNew().markAsInvalid(),
+                zip: this.state.zip.setValue('').markAsBrandNew().markAsInvalid(),
+                telephone: this.state.telephone.setValue('').markAsBrandNew().markAsInvalid(),
             });
         }
     }
@@ -411,9 +415,24 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
         const {
             userEmail,
             userFullName,
+            userRole,
+            street,
+            state,
+            city,
+            zip,
         } = this.state;
 
-        return userEmail.invalid || userFullName.invalid;
+        const baseControlsAreInvalid = userEmail.invalid || userFullName.invalid;
+
+        if (baseControlsAreInvalid) {
+            return true;
+        }
+
+        if (userRole === UserType.Doctor) {
+            return street.invalid || state.invalid || city.invalid || zip.invalid;
+        }
+
+        return false;
     }
 
     private handleUserFullNameChange = (event: any) => {
@@ -435,6 +454,56 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
             })
         }
     }
+
+    private handleStateChange = (event: any) => {
+        const state = event.target.value;
+        const stateControl = this.state.state.setValue(state);
+        if (this._isMounted) {
+            this.setState({
+                state: stateControl,
+            })
+        }
+    }
+
+    private handleCityChange = (event: any) => {
+        const city = event.target.value;
+        const cityControl = this.state.city.setValue(city);
+        if (this._isMounted) {
+            this.setState({
+                city: cityControl,
+            })
+        }
+    }
+
+    private handleZipCodeChange = (event: any) => {
+        const zip = event.target.value;
+        const zipControl = this.state.zip.setValue(zip);
+        if (this._isMounted) {
+            this.setState({
+                zip: zipControl,
+            })
+        }
+    }
+
+    private handleStreetChange = (event: any) => {
+        const street = event.target.value;
+        const streetControl = this.state.street.setValue(street);
+        if (this._isMounted) {
+            this.setState({
+                street: streetControl,
+            })
+        }
+    }
+
+    // private handleTelephoneChange = (event: any) => {
+    //     const telephone = event.target.value;
+    //     const telephoneControl = this.state.telephone.setValue(telephone);
+    //     if (this._isMounted) {
+    //         this.setState({
+    //             telephone: telephoneControl,
+    //         })
+    //     }
+    // }
 
     private removeCheckpointItem = (workflowCheckpointId: string) => {
         const clonedSet = new Set(this.state.additionalCheckpoints);
