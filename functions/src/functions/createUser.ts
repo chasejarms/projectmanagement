@@ -2,14 +2,15 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { UserType } from '../models/userTypes';
 import sgMail = require('@sendgrid/mail');
+import { IUnitedStatesAddress } from '../models/unitedStatesAddress';
 
 interface IUserCreateRequest {
     companyId: string;
     email: string;
     fullName: string;
     type: UserType;
-    mustResetPassword: boolean;
     scanCheckpoints?: string[];
+    address?: IUnitedStatesAddress;
 }
 
 export const createUserLocal = (auth: admin.auth.Auth, firestore: FirebaseFirestore.Firestore) => functions.https.onCall(async(data: IUserCreateRequest, context) => {
@@ -90,9 +91,15 @@ export const createUserLocal = (auth: admin.auth.Auth, firestore: FirebaseFirest
         email: data.email,
         fullName: data.fullName,
         type: data.type,
-        scanCheckpoints: data.scanCheckpoints || [],
-        mustResetPassword: data.mustResetPassword,
         uid: userRecord.uid,
+    }
+
+    if (data.scanCheckpoints && data.type !== UserType.Doctor) {
+        (userToCreate as any).scanCheckpoints = data.scanCheckpoints;
+    }
+
+    if (data.address && data.type === UserType.Doctor) {
+        (userToCreate as any).address = data.address;
     }
 
     const createdUserDocumentSnapshot = await firestore.collection('users').add(userToCreate);

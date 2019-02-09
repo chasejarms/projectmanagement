@@ -76,10 +76,14 @@ exports.createUserLocal = (auth, firestore) => functions.https.onCall((data, con
         email: data.email,
         fullName: data.fullName,
         type: data.type,
-        scanCheckpoints: data.scanCheckpoints || [],
-        mustResetPassword: data.mustResetPassword,
         uid: userRecord.uid,
     };
+    if (data.scanCheckpoints && data.type !== userTypes_1.UserType.Doctor) {
+        userToCreate.scanCheckpoints = data.scanCheckpoints;
+    }
+    if (data.address && data.type === userTypes_1.UserType.Doctor) {
+        userToCreate.address = data.address;
+    }
     const createdUserDocumentSnapshot = yield firestore.collection('users').add(userToCreate);
     yield firestore.collection('companyUserJoin')
         .doc(`${data.companyId}_${userRecord.uid}`)

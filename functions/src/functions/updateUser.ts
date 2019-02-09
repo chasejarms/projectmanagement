@@ -2,6 +2,7 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { UserType } from '../models/userTypes';
+import { IUnitedStatesAddress } from '../models/unitedStatesAddress';
 
 interface IUser {
     id: string;
@@ -12,6 +13,7 @@ interface IUser {
     type: UserType;
     mustResetPassword: boolean;
     scanCheckpoints: string[];
+    address?: IUnitedStatesAddress;
 }
 
 export const updateUserLocal = (passedInAdmin: admin.app.App) => functions.https.onCall(async(data: IUser, context) => {
@@ -80,6 +82,10 @@ export const updateUserLocal = (passedInAdmin: admin.app.App) => functions.https
 
     if (userBeforeUpdate.scanCheckpoints.length !== data.scanCheckpoints.length) {
         updatedUser['scanCheckpoints'] = data.scanCheckpoints;
+    }
+
+    if (userBeforeUpdate.address) {
+        updatedUser['address'] = data.address;
     }
 
     console.log('updatedUser: ', updatedUser);

@@ -25,6 +25,7 @@ import ClearIcon from '@material-ui/icons/Clear';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
+import { IUserCreateRequest } from 'src/Models/requests/userCreateRequest';
 import { IStaffOrAdminUser } from 'src/Models/staffOrAdminUser';
 import { IUnitedStatesState } from 'src/Models/unitedStatesState';
 import { UserType } from 'src/Models/userTypes';
@@ -37,6 +38,8 @@ import { IAppState } from '../../Redux/Reducers/rootReducer';
 import { handleChange } from '../../Utils/handleChange';
 import { requiredValidator } from '../../Validators/required.validator';
 import { createUsersPresentationClasses, IUsersPresentationProps, IUsersPresentationState } from './Users.ias';
+import { IDoctorUser } from 'src/Models/doctorUser';
+import { IUnitedStatesAddress } from 'src/Models/unitedStatesAddress';
 
 export class UsersPresentation extends React.Component<IUsersPresentationProps, IUsersPresentationState> {
     public state: IUsersPresentationState = {
@@ -495,13 +498,27 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                 return compareUser.id === this.state.idOfUserBeingUpdated;
             })[0];
 
-            const userToUpdate = await Api.userApi.updateUser({
-                ...user,
-                fullName: this.state.userFullName.value,
-                email: this.state.userEmail.value,
-                type: this.state.userRole as any,
-                scanCheckpoints,
-            })
+            let userUpdateRequest;
+
+            if (this.state.userRole === UserType.Doctor) {
+                userUpdateRequest = {
+                    ...user,
+                    fullName: this.state.userFullName.value,
+                    email: this.state.userEmail.value,
+                    type: this.state.userRole as any,
+                    address: this.getAddressFromState(),
+                } as IDoctorUser;
+            } else {
+                userUpdateRequest = {
+                    ...user,
+                    fullName: this.state.userFullName.value,
+                    email: this.state.userEmail.value,
+                    type: this.state.userRole as any,
+                    scanCheckpoints,
+                } as IStaffOrAdminUser;
+            }
+
+            const userToUpdate = await Api.userApi.updateUser(userUpdateRequest);
 
             const users = this.state.users.map((compareUser) => {
                 if (compareUser.id === userToUpdate.id) {
@@ -519,14 +536,20 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                 });
             }
         } else {
-            const addedUser = await Api.userApi.addUser({
+            const addUserRequest: IUserCreateRequest = {
                 companyId,
                 fullName: this.state.userFullName.value,
                 email: this.state.userEmail.value,
-                type: this.state.userRole as any,
-                scanCheckpoints,
-                mustResetPassword: true,
-            })
+                type: this.state.userRole as UserType,
+            }
+
+            if (this.state.userRole === UserType.Doctor) {
+                addUserRequest.address = this.getAddressFromState();
+            } else {
+                addUserRequest.scanCheckpoints = scanCheckpoints;
+            }
+
+            const addedUser = await Api.userApi.addUser(addUserRequest);
 
             if (this._isMounted) {
                 this.setState({
@@ -535,6 +558,15 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                     users: this.state.users.concat([addedUser]),
                 })
             }
+        }
+    }
+
+    private getAddressFromState = (): IUnitedStatesAddress => {
+        return {
+            street: this.state.street,
+            city: this.state.city,
+            state: this.state.state as IUnitedStatesState,
+            zip: this.state.zip,
         }
     }
 

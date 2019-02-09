@@ -1,4 +1,4 @@
-import { IUnitedStatesState } from "./unitedStatesState";
+import { IUnitedStatesState } from './unitedStatesState';
 
 export interface IUnitedStatesAddress {
     street: string;

@@ -60,6 +60,9 @@ exports.updateUserLocal = (passedInAdmin) => functions.https.onCall((data, conte
     if (userBeforeUpdate.scanCheckpoints.length !== data.scanCheckpoints.length) {
         updatedUser['scanCheckpoints'] = data.scanCheckpoints;
     }
+    if (userBeforeUpdate.address) {
+        updatedUser['address'] = data.address;
+    }
     console.log('updatedUser: ', updatedUser);
     const dataScanCheckpoints = new Set(data.scanCheckpoints);
     // tslint:disable-next-line:prefer-for-of

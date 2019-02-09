@@ -1,4 +1,5 @@
-import { IUser, IUserCreateRequest } from '../../Models/user';
+import { IUserCreateRequest } from 'src/Models/requests/userCreateRequest';
+import { IUser } from '../../Models/user';
 
 export interface IDeleteUserRequest {
     companyId: string;

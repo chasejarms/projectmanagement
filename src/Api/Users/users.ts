@@ -1,7 +1,8 @@
 import * as firebase from 'firebase';
+import { IUserCreateRequest } from 'src/Models/requests/userCreateRequest';
 import { UserType } from 'src/Models/userTypes';
 import { db } from '../../firebase';
-import { IUser, IUserCreateRequest } from './../../Models/user';
+import { IUser } from './../../Models/user';
 import { IDeleteUserRequest, IUsersApi } from './usersApiInterface';
 
 export class UsersApi implements IUsersApi {
