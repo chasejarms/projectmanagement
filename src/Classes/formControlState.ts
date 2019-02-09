@@ -109,6 +109,12 @@ export class FormControlState<T> implements IFormControlState<T> {
         return this;
     }
 
+    public markAsBrandNew(): FormControlState<T> {
+        return this.markAsUntouched()
+            .markAsValid()
+            .markAsPristine();
+    }
+
     public runValidators(): FormControlState<T> {
         if (this.validators.length > 0) {
             this.errors = [];

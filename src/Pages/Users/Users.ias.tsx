@@ -22,11 +22,11 @@ export interface IUsersPresentationState {
     deletingUser: boolean;
     isUpdate: boolean;
     idOfUserBeingUpdated: string;
-    street: string;
-    state: IUnitedStatesState | '';
-    city: string;
-    zip: string;
-    telephone: string;
+    street: FormControlState<string>;
+    state: FormControlState<IUnitedStatesState | ''>;
+    city: FormControlState<string>;
+    zip: FormControlState<string>;
+    telephone: FormControlState<string>;
 }
 
 export const createUsersPresentationClasses = (

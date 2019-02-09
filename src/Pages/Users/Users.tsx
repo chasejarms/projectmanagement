@@ -25,8 +25,10 @@ import ClearIcon from '@material-ui/icons/Clear';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
+import { IDoctorUser } from 'src/Models/doctorUser';
 import { IUserCreateRequest } from 'src/Models/requests/userCreateRequest';
 import { IStaffOrAdminUser } from 'src/Models/staffOrAdminUser';
+import { IUnitedStatesAddress } from 'src/Models/unitedStatesAddress';
 import { IUnitedStatesState } from 'src/Models/unitedStatesState';
 import { UserType } from 'src/Models/userTypes';
 import { emailValidator } from 'src/Validators/email.validator';
@@ -38,8 +40,6 @@ import { IAppState } from '../../Redux/Reducers/rootReducer';
 import { handleChange } from '../../Utils/handleChange';
 import { requiredValidator } from '../../Validators/required.validator';
 import { createUsersPresentationClasses, IUsersPresentationProps, IUsersPresentationState } from './Users.ias';
-import { IDoctorUser } from 'src/Models/doctorUser';
-import { IUnitedStatesAddress } from 'src/Models/unitedStatesAddress';
 
 export class UsersPresentation extends React.Component<IUsersPresentationProps, IUsersPresentationState> {
     public state: IUsersPresentationState = {
@@ -65,11 +65,36 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
         isUpdate: false,
         idOfUserBeingUpdated: '',
         deletingUser: false,
-        street: '',
-        state: '',
-        city: '',
-        zip: '',
-        telephone: '',
+        street: new FormControlState({
+            value: '',
+            validators: [
+                requiredValidator('A street address is required'),
+            ]
+        }),
+        state: new FormControlState({
+            value: '',
+            validators: [
+                requiredValidator('A state is required'),
+            ]
+        }),
+        city: new FormControlState({
+            value: '',
+            validators: [
+                requiredValidator('A city is required'),
+            ]
+        }),
+        zip: new FormControlState({
+            value: '',
+            validators: [
+                requiredValidator('A zip code is required'),
+            ]
+        }),
+        telephone: new FormControlState({
+            value: '',
+            validators: [
+                requiredValidator('A telephone number is required'),
+            ]
+        }),
     };
 
     // tslint:disable-next-line:variable-name
@@ -236,7 +261,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                                 {userEmailError}
                             </FormHelperText>
                         </FormControl>
-                        <FormControl>
+                        <FormControl required={true}>
                             <InputLabel htmlFor="role">Role</InputLabel>
                             <Select
                                 name="userRole"
@@ -283,7 +308,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                                         <InputLabel>Street</InputLabel>
                                         <Input
                                             name="street"
-                                            value={this.state.street}
+                                            value={this.state.street.value}
                                             onChange={this.handleChange}
                                         />
                                         <FormHelperText>
@@ -295,7 +320,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                                             <InputLabel>City</InputLabel>
                                             <Input
                                                 name="city"
-                                                value={this.state.city}
+                                                value={this.state.city.value}
                                                 onChange={this.handleChange}
                                             />
                                             <FormHelperText>
@@ -309,7 +334,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                                                 inputProps={{
                                                     id: 'state',
                                                 }}
-                                                value={this.state.state}
+                                                value={this.state.state.value}
                                                 onChange={this.handleChange}
                                             >
                                                 {Object.keys(IUnitedStatesState).map((unitedStatesState, index) => {
@@ -325,7 +350,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                                             <InputLabel>Zip</InputLabel>
                                             <Input
                                                 name="zip"
-                                                value={this.state.zip}
+                                                value={this.state.zip.value}
                                                 onChange={this.handleChange}
                                             />
                                             <FormHelperText>
@@ -447,6 +472,11 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
         const additionalCheckpoints = user.type === UserType.Doctor ? [] : (user as IStaffOrAdminUser).scanCheckpoints;
         const additionalCheckpointsSet = new Set(additionalCheckpoints);
 
+        const streetValue = user.type === UserType.Doctor ? user.address.street : '';
+        const cityValue = user.type === UserType.Doctor ? user.address.city : '';
+        const stateValue = user.type === UserType.Doctor ? user.address.state : '';
+        const zipValue = user.type === UserType.Doctor ? user.address.zip : '';
+
         return () => {
             if (this._isMounted) {
                 this.setState({
@@ -455,18 +485,24 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                     additionalCheckpoints: additionalCheckpointsSet,
                     userFullName: this.state.userFullName.setValue(
                         user.fullName,
-                    )
-                    .markAsUntouched()
-                    .markAsValid()
-                    .markAsPristine(),
+                    ).markAsBrandNew(),
                     userEmail: this.state.userEmail.setValue(
                         user.email,
-                    )
-                    .markAsUntouched()
-                    .markAsValid()
-                    .markAsPristine(),
+                    ).markAsBrandNew(),
                     userRole: user.type,
                     idOfUserBeingUpdated: user.id,
+                    street: this.state.street.setValue(
+                        streetValue,
+                    ).markAsBrandNew(),
+                    city: this.state.city.setValue(
+                        cityValue,
+                    ).markAsBrandNew(),
+                    state: this.state.state.setValue(
+                        stateValue,
+                    ).markAsBrandNew(),
+                    zip: this.state.zip.setValue(
+                        zipValue,
+                    ).markAsBrandNew(),
                 })
             }
         }
@@ -563,10 +599,10 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
 
     private getAddressFromState = (): IUnitedStatesAddress => {
         return {
-            street: this.state.street,
-            city: this.state.city,
-            state: this.state.state as IUnitedStatesState,
-            zip: this.state.zip,
+            street: this.state.street.value,
+            city: this.state.city.value,
+            state: this.state.state.value as IUnitedStatesState,
+            zip: this.state.zip.value,
         }
     }
 
