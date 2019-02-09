@@ -1,9 +1,8 @@
+import { IDoctorUser } from './doctorUser';
+import { IStaffOrAdminUser } from './staffOrAdminUser';
 import { UserType } from './userTypes';
 
-export interface IUser extends IUserCreateRequest {
-    id: string;
-    uid: string;
-}
+export type IUser = IDoctorUser | IStaffOrAdminUser;
 
 export interface IUserCreateRequest {
     companyId: string;
