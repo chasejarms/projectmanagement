@@ -350,7 +350,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
     }
 
     private navigateToCreateProjectPage = () => {
-        this.props.history.push(`${this.props.location.pathname}/createProject`);
+        this.props.history.push(`${this.props.location.pathname}/createCase`);
     }
 }
 

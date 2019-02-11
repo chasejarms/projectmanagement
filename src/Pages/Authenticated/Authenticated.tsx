@@ -22,9 +22,9 @@ import { UserType } from 'src/Models/userTypes';
 import { removeUserForCompany } from 'src/Redux/ActionCreators/userActionCreators';
 import { IAppState } from 'src/Redux/Reducers/rootReducer';
 import Api from '../../Api/api';
+import { CaseCreation } from '../CaseCreation/CaseCreation';
 import { CaseNotesTemplate } from '../CaseNotesTemplate/CaseNotesTemplate';
 import { Project } from '../Project/Project';
-import { ProjectCreation } from '../ProjectCreation/ProjectCreation';
 import { Projects } from '../Projects/Projects';
 import { Users } from '../Users/Users';
 import { UserSettings } from '../UserSettings/UserSettings';
@@ -163,9 +163,9 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                             component={Workflow as any}
                         />
                         <Route
-                            path={this.props.match.url + '/createProject'}
+                            path={this.props.match.url + '/createCase'}
                             exact={true}
-                            component={ProjectCreation}
+                            component={CaseCreation}
                         />
                         <RouteGuard
                             mustHaveRole={[UserType.Admin]}
