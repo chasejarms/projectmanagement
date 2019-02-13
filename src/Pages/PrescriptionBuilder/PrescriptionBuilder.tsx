@@ -1,5 +1,7 @@
 import {
-    Drawer, withTheme,
+    Drawer,
+    Paper,
+    withTheme,
 } from '@material-ui/core';
 import * as React from 'react';
 import {
@@ -15,18 +17,27 @@ export class PrescriptionBuilderPresentation extends React.Component<
     public render() {
         const {
             drawerPaper,
+            prescriptionBuilderContainer,
+            prescriptionFormContainer,
+            drawerReplacement,
         } = createPrescriptionBuilderClasses(this.props, this.state);
 
         return (
-            <Drawer
-                variant="permanent"
-                anchor="right"
-                classes={{
-                    paper: drawerPaper,
-                }}
-            >
-                <p>Nothing here</p>
-            </Drawer>
+            <div className={prescriptionBuilderContainer}>
+                <Drawer
+                    variant="permanent"
+                    anchor="right"
+                    classes={{
+                        paper: drawerPaper,
+                    }}
+                >
+                    <p>Nothing here</p>
+                </Drawer>
+                <Paper className={prescriptionFormContainer}>
+                    <p>This is where the prescription form container lives</p>
+                </Paper>
+                <div className={drawerReplacement}/>
+            </div>
         )
     }
 }
