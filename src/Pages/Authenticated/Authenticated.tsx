@@ -9,9 +9,9 @@ import {
 import { withTheme } from '@material-ui/core';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import AssignmentIcon from '@material-ui/icons/Assignment';
+import DescriptionIcon from '@material-ui/icons/Description';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import ListIcon from '@material-ui/icons/List';
-import NoteIcon from '@material-ui/icons/Note';
 import PeopleIcon from '@material-ui/icons/People';
 import * as React from 'react';
 import { connect, Dispatch } from 'react-redux';
@@ -23,7 +23,7 @@ import { removeUserForCompany } from 'src/Redux/ActionCreators/userActionCreator
 import { IAppState } from 'src/Redux/Reducers/rootReducer';
 import Api from '../../Api/api';
 import { CaseCreation } from '../CaseCreation/CaseCreation';
-import { CaseNotesTemplate } from '../CaseNotesTemplate/CaseNotesTemplate';
+import { PrescriptionBuilder } from '../PrescriptionBuilder/PrescriptionBuilder';
 import { Project } from '../Project/Project';
 import { Projects } from '../Projects/Projects';
 import { Users } from '../Users/Users';
@@ -96,14 +96,14 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                                                 </ListItemIcon>
                                             </ListItem>
                                         </Tooltip>
-                                        <Tooltip title="Case Notes Template" placement="right" disableFocusListener={true}>
+                                        <Tooltip title="Prescription Builder" placement="right" disableFocusListener={true}>
                                             <ListItem
                                                 button={true}
                                                 className={iconContainer}
-                                                onClick={this.navigateToCaseNotesTemplate}
+                                                onClick={this.navigateToPrescriptionBuilder}
                                             >
                                                 <ListItemIcon>
-                                                    <NoteIcon className={iconStyling}/>
+                                                    <DescriptionIcon className={iconStyling}/>
                                                 </ListItemIcon>
                                             </ListItem>
                                         </Tooltip>
@@ -169,8 +169,8 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                         />
                         <RouteGuard
                             mustHaveRole={[UserType.Admin]}
-                            path={this.props.match.url + '/caseNotesTemplate'}
-                            component={CaseNotesTemplate as any}
+                            path={this.props.match.url + '/prescriptionBuilder'}
+                            component={PrescriptionBuilder}
                         />
                         <Route
                             path={this.props.match.url + '/userSettings'}
@@ -193,9 +193,9 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
         this.props.history.push(`/company/${companyName}/users`);
     }
 
-    private navigateToCaseNotesTemplate = () => {
+    private navigateToPrescriptionBuilder = () => {
         const { companyName } = this.props.match.params as any;
-        this.props.history.push(`/company/${companyName}/caseNotesTemplate`);
+        this.props.history.push(`/company/${companyName}/prescriptionBuilder`);
     }
 
     private navigateToUserSettings = () => {
