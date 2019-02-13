@@ -1,3 +1,5 @@
+import { css } from 'emotion';
+
 // tslint:disable-next-line:no-empty-interface
 export interface IPrescriptionBuilderProps {}
 // tslint:disable-next-line:no-empty-interface
@@ -7,5 +9,11 @@ export const createPrescriptionBuilderClasses = (
     props: IPrescriptionBuilderProps,
     state: IPrescriptionBuilderState,
 ) => {
-    return {};
+    const drawerPaper = css({
+        width: 320,
+    });
+
+    return {
+        drawerPaper,
+    };
 }

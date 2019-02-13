@@ -170,7 +170,7 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                         <RouteGuard
                             mustHaveRole={[UserType.Admin]}
                             path={this.props.match.url + '/prescriptionBuilder'}
-                            component={PrescriptionBuilder}
+                            component={PrescriptionBuilder as any}
                         />
                         <Route
                             path={this.props.match.url + '/userSettings'}
