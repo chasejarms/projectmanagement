@@ -1,11 +1,14 @@
+import { WithTheme } from '@material-ui/core';
 import { css } from 'emotion';
 import { IPrescriptionFormTemplate } from 'src/Models/prescription/prescriptionFormTemplate';
 
 // tslint:disable-next-line:no-empty-interface
-export interface IPrescriptionBuilderProps {}
+export interface IPrescriptionBuilderProps extends WithTheme {}
 // tslint:disable-next-line:no-empty-interface
 export interface IPrescriptionBuilderState {
     prescriptionFormTemplate: IPrescriptionFormTemplate;
+    hoveredSection: string | null;
+    hoveredControl: string | null;
 }
 
 export const createPrescriptionBuilderClasses = (
@@ -28,7 +31,7 @@ export const createPrescriptionBuilderClasses = (
     const prescriptionFormContainer = css({
         flexGrow: 1,
         margin: 32,
-        padding: 32,
+        padding: 21,
         boxSizing: 'border-box',
         overflowY: 'auto',
     })
@@ -41,7 +44,17 @@ export const createPrescriptionBuilderClasses = (
     const sectionsContainer = css({
         display: 'grid',
         gridRowGap: 32,
+        border: '3px solid transparent',
+        padding: 8,
+        borderRadius: 3,
+        '&:hover': {
+            cursor: 'pointer',
+        }
     })
+
+    const hoverArea = css({
+        borderColor: `${props.theme.palette.primary.main}`
+    });
 
     return {
         drawerPaper,
@@ -49,5 +62,6 @@ export const createPrescriptionBuilderClasses = (
         prescriptionFormContainer,
         drawerReplacement,
         sectionsContainer,
+        hoverArea,
     };
 }

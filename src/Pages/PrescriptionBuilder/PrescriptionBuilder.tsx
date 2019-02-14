@@ -26,7 +26,9 @@ export class PrescriptionBuilderPresentation extends React.Component<
             controlOrder: {},
             sections: {},
             controls: {},
-        }
+        },
+        hoveredSection: null,
+        hoveredControl: null,
     }
 
     public render() {
@@ -36,6 +38,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
             prescriptionFormContainer,
             drawerReplacement,
             sectionsContainer,
+            hoverArea,
         } = createPrescriptionBuilderClasses(this.props, this.state);
 
         const {
@@ -61,8 +64,19 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     <div className={sectionsContainer}>
                         {sectionOrder.map((sectionId) => {
                             const section = sections[sectionId];
+                            let sectionClasses = sectionsContainer;
+
+                            if (sectionId === this.state.hoveredSection) {
+                                sectionClasses += ` ${hoverArea}`;
+                            }
+
                             return (
-                                <div key={sectionId} className={sectionsContainer}>
+                                <div
+                                    key={sectionId}
+                                    className={sectionClasses}
+                                    onMouseEnter={this.setHoverSection(sectionId)}
+                                    onMouseLeave={this.removeHoverSection}
+                                >
                                     <Typography variant="title">{section.title}</Typography>
                                 </div>
                             )
@@ -72,6 +86,18 @@ export class PrescriptionBuilderPresentation extends React.Component<
                 <div className={drawerReplacement}/>
             </div>
         )
+    }
+
+    private setHoverSection = (sectionId: string) => () => {
+        this.setState({
+            hoveredSection: sectionId,
+        });
+    }
+
+    private removeHoverSection = () => {
+        this.setState({
+            hoveredSection: null,
+        })
     }
 
     private addSection = (insertPosition: number) => () => {
