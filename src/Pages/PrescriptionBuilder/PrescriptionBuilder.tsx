@@ -89,7 +89,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                         <Button color="secondary" className={buttonLeftMargin} onClick={this.addSectionAfterSelected}>After</Button>
                                     </div>
                                 </div>
-                                <div>
+                                <div className={addSectionOrFieldContainer}>
                                     <Typography variant="subheading">Add A Field:</Typography>
                                     <div>
                                         <Button color="secondary">Beginning</Button>
