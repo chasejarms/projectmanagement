@@ -9,6 +9,8 @@ export interface IPrescriptionBuilderState {
     prescriptionFormTemplate: IPrescriptionFormTemplate;
     hoveredSection: string | null;
     hoveredControl: string | null;
+    selectedSection: string | null;
+    selectedControl: string | null;
 }
 
 export const createPrescriptionBuilderClasses = (
@@ -56,6 +58,10 @@ export const createPrescriptionBuilderClasses = (
         borderColor: `${props.theme.palette.primary.main}`
     });
 
+    const innerDrawerContainer = css({
+        padding: 16,
+    });
+
     return {
         drawerPaper,
         prescriptionBuilderContainer,
@@ -63,5 +69,6 @@ export const createPrescriptionBuilderClasses = (
         drawerReplacement,
         sectionsContainer,
         hoverArea,
+        innerDrawerContainer,
     };
 }

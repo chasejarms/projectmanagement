@@ -1,6 +1,9 @@
 import {
     Button,
     Drawer,
+    FormControl,
+    Input,
+    InputLabel,
     Paper,
     Typography,
     withTheme,
@@ -29,6 +32,8 @@ export class PrescriptionBuilderPresentation extends React.Component<
         },
         hoveredSection: null,
         hoveredControl: null,
+        selectedSection: null,
+        selectedControl: null,
     }
 
     public render() {
@@ -39,14 +44,21 @@ export class PrescriptionBuilderPresentation extends React.Component<
             drawerReplacement,
             sectionsContainer,
             hoverArea,
+            innerDrawerContainer,
         } = createPrescriptionBuilderClasses(this.props, this.state);
+
+        const {
+            selectedSection,
+            prescriptionFormTemplate,
+            // selectedControl,
+        } = this.state;
 
         const {
             sections,
             // controls,
             sectionOrder,
             // controlOrder,
-        } = this.state.prescriptionFormTemplate;
+        } = prescriptionFormTemplate;
 
         return (
             <div className={prescriptionBuilderContainer}>
@@ -57,7 +69,17 @@ export class PrescriptionBuilderPresentation extends React.Component<
                         paper: drawerPaper,
                     }}
                 >
-                    <p>Nothing here</p>
+                    <div className={innerDrawerContainer}>
+                        {selectedSection ? (
+                            <FormControl fullWidth={true}>
+                                <InputLabel>Section Title</InputLabel>
+                                <Input
+                                    value={sections[selectedSection].title}
+                                    onChange={this.handleSelectedSectionTitleChange}
+                                />
+                            </FormControl>
+                        ): undefined}
+                    </div>
                 </Drawer>
                 <Paper className={prescriptionFormContainer}>
                     <Button onClick={this.addSection(0)}>Add A Section</Button>
@@ -76,6 +98,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                     className={sectionClasses}
                                     onMouseEnter={this.setHoverSection(sectionId)}
                                     onMouseLeave={this.removeHoverSection}
+                                    onClick={this.selectSection(sectionId)}
                                 >
                                     <Typography variant="title">{section.title}</Typography>
                                 </div>
@@ -97,6 +120,26 @@ export class PrescriptionBuilderPresentation extends React.Component<
     private removeHoverSection = () => {
         this.setState({
             hoveredSection: null,
+        })
+    }
+
+    private selectSection = (sectionId: string) => () => {
+        this.setState({
+            selectedSection: sectionId,
+        })
+    }
+
+    private handleSelectedSectionTitleChange = (event: any) => {
+        const newTitleValue = event.target.value;
+        const selectedSection = this.state.prescriptionFormTemplate.sections[this.state.selectedSection!];
+        const sectionClone = cloneDeep(selectedSection)!;
+        sectionClone.title = newTitleValue;
+
+        const prescriptionFormTemplateCopy = cloneDeep(this.state.prescriptionFormTemplate);
+        prescriptionFormTemplateCopy.sections[sectionClone.id] = sectionClone;
+
+        this.setState({
+            prescriptionFormTemplate: prescriptionFormTemplateCopy,
         })
     }
 
