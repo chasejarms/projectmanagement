@@ -45,6 +45,9 @@ export class PrescriptionBuilderPresentation extends React.Component<
             sectionsContainer,
             hoverArea,
             innerDrawerContainer,
+            drawerVerticalSpacing,
+            addSectionOrFieldContainer,
+            buttonLeftMargin,
         } = createPrescriptionBuilderClasses(this.props, this.state);
 
         const {
@@ -71,13 +74,29 @@ export class PrescriptionBuilderPresentation extends React.Component<
                 >
                     <div className={innerDrawerContainer}>
                         {selectedSection ? (
-                            <FormControl fullWidth={true}>
-                                <InputLabel>Section Title</InputLabel>
-                                <Input
-                                    value={sections[selectedSection].title}
-                                    onChange={this.handleSelectedSectionTitleChange}
-                                />
-                            </FormControl>
+                            <div className={drawerVerticalSpacing}>
+                                <FormControl fullWidth={true}>
+                                    <InputLabel>Section Title</InputLabel>
+                                    <Input
+                                        value={sections[selectedSection].title}
+                                        onChange={this.handleSelectedSectionTitleChange}
+                                    />
+                                </FormControl>
+                                <div className={addSectionOrFieldContainer}>
+                                    <Typography variant="subheading">Add A Section:</Typography>
+                                    <div>
+                                        <Button color="secondary" onClick={this.addSectionBeforeSelected}>Before</Button>
+                                        <Button color="secondary" className={buttonLeftMargin} onClick={this.addSectionAfterSelected}>After</Button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <Typography variant="subheading">Add A Field:</Typography>
+                                    <div>
+                                        <Button color="secondary">Beginning</Button>
+                                        <Button color="secondary" className={buttonLeftMargin}>End</Button>
+                                    </div>
+                                </div>
+                            </div>
                         ): undefined}
                     </div>
                 </Drawer>
@@ -163,6 +182,22 @@ export class PrescriptionBuilderPresentation extends React.Component<
         this.setState({
             prescriptionFormTemplate: prescriptionFormTemplateCopy,
         })
+    }
+
+    private addSectionBeforeSelected = () => {
+        const index = this.indexOfSelectedSection();
+        this.addSection(index)();
+    }
+
+    private addSectionAfterSelected = () => {
+        const index = this.indexOfSelectedSection();
+        this.addSection(index + 1)();
+    }
+
+    private indexOfSelectedSection = (): number => {
+        return this.state.prescriptionFormTemplate.sectionOrder.findIndex((sectionId) => {
+            return this.state.selectedSection === sectionId;
+        });
     }
 
     // private addControlToSection = (): void => {

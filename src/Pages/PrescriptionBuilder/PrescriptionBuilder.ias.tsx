@@ -62,6 +62,20 @@ export const createPrescriptionBuilderClasses = (
         padding: 16,
     });
 
+    const drawerVerticalSpacing = css({
+        display: 'grid',
+        gridRowGap: 16,
+    });
+
+    const addSectionOrFieldContainer = css({
+        display: 'grid',
+        gridRowGap: 8,
+    });
+
+    const buttonLeftMargin = css({
+        marginLeft: 8,
+    });
+
     return {
         drawerPaper,
         prescriptionBuilderContainer,
@@ -70,5 +84,8 @@ export const createPrescriptionBuilderClasses = (
         sectionsContainer,
         hoverArea,
         innerDrawerContainer,
+        drawerVerticalSpacing,
+        addSectionOrFieldContainer,
+        buttonLeftMargin,
     };
 }
