@@ -1,9 +1,12 @@
 import { css } from 'emotion';
+import { IPrescriptionFormTemplate } from 'src/Models/prescription/prescriptionFormTemplate';
 
 // tslint:disable-next-line:no-empty-interface
 export interface IPrescriptionBuilderProps {}
 // tslint:disable-next-line:no-empty-interface
-export interface IPrescriptionBuilderState {}
+export interface IPrescriptionBuilderState {
+    prescriptionFormTemplate: IPrescriptionFormTemplate;
+}
 
 export const createPrescriptionBuilderClasses = (
     props: IPrescriptionBuilderProps,
@@ -25,7 +28,9 @@ export const createPrescriptionBuilderClasses = (
     const prescriptionFormContainer = css({
         flexGrow: 1,
         margin: 32,
+        padding: 32,
         boxSizing: 'border-box',
+        overflowY: 'auto',
     })
 
     const drawerReplacement = css({
@@ -33,10 +38,16 @@ export const createPrescriptionBuilderClasses = (
         flex: '0 0 320px',
     });
 
+    const sectionsContainer = css({
+        display: 'grid',
+        gridRowGap: 32,
+    })
+
     return {
         drawerPaper,
         prescriptionBuilderContainer,
         prescriptionFormContainer,
         drawerReplacement,
+        sectionsContainer,
     };
 }
