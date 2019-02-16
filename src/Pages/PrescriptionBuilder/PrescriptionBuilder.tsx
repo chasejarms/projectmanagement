@@ -16,6 +16,9 @@ import { cloneDeep } from 'lodash';
 import * as React from 'react';
 import { IBeforeOrAfter } from 'src/Models/beforeOrAfter';
 import { IBeginningOrEnd } from 'src/Models/beginningOrEnd';
+import { IDropdownTemplateControl } from 'src/Models/prescription/controls/dropdownTemplateControl';
+import { IOption } from 'src/Models/prescription/controls/option';
+import { IPrescriptionControlTemplate } from 'src/Models/prescription/controls/prescriptionControlTemplate';
 import { IPrescriptionControlTemplateType } from 'src/Models/prescription/controls/prescriptionControlTemplateType';
 import { ITitleTemplateControl } from 'src/Models/prescription/controls/titleTemplateControl';
 import { IPrescriptionSectionTemplate } from 'src/Models/prescription/prescriptionSectionTemplate';
@@ -328,6 +331,9 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     case IPrescriptionControlTemplateType.Title:
                         displayName = 'Title';
                         break;
+                    case IPrescriptionControlTemplateType.Dropdown:
+                        displayName = 'Dropdown';
+                        break;
                     default:
                         break;
                 }
@@ -358,6 +364,8 @@ export class PrescriptionBuilderPresentation extends React.Component<
         const id = generateUniqueId();
         const prescriptionFormTemplateCopy = cloneDeep(this.state.prescriptionFormTemplate);
 
+        let control: IPrescriptionControlTemplate;
+
         if (value === IPrescriptionControlTemplateType.Title) {
 
             const titleControl: ITitleTemplateControl = {
@@ -366,17 +374,36 @@ export class PrescriptionBuilderPresentation extends React.Component<
                 title: 'New Title',
                 sectionId,
             }
-
-            prescriptionFormTemplateCopy.controls[id] = titleControl;
-            const currentControlOrder = prescriptionFormTemplateCopy.controlOrder[sectionId];
-
-            if (beginningOrEnd === IBeginningOrEnd.Beginning) {
-                const newControlOrder = [id, ...currentControlOrder];
-                prescriptionFormTemplateCopy.controlOrder[sectionId] = newControlOrder;
-            } else {
-                const newControlOrder = [...currentControlOrder, id];
-                prescriptionFormTemplateCopy.controlOrder[sectionId] = newControlOrder;
+            control = titleControl;
+        } else if (value === IPrescriptionControlTemplateType.Dropdown) {
+            const options: IOption[] = [];
+            for (let i = 0; i < 3; i++) {
+                const uniqueOptionId = generateUniqueId();
+                options.push({
+                    id: uniqueOptionId,
+                    text: `Option ${i + 1}`,
+                })
             }
+            const dropdownControl: IDropdownTemplateControl = {
+                id,
+                label: 'Dropdown Label',
+                type: IPrescriptionControlTemplateType.Dropdown,
+                options,
+                sectionId,
+            }
+
+            control = dropdownControl;
+        }
+
+        prescriptionFormTemplateCopy.controls[id] = control!;
+        const currentControlOrder = prescriptionFormTemplateCopy.controlOrder[sectionId];
+
+        if (beginningOrEnd === IBeginningOrEnd.Beginning) {
+            const newControlOrder = [id, ...currentControlOrder];
+            prescriptionFormTemplateCopy.controlOrder[sectionId] = newControlOrder;
+        } else {
+            const newControlOrder = [...currentControlOrder, id];
+            prescriptionFormTemplateCopy.controlOrder[sectionId] = newControlOrder;
         }
 
         this.setState({
@@ -395,6 +422,9 @@ export class PrescriptionBuilderPresentation extends React.Component<
                         break;
                     case IPrescriptionControlTemplateType.Title:
                         displayName = 'Title';
+                        break;
+                    case IPrescriptionControlTemplateType.Dropdown:
+                        displayName = 'Dropdown';
                         break;
                     default:
                         break;
@@ -467,9 +497,26 @@ export class PrescriptionBuilderPresentation extends React.Component<
             return (
                 <Typography variant="title">{control.title}</Typography>
             )
-        } else {
-            return <div/>
+        } else if (control.type === IPrescriptionControlTemplateType.Dropdown) {
+            return (
+                <div>
+                    <FormControl fullWidth={true}>
+                        <InputLabel>{control.label}</InputLabel>
+                        <Select
+                            value={''}
+                            // will need to handle the change and actually make the value change
+                            // onChange={}
+                        >
+                            {control.options.map(({ text, id }) => {
+                                return <MenuItem key={id} value={id}>{text}</MenuItem>
+                            })}
+                        </Select>
+                    </FormControl>
+                </div>
+            )
         }
+
+        return <div/>
     }
 
     private selectControl = (controlId: string) => (event: any) => {

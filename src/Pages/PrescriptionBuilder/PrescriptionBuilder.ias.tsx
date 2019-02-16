@@ -121,6 +121,7 @@ export const createPrescriptionBuilderClasses = (
     const controlContainer = css({
         border: '3px solid transparent',
         borderRadius: 3,
+        padding: 8,
     });
 
     const controlsContainer = css({
