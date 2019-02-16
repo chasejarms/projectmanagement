@@ -1,7 +1,9 @@
 import {
     Button,
+    Checkbox,
     Drawer,
     FormControl,
+    FormControlLabel,
     Input,
     InputLabel,
     Paper,
@@ -24,7 +26,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
 > {
     public state: IPrescriptionBuilderState = {
         prescriptionFormTemplate: {
-            id: '1',
             sectionOrder: [],
             controlOrder: {},
             sections: {},
@@ -43,25 +44,33 @@ export class PrescriptionBuilderPresentation extends React.Component<
             prescriptionFormContainer,
             drawerReplacement,
             sectionsContainer,
+            sectionContainer,
             hoverArea,
             innerDrawerContainer,
             drawerVerticalSpacing,
             addSectionOrFieldContainer,
             buttonLeftMargin,
+            noSectionsInfoText,
+            noSectionInnerContainer,
+            noControlForSectionClass,
+            drawerNoSelectedSectionOrControl,
         } = createPrescriptionBuilderClasses(this.props, this.state);
 
         const {
             selectedSection,
             prescriptionFormTemplate,
-            // selectedControl,
+            selectedControl,
         } = this.state;
 
         const {
             sections,
             // controls,
             sectionOrder,
-            // controlOrder,
+            controlOrder,
         } = prescriptionFormTemplate;
+
+        const section = sections[this.state.selectedSection!];
+        const noSelectedSectionOrControl = !selectedSection && !selectedControl;
 
         return (
             <div className={prescriptionBuilderContainer}>
@@ -72,15 +81,28 @@ export class PrescriptionBuilderPresentation extends React.Component<
                         paper: drawerPaper,
                     }}
                 >
-                    <div className={innerDrawerContainer}>
+                    <div className={`${innerDrawerContainer} ${noSelectedSectionOrControl ? drawerNoSelectedSectionOrControl : ''}`}>
+                        {noSelectedSectionOrControl ? (
+                            <Typography variant="body1">Select a control or section</Typography>
+                        ) : undefined}
                         {selectedSection ? (
                             <div className={drawerVerticalSpacing}>
-                                <FormControl fullWidth={true}>
-                                    <InputLabel>Section Title</InputLabel>
-                                    <Input
-                                        value={sections[selectedSection].title}
-                                        onChange={this.handleSelectedSectionTitleChange}
+                                <Typography variant="title">Edit Section</Typography>
+                                <FormControlLabel control={
+                                    <Checkbox
+                                        checked={section.canDuplicate}
+                                        onChange={this.handleSectionDuplicationChange}
+                                        name="allowDuplication"
+                                        color="primary"
                                     />
+                                } label="Allow Duplication"/>
+                                <FormControl required={section.canDuplicate} disabled={!section.canDuplicate}>
+                                    <InputLabel>Section Duplication Text</InputLabel>
+                                    <Input
+                                        value={section.duplicateButtonText || ''}
+                                        onChange={this.handleDuplicationButtonTextChange}
+                                    />
+                                    {/* <FormHelperText>{estimatedCompletionError}</FormHelperText> */}
                                 </FormControl>
                                 <div className={addSectionOrFieldContainer}>
                                     <Typography variant="subheading">Add A Section:</Typography>
@@ -101,29 +123,43 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     </div>
                 </Drawer>
                 <Paper className={prescriptionFormContainer}>
-                    <Button onClick={this.addSection(0)}>Add A Section</Button>
-                    <div className={sectionsContainer}>
-                        {sectionOrder.map((sectionId) => {
-                            const section = sections[sectionId];
-                            let sectionClasses = sectionsContainer;
+                    {sectionOrder.length === 0 ? (
+                        <div className={noSectionsInfoText}>
+                            <div className={noSectionInnerContainer}>
+                                <Typography variant="body1">To get started, click the add section button</Typography>
+                                <Button color="secondary" onClick={this.addSection(0)}>Add A Section</Button>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className={sectionsContainer}>
+                            {sectionOrder.map((sectionId) => {
+                                let sectionClasses = sectionContainer;
 
-                            if (sectionId === this.state.hoveredSection) {
-                                sectionClasses += ` ${hoverArea}`;
-                            }
+                                if (sectionId === this.state.hoveredSection) {
+                                    sectionClasses += ` ${hoverArea}`;
+                                }
 
-                            return (
-                                <div
-                                    key={sectionId}
-                                    className={sectionClasses}
-                                    onMouseEnter={this.setHoverSection(sectionId)}
-                                    onMouseLeave={this.removeHoverSection}
-                                    onClick={this.selectSection(sectionId)}
-                                >
-                                    <Typography variant="title">{section.title}</Typography>
-                                </div>
-                            )
-                        })}
-                    </div>
+                                const controlOrderForSection = controlOrder[sectionId];
+                                const noControlForSection = controlOrderForSection.length === 0;
+
+                                return (
+                                    <div
+                                        key={sectionId}
+                                        className={`${sectionClasses} ${noControlForSection ? noControlForSectionClass : ''}`}
+                                        onMouseEnter={this.setHoverSection(sectionId)}
+                                        onMouseLeave={this.removeHoverSection}
+                                        onClick={this.selectSection(sectionId)}
+                                    >
+                                        {noControlForSection ? (
+                                            <Typography>Click on this section to add fields or other sections</Typography>
+                                        ) : (
+                                            <div/>
+                                        )}
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    )}
                 </Paper>
                 <div className={drawerReplacement}/>
             </div>
@@ -148,26 +184,13 @@ export class PrescriptionBuilderPresentation extends React.Component<
         })
     }
 
-    private handleSelectedSectionTitleChange = (event: any) => {
-        const newTitleValue = event.target.value;
-        const selectedSection = this.state.prescriptionFormTemplate.sections[this.state.selectedSection!];
-        const sectionClone = cloneDeep(selectedSection)!;
-        sectionClone.title = newTitleValue;
-
-        const prescriptionFormTemplateCopy = cloneDeep(this.state.prescriptionFormTemplate);
-        prescriptionFormTemplateCopy.sections[sectionClone.id] = sectionClone;
-
-        this.setState({
-            prescriptionFormTemplate: prescriptionFormTemplateCopy,
-        })
-    }
-
     private addSection = (insertPosition: number) => () => {
         const id = generateUniqueId();
         const newSection: IPrescriptionSectionTemplate = {
             id,
-            title: 'New Section',
             validators: [],
+            canDuplicate: false,
+            duplicateButtonText: null,
         }
 
         const prescriptionFormTemplateCopy = cloneDeep(this.state.prescriptionFormTemplate);
@@ -178,6 +201,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
         prescriptionFormTemplateCopy.sections[id] = newSection;
         prescriptionFormTemplateCopy.sectionOrder = sectionOrder;
+        prescriptionFormTemplateCopy.controlOrder[newSection.id] = [];
 
         this.setState({
             prescriptionFormTemplate: prescriptionFormTemplateCopy,
@@ -198,6 +222,34 @@ export class PrescriptionBuilderPresentation extends React.Component<
         return this.state.prescriptionFormTemplate.sectionOrder.findIndex((sectionId) => {
             return this.state.selectedSection === sectionId;
         });
+    }
+
+    private handleSectionDuplicationChange = (event: any) => {
+        const isDuplicatable = event.target.checked;
+
+        const prescriptionFormTemplateCopy = cloneDeep(this.state.prescriptionFormTemplate);
+        const section = prescriptionFormTemplateCopy.sections[this.state.selectedSection!];
+        section.canDuplicate = isDuplicatable;
+
+        prescriptionFormTemplateCopy.sections[this.state.selectedSection!] = section;
+
+        this.setState({
+            prescriptionFormTemplate: prescriptionFormTemplateCopy,
+        })
+    }
+
+    private handleDuplicationButtonTextChange = (event: any) => {
+        const newText = event.target.value;
+
+        const prescriptionFormTemplateCopy = cloneDeep(this.state.prescriptionFormTemplate);
+        const section = prescriptionFormTemplateCopy.sections[this.state.selectedSection!];
+        section.duplicateButtonText = newText;
+
+        prescriptionFormTemplateCopy.sections[this.state.selectedSection!] = section;
+
+        this.setState({
+            prescriptionFormTemplate: prescriptionFormTemplateCopy,
+        })
     }
 
     // private addControlToSection = (): void => {

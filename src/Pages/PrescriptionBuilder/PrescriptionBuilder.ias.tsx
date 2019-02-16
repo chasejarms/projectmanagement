@@ -33,7 +33,7 @@ export const createPrescriptionBuilderClasses = (
     const prescriptionFormContainer = css({
         flexGrow: 1,
         margin: 32,
-        padding: 21,
+        padding: 32,
         boxSizing: 'border-box',
         overflowY: 'auto',
     })
@@ -46,13 +46,19 @@ export const createPrescriptionBuilderClasses = (
     const sectionsContainer = css({
         display: 'grid',
         gridRowGap: 32,
-        border: '3px solid transparent',
+    })
+
+    const sectionContainer = css({
+        border: '3px solid rgba(0,0,0,0.08)',
+        backgroundColor: 'rgba(0,0,0,0.08)',
         padding: 8,
         borderRadius: 3,
         '&:hover': {
             cursor: 'pointer',
-        }
-    })
+        },
+        minHeight: 120,
+        boxSizing: 'border-box',
+    });
 
     const hoverArea = css({
         borderColor: `${props.theme.palette.primary.main}`
@@ -60,6 +66,7 @@ export const createPrescriptionBuilderClasses = (
 
     const innerDrawerContainer = css({
         padding: 16,
+        boxSizing: 'border-box',
     });
 
     const drawerVerticalSpacing = css({
@@ -76,16 +83,49 @@ export const createPrescriptionBuilderClasses = (
         marginLeft: 8,
     });
 
+    const noSectionsInfoText = css({
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100%',
+    });
+
+    const noSectionInnerContainer = css({
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column',
+    });
+
+    const noControlForSectionClass = css({
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100%',
+    });
+
+    const drawerNoSelectedSectionOrControl = css({
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100%',
+    });
+
     return {
         drawerPaper,
         prescriptionBuilderContainer,
         prescriptionFormContainer,
         drawerReplacement,
+        sectionContainer,
         sectionsContainer,
         hoverArea,
         innerDrawerContainer,
         drawerVerticalSpacing,
         addSectionOrFieldContainer,
         buttonLeftMargin,
+        noSectionsInfoText,
+        noSectionInnerContainer,
+        noControlForSectionClass,
+        drawerNoSelectedSectionOrControl,
     };
 }

@@ -3,7 +3,6 @@ import { IPrescriptionControlOrder } from "./prescriptionControlOrder";
 import { IPrescriptionSectionMapping } from "./prescriptionSectionMapping";
 
 export interface IPrescriptionFormTemplate {
-    id: string;
     sectionOrder: string[];
     controlOrder: IPrescriptionControlOrder;
     sections: IPrescriptionSectionMapping;
