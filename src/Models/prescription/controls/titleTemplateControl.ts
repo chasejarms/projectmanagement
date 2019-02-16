@@ -3,4 +3,5 @@ import { IPrescriptionControlTemplateType } from "./prescriptionControlTemplateT
 
 export interface ITitleTemplateControl extends IBasePrescriptionControlTemplate {
     type: IPrescriptionControlTemplateType.Title,
+    title: string,
 }

@@ -16,6 +16,7 @@ import { cloneDeep } from 'lodash';
 import * as React from 'react';
 import { IBeginningOrEnd } from 'src/Models/beginningOrEnd';
 import { IPrescriptionControlTemplateType } from 'src/Models/prescription/controls/prescriptionControlTemplateType';
+import { ITitleTemplateControl } from 'src/Models/prescription/controls/titleTemplateControl';
 import { IPrescriptionSectionTemplate } from 'src/Models/prescription/prescriptionSectionTemplate';
 import { generateUniqueId } from 'src/Utils/generateUniqueId';
 import {
@@ -156,7 +157,15 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                             {noControlForSection ? (
                                                 <Typography>Click on this section to add fields or other sections</Typography>
                                             ) : (
-                                                <div/>
+                                                <div>
+                                                    {controlOrderForSection.map((controlId) => {
+                                                        return (
+                                                            <div key={controlId}>
+                                                                {this.correctControlDisplay(controlId)}
+                                                            </div>
+                                                        )
+                                                    })}
+                                                </div>
                                             )}
                                         </div>
                                         {currentSection.canDuplicate && currentSection.duplicateButtonText ? (
@@ -288,7 +297,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                 <InputLabel>{label}</InputLabel>
                 <Select
                     value={''}
-                    onChange={this.handleAddControlOption(sectionId)}
+                    onChange={this.handleAddControlOption(sectionId, beginningOrEnd)}
                 >
                     {controlOptions.map(({ value, displayName }) => {
                         return <MenuItem key={value} value={value}>{displayName}</MenuItem>
@@ -298,8 +307,46 @@ export class PrescriptionBuilderPresentation extends React.Component<
         )
     }
 
-    private handleAddControlOption = (sectionId: string) => (event: any) => {
-        // const value = event.target.value;
+    private handleAddControlOption = (sectionId: string, beginningOrEnd: IBeginningOrEnd) => (event: any) => {
+        const value = event.target.value;
+        const id = generateUniqueId();
+        const prescriptionFormTemplateCopy = cloneDeep(this.state.prescriptionFormTemplate);
+
+        if (value === IPrescriptionControlTemplateType.Title) {
+
+            const titleControl: ITitleTemplateControl = {
+                id,
+                type: IPrescriptionControlTemplateType.Title,
+                title: 'New Title',
+            }
+
+            prescriptionFormTemplateCopy.controls[id] = titleControl;
+            const currentControlOrder = prescriptionFormTemplateCopy.controlOrder[sectionId];
+
+            if (beginningOrEnd === IBeginningOrEnd.Beginning) {
+                const newControlOrder = [id, ...currentControlOrder];
+                prescriptionFormTemplateCopy.controlOrder[sectionId] = newControlOrder;
+            } else {
+                const newControlOrder = [...currentControlOrder, id];
+                prescriptionFormTemplateCopy.controlOrder[sectionId] = newControlOrder;
+            }
+        }
+
+        this.setState({
+            prescriptionFormTemplate: prescriptionFormTemplateCopy,
+        })
+    }
+
+    private correctControlDisplay = (controlId: string) => {
+        const control = this.state.prescriptionFormTemplate.controls[controlId];
+
+        if (control.type === IPrescriptionControlTemplateType.Title) {
+            return (
+                <Typography variant="title">{control.title}</Typography>
+            )
+        } else {
+            return <div/>
+        }
     }
 
     // private addControlToSection = (): void => {
