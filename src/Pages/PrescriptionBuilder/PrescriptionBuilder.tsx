@@ -6,12 +6,16 @@ import {
     FormControlLabel,
     Input,
     InputLabel,
+    MenuItem,
     Paper,
+    Select,
     Typography,
     withTheme,
 } from '@material-ui/core';
 import { cloneDeep } from 'lodash';
 import * as React from 'react';
+import { IBeginningOrEnd } from 'src/Models/beginningOrEnd';
+import { IPrescriptionControlTemplateType } from 'src/Models/prescription/controls/prescriptionControlTemplateType';
 import { IPrescriptionSectionTemplate } from 'src/Models/prescription/prescriptionSectionTemplate';
 import { generateUniqueId } from 'src/Utils/generateUniqueId';
 import {
@@ -113,11 +117,8 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                     </div>
                                 </div>
                                 <div className={addSectionOrFieldContainer}>
-                                    <Typography variant="subheading">Add A Field:</Typography>
-                                    <div>
-                                        <Button color="secondary">Beginning</Button>
-                                        <Button color="secondary" className={buttonLeftMargin}>End</Button>
-                                    </div>
+                                    {this.controlOptionsSelect(section.id, 'Add Field At Beginning Of Section', IBeginningOrEnd.Beginning)}
+                                    {this.controlOptionsSelect(section.id, 'Add Field At End Of Section', IBeginningOrEnd.End)}
                                 </div>
                             </div>
                         ): undefined}
@@ -258,6 +259,47 @@ export class PrescriptionBuilderPresentation extends React.Component<
         this.setState({
             prescriptionFormTemplate: prescriptionFormTemplateCopy,
         })
+    }
+
+    private controlOptionsSelect = (sectionId: string, label: string, beginningOrEnd: IBeginningOrEnd) => {
+        const controlOptions = [];
+        for (const templateType in IPrescriptionControlTemplateType) {
+            if (true) {
+                let displayName: string;
+                switch (templateType) {
+                    case IPrescriptionControlTemplateType.DoctorInformation:
+                        displayName = 'Doctor Information';
+                        break;
+                    case IPrescriptionControlTemplateType.Title:
+                        displayName = 'Title';
+                        break;
+                    default:
+                        break;
+                }
+
+                controlOptions.push({
+                    value: templateType,
+                    displayName: displayName!,
+                });
+            }
+        }
+        return (
+            <FormControl>
+                <InputLabel>{label}</InputLabel>
+                <Select
+                    value={''}
+                    onChange={this.handleAddControlOption(sectionId)}
+                >
+                    {controlOptions.map(({ value, displayName }) => {
+                        return <MenuItem key={value} value={value}>{displayName}</MenuItem>
+                    })}
+                </Select>
+            </FormControl>
+        )
+    }
+
+    private handleAddControlOption = (sectionId: string) => (event: any) => {
+        // const value = event.target.value;
     }
 
     // private addControlToSection = (): void => {
