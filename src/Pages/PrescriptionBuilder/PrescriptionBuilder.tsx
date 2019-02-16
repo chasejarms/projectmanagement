@@ -164,8 +164,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
                                                         if (controlId === this.state.hoveredControl) {
                                                             controlClasses += ` ${hoverArea}`;
-                                                            // tslint:disable-next-line:no-console
-                                                            console.log('adding hover class to control');
                                                         }
 
                                                         return (
@@ -174,6 +172,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                                                 className={controlClasses}
                                                                 onMouseEnter={this.setHoverControl(controlId)}
                                                                 onMouseLeave={this.removeHoverControl}
+                                                                onClick={this.selectControl(controlId)}
                                                             >
                                                                 {this.correctControlDisplay(controlId)}
                                                             </div>
@@ -201,6 +200,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
     private setHoverSection = (sectionId: string) => () => {
         this.setState({
             hoveredSection: sectionId,
+            hoveredControl: null,
         });
     }
 
@@ -225,6 +225,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
     private selectSection = (sectionId: string) => () => {
         this.setState({
             selectedSection: sectionId,
+            selectedControl: null,
         })
     }
 
@@ -375,9 +376,14 @@ export class PrescriptionBuilderPresentation extends React.Component<
         }
     }
 
-    // private addControlToSection = (): void => {
-    //     //
-    // }
+    private selectControl = (controlId: string) => (event: any) => {
+        event.stopPropagation();
+        event.preventDefault();
+        this.setState({
+            selectedControl: controlId,
+            selectedSection: null,
+        })
+    }
 
     // private removeSection = (): void => {
     //     //
