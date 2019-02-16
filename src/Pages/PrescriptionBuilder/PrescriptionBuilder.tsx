@@ -516,13 +516,15 @@ export class PrescriptionBuilderPresentation extends React.Component<
     private correctControlDisplayForDropdown = (controlId: string) => {
         const {
             fullWidthClass,
+            optionsContainer,
+            sixteenPixelSpacing,
         } = createPrescriptionBuilderClasses(this.props, this.state);
 
         const control = this.state.prescriptionFormTemplate.controls[controlId];
 
         if (control.type === IPrescriptionControlTemplateType.Dropdown) {
             return (
-                <div className={fullWidthClass}>
+                <div className={`${fullWidthClass} ${sixteenPixelSpacing}`}>
                     <FormControl fullWidth={true}>
                         <InputLabel>Label</InputLabel>
                         <Input
@@ -530,6 +532,20 @@ export class PrescriptionBuilderPresentation extends React.Component<
                             onChange={this.handleControlLabelChange}
                         />
                     </FormControl>
+                    <div className={optionsContainer}>
+                        <Typography variant="subheading">Options:</Typography>
+                        { control.options.map(({ id, text }, index) => {
+                            return (
+                                <FormControl fullWidth={true} key={id}>
+                                    <InputLabel>Option {index + 1}</InputLabel>
+                                    <Input
+                                        value={text}
+                                        onChange={this.handleOptionTextChange(id)}
+                                    />
+                                </FormControl>
+                            )
+                        })}
+                    </div>
                 </div>
             )
         } else if (control.type === IPrescriptionControlTemplateType.Title) {
@@ -573,6 +589,29 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
         const prescriptionFormTemplateCopy = this.copyPrescriptionFormTemplate();
         (prescriptionFormTemplateCopy.controls[selectedControlId!] as IDropdownTemplateControl).label = newLabel;
+        this.setState({
+            prescriptionFormTemplate: prescriptionFormTemplateCopy,
+        })
+    }
+
+    private handleOptionTextChange = (optionId: string) => (event: any) => {
+        const newOptionText = event.target.value;
+        const selectedControlId = this.state.selectedControl!;
+
+        const prescriptionFormTemplateCopy = this.copyPrescriptionFormTemplate();
+        const currentOptions = (prescriptionFormTemplateCopy.controls[selectedControlId] as IDropdownTemplateControl).options;
+        const updatedOptions = currentOptions.map((currentOption) => {
+            if (optionId === currentOption.id) {
+                return {
+                    id: currentOption.id,
+                    text: newOptionText,
+                }
+            } else {
+                return currentOption;
+            }
+        });
+
+        (prescriptionFormTemplateCopy.controls[selectedControlId] as IDropdownTemplateControl).options = updatedOptions;
         this.setState({
             prescriptionFormTemplate: prescriptionFormTemplateCopy,
         })

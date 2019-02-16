@@ -133,6 +133,16 @@ export const createPrescriptionBuilderClasses = (
         width: '100%',
     });
 
+    const optionsContainer = css({
+        display: 'grid',
+        gridRowGap: 8,
+    });
+
+    const sixteenPixelSpacing = css({
+        display: 'grid',
+        gridRowGap: 16,
+    });
+
     return {
         drawerPaper,
         prescriptionBuilderContainer,
@@ -153,5 +163,7 @@ export const createPrescriptionBuilderClasses = (
         controlContainer,
         controlsContainer,
         fullWidthClass,
+        optionsContainer,
+        sixteenPixelSpacing,
     };
 }
