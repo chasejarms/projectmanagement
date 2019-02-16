@@ -60,6 +60,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
             noControlForSectionClass,
             drawerNoSelectedSectionOrControl,
             duplicateSectionButtonContainer,
+            controlContainer,
         } = createPrescriptionBuilderClasses(this.props, this.state);
 
         const {
@@ -138,7 +139,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                             {sectionOrder.map((sectionId) => {
                                 let sectionClasses = sectionContainer;
 
-                                if (sectionId === this.state.hoveredSection) {
+                                if (sectionId === this.state.hoveredSection && !this.state.hoveredControl) {
                                     sectionClasses += ` ${hoverArea}`;
                                 }
 
@@ -159,8 +160,21 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                             ) : (
                                                 <div>
                                                     {controlOrderForSection.map((controlId) => {
+                                                        let controlClasses = controlContainer;
+
+                                                        if (controlId === this.state.hoveredControl) {
+                                                            controlClasses += ` ${hoverArea}`;
+                                                            // tslint:disable-next-line:no-console
+                                                            console.log('adding hover class to control');
+                                                        }
+
                                                         return (
-                                                            <div key={controlId}>
+                                                            <div
+                                                                key={controlId}
+                                                                className={controlClasses}
+                                                                onMouseEnter={this.setHoverControl(controlId)}
+                                                                onMouseLeave={this.removeHoverControl}
+                                                            >
                                                                 {this.correctControlDisplay(controlId)}
                                                             </div>
                                                         )
@@ -193,6 +207,18 @@ export class PrescriptionBuilderPresentation extends React.Component<
     private removeHoverSection = () => {
         this.setState({
             hoveredSection: null,
+        })
+    }
+
+    private setHoverControl = (controlId: string) => () => {
+        this.setState({
+            hoveredControl: controlId,
+        })
+    }
+
+    private removeHoverControl = () => {
+        this.setState({
+            hoveredControl: null,
         })
     }
 

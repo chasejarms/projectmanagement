@@ -61,7 +61,7 @@ export const createPrescriptionBuilderClasses = (
     });
 
     const hoverArea = css({
-        borderColor: `${props.theme.palette.primary.main}`
+        borderColor: `${props.theme.palette.primary.main} !important`
     });
 
     const innerDrawerContainer = css({
@@ -118,6 +118,11 @@ export const createPrescriptionBuilderClasses = (
         width: '100%',
     });
 
+    const controlContainer = css({
+        border: '3px solid transparent',
+        borderRadius: 3,
+    });
+
     return {
         drawerPaper,
         prescriptionBuilderContainer,
@@ -135,5 +140,6 @@ export const createPrescriptionBuilderClasses = (
         noControlForSectionClass,
         drawerNoSelectedSectionOrControl,
         duplicateSectionButtonContainer,
+        controlContainer,
     };
 }
