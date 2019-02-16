@@ -459,7 +459,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
             prescriptionFormTemplate: prescriptionFormTemplateCopy,
         })
     }
-            
+
     private correctControlDisplay = (controlId: string) => {
         const control = this.state.prescriptionFormTemplate.controls[controlId];
 
