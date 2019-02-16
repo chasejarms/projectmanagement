@@ -123,6 +123,11 @@ export const createPrescriptionBuilderClasses = (
         borderRadius: 3,
     });
 
+    const controlsContainer = css({
+        display: 'grid',
+        gridRowGap: 16,
+    })
+
     return {
         drawerPaper,
         prescriptionBuilderContainer,
@@ -141,5 +146,6 @@ export const createPrescriptionBuilderClasses = (
         drawerNoSelectedSectionOrControl,
         duplicateSectionButtonContainer,
         controlContainer,
+        controlsContainer,
     };
 }

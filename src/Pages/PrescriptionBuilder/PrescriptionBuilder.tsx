@@ -14,6 +14,7 @@ import {
 } from '@material-ui/core';
 import { cloneDeep } from 'lodash';
 import * as React from 'react';
+import { IBeforeOrAfter } from 'src/Models/beforeOrAfter';
 import { IBeginningOrEnd } from 'src/Models/beginningOrEnd';
 import { IPrescriptionControlTemplateType } from 'src/Models/prescription/controls/prescriptionControlTemplateType';
 import { ITitleTemplateControl } from 'src/Models/prescription/controls/titleTemplateControl';
@@ -61,6 +62,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
             drawerNoSelectedSectionOrControl,
             duplicateSectionButtonContainer,
             controlContainer,
+            controlsContainer,
         } = createPrescriptionBuilderClasses(this.props, this.state);
 
         const {
@@ -71,12 +73,13 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
         const {
             sections,
-            // controls,
+            controls,
             sectionOrder,
             controlOrder,
         } = prescriptionFormTemplate;
 
         const section = sections[this.state.selectedSection!];
+        const control = controls[this.state.selectedControl!];
         const noSelectedSectionOrControl = !selectedSection && !selectedControl;
 
         return (
@@ -124,6 +127,22 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                 </div>
                             </div>
                         ): undefined}
+                        {selectedControl && control.type === IPrescriptionControlTemplateType.Title ? (
+                            <div className={drawerVerticalSpacing}>
+                                <Typography variant="title">Edit Field</Typography>
+                                <FormControl >
+                                    <InputLabel>Title</InputLabel>
+                                    <Input
+                                        value={control.title}
+                                        onChange={this.handleControlTitleChange}
+                                    />
+                                </FormControl>
+                                <div className={addSectionOrFieldContainer}>
+                                    {this.controlOptionsSelectForControl(control.id, 'Add Field Before Current Field', IBeforeOrAfter.Before)}
+                                    {this.controlOptionsSelectForControl(control.id, 'Add Field After Current Field', IBeforeOrAfter.After)}
+                                </div>
+                            </div>
+                        ) : undefined}
                     </div>
                 </Drawer>
                 <Paper className={prescriptionFormContainer}>
@@ -158,7 +177,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                             {noControlForSection ? (
                                                 <Typography>Click on this section to add fields or other sections</Typography>
                                             ) : (
-                                                <div>
+                                                <div className={controlsContainer}>
                                                     {controlOrderForSection.map((controlId) => {
                                                         let controlClasses = controlContainer;
 
@@ -345,6 +364,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                 id,
                 type: IPrescriptionControlTemplateType.Title,
                 title: 'New Title',
+                sectionId,
             }
 
             prescriptionFormTemplateCopy.controls[id] = titleControl;
@@ -364,6 +384,82 @@ export class PrescriptionBuilderPresentation extends React.Component<
         })
     }
 
+    private controlOptionsSelectForControl = (controlId: string, label: string, beforeOrAfter: IBeforeOrAfter) => {
+        const controlOptions = [];
+        for (const templateType in IPrescriptionControlTemplateType) {
+            if (true) {
+                let displayName: string;
+                switch (templateType) {
+                    case IPrescriptionControlTemplateType.DoctorInformation:
+                        displayName = 'Doctor Information';
+                        break;
+                    case IPrescriptionControlTemplateType.Title:
+                        displayName = 'Title';
+                        break;
+                    default:
+                        break;
+                }
+
+                controlOptions.push({
+                    value: templateType,
+                    displayName: displayName!,
+                });
+            }
+        }
+        return (
+            <FormControl>
+                <InputLabel>{label}</InputLabel>
+                <Select
+                    value={''}
+                    onChange={this.handleAddControlOptionForControl(controlId, beforeOrAfter)}
+                >
+                    {controlOptions.map(({ value, displayName }) => {
+                        return <MenuItem key={value} value={value}>{displayName}</MenuItem>
+                    })}
+                </Select>
+            </FormControl>
+        )
+    }
+
+    private handleAddControlOptionForControl = (controlId: string, beforeOrAfter: IBeforeOrAfter) => (event: any) => {
+        const value = event.target.value;
+        const id = generateUniqueId();
+        const prescriptionFormTemplateCopy = cloneDeep(this.state.prescriptionFormTemplate);
+        const selectedControlCopy = cloneDeep(this.state.prescriptionFormTemplate.controls[controlId]);
+        const indexOfSelectedControl = prescriptionFormTemplateCopy.controlOrder[selectedControlCopy.sectionId].findIndex((compareControlId) => {
+            return compareControlId === controlId;
+        });
+
+        if (value === IPrescriptionControlTemplateType.Title) {
+
+            const titleControl: ITitleTemplateControl = {
+                id,
+                type: IPrescriptionControlTemplateType.Title,
+                title: 'New Title',
+                sectionId: selectedControlCopy.sectionId,
+            }
+
+            prescriptionFormTemplateCopy.controls[id] = titleControl;
+            const currentControlOrder = prescriptionFormTemplateCopy.controlOrder[selectedControlCopy.sectionId];
+
+            if (beforeOrAfter === IBeforeOrAfter.Before) {
+                const before = currentControlOrder.slice(0, indexOfSelectedControl);
+                const after = currentControlOrder.slice(indexOfSelectedControl);
+                const newControlOrder = [...before, titleControl.id, ...after];
+                prescriptionFormTemplateCopy.controlOrder[selectedControlCopy.sectionId] = newControlOrder;
+            } else {
+                const before = currentControlOrder.slice(0, indexOfSelectedControl + 1);
+                const after = currentControlOrder.slice(indexOfSelectedControl + 1);
+                const newControlOrder = [...before, titleControl.id, ...after];
+                prescriptionFormTemplateCopy.controlOrder[selectedControlCopy.sectionId] = newControlOrder;
+            }
+        }
+
+        this.setState({
+            prescriptionFormTemplate: prescriptionFormTemplateCopy,
+        })
+    }
+            
     private correctControlDisplay = (controlId: string) => {
         const control = this.state.prescriptionFormTemplate.controls[controlId];
 
@@ -382,6 +478,17 @@ export class PrescriptionBuilderPresentation extends React.Component<
         this.setState({
             selectedControl: controlId,
             selectedSection: null,
+        })
+    }
+
+    private handleControlTitleChange = (event: any) => {
+        const newTitle = event.target.value;
+        const selectedControlId = this.state.selectedControl;
+
+        const prescriptionFormTemplateCopy = cloneDeep(this.state.prescriptionFormTemplate);
+        (prescriptionFormTemplateCopy.controls[selectedControlId!] as ITitleTemplateControl).title = newTitle;
+        this.setState({
+            prescriptionFormTemplate: prescriptionFormTemplateCopy,
         })
     }
 
