@@ -111,6 +111,13 @@ export const createPrescriptionBuilderClasses = (
         height: '100%',
     });
 
+    const duplicateSectionButtonContainer = css({
+        marginTop: 8,
+        display: 'flex',
+        justifyContent: 'flex-end',
+        width: '100%',
+    });
+
     return {
         drawerPaper,
         prescriptionBuilderContainer,
@@ -127,5 +134,6 @@ export const createPrescriptionBuilderClasses = (
         noSectionInnerContainer,
         noControlForSectionClass,
         drawerNoSelectedSectionOrControl,
+        duplicateSectionButtonContainer,
     };
 }

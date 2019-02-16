@@ -54,6 +54,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
             noSectionInnerContainer,
             noControlForSectionClass,
             drawerNoSelectedSectionOrControl,
+            duplicateSectionButtonContainer,
         } = createPrescriptionBuilderClasses(this.props, this.state);
 
         const {
@@ -139,22 +140,29 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                     sectionClasses += ` ${hoverArea}`;
                                 }
 
+                                const currentSection = sections[sectionId];
                                 const controlOrderForSection = controlOrder[sectionId];
                                 const noControlForSection = controlOrderForSection.length === 0;
 
                                 return (
-                                    <div
-                                        key={sectionId}
-                                        className={`${sectionClasses} ${noControlForSection ? noControlForSectionClass : ''}`}
-                                        onMouseEnter={this.setHoverSection(sectionId)}
-                                        onMouseLeave={this.removeHoverSection}
-                                        onClick={this.selectSection(sectionId)}
-                                    >
-                                        {noControlForSection ? (
-                                            <Typography>Click on this section to add fields or other sections</Typography>
-                                        ) : (
-                                            <div/>
-                                        )}
+                                    <div key={sectionId}>
+                                        <div
+                                            className={`${sectionClasses} ${noControlForSection ? noControlForSectionClass : ''}`}
+                                            onMouseEnter={this.setHoverSection(sectionId)}
+                                            onMouseLeave={this.removeHoverSection}
+                                            onClick={this.selectSection(sectionId)}
+                                        >
+                                            {noControlForSection ? (
+                                                <Typography>Click on this section to add fields or other sections</Typography>
+                                            ) : (
+                                                <div/>
+                                            )}
+                                        </div>
+                                        {currentSection.canDuplicate && currentSection.duplicateButtonText ? (
+                                            <div className={duplicateSectionButtonContainer}>
+                                                <Button color="secondary">{currentSection.duplicateButtonText}</Button>
+                                            </div>
+                                        ) : undefined}
                                     </div>
                                 )
                             })}
