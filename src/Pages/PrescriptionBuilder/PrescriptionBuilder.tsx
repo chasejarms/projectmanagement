@@ -130,16 +130,10 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                 </div>
                             </div>
                         ): undefined}
-                        {selectedControl && control.type === IPrescriptionControlTemplateType.Title ? (
+                        {selectedControl ? (
                             <div className={drawerVerticalSpacing}>
                                 <Typography variant="title">Edit Field</Typography>
-                                <FormControl >
-                                    <InputLabel>Title</InputLabel>
-                                    <Input
-                                        value={control.title}
-                                        onChange={this.handleControlTitleChange}
-                                    />
-                                </FormControl>
+                                {this.correctControlDisplayForDropdown(this.state.selectedControl!)}
                                 <div className={addSectionOrFieldContainer}>
                                     {this.controlOptionsSelectForControl(control.id, 'Add Field Before Current Field', IBeforeOrAfter.Before)}
                                     {this.controlOptionsSelectForControl(control.id, 'Add Field After Current Field', IBeforeOrAfter.After)}
@@ -519,6 +513,40 @@ export class PrescriptionBuilderPresentation extends React.Component<
         return <div/>
     }
 
+    private correctControlDisplayForDropdown = (controlId: string) => {
+        const {
+            fullWidthClass,
+        } = createPrescriptionBuilderClasses(this.props, this.state);
+
+        const control = this.state.prescriptionFormTemplate.controls[controlId];
+
+        if (control.type === IPrescriptionControlTemplateType.Dropdown) {
+            return (
+                <div className={fullWidthClass}>
+                    <FormControl fullWidth={true}>
+                        <InputLabel>Label</InputLabel>
+                        <Input
+                            value={control.label}
+                            onChange={this.handleControlLabelChange}
+                        />
+                    </FormControl>
+                </div>
+            )
+        } else if (control.type === IPrescriptionControlTemplateType.Title) {
+            return (
+                <FormControl fullWidth={true}>
+                    <InputLabel>Title</InputLabel>
+                    <Input
+                        value={control.title}
+                        onChange={this.handleControlTitleChange}
+                    />
+                </FormControl>
+            )
+        }
+
+        return <div/>
+    }
+
     private selectControl = (controlId: string) => (event: any) => {
         event.stopPropagation();
         event.preventDefault();
@@ -537,6 +565,21 @@ export class PrescriptionBuilderPresentation extends React.Component<
         this.setState({
             prescriptionFormTemplate: prescriptionFormTemplateCopy,
         })
+    }
+
+    private handleControlLabelChange = (event: any) => {
+        const newLabel = event.target.value;
+        const selectedControlId = this.state.selectedControl;
+
+        const prescriptionFormTemplateCopy = this.copyPrescriptionFormTemplate();
+        (prescriptionFormTemplateCopy.controls[selectedControlId!] as IDropdownTemplateControl).label = newLabel;
+        this.setState({
+            prescriptionFormTemplate: prescriptionFormTemplateCopy,
+        })
+    }
+
+    private copyPrescriptionFormTemplate = () => {
+        return cloneDeep(this.state.prescriptionFormTemplate);
     }
 
     // private removeSection = (): void => {

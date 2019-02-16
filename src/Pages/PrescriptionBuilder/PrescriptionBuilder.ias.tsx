@@ -129,6 +129,10 @@ export const createPrescriptionBuilderClasses = (
         gridRowGap: 16,
     })
 
+    const fullWidthClass = css({
+        width: '100%',
+    });
+
     return {
         drawerPaper,
         prescriptionBuilderContainer,
@@ -148,5 +152,6 @@ export const createPrescriptionBuilderClasses = (
         duplicateSectionButtonContainer,
         controlContainer,
         controlsContainer,
+        fullWidthClass,
     };
 }
