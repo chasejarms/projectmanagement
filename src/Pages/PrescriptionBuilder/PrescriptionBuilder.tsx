@@ -376,7 +376,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                 const uniqueOptionId = generateUniqueId();
                 options.push({
                     id: uniqueOptionId,
-                    text: `Option ${i + 1}`,
+                    text: `Option Text`,
                 })
             }
             const dropdownControl: IDropdownTemplateControl = {
@@ -522,6 +522,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
             optionAndTrashContainer,
             trashIcon,
             optionName,
+            addOptionButtonContainer,
         } = createPrescriptionBuilderClasses(this.props, this.state);
 
         const control = this.state.prescriptionFormTemplate.controls[controlId];
@@ -554,6 +555,9 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                 </div>
                             )
                         })}
+                        <div className={addOptionButtonContainer}>
+                            <Button onClick={this.handleAddOptionToDropdown} color="secondary">Add Option</Button>
+                        </div>
                     </div>
                 </div>
             )
@@ -643,6 +647,22 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
     private copyPrescriptionFormTemplate = () => {
         return cloneDeep(this.state.prescriptionFormTemplate);
+    }
+
+    private handleAddOptionToDropdown = () => {
+        const selectedControlId = this.state.selectedControl!;
+
+        const prescriptionFormTemplateCopy = this.copyPrescriptionFormTemplate();
+        const currentOptions = (prescriptionFormTemplateCopy.controls[selectedControlId] as IDropdownTemplateControl).options;
+        const optionsWithNewOption = currentOptions.concat([{
+            id: generateUniqueId(),
+            text: 'Option Text',
+        }]);
+
+        (prescriptionFormTemplateCopy.controls[selectedControlId] as IDropdownTemplateControl).options = optionsWithNewOption;
+        this.setState({
+            prescriptionFormTemplate: prescriptionFormTemplateCopy,
+        })
     }
 
     // private removeSection = (): void => {

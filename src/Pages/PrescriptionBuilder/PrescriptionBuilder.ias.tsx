@@ -160,6 +160,12 @@ export const createPrescriptionBuilderClasses = (
         cursor: 'pointer',
     })
 
+    const addOptionButtonContainer = css({
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+    });
+
     return {
         drawerPaper,
         prescriptionBuilderContainer,
@@ -185,5 +191,6 @@ export const createPrescriptionBuilderClasses = (
         optionAndTrashContainer,
         optionName,
         trashIcon,
+        addOptionButtonContainer,
     };
 }
