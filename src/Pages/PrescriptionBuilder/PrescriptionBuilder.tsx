@@ -67,6 +67,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
             duplicateSectionButtonContainer,
             controlContainer,
             controlsContainer,
+            drawerSplitSections,
         } = createPrescriptionBuilderClasses(this.props, this.state);
 
         const {
@@ -100,34 +101,39 @@ export class PrescriptionBuilderPresentation extends React.Component<
                             <Typography variant="body1">Select a control or section</Typography>
                         ) : undefined}
                         {selectedSection ? (
-                            <div className={drawerVerticalSpacing}>
-                                <Typography variant="title">Edit Section</Typography>
-                                <FormControlLabel control={
-                                    <Checkbox
-                                        checked={section.canDuplicate}
-                                        onChange={this.handleSectionDuplicationChange}
-                                        name="allowDuplication"
-                                        color="primary"
-                                    />
-                                } label="Allow Duplication"/>
-                                <FormControl required={section.canDuplicate} disabled={!section.canDuplicate}>
-                                    <InputLabel>Section Duplication Text</InputLabel>
-                                    <Input
-                                        value={section.duplicateButtonText || ''}
-                                        onChange={this.handleDuplicationButtonTextChange}
-                                    />
-                                    {/* <FormHelperText>{estimatedCompletionError}</FormHelperText> */}
-                                </FormControl>
-                                <div className={addSectionOrFieldContainer}>
-                                    <Typography variant="subheading">Add A Section:</Typography>
-                                    <div>
-                                        <Button color="secondary" onClick={this.addSectionBeforeSelected}>Before</Button>
-                                        <Button color="secondary" className={buttonLeftMargin} onClick={this.addSectionAfterSelected}>After</Button>
+                            <div className={drawerSplitSections}>
+                                <div className={drawerVerticalSpacing}>
+                                    <Typography variant="title">Edit Section</Typography>
+                                    <FormControlLabel control={
+                                        <Checkbox
+                                            checked={section.canDuplicate}
+                                            onChange={this.handleSectionDuplicationChange}
+                                            name="allowDuplication"
+                                            color="primary"
+                                        />
+                                    } label="Allow Duplication"/>
+                                    <FormControl required={section.canDuplicate} disabled={!section.canDuplicate}>
+                                        <InputLabel>Section Duplication Text</InputLabel>
+                                        <Input
+                                            value={section.duplicateButtonText || ''}
+                                            onChange={this.handleDuplicationButtonTextChange}
+                                        />
+                                        {/* <FormHelperText>{estimatedCompletionError}</FormHelperText> */}
+                                    </FormControl>
+                                    <div className={addSectionOrFieldContainer}>
+                                        <Typography variant="subheading">Add A Section:</Typography>
+                                        <div>
+                                            <Button color="secondary" onClick={this.addSectionBeforeSelected}>Before</Button>
+                                            <Button color="secondary" className={buttonLeftMargin} onClick={this.addSectionAfterSelected}>After</Button>
+                                        </div>
+                                    </div>
+                                    <div className={addSectionOrFieldContainer}>
+                                        {this.controlOptionsSelect(section.id, 'Add Field At Beginning Of Section', IBeginningOrEnd.Beginning)}
+                                        {this.controlOptionsSelect(section.id, 'Add Field At End Of Section', IBeginningOrEnd.End)}
                                     </div>
                                 </div>
-                                <div className={addSectionOrFieldContainer}>
-                                    {this.controlOptionsSelect(section.id, 'Add Field At Beginning Of Section', IBeginningOrEnd.Beginning)}
-                                    {this.controlOptionsSelect(section.id, 'Add Field At End Of Section', IBeginningOrEnd.End)}
+                                <div>
+                                    <Button onClick={this.removeSection} color="secondary">Delete Section</Button>
                                 </div>
                             </div>
                         ): undefined}
@@ -665,9 +671,28 @@ export class PrescriptionBuilderPresentation extends React.Component<
         })
     }
 
-    // private removeSection = (): void => {
-    //     //
-    // }
+    private removeSection = (): void => {
+        const selectedSectionId = this.state.selectedSection!;
+
+        const prescriptionFormTemplateCopy = this.copyPrescriptionFormTemplate();
+        const sectionsWithSelectedSection = prescriptionFormTemplateCopy.sectionOrder.filter((compareSectionId) => {
+            return compareSectionId !== selectedSectionId;
+        });
+
+        delete prescriptionFormTemplateCopy.sections[selectedSectionId];
+        prescriptionFormTemplateCopy.sectionOrder = sectionsWithSelectedSection;
+
+        prescriptionFormTemplateCopy.controlOrder[selectedSectionId].forEach((controlId) => {
+            delete prescriptionFormTemplateCopy.controls[controlId];
+        });
+
+        delete prescriptionFormTemplateCopy.controlOrder[selectedSectionId];
+
+        this.setState({
+            prescriptionFormTemplate: prescriptionFormTemplateCopy,
+            selectedSection: null,
+        })
+    }
 
     // private removeControlFromSection =(): void => {
     //     //

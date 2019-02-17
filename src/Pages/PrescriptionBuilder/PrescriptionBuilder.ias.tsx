@@ -67,6 +67,7 @@ export const createPrescriptionBuilderClasses = (
     const innerDrawerContainer = css({
         padding: 16,
         boxSizing: 'border-box',
+        height: '100%',
     });
 
     const drawerVerticalSpacing = css({
@@ -166,6 +167,13 @@ export const createPrescriptionBuilderClasses = (
         justifyContent: 'flex-end',
     });
 
+    const drawerSplitSections = css({
+        display: 'flex',
+        justifyContent: 'space-between',
+        flexDirection: 'column',
+        height: '100%',
+    });
+
     return {
         drawerPaper,
         prescriptionBuilderContainer,
@@ -192,5 +200,6 @@ export const createPrescriptionBuilderClasses = (
         optionName,
         trashIcon,
         addOptionButtonContainer,
+        drawerSplitSections,
     };
 }
