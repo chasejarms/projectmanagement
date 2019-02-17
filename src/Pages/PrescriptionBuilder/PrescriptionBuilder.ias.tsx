@@ -143,6 +143,23 @@ export const createPrescriptionBuilderClasses = (
         gridRowGap: 16,
     });
 
+    const optionAndTrashContainer = css({
+        display: 'flex',
+        flexDirection: 'row',
+    });
+
+    const optionName = css({
+        flex: '1 0',
+    });
+
+    const trashIcon = css({
+        flex: '0 0 auto',
+        position: 'relative',
+        top: 19,
+        marginLeft: 8,
+        cursor: 'pointer',
+    })
+
     return {
         drawerPaper,
         prescriptionBuilderContainer,
@@ -165,5 +182,8 @@ export const createPrescriptionBuilderClasses = (
         fullWidthClass,
         optionsContainer,
         sixteenPixelSpacing,
+        optionAndTrashContainer,
+        optionName,
+        trashIcon,
     };
 }
