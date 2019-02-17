@@ -138,12 +138,17 @@ export class PrescriptionBuilderPresentation extends React.Component<
                             </div>
                         ): undefined}
                         {selectedControl ? (
-                            <div className={drawerVerticalSpacing}>
-                                <Typography variant="title">Edit Field</Typography>
-                                {this.correctControlDisplayForDropdown(this.state.selectedControl!)}
-                                <div className={addSectionOrFieldContainer}>
-                                    {this.controlOptionsSelectForControl(control.id, 'Add Field Before Current Field', IBeforeOrAfter.Before)}
-                                    {this.controlOptionsSelectForControl(control.id, 'Add Field After Current Field', IBeforeOrAfter.After)}
+                            <div className={drawerSplitSections}>
+                                <div className={drawerVerticalSpacing}>
+                                    <Typography variant="title">Edit Field</Typography>
+                                    {this.correctControlDisplayForDropdown(this.state.selectedControl!)}
+                                    <div className={addSectionOrFieldContainer}>
+                                        {this.controlOptionsSelectForControl(control.id, 'Add Field Before Current Field', IBeforeOrAfter.Before)}
+                                        {this.controlOptionsSelectForControl(control.id, 'Add Field After Current Field', IBeforeOrAfter.After)}
+                                    </div>
+                                </div>
+                                <div>
+                                    <Button onClick={this.removeControl} color="secondary">Delete Control</Button>
                                 </div>
                             </div>
                         ) : undefined}
@@ -675,12 +680,12 @@ export class PrescriptionBuilderPresentation extends React.Component<
         const selectedSectionId = this.state.selectedSection!;
 
         const prescriptionFormTemplateCopy = this.copyPrescriptionFormTemplate();
-        const sectionsWithSelectedSection = prescriptionFormTemplateCopy.sectionOrder.filter((compareSectionId) => {
+        const sectionsWithoutSelectedSection = prescriptionFormTemplateCopy.sectionOrder.filter((compareSectionId) => {
             return compareSectionId !== selectedSectionId;
         });
 
         delete prescriptionFormTemplateCopy.sections[selectedSectionId];
-        prescriptionFormTemplateCopy.sectionOrder = sectionsWithSelectedSection;
+        prescriptionFormTemplateCopy.sectionOrder = sectionsWithoutSelectedSection;
 
         prescriptionFormTemplateCopy.controlOrder[selectedSectionId].forEach((controlId) => {
             delete prescriptionFormTemplateCopy.controls[controlId];
@@ -691,6 +696,26 @@ export class PrescriptionBuilderPresentation extends React.Component<
         this.setState({
             prescriptionFormTemplate: prescriptionFormTemplateCopy,
             selectedSection: null,
+        })
+    }
+
+    private removeControl = (): void => {
+        const selectedControlId = this.state.selectedControl!;
+
+        const prescriptionFormTemplateCopy = this.copyPrescriptionFormTemplate();
+        const control = prescriptionFormTemplateCopy.controls[selectedControlId];
+        const sectionId = control.sectionId;
+        const controlsWithoutSelectedSection = prescriptionFormTemplateCopy.controlOrder[sectionId].filter((compareControlId) => {
+            return compareControlId !== selectedControlId;
+        });
+
+        prescriptionFormTemplateCopy.controlOrder[sectionId] = controlsWithoutSelectedSection;
+
+        delete prescriptionFormTemplateCopy.controls[selectedControlId];
+
+        this.setState({
+            prescriptionFormTemplate: prescriptionFormTemplateCopy,
+            selectedControl: null,
         })
     }
 
