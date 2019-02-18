@@ -18,6 +18,7 @@ import { cloneDeep } from 'lodash';
 import * as React from 'react';
 import { IBeforeOrAfter } from 'src/Models/beforeOrAfter';
 import { IBeginningOrEnd } from 'src/Models/beginningOrEnd';
+import { ICheckboxTemplateControl } from 'src/Models/prescription/controls/checkboxTemplateControl';
 import { IDoctorInformationTemplateControl } from 'src/Models/prescription/controls/doctorInformationTemplateControl';
 import { IDropdownTemplateControl } from 'src/Models/prescription/controls/dropdownTemplateControl';
 import { IMultilineTextControl } from 'src/Models/prescription/controls/multilineTextControlTemplate';
@@ -350,6 +351,9 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     case IPrescriptionControlTemplateType.SingleLineText:
                         displayName = 'Single Line Text';
                         break;
+                    case IPrescriptionControlTemplateType.Checkbox:
+                        displayName = 'Checkbox';
+                        break;
                     default:
                         break;
                 }
@@ -435,6 +439,23 @@ export class PrescriptionBuilderPresentation extends React.Component<
             }
 
             control = singleLineText;
+        } else if (value === IPrescriptionControlTemplateType.Checkbox) {
+            const options: IOption[] = [];
+            for (let i = 0; i < 3; i++) {
+                const uniqueOptionId = generateUniqueId();
+                options.push({
+                    id: uniqueOptionId,
+                    text: `Option Text`,
+                })
+            }
+            const checkboxControl: ICheckboxTemplateControl = {
+                id,
+                type: IPrescriptionControlTemplateType.Checkbox,
+                options,
+                sectionId,
+            }
+
+            control = checkboxControl;
         }
 
         prescriptionFormTemplateCopy.controls[id] = control!;
@@ -473,6 +494,9 @@ export class PrescriptionBuilderPresentation extends React.Component<
                         break;
                     case IPrescriptionControlTemplateType.SingleLineText:
                         displayName = 'Single Line Text';
+                        break;
+                    case IPrescriptionControlTemplateType.Checkbox:
+                        displayName = 'Checkbox';
                         break;
                     default:
                         break;
@@ -635,6 +659,24 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     />
                 </div>
             )
+        } else if (control.type === IPrescriptionControlTemplateType.Checkbox) {
+            return (
+                <div>
+                    <FormControl fullWidth={true}>
+                        {control.options.map(({ text, id }) => {
+                            return (
+                                <FormControlLabel
+                                    key={id}
+                                    label={text}
+                                    control={
+                                        <Checkbox checked={false} value={''}/>
+                                    }
+                                />
+                            )
+                        })}
+                    </FormControl>
+                </div>
+            )
         }
 
         return <div/>
@@ -653,16 +695,18 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
         const control = this.state.prescriptionFormTemplate.controls[controlId];
 
-        if (control.type === IPrescriptionControlTemplateType.Dropdown) {
+        if (control.type === IPrescriptionControlTemplateType.Dropdown || control.type === IPrescriptionControlTemplateType.Checkbox) {
             return (
                 <div className={`${fullWidthClass} ${sixteenPixelSpacing}`}>
-                    <FormControl fullWidth={true}>
-                        <InputLabel>Label</InputLabel>
-                        <Input
-                            value={control.label}
-                            onChange={this.handleControlLabelChange}
-                        />
-                    </FormControl>
+                    {control.type === IPrescriptionControlTemplateType.Dropdown ? (
+                        <FormControl fullWidth={true}>
+                            <InputLabel>Label</InputLabel>
+                            <Input
+                                value={control.label}
+                                onChange={this.handleControlLabelChange}
+                            />
+                        </FormControl>
+                    ) : undefined}
                     <div className={optionsContainer}>
                         <Typography variant="subheading">Options:</Typography>
                         { control.options.map(({ id, text }, index) => {

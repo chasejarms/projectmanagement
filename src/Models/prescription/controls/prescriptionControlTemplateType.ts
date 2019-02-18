@@ -4,4 +4,5 @@ export enum IPrescriptionControlTemplateType {
     Dropdown = 'Dropdown',
     MultilineText = 'MultilineText',
     SingleLineText = 'SingleLineText',
+    Checkbox = 'Checkbox',
 }
