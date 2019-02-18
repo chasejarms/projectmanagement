@@ -498,10 +498,13 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
     private correctControlDisplay = (controlId: string) => {
         const control = this.state.prescriptionFormTemplate.controls[controlId];
+        const { titleControlContainer } = createPrescriptionBuilderClasses(this.props, this.state);
 
         if (control.type === IPrescriptionControlTemplateType.Title) {
             return (
-                <Typography variant="title">{control.title}</Typography>
+                <div className={titleControlContainer}>
+                    <Typography variant="title">{control.title}</Typography>
+                </div>
             )
         } else if (control.type === IPrescriptionControlTemplateType.Dropdown) {
             return (

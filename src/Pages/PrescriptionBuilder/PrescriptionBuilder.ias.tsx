@@ -127,7 +127,6 @@ export const createPrescriptionBuilderClasses = (
 
     const controlsContainer = css({
         display: 'grid',
-        gridRowGap: 16,
     })
 
     const fullWidthClass = css({
@@ -174,6 +173,10 @@ export const createPrescriptionBuilderClasses = (
         height: '100%',
     });
 
+    const titleControlContainer = css({
+        marginBottom: 16,
+    });
+
     return {
         drawerPaper,
         prescriptionBuilderContainer,
@@ -201,5 +204,6 @@ export const createPrescriptionBuilderClasses = (
         trashIcon,
         addOptionButtonContainer,
         drawerSplitSections,
+        titleControlContainer,
     };
 }
