@@ -24,6 +24,7 @@ import { IMultilineTextControl } from 'src/Models/prescription/controls/multilin
 import { IOption } from 'src/Models/prescription/controls/option';
 import { IPrescriptionControlTemplate } from 'src/Models/prescription/controls/prescriptionControlTemplate';
 import { IPrescriptionControlTemplateType } from 'src/Models/prescription/controls/prescriptionControlTemplateType';
+import { ISingleLineTextControlTemplate } from 'src/Models/prescription/controls/singleLineTextControlTemplate';
 import { ITitleTemplateControl } from 'src/Models/prescription/controls/titleTemplateControl';
 import { IPrescriptionSectionTemplate } from 'src/Models/prescription/prescriptionSectionTemplate';
 import { generateUniqueId } from 'src/Utils/generateUniqueId';
@@ -344,7 +345,10 @@ export class PrescriptionBuilderPresentation extends React.Component<
                         displayName = 'Dropdown';
                         break;
                     case IPrescriptionControlTemplateType.MultilineText:
-                        displayName = 'MultilineText';
+                        displayName = 'Multiline Text';
+                        break;
+                    case IPrescriptionControlTemplateType.SingleLineText:
+                        displayName = 'Single Line Text';
                         break;
                     default:
                         break;
@@ -422,6 +426,15 @@ export class PrescriptionBuilderPresentation extends React.Component<
             }
 
             control = multilineTextControl;
+        } else if (value === IPrescriptionControlTemplateType.SingleLineText) {
+            const singleLineText: ISingleLineTextControlTemplate = {
+                id,
+                type: IPrescriptionControlTemplateType.SingleLineText,
+                sectionId,
+                label: 'Single Line Text Label',
+            }
+
+            control = singleLineText;
         }
 
         prescriptionFormTemplateCopy.controls[id] = control!;
@@ -457,6 +470,9 @@ export class PrescriptionBuilderPresentation extends React.Component<
                         break;
                     case IPrescriptionControlTemplateType.MultilineText:
                         displayName = 'Multiline Text';
+                        break;
+                    case IPrescriptionControlTemplateType.SingleLineText:
+                        displayName = 'Single Line Text';
                         break;
                     default:
                         break;
@@ -600,10 +616,21 @@ export class PrescriptionBuilderPresentation extends React.Component<
                 <div>
                     <TextField
                         fullWidth={true}
-                        rows={10}
+                        rows={5}
                         multiline={true}
                         label={control.label}
-                        name="notes"
+                        name="multilineText"
+                        value={''}
+                    />
+                </div>
+            )
+        } else if (control.type === IPrescriptionControlTemplateType.SingleLineText) {
+            return (
+                <div>
+                    <TextField
+                        fullWidth={true}
+                        label={control.label}
+                        name="singleLineText"
                         value={''}
                     />
                 </div>
@@ -673,6 +700,26 @@ export class PrescriptionBuilderPresentation extends React.Component<
         } else if (control.type === IPrescriptionControlTemplateType.DoctorInformation) {
             return (
                 <Typography variant="body1">*The doctor field has no configurable options*</Typography>
+            )
+        } else if (control.type === IPrescriptionControlTemplateType.MultilineText) {
+            return (
+                <FormControl fullWidth={true}>
+                    <InputLabel>Label</InputLabel>
+                    <Input
+                        value={control.label}
+                        onChange={this.handleControlLabelChange}
+                    />
+                </FormControl>
+            )
+        } else if (control.type === IPrescriptionControlTemplateType.SingleLineText) {
+            return (
+                <FormControl fullWidth={true}>
+                    <InputLabel>Label</InputLabel>
+                    <Input
+                        value={control.label}
+                        onChange={this.handleControlLabelChange}
+                    />
+                </FormControl>
             )
         }
 
