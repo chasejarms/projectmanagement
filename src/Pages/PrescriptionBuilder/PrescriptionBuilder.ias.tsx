@@ -177,6 +177,13 @@ export const createPrescriptionBuilderClasses = (
         marginBottom: 16,
     });
 
+    const cityStateZipContainer = css({
+        width: '100%',
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr 1fr',
+        gridColumnGap: 16,
+    });
+
     return {
         drawerPaper,
         prescriptionBuilderContainer,
@@ -205,5 +212,6 @@ export const createPrescriptionBuilderClasses = (
         addOptionButtonContainer,
         drawerSplitSections,
         titleControlContainer,
+        cityStateZipContainer,
     };
 }

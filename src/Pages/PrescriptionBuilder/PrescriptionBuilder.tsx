@@ -17,6 +17,7 @@ import { cloneDeep } from 'lodash';
 import * as React from 'react';
 import { IBeforeOrAfter } from 'src/Models/beforeOrAfter';
 import { IBeginningOrEnd } from 'src/Models/beginningOrEnd';
+import { IDoctorInformationTemplateControl } from 'src/Models/prescription/controls/doctorInformationTemplateControl';
 import { IDropdownTemplateControl } from 'src/Models/prescription/controls/dropdownTemplateControl';
 import { IOption } from 'src/Models/prescription/controls/option';
 import { IPrescriptionControlTemplate } from 'src/Models/prescription/controls/prescriptionControlTemplate';
@@ -399,6 +400,14 @@ export class PrescriptionBuilderPresentation extends React.Component<
             }
 
             control = dropdownControl;
+        } else if (value === IPrescriptionControlTemplateType.DoctorInformation) {
+            const doctorControl: IDoctorInformationTemplateControl = {
+                id,
+                type: IPrescriptionControlTemplateType.DoctorInformation,
+                sectionId,
+            }
+
+            control = doctorControl;
         }
 
         prescriptionFormTemplateCopy.controls[id] = control!;
@@ -498,7 +507,10 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
     private correctControlDisplay = (controlId: string) => {
         const control = this.state.prescriptionFormTemplate.controls[controlId];
-        const { titleControlContainer } = createPrescriptionBuilderClasses(this.props, this.state);
+        const {
+            titleControlContainer,
+            cityStateZipContainer,
+        } = createPrescriptionBuilderClasses(this.props, this.state);
 
         if (control.type === IPrescriptionControlTemplateType.Title) {
             return (
@@ -522,6 +534,50 @@ export class PrescriptionBuilderPresentation extends React.Component<
                         </Select>
                     </FormControl>
                 </div>
+            )
+        } else if (control.type === IPrescriptionControlTemplateType.DoctorInformation) {
+            return (
+                <div>
+                    <FormControl fullWidth={true}>
+                        <InputLabel>Doctor</InputLabel>
+                        <Input
+                            value={''}
+                        />
+                    </FormControl>
+                    <FormControl fullWidth={true}>
+                        <InputLabel>Street</InputLabel>
+                        <Input
+                            value={''}
+                        />
+                    </FormControl>
+                    <div className={cityStateZipContainer}>
+                        <FormControl>
+                            <InputLabel>City</InputLabel>
+                            <Input
+                                value={''}
+                            />
+                        </FormControl>
+                        <FormControl>
+                            <InputLabel>State</InputLabel>
+                            <Input
+                                value={''}
+                            />
+                        </FormControl>
+                        <FormControl>
+                            <InputLabel>Zip</InputLabel>
+                            <Input
+                                value={''}
+                            />
+                        </FormControl>
+                    </div>
+                    <FormControl fullWidth={true}>
+                        <InputLabel>Telephone</InputLabel>
+                        <Input
+                            value={''}
+                        />
+                    </FormControl>
+                </div>
+
             )
         }
 
@@ -584,6 +640,10 @@ export class PrescriptionBuilderPresentation extends React.Component<
                         onChange={this.handleControlTitleChange}
                     />
                 </FormControl>
+            )
+        } else if (control.type === IPrescriptionControlTemplateType.DoctorInformation) {
+            return (
+                <Typography variant="body1">*The doctor field has no configurable options*</Typography>
             )
         }
 
