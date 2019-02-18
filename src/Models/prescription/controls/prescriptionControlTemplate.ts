@@ -2,6 +2,7 @@ import { ICheckboxTemplateControl } from './checkboxTemplateControl';
 import { IDoctorInformationTemplateControl } from './doctorInformationTemplateControl';
 import { IDropdownTemplateControl } from './dropdownTemplateControl';
 import { IMultilineTextControl } from './multilineTextControlTemplate';
+import { INonEditableTextField } from './nonEditableTextField';
 import { INumberTemplateControl } from './numberTemplateControl';
 import { ISingleLineTextControlTemplate } from './singleLineTextControlTemplate';
 import { ITitleTemplateControl } from './titleTemplateControl';
@@ -12,4 +13,5 @@ export type IPrescriptionControlTemplate = IDoctorInformationTemplateControl |
     IMultilineTextControl |
     ISingleLineTextControlTemplate |
     ICheckboxTemplateControl |
-    INumberTemplateControl;
+    INumberTemplateControl |
+    INonEditableTextField;

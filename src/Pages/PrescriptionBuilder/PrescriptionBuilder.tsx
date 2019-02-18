@@ -23,6 +23,7 @@ import { ICheckboxTemplateControl } from 'src/Models/prescription/controls/check
 import { IDoctorInformationTemplateControl } from 'src/Models/prescription/controls/doctorInformationTemplateControl';
 import { IDropdownTemplateControl } from 'src/Models/prescription/controls/dropdownTemplateControl';
 import { IMultilineTextControl } from 'src/Models/prescription/controls/multilineTextControlTemplate';
+import { INonEditableTextField } from 'src/Models/prescription/controls/nonEditableTextField';
 import { INumberTemplateControl } from 'src/Models/prescription/controls/numberTemplateControl';
 import { IOption } from 'src/Models/prescription/controls/option';
 import { IPrescriptionControlTemplate } from 'src/Models/prescription/controls/prescriptionControlTemplate';
@@ -125,7 +126,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                             value={section.duplicateButtonText || ''}
                                             onChange={this.handleDuplicationButtonTextChange}
                                         />
-                                        {/* <FormHelperText>{estimatedCompletionError}</FormHelperText> */}
                                     </FormControl>
                                     <div className={addSectionOrFieldContainer}>
                                         <Typography variant="subheading">Add A Section:</Typography>
@@ -348,16 +348,19 @@ export class PrescriptionBuilderPresentation extends React.Component<
                         displayName = 'Dropdown';
                         break;
                     case IPrescriptionControlTemplateType.MultilineText:
-                        displayName = 'Multiline Text';
+                        displayName = 'Multiline Input';
                         break;
                     case IPrescriptionControlTemplateType.SingleLineText:
-                        displayName = 'Single Line Text';
+                        displayName = 'Single Line Input';
                         break;
                     case IPrescriptionControlTemplateType.Checkbox:
                         displayName = 'Checkbox';
                         break;
                     case IPrescriptionControlTemplateType.Number:
                         displayName = 'Number';
+                        break;
+                    case IPrescriptionControlTemplateType.NonEditableText:
+                        displayName = 'Text';
                         break;
                     default:
                         break;
@@ -431,7 +434,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                 id,
                 type: IPrescriptionControlTemplateType.MultilineText,
                 sectionId,
-                label: 'Multiline Text Label',
+                label: 'Multiline Input Label',
             }
 
             control = multilineTextControl;
@@ -440,7 +443,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                 id,
                 type: IPrescriptionControlTemplateType.SingleLineText,
                 sectionId,
-                label: 'Single Line Text Label',
+                label: 'Single Line Input Label',
             }
 
             control = singleLineText;
@@ -472,6 +475,15 @@ export class PrescriptionBuilderPresentation extends React.Component<
             }
 
             control = numberControl;
+        } else if (value === IPrescriptionControlTemplateType.NonEditableText) {
+            const nonEditableTextControl: INonEditableTextField = {
+                id,
+                sectionId,
+                text: 'Replace this text by clicking on this field',
+                type: IPrescriptionControlTemplateType.NonEditableText,
+            }
+
+            control = nonEditableTextControl;
         }
 
         prescriptionFormTemplateCopy.controls[id] = control!;
@@ -506,16 +518,19 @@ export class PrescriptionBuilderPresentation extends React.Component<
                         displayName = 'Dropdown';
                         break;
                     case IPrescriptionControlTemplateType.MultilineText:
-                        displayName = 'Multiline Text';
+                        displayName = 'Multiline Input';
                         break;
                     case IPrescriptionControlTemplateType.SingleLineText:
-                        displayName = 'Single Line Text';
+                        displayName = 'Single Line Input';
                         break;
                     case IPrescriptionControlTemplateType.Checkbox:
                         displayName = 'Checkbox';
                         break;
                     case IPrescriptionControlTemplateType.Number:
                         displayName = 'Number';
+                        break;
+                    case IPrescriptionControlTemplateType.NonEditableText:
+                        displayName = 'Text';
                         break;
                     default:
                         break;
@@ -708,6 +723,10 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     />
                 </FormControl>
             )
+        } else if (control.type === IPrescriptionControlTemplateType.NonEditableText) {
+            return (
+                <Typography variant="body1">{control.text}</Typography>
+            )
         }
 
         return <div/>
@@ -823,6 +842,17 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     </FormControl>
                 </div>
             )
+        } else if (control.type === IPrescriptionControlTemplateType.NonEditableText) {
+            return (
+                <FormControl fullWidth={true}>
+                    <InputLabel>Text</InputLabel>
+                    <Input
+                        multiline={true}
+                        value={control.text}
+                        onChange={this.handleControlTextChange}
+                    />
+                </FormControl>
+            )
         }
 
         return <div/>
@@ -834,6 +864,17 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
         const prescriptionFormTemplateCopy = cloneDeep(this.state.prescriptionFormTemplate);
         (prescriptionFormTemplateCopy.controls[selectedControlId!] as INumberTemplateControl).prefix = newPrefix;
+        this.setState({
+            prescriptionFormTemplate: prescriptionFormTemplateCopy,
+        })
+    }
+
+    private handleControlTextChange = (event: any) => {
+        const newText = event.target.value;
+        const selectedControlId = this.state.selectedControl;
+
+        const prescriptionFormTemplateCopy = cloneDeep(this.state.prescriptionFormTemplate);
+        (prescriptionFormTemplateCopy.controls[selectedControlId!] as INonEditableTextField).text = newText;
         this.setState({
             prescriptionFormTemplate: prescriptionFormTemplateCopy,
         })
