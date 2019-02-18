@@ -9,6 +9,7 @@ import {
     MenuItem,
     Paper,
     Select,
+    TextField,
     Typography,
     withTheme,
 } from '@material-ui/core';
@@ -19,6 +20,7 @@ import { IBeforeOrAfter } from 'src/Models/beforeOrAfter';
 import { IBeginningOrEnd } from 'src/Models/beginningOrEnd';
 import { IDoctorInformationTemplateControl } from 'src/Models/prescription/controls/doctorInformationTemplateControl';
 import { IDropdownTemplateControl } from 'src/Models/prescription/controls/dropdownTemplateControl';
+import { IMultilineTextControl } from 'src/Models/prescription/controls/multilineTextControlTemplate';
 import { IOption } from 'src/Models/prescription/controls/option';
 import { IPrescriptionControlTemplate } from 'src/Models/prescription/controls/prescriptionControlTemplate';
 import { IPrescriptionControlTemplateType } from 'src/Models/prescription/controls/prescriptionControlTemplateType';
@@ -341,6 +343,9 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     case IPrescriptionControlTemplateType.Dropdown:
                         displayName = 'Dropdown';
                         break;
+                    case IPrescriptionControlTemplateType.MultilineText:
+                        displayName = 'MultilineText';
+                        break;
                     default:
                         break;
                 }
@@ -408,6 +413,15 @@ export class PrescriptionBuilderPresentation extends React.Component<
             }
 
             control = doctorControl;
+        } else if (value === IPrescriptionControlTemplateType.MultilineText) {
+            const multilineTextControl: IMultilineTextControl = {
+                id,
+                type: IPrescriptionControlTemplateType.MultilineText,
+                sectionId,
+                label: 'Multiline Text Label',
+            }
+
+            control = multilineTextControl;
         }
 
         prescriptionFormTemplateCopy.controls[id] = control!;
@@ -440,6 +454,9 @@ export class PrescriptionBuilderPresentation extends React.Component<
                         break;
                     case IPrescriptionControlTemplateType.Dropdown:
                         displayName = 'Dropdown';
+                        break;
+                    case IPrescriptionControlTemplateType.MultilineText:
+                        displayName = 'Multiline Text';
                         break;
                     default:
                         break;
@@ -577,7 +594,19 @@ export class PrescriptionBuilderPresentation extends React.Component<
                         />
                     </FormControl>
                 </div>
-
+            )
+        } else if (control.type === IPrescriptionControlTemplateType.MultilineText) {
+            return (
+                <div>
+                    <TextField
+                        fullWidth={true}
+                        rows={10}
+                        multiline={true}
+                        label={control.label}
+                        name="notes"
+                        value={''}
+                    />
+                </div>
             )
         }
 
