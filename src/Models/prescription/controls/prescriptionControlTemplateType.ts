@@ -5,4 +5,5 @@ export enum IPrescriptionControlTemplateType {
     MultilineText = 'MultilineText',
     SingleLineText = 'SingleLineText',
     Checkbox = 'Checkbox',
+    Number = 'Number',
 }

@@ -5,6 +5,7 @@ import {
     FormControl,
     FormControlLabel,
     Input,
+    InputAdornment,
     InputLabel,
     MenuItem,
     Paper,
@@ -22,6 +23,7 @@ import { ICheckboxTemplateControl } from 'src/Models/prescription/controls/check
 import { IDoctorInformationTemplateControl } from 'src/Models/prescription/controls/doctorInformationTemplateControl';
 import { IDropdownTemplateControl } from 'src/Models/prescription/controls/dropdownTemplateControl';
 import { IMultilineTextControl } from 'src/Models/prescription/controls/multilineTextControlTemplate';
+import { INumberTemplateControl } from 'src/Models/prescription/controls/numberTemplateControl';
 import { IOption } from 'src/Models/prescription/controls/option';
 import { IPrescriptionControlTemplate } from 'src/Models/prescription/controls/prescriptionControlTemplate';
 import { IPrescriptionControlTemplateType } from 'src/Models/prescription/controls/prescriptionControlTemplateType';
@@ -354,6 +356,9 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     case IPrescriptionControlTemplateType.Checkbox:
                         displayName = 'Checkbox';
                         break;
+                    case IPrescriptionControlTemplateType.Number:
+                        displayName = 'Number';
+                        break;
                     default:
                         break;
                 }
@@ -456,6 +461,17 @@ export class PrescriptionBuilderPresentation extends React.Component<
             }
 
             control = checkboxControl;
+        } else if (value === IPrescriptionControlTemplateType.Number) {
+            const numberControl: INumberTemplateControl = {
+                id,
+                type: IPrescriptionControlTemplateType.Number,
+                sectionId,
+                label: 'Number Field Label',
+                prefix: '',
+                suffix: '',
+            }
+
+            control = numberControl;
         }
 
         prescriptionFormTemplateCopy.controls[id] = control!;
@@ -497,6 +513,9 @@ export class PrescriptionBuilderPresentation extends React.Component<
                         break;
                     case IPrescriptionControlTemplateType.Checkbox:
                         displayName = 'Checkbox';
+                        break;
+                    case IPrescriptionControlTemplateType.Number:
+                        displayName = 'Number';
                         break;
                     default:
                         break;
@@ -677,6 +696,18 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     </FormControl>
                 </div>
             )
+        } else if (control.type === IPrescriptionControlTemplateType.Number) {
+            return (
+                <FormControl fullWidth={true}>
+                    <InputLabel htmlFor={`${control.id}-number`}>{control.label}</InputLabel>
+                    <Input
+                        id={`${control.id}-number`}
+                        value={undefined}
+                        startAdornment={control.prefix ? <InputAdornment position="start">{control.prefix}</InputAdornment> : undefined}
+                        endAdornment={control.suffix ? <InputAdornment position="end">{control.suffix}</InputAdornment> : undefined}
+                    />
+                </FormControl>
+            )
         }
 
         return <div/>
@@ -691,6 +722,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
             trashIcon,
             optionName,
             addOptionButtonContainer,
+            addSectionOrFieldContainer,
         } = createPrescriptionBuilderClasses(this.props, this.state);
 
         const control = this.state.prescriptionFormTemplate.controls[controlId];
@@ -765,9 +797,57 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     />
                 </FormControl>
             )
+        } else if (control.type === IPrescriptionControlTemplateType.Number) {
+            return (
+                <div className={addSectionOrFieldContainer}>
+                    <FormControl fullWidth={true}>
+                        <InputLabel>Label</InputLabel>
+                        <Input
+                            value={control.label}
+                            onChange={this.handleControlLabelChange}
+                        />
+                    </FormControl>
+                    <FormControl fullWidth={true}>
+                        <InputLabel>Prefix</InputLabel>
+                        <Input
+                            value={control.prefix}
+                            onChange={this.handlePrefixChange}
+                        />
+                    </FormControl>
+                    <FormControl fullWidth={true}>
+                        <InputLabel>Suffix</InputLabel>
+                        <Input
+                            value={control.suffix}
+                            onChange={this.handleSuffixChange}
+                        />
+                    </FormControl>
+                </div>
+            )
         }
 
         return <div/>
+    }
+
+    private handlePrefixChange = (event: any) => {
+        const newPrefix = event.target.value;
+        const selectedControlId = this.state.selectedControl;
+
+        const prescriptionFormTemplateCopy = cloneDeep(this.state.prescriptionFormTemplate);
+        (prescriptionFormTemplateCopy.controls[selectedControlId!] as INumberTemplateControl).prefix = newPrefix;
+        this.setState({
+            prescriptionFormTemplate: prescriptionFormTemplateCopy,
+        })
+    }
+
+    private handleSuffixChange = (event: any) => {
+        const newSuffix = event.target.value;
+        const selectedControlId = this.state.selectedControl;
+
+        const prescriptionFormTemplateCopy = cloneDeep(this.state.prescriptionFormTemplate);
+        (prescriptionFormTemplateCopy.controls[selectedControlId!] as INumberTemplateControl).suffix = newSuffix;
+        this.setState({
+            prescriptionFormTemplate: prescriptionFormTemplateCopy,
+        })
     }
 
     private selectControl = (controlId: string) => (event: any) => {
