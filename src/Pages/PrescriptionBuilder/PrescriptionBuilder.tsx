@@ -17,10 +17,12 @@ import {
 } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { cloneDeep } from 'lodash';
+import { DateFormatInput } from 'material-ui-next-pickers';
 import * as React from 'react';
 import { IBeforeOrAfter } from 'src/Models/beforeOrAfter';
 import { IBeginningOrEnd } from 'src/Models/beginningOrEnd';
 import { ICheckboxTemplateControl } from 'src/Models/prescription/controls/checkboxTemplateControl';
+import { IDateTemplateControl } from 'src/Models/prescription/controls/dateControlTemplate';
 import { IDoctorInformationTemplateControl } from 'src/Models/prescription/controls/doctorInformationTemplateControl';
 import { IDropdownTemplateControl } from 'src/Models/prescription/controls/dropdownTemplateControl';
 import { IMultilineTextControl } from 'src/Models/prescription/controls/multilineTextControlTemplate';
@@ -367,6 +369,9 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     case IPrescriptionControlTemplateType.UnitSelection:
                         displayName = 'Unit Selection';
                         break;
+                    case IPrescriptionControlTemplateType.Date:
+                        displayName = 'Date';
+                        break;
                     default:
                         break;
                 }
@@ -498,6 +503,15 @@ export class PrescriptionBuilderPresentation extends React.Component<
             }
 
             control = unitSelectionControl;
+        } else if (value === IPrescriptionControlTemplateType.Date) {
+            const dateControl: IDateTemplateControl = {
+                id,
+                sectionId,
+                type: IPrescriptionControlTemplateType.Date,
+                label: 'Date Control Label',
+            }
+
+            control = dateControl;
         }
 
         prescriptionFormTemplateCopy.controls[id] = control!;
@@ -548,6 +562,9 @@ export class PrescriptionBuilderPresentation extends React.Component<
                         break;
                     case IPrescriptionControlTemplateType.UnitSelection:
                         displayName = 'Unit Selection';
+                        break;
+                    case IPrescriptionControlTemplateType.Date:
+                        displayName = 'Date';
                         break;
                     default:
                         break;
@@ -756,9 +773,24 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     </Select>
                 </FormControl>
             )
+        } else if (control.type === IPrescriptionControlTemplateType.Date) {
+            return (
+                <DateFormatInput
+                    fullWidth={true}
+                    label={control.label}
+                    name="caseDeadline"
+                    value={new Date()}
+                    onChange={this.handleDeadlineChange}
+                    min={new Date()}
+                />
+            )
         }
 
         return <div/>
+    }
+
+    private handleDeadlineChange = () => {
+        //
     }
 
     private createUnits = () => {
@@ -897,6 +929,19 @@ export class PrescriptionBuilderPresentation extends React.Component<
                         onChange={this.handleControlTextChange}
                     />
                 </FormControl>
+            )
+        } else if (control.type === IPrescriptionControlTemplateType.Date) {
+            return (
+                <div>
+                    <FormControl fullWidth={true}>
+                        <InputLabel>Label</InputLabel>
+                        <Input
+                            value={control.label}
+                            onChange={this.handleControlLabelChange}
+                        />
+                    </FormControl>
+                </div>
+
             )
         }
 

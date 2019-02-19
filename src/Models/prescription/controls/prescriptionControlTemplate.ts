@@ -1,4 +1,5 @@
 import { ICheckboxTemplateControl } from './checkboxTemplateControl';
+import { IDateTemplateControl } from './dateControlTemplate';
 import { IDoctorInformationTemplateControl } from './doctorInformationTemplateControl';
 import { IDropdownTemplateControl } from './dropdownTemplateControl';
 import { IMultilineTextControl } from './multilineTextControlTemplate';
@@ -16,4 +17,5 @@ export type IPrescriptionControlTemplate = IDoctorInformationTemplateControl |
     ICheckboxTemplateControl |
     INumberTemplateControl |
     INonEditableTextField |
-    IUnitSelectionControlTemplate;
+    IUnitSelectionControlTemplate |
+    IDateTemplateControl;

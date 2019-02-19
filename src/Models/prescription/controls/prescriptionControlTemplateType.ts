@@ -8,4 +8,5 @@ export enum IPrescriptionControlTemplateType {
     Number = 'Number',
     NonEditableText = 'NonEditableText',
     UnitSelection = 'UnitSelection',
+    Date = 'Date',
 }
