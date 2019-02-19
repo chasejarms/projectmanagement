@@ -7,6 +7,7 @@ import {
     Input,
     InputAdornment,
     InputLabel,
+    ListItemText,
     MenuItem,
     Paper,
     Select,
@@ -30,6 +31,7 @@ import { IPrescriptionControlTemplate } from 'src/Models/prescription/controls/p
 import { IPrescriptionControlTemplateType } from 'src/Models/prescription/controls/prescriptionControlTemplateType';
 import { ISingleLineTextControlTemplate } from 'src/Models/prescription/controls/singleLineTextControlTemplate';
 import { ITitleTemplateControl } from 'src/Models/prescription/controls/titleTemplateControl';
+import { IUnitSelectionControlTemplate } from 'src/Models/prescription/controls/unitSelectionControlTemplate';
 import { IPrescriptionSectionTemplate } from 'src/Models/prescription/prescriptionSectionTemplate';
 import { generateUniqueId } from 'src/Utils/generateUniqueId';
 import {
@@ -362,6 +364,9 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     case IPrescriptionControlTemplateType.NonEditableText:
                         displayName = 'Text';
                         break;
+                    case IPrescriptionControlTemplateType.UnitSelection:
+                        displayName = 'Unit Selection';
+                        break;
                     default:
                         break;
                 }
@@ -484,6 +489,15 @@ export class PrescriptionBuilderPresentation extends React.Component<
             }
 
             control = nonEditableTextControl;
+        } else if (value === IPrescriptionControlTemplateType.UnitSelection) {
+            const unitSelectionControl: IUnitSelectionControlTemplate = {
+                id,
+                sectionId,
+                type: IPrescriptionControlTemplateType.UnitSelection,
+                units: [],
+            }
+
+            control = unitSelectionControl;
         }
 
         prescriptionFormTemplateCopy.controls[id] = control!;
@@ -531,6 +545,9 @@ export class PrescriptionBuilderPresentation extends React.Component<
                         break;
                     case IPrescriptionControlTemplateType.NonEditableText:
                         displayName = 'Text';
+                        break;
+                    case IPrescriptionControlTemplateType.UnitSelection:
+                        displayName = 'Unit Selection';
                         break;
                     default:
                         break;
@@ -727,9 +744,37 @@ export class PrescriptionBuilderPresentation extends React.Component<
             return (
                 <Typography variant="body1">{control.text}</Typography>
             )
+        } else if (control.type === IPrescriptionControlTemplateType.UnitSelection) {
+            return (
+                <FormControl fullWidth={true}>
+                    <InputLabel>Select Units</InputLabel>
+                    <Select
+                        multiple={true}
+                        value={[]}
+                    >
+                        {this.createUnits()}
+                    </Select>
+                </FormControl>
+            )
         }
 
         return <div/>
+    }
+
+    private createUnits = () => {
+        const units = [];
+        for (let i = 1; i <= 32; i++) {
+            units.push(i);
+        }
+
+        return units.map((unitNumber) => {
+            return (
+                <MenuItem key={unitNumber}>
+                    <Checkbox checked={false}/>
+                    <ListItemText primary={unitNumber}/>
+                </MenuItem>
+            )
+        });
     }
 
     private correctControlDisplayForDropdown = (controlId: string) => {

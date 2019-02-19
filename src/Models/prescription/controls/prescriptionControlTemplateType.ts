@@ -7,4 +7,5 @@ export enum IPrescriptionControlTemplateType {
     Checkbox = 'Checkbox',
     Number = 'Number',
     NonEditableText = 'NonEditableText',
+    UnitSelection = 'UnitSelection',
 }

@@ -6,6 +6,7 @@ import { INonEditableTextField } from './nonEditableTextField';
 import { INumberTemplateControl } from './numberTemplateControl';
 import { ISingleLineTextControlTemplate } from './singleLineTextControlTemplate';
 import { ITitleTemplateControl } from './titleTemplateControl';
+import { IUnitSelectionControlTemplate } from './unitSelectionControlTemplate';
 
 export type IPrescriptionControlTemplate = IDoctorInformationTemplateControl |
     ITitleTemplateControl |
@@ -14,4 +15,5 @@ export type IPrescriptionControlTemplate = IDoctorInformationTemplateControl |
     ISingleLineTextControlTemplate |
     ICheckboxTemplateControl |
     INumberTemplateControl |
-    INonEditableTextField;
+    INonEditableTextField |
+    IUnitSelectionControlTemplate;
