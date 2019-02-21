@@ -91,6 +91,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
             draggableIconsContainer,
             draggableIconContainer,
             drawerInnerContainer,
+            topDrawerContainer,
         } = createPrescriptionBuilderClasses(this.props, this.state);
 
         const {
@@ -114,6 +115,10 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     }}
                 >
                     <div className={drawerInnerContainer}>
+                        <div className={topDrawerContainer}>
+                            <Typography variant="title">Form Elements</Typography>
+                            <Typography variant="caption">Drag a section to the left to get started</Typography>
+                        </div>
                         <div className={draggableIconsContainer}>
                             <div className={draggableIconContainer}>
                                 <SectionIcon/>

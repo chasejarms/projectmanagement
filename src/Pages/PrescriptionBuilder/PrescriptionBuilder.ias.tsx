@@ -235,7 +235,13 @@ export const createPrescriptionBuilderClasses = (
 
     const darkGrey = css({
         color: '#9e9e9e',
-    })
+    });
+
+    const topDrawerContainer = css({
+        padding: 16,
+        display: 'grid',
+        gridRowGap: 16,
+    });
 
     return {
         drawerPaper,
@@ -271,5 +277,6 @@ export const createPrescriptionBuilderClasses = (
         draggableIconContainer,
         drawerInnerContainer,
         darkGrey,
+        topDrawerContainer,
     };
 }
