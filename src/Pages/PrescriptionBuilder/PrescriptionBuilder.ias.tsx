@@ -11,6 +11,10 @@ export interface IPrescriptionBuilderState {
     hoveredControl: string | null;
     selectedSection: string | null;
     selectedControl: string | null;
+    editMode: boolean;
+    controlValues: {
+        [controlId: string]: any,
+    }
 }
 
 export const createPrescriptionBuilderClasses = (
@@ -184,6 +188,12 @@ export const createPrescriptionBuilderClasses = (
         gridColumnGap: 16,
     });
 
+    const editModeButtonContainer = css({
+        display: 'flex',
+        justifyContent: 'flex-end',
+        marginBottom: 8,
+    });
+
     return {
         drawerPaper,
         prescriptionBuilderContainer,
@@ -213,5 +223,6 @@ export const createPrescriptionBuilderClasses = (
         drawerSplitSections,
         titleControlContainer,
         cityStateZipContainer,
+        editModeButtonContainer,
     };
 }

@@ -57,6 +57,8 @@ export class PrescriptionBuilderPresentation extends React.Component<
         hoveredControl: null,
         selectedSection: null,
         selectedControl: null,
+        editMode: true,
+        controlValues: {},
     }
 
     public render() {
@@ -80,6 +82,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
             controlContainer,
             controlsContainer,
             drawerSplitSections,
+            editModeButtonContainer,
         } = createPrescriptionBuilderClasses(this.props, this.state);
 
         const {
@@ -102,7 +105,8 @@ export class PrescriptionBuilderPresentation extends React.Component<
         return (
             <div className={prescriptionBuilderContainer}>
                 <Drawer
-                    variant="permanent"
+                    open={true}
+                    variant="persistent"
                     anchor="right"
                     classes={{
                         paper: drawerPaper,
@@ -159,7 +163,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                     </div>
                                 </div>
                                 <div>
-                                    <Button onClick={this.removeControl} color="secondary">Delete Control</Button>
+                                    <Button onClick={this.removeControl} color="secondary">Delete Field</Button>
                                 </div>
                             </div>
                         ) : undefined}
@@ -174,7 +178,11 @@ export class PrescriptionBuilderPresentation extends React.Component<
                             </div>
                         </div>
                     ) : (
-                        <div className={sectionsContainer}>
+                        <div>
+                            <div className={editModeButtonContainer}>
+                                <Button onClick={this.toggleEditMode} color="secondary">{this.state.editMode ? 'Switch To View Mode' : 'Switch To Edit Mode'}</Button>
+                            </div>
+                            <div className={sectionsContainer}>
                             {sectionOrder.map((sectionId) => {
                                 let sectionClasses = sectionContainer;
 
@@ -229,6 +237,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                 )
                             })}
                         </div>
+                        </div>
                     )}
                 </Paper>
                 <div className={drawerReplacement}/>
@@ -236,11 +245,30 @@ export class PrescriptionBuilderPresentation extends React.Component<
         )
     }
 
-    private setHoverSection = (sectionId: string) => () => {
+    private handleControlValueChange = (controlId: string) => (event: any) => {
+        const value = event.target.value;
+        const controlValuesCopy = cloneDeep(this.state.controlValues);
+
+        controlValuesCopy[controlId] = value;
+
         this.setState({
-            hoveredSection: sectionId,
-            hoveredControl: null,
-        });
+            controlValues: controlValuesCopy,
+        })
+    }
+
+    private toggleEditMode = () => {
+        this.setState({
+            editMode: !this.state.editMode,
+        })
+    }
+
+    private setHoverSection = (sectionId: string) => () => {
+        if (this.state.editMode) {
+            this.setState({
+                hoveredSection: sectionId,
+                hoveredControl: null,
+            });
+        }
     }
 
     private removeHoverSection = () => {
@@ -250,9 +278,11 @@ export class PrescriptionBuilderPresentation extends React.Component<
     }
 
     private setHoverControl = (controlId: string) => () => {
-        this.setState({
-            hoveredControl: controlId,
-        })
+        if (this.state.editMode) {
+            this.setState({
+                hoveredControl: controlId,
+            })
+        }
     }
 
     private removeHoverControl = () => {
@@ -352,10 +382,10 @@ export class PrescriptionBuilderPresentation extends React.Component<
                         displayName = 'Dropdown';
                         break;
                     case IPrescriptionControlTemplateType.MultilineText:
-                        displayName = 'Multiline Input';
+                        displayName = 'Notepad';
                         break;
                     case IPrescriptionControlTemplateType.SingleLineText:
-                        displayName = 'Single Line Input';
+                        displayName = 'Single Line Text';
                         break;
                     case IPrescriptionControlTemplateType.Checkbox:
                         displayName = 'Checkbox';
@@ -364,7 +394,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                         displayName = 'Number';
                         break;
                     case IPrescriptionControlTemplateType.NonEditableText:
-                        displayName = 'Text';
+                        displayName = 'Description';
                         break;
                     case IPrescriptionControlTemplateType.UnitSelection:
                         displayName = 'Unit Selection';
@@ -444,7 +474,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                 id,
                 type: IPrescriptionControlTemplateType.MultilineText,
                 sectionId,
-                label: 'Multiline Input Label',
+                label: 'Notepad Label',
             }
 
             control = multilineTextControl;
@@ -453,7 +483,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                 id,
                 type: IPrescriptionControlTemplateType.SingleLineText,
                 sectionId,
-                label: 'Single Line Input Label',
+                label: 'Single Line Text Label',
             }
 
             control = singleLineText;
@@ -546,10 +576,10 @@ export class PrescriptionBuilderPresentation extends React.Component<
                         displayName = 'Dropdown';
                         break;
                     case IPrescriptionControlTemplateType.MultilineText:
-                        displayName = 'Multiline Input';
+                        displayName = 'Notepad';
                         break;
                     case IPrescriptionControlTemplateType.SingleLineText:
-                        displayName = 'Single Line Input';
+                        displayName = 'Single Line Text';
                         break;
                     case IPrescriptionControlTemplateType.Checkbox:
                         displayName = 'Checkbox';
@@ -558,7 +588,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                         displayName = 'Number';
                         break;
                     case IPrescriptionControlTemplateType.NonEditableText:
-                        displayName = 'Text';
+                        displayName = 'Description';
                         break;
                     case IPrescriptionControlTemplateType.UnitSelection:
                         displayName = 'Unit Selection';
@@ -646,12 +676,11 @@ export class PrescriptionBuilderPresentation extends React.Component<
         } else if (control.type === IPrescriptionControlTemplateType.Dropdown) {
             return (
                 <div>
-                    <FormControl fullWidth={true}>
+                    <FormControl fullWidth={true} disabled={this.state.editMode}>
                         <InputLabel>{control.label}</InputLabel>
                         <Select
-                            value={''}
-                            // will need to handle the change and actually make the value change
-                            // onChange={}
+                            value={this.state.controlValues[control.id]}
+                            onChange={this.handleControlValueChange(control.id)}
                         >
                             {control.options.map(({ text, id }) => {
                                 return <MenuItem key={id} value={id}>{text}</MenuItem>
@@ -663,39 +692,39 @@ export class PrescriptionBuilderPresentation extends React.Component<
         } else if (control.type === IPrescriptionControlTemplateType.DoctorInformation) {
             return (
                 <div>
-                    <FormControl fullWidth={true}>
+                    <FormControl fullWidth={true} disabled={this.state.editMode}>
                         <InputLabel>Doctor</InputLabel>
                         <Input
                             value={''}
                         />
                     </FormControl>
-                    <FormControl fullWidth={true}>
+                    <FormControl fullWidth={true} disabled={this.state.editMode}>
                         <InputLabel>Street</InputLabel>
                         <Input
                             value={''}
                         />
                     </FormControl>
                     <div className={cityStateZipContainer}>
-                        <FormControl>
+                        <FormControl disabled={this.state.editMode}>
                             <InputLabel>City</InputLabel>
                             <Input
                                 value={''}
                             />
                         </FormControl>
-                        <FormControl>
+                        <FormControl disabled={this.state.editMode}>
                             <InputLabel>State</InputLabel>
                             <Input
                                 value={''}
                             />
                         </FormControl>
-                        <FormControl>
+                        <FormControl disabled={this.state.editMode}>
                             <InputLabel>Zip</InputLabel>
                             <Input
                                 value={''}
                             />
                         </FormControl>
                     </div>
-                    <FormControl fullWidth={true}>
+                    <FormControl fullWidth={true} disabled={this.state.editMode}>
                         <InputLabel>Telephone</InputLabel>
                         <Input
                             value={''}
@@ -707,12 +736,13 @@ export class PrescriptionBuilderPresentation extends React.Component<
             return (
                 <div>
                     <TextField
+                        disabled={this.state.editMode}
                         fullWidth={true}
                         rows={5}
                         multiline={true}
                         label={control.label}
-                        name="multilineText"
-                        value={''}
+                        value={this.state.controlValues[control.id]}
+                        onChange={this.handleControlValueChange(control.id)}
                     />
                 </div>
             )
@@ -720,17 +750,18 @@ export class PrescriptionBuilderPresentation extends React.Component<
             return (
                 <div>
                     <TextField
+                        disabled={this.state.editMode}
                         fullWidth={true}
                         label={control.label}
-                        name="singleLineText"
-                        value={''}
+                        value={this.state.controlValues[control.id]}
+                        onChange={this.handleControlValueChange(control.id)}
                     />
                 </div>
             )
         } else if (control.type === IPrescriptionControlTemplateType.Checkbox) {
             return (
                 <div>
-                    <FormControl fullWidth={true}>
+                    <FormControl fullWidth={true} disabled={this.state.editMode}>
                         {control.options.map(({ text, id }) => {
                             return (
                                 <FormControlLabel
@@ -747,11 +778,12 @@ export class PrescriptionBuilderPresentation extends React.Component<
             )
         } else if (control.type === IPrescriptionControlTemplateType.Number) {
             return (
-                <FormControl fullWidth={true}>
+                <FormControl fullWidth={true} disabled={this.state.editMode}>
                     <InputLabel htmlFor={`${control.id}-number`}>{control.label}</InputLabel>
                     <Input
                         id={`${control.id}-number`}
-                        value={undefined}
+                        value={this.state.controlValues[control.id]}
+                        onChange={this.handleControlValueChange(control.id)}
                         startAdornment={control.prefix ? <InputAdornment position="start">{control.prefix}</InputAdornment> : undefined}
                         endAdornment={control.suffix ? <InputAdornment position="end">{control.suffix}</InputAdornment> : undefined}
                     />
@@ -763,11 +795,12 @@ export class PrescriptionBuilderPresentation extends React.Component<
             )
         } else if (control.type === IPrescriptionControlTemplateType.UnitSelection) {
             return (
-                <FormControl fullWidth={true}>
+                <FormControl fullWidth={true} disabled={this.state.editMode}>
                     <InputLabel>Select Units</InputLabel>
                     <Select
                         multiple={true}
-                        value={[]}
+                        onChange={this.handleControlValueChange(control.id)}
+                        value={this.state.controlValues[control.id] || []}
                     >
                         {this.createUnits()}
                     </Select>
@@ -776,11 +809,12 @@ export class PrescriptionBuilderPresentation extends React.Component<
         } else if (control.type === IPrescriptionControlTemplateType.Date) {
             return (
                 <DateFormatInput
+                    disabled={this.state.editMode}
                     fullWidth={true}
                     label={control.label}
-                    name="caseDeadline"
-                    value={new Date()}
-                    onChange={this.handleDeadlineChange}
+                    name="date-input"
+                    value={this.state.controlValues[control.id]}
+                    onChange={this.handleDeadlineChange(control.id)}
                     min={new Date()}
                 />
             )
@@ -789,8 +823,14 @@ export class PrescriptionBuilderPresentation extends React.Component<
         return <div/>
     }
 
-    private handleDeadlineChange = () => {
-        //
+    private handleDeadlineChange = (controlId: string) => (newDeadline: any) => {
+        const controlValuesCopy = cloneDeep(this.state.controlValues);
+
+        controlValuesCopy[controlId] = newDeadline;
+
+        this.setState({
+            controlValues: controlValuesCopy,
+        })
     }
 
     private createUnits = () => {

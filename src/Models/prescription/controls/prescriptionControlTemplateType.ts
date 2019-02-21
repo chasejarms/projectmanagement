@@ -1,12 +1,12 @@
 export enum IPrescriptionControlTemplateType {
+    Checkbox = 'Checkbox',
+    Date = 'Date',
     DoctorInformation = 'DoctorInformation',
-    Title = 'Title',
     Dropdown = 'Dropdown',
     MultilineText = 'MultilineText',
-    SingleLineText = 'SingleLineText',
-    Checkbox = 'Checkbox',
-    Number = 'Number',
     NonEditableText = 'NonEditableText',
+    Number = 'Number',
+    SingleLineText = 'SingleLineText',
+    Title = 'Title',
     UnitSelection = 'UnitSelection',
-    Date = 'Date',
 }
