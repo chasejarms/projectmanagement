@@ -11,10 +11,33 @@ import TextIcon from '@material-ui/icons/TextFields';
 import TitleIcon from '@material-ui/icons/Title';
 import SectionIcon from '@material-ui/icons/ViewAgenda';
 import * as React from 'react';
+import { DragSource, DragSourceCollector, DragSourceConnector, DragSourceMonitor } from 'react-dnd';
+import { IDraggableTypes } from 'src/Models/draggableTypes';
 import { IPrescriptionControlTemplateType } from 'src/Models/prescription/controls/prescriptionControlTemplateType';
-import { createDraggableFormElementClasses, IDraggableFormElementProps, IDraggableFormElementState } from './DraggableFormElement.ias';
+import { createDraggableFormElementClasses, IDraggableFormElementCollectorProps, IDraggableFormElementProps, IDraggableFormElementState } from './DraggableFormElement.ias';
 
-export class DraggableFormElement extends React.Component<
+const draggableFormElementSource = {
+    beginDrag() {
+        return {};
+    },
+}
+
+const collect: DragSourceCollector<IDraggableFormElementCollectorProps> = (
+    connect: DragSourceConnector,
+    monitor: DragSourceMonitor,
+) => {
+    return {
+        connectDragSource: connect.dragSource(),
+        isDragging: monitor.isDragging(),
+    }
+}
+
+interface IDraggableFormElementPresentation extends React.Component<
+    IDraggableFormElementProps,
+    IDraggableFormElementState
+> {};
+
+export class DraggableFormElementPresentation extends React.Component<
     IDraggableFormElementProps,
     IDraggableFormElementState
 > {
@@ -23,8 +46,11 @@ export class DraggableFormElement extends React.Component<
             draggableIconContainer,
         } = createDraggableFormElementClasses(this.props, this.state);
 
+        const {
+            connectDragSource,
+        } = this.props;
 
-        return (
+        return connectDragSource(
             <div className={draggableIconContainer}>
                 {this.correctIcon()}
                 <Typography variant="caption" align="center">
@@ -70,7 +96,7 @@ export class DraggableFormElement extends React.Component<
             case IPrescriptionControlTemplateType.Date:
                 return 'Date'
             case IPrescriptionControlTemplateType.DoctorInformation:
-                return 'Person';
+                return 'Doctor Information';
             case IPrescriptionControlTemplateType.Dropdown:
                 return 'Dropdown';
             case IPrescriptionControlTemplateType.MultilineText:
@@ -88,3 +114,9 @@ export class DraggableFormElement extends React.Component<
         }
     }
 }
+
+export const DraggableFormElement = DragSource(
+    IDraggableTypes.PrescriptionBuilder,
+    draggableFormElementSource,
+    collect,
+)(DraggableFormElementPresentation) as any;
