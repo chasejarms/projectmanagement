@@ -15,21 +15,11 @@ import {
     Typography,
     withTheme,
 } from '@material-ui/core';
-import UnitSelectionIcon from '@material-ui/icons/Apps';
-import DropdownIcon from '@material-ui/icons/ArrowDropDown';
-import DateIcon from '@material-ui/icons/CalendarToday';
-import CheckboxIcon from '@material-ui/icons/CheckBox';
-import DescriptionIcon from '@material-ui/icons/Description';
-import NumberIcon from '@material-ui/icons/ExposurePlus1';
-import NotePadIcon from '@material-ui/icons/Notes';
-import PersonIcon from '@material-ui/icons/Person';
-import TextIcon from '@material-ui/icons/TextFields';
-import TitleIcon from '@material-ui/icons/Title';
-import SectionIcon from '@material-ui/icons/ViewAgenda';
 // import DeleteIcon from '@material-ui/icons/Delete';
 import { cloneDeep } from 'lodash';
 import { DateFormatInput } from 'material-ui-next-pickers';
 import * as React from 'react';
+import { DraggableFormElement } from 'src/Components/DraggableFormElement/DraggableFormElement';
 // import { IBeforeOrAfter } from 'src/Models/beforeOrAfter';
 // import { IBeginningOrEnd } from 'src/Models/beginningOrEnd';
 // import { ICheckboxTemplateControl } from 'src/Models/prescription/controls/checkboxTemplateControl';
@@ -89,7 +79,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
             controlsContainer,
             editModeButtonContainer,
             draggableIconsContainer,
-            draggableIconContainer,
             drawerInnerContainer,
             topDrawerContainer,
         } = createPrescriptionBuilderClasses(this.props, this.state);
@@ -120,50 +109,17 @@ export class PrescriptionBuilderPresentation extends React.Component<
                             <Typography variant="caption">Drag a section to the left to get started</Typography>
                         </div>
                         <div className={draggableIconsContainer}>
-                            <div className={draggableIconContainer}>
-                                <SectionIcon/>
-                                <Typography variant="caption" align="center">Section</Typography>
-                            </div>
-                            <div className={draggableIconContainer}>
-                                <CheckboxIcon/>
-                                <Typography variant="caption" align="center">Checkbox</Typography>
-                            </div>
-                            <div className={draggableIconContainer}>
-                                <DateIcon/>
-                                <Typography variant="caption" align="center">Date</Typography>
-                            </div>
-                            <div className={draggableIconContainer}>
-                                <DescriptionIcon/>
-                                <Typography variant="caption" align="center">Description</Typography>
-                            </div>
-                            <div className={draggableIconContainer}>
-                                <PersonIcon/>
-                                <Typography variant="caption" align="center">Doctor Information</Typography>
-                            </div>
-                            <div className={draggableIconContainer}>
-                                <DropdownIcon/>
-                                <Typography variant="caption" align="center">Dropdown</Typography>
-                            </div>
-                            <div className={draggableIconContainer}>
-                                <NotePadIcon/>
-                                <Typography variant="caption" align="center">Notepad</Typography>
-                            </div>
-                            <div className={draggableIconContainer}>
-                                <NumberIcon/>
-                                <Typography variant="caption" align="center">Number</Typography>
-                            </div>
-                            <div className={draggableIconContainer}>
-                                <TextIcon/>
-                                <Typography variant="caption" align="center">Single Line Text</Typography>
-                            </div>
-                            <div className={draggableIconContainer}>
-                                <TitleIcon/>
-                                <Typography variant="caption" align="center">Title</Typography>
-                            </div>
-                            <div className={draggableIconContainer}>
-                                <UnitSelectionIcon/>
-                                <Typography variant="caption" align="center">Unit Selection</Typography>
-                            </div>
+                            <DraggableFormElement type={null}/>
+                            <DraggableFormElement type={IPrescriptionControlTemplateType.Checkbox}/>
+                            <DraggableFormElement type={IPrescriptionControlTemplateType.Date}/>
+                            <DraggableFormElement type={IPrescriptionControlTemplateType.NonEditableText}/>
+                            <DraggableFormElement type={IPrescriptionControlTemplateType.DoctorInformation}/>
+                            <DraggableFormElement type={IPrescriptionControlTemplateType.Dropdown}/>
+                            <DraggableFormElement type={IPrescriptionControlTemplateType.MultilineText}/>
+                            <DraggableFormElement type={IPrescriptionControlTemplateType.Number}/>
+                            <DraggableFormElement type={IPrescriptionControlTemplateType.SingleLineText}/>
+                            <DraggableFormElement type={IPrescriptionControlTemplateType.Title}/>
+                            <DraggableFormElement type={IPrescriptionControlTemplateType.UnitSelection}/>
                         </div>
                     </div>
                 </Drawer>

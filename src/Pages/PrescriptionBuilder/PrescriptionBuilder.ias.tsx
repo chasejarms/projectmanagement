@@ -213,21 +213,6 @@ export const createPrescriptionBuilderClasses = (
         gridAutoRows: '1fr',
     });
 
-    const draggableIconContainer = css({
-        borderRadius: 3,
-        backgroundColor: '#ffffff',
-        boxShadow: '0px 1px 5px 0px rgba(0, 0, 0, 0.2)',
-        '&:hover': {
-            boxShadow: '0px 1px 5px 0px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.12)',
-            cursor: 'pointer',
-        },
-        padding: 8,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexDirection: 'column',
-    })
-
     const drawerInnerContainer = css({
         backgroundColor: '#f9f9f9',
         height: '100%',
@@ -274,7 +259,6 @@ export const createPrescriptionBuilderClasses = (
         cityStateZipContainer,
         editModeButtonContainer,
         draggableIconsContainer,
-        draggableIconContainer,
         drawerInnerContainer,
         darkGrey,
         topDrawerContainer,

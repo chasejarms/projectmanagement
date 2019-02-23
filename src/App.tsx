@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { DragDropContextProvider } from 'react-dnd';
+import HTML5Backend from 'react-dnd-html5-backend';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { Main } from './Pages/Main/Main';
@@ -11,7 +13,9 @@ class App extends React.Component {
     return (
       <Provider store={store}>
         <BrowserRouter>
-          <Main/>
+          <DragDropContextProvider backend={HTML5Backend}>
+            <Main/>
+          </DragDropContextProvider>
         </BrowserRouter>
       </Provider>
     );
