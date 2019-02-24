@@ -167,13 +167,13 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                                             >
                                                                 {controlIndex === 0 ? (
                                                                     <FormElementDropZone
-                                                                        heightInPixels={16}
+                                                                        heightInPixels={24}
                                                                         onDrop={this.onDropControl(sectionId, controlIndex)}
                                                                     />
                                                                 ) : undefined}
                                                                 {this.correctControlDisplay(controlId)}
                                                                 <FormElementDropZone
-                                                                    heightInPixels={16}
+                                                                    heightInPixels={24}
                                                                     onDrop={this.onDropControl(sectionId, controlIndex + 1)}
                                                                 />
                                                             </div>

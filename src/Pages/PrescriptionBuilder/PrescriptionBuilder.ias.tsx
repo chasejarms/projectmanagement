@@ -19,6 +19,7 @@ export const createPrescriptionBuilderClasses = (
     props: IPrescriptionBuilderProps,
     state: IPrescriptionBuilderState,
 ) => {
+    const paddingTop = state.prescriptionFormTemplate.sectionOrder.length > 0 ? 0 : 32;
     const drawerWidth = 320;
 
     const drawerPaper = css({
@@ -36,6 +37,7 @@ export const createPrescriptionBuilderClasses = (
         flexGrow: 1,
         margin: 32,
         padding: 32,
+        paddingTop,
         boxSizing: 'border-box',
         overflowY: 'auto',
     })
@@ -121,6 +123,7 @@ export const createPrescriptionBuilderClasses = (
         border: '3px solid transparent',
         borderRadius: 3,
         padding: 8,
+        position: 'relative',
     });
 
     const controlsContainer = css({
@@ -222,6 +225,12 @@ export const createPrescriptionBuilderClasses = (
         gridRowGap: 16,
     });
 
+    const formElementDropZoneClass = css({
+        position: 'absolute',
+        width: '100%',
+        zIndex: 1,
+    });
+
     return {
         drawerPaper,
         prescriptionBuilderContainer,
@@ -255,5 +264,6 @@ export const createPrescriptionBuilderClasses = (
         drawerInnerContainer,
         darkGrey,
         topDrawerContainer,
+        formElementDropZoneClass,
     };
 }
