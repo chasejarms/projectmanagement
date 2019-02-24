@@ -35,9 +35,12 @@ export const createFormElementDropZoneClasses = (
         width: '100%',
         height: `${props.heightInPixels}px`,
         border: `2px ${borderStyle} ${props.theme.palette.secondary.main}`,
+        marginTop: 2,
+        marginBottom: 2,
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        boxSizing: 'border-box',
     });
 
     return {

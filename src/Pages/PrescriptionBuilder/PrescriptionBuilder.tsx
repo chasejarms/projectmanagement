@@ -152,14 +152,24 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                                 />
                                             ) : (
                                                 <div className={controlsContainer}>
-                                                    {controlOrderForSection.map((controlId) => {
+                                                    {controlOrderForSection.map((controlId, controlIndex) => {
                                                         return (
                                                             <div
                                                                 key={controlId}
                                                                 className={controlContainer}
                                                                 // onClick={this.selectControl(controlId)}
                                                             >
+                                                                {controlIndex === 0 ? (
+                                                                    <FormElementDropZone
+                                                                        heightInPixels={16}
+                                                                        onDrop={this.onDropControl(sectionId, controlIndex)}
+                                                                    />
+                                                                ) : undefined}
                                                                 {this.correctControlDisplay(controlId)}
+                                                                <FormElementDropZone
+                                                                    heightInPixels={16}
+                                                                    onDrop={this.onDropControl(sectionId, controlIndex + 1)}
+                                                                />
                                                             </div>
                                                         )
                                                     })}
