@@ -47,7 +47,6 @@ export const createPrescriptionBuilderClasses = (
 
     const sectionsContainer = css({
         display: 'grid',
-        gridRowGap: 32,
     })
 
     const sectionContainer = css({

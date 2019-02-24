@@ -132,13 +132,19 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                 <Button onClick={this.toggleEditMode} color="secondary">{this.state.editMode ? 'Switch To View Mode' : 'Switch To Edit Mode'}</Button>
                             </div> */}
                             <div className={sectionsContainer}>
-                            {sectionOrder.map((sectionId) => {
+                            {sectionOrder.map((sectionId, sectionIndex) => {
                                 const currentSection = sections[sectionId];
                                 const controlOrderForSection = controlOrder[sectionId];
                                 const noControlForSection = controlOrderForSection.length === 0;
 
                                 return (
                                     <div key={sectionId}>
+                                        {sectionIndex === 0 ? (
+                                            <FormElementDropZone
+                                                heightInPixels={32}
+                                                onDrop={this.onDropSection(sectionIndex)}
+                                            />
+                                        ) : undefined}
                                         <div
                                             className={`${sectionContainer} ${noControlForSection ? noControlForSectionClass : ''}`}
                                             onClick={this.selectSection(sectionId)}
@@ -181,6 +187,10 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                                 <Button color="secondary">{currentSection.duplicateButtonText}</Button>
                                             </div>
                                         ) : undefined}
+                                        <FormElementDropZone
+                                            heightInPixels={32}
+                                            onDrop={this.onDropSection(sectionIndex + 1)}
+                                        />
                                     </div>
                                 )
                             })}
