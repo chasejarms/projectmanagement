@@ -15,26 +15,12 @@ import {
     Typography,
     withTheme,
 } from '@material-ui/core';
-// import DeleteIcon from '@material-ui/icons/Delete';
 import { cloneDeep } from 'lodash';
 import { DateFormatInput } from 'material-ui-next-pickers';
 import * as React from 'react';
 import { DraggableFormElement } from 'src/Components/DraggableFormElement/DraggableFormElement';
-// import { IBeforeOrAfter } from 'src/Models/beforeOrAfter';
-// import { IBeginningOrEnd } from 'src/Models/beginningOrEnd';
-// import { ICheckboxTemplateControl } from 'src/Models/prescription/controls/checkboxTemplateControl';
-// import { IDateTemplateControl } from 'src/Models/prescription/controls/dateControlTemplate';
-// import { IDoctorInformationTemplateControl } from 'src/Models/prescription/controls/doctorInformationTemplateControl';
-// import { IDropdownTemplateControl } from 'src/Models/prescription/controls/dropdownTemplateControl';
-// import { IMultilineTextControl } from 'src/Models/prescription/controls/multilineTextControlTemplate';
-// import { INonEditableTextField } from 'src/Models/prescription/controls/nonEditableTextField';
-// import { INumberTemplateControl } from 'src/Models/prescription/controls/numberTemplateControl';
-// import { IOption } from 'src/Models/prescription/controls/option';
-// import { IPrescriptionControlTemplate } from 'src/Models/prescription/controls/prescriptionControlTemplate';
+import { FormElementDropZone } from 'src/Components/FormElementDropZone/FormElementDropZone';
 import { IPrescriptionControlTemplateType } from 'src/Models/prescription/controls/prescriptionControlTemplateType';
-// import { ISingleLineTextControlTemplate } from 'src/Models/prescription/controls/singleLineTextControlTemplate';
-// import { ITitleTemplateControl } from 'src/Models/prescription/controls/titleTemplateControl';
-// import { IUnitSelectionControlTemplate } from 'src/Models/prescription/controls/unitSelectionControlTemplate';
 import { IPrescriptionSectionTemplate } from 'src/Models/prescription/prescriptionSectionTemplate';
 import { generateUniqueId } from 'src/Utils/generateUniqueId';
 import {
@@ -71,8 +57,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
             sectionsContainer,
             sectionContainer,
             hoverArea,
-            noSectionsInfoText,
-            noSectionInnerContainer,
             noControlForSectionClass,
             duplicateSectionButtonContainer,
             controlContainer,
@@ -106,7 +90,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     <div className={drawerInnerContainer}>
                         <div className={topDrawerContainer}>
                             <Typography variant="title">Form Elements</Typography>
-                            <Typography variant="caption">Drag a section to the left to get started</Typography>
+                            <Typography variant="caption">Drag an element to the left to get started</Typography>
                         </div>
                         <div className={draggableIconsContainer}>
                             <DraggableFormElement type={null}/>
@@ -125,11 +109,13 @@ export class PrescriptionBuilderPresentation extends React.Component<
                 </Drawer>
                 <Paper className={prescriptionFormContainer}>
                     {sectionOrder.length === 0 ? (
-                        <div className={noSectionsInfoText}>
-                            <div className={noSectionInnerContainer}>
-                                <Typography variant="body1">To get started, click the add section button</Typography>
-                                <Button color="secondary" onClick={this.addSection(0)}>Add A Section</Button>
-                            </div>
+                        <div>
+                            <FormElementDropZone
+                                heightInPixels={100}
+                                showBorderWithNoDragInProgress={true}
+                                text={'Drag the section form element into this box to get started.'}
+                                onDrop={this.onDropSection(0)}
+                            />
                         </div>
                     ) : (
                         <div>
@@ -199,6 +185,34 @@ export class PrescriptionBuilderPresentation extends React.Component<
         )
     }
 
+    private onDropSection = (insertPosition: number) => () => {
+        const id = generateUniqueId();
+        const newSection: IPrescriptionSectionTemplate = {
+            id,
+            validators: [],
+            canDuplicate: false,
+            duplicateButtonText: null,
+        }
+
+        const prescriptionFormTemplateCopy = cloneDeep(this.state.prescriptionFormTemplate);
+
+        const before = prescriptionFormTemplateCopy.sectionOrder.slice(0, insertPosition);
+        const after = prescriptionFormTemplateCopy.sectionOrder.slice(insertPosition);
+        const sectionOrder = before.concat([id]).concat(after);
+
+        prescriptionFormTemplateCopy.sections[id] = newSection;
+        prescriptionFormTemplateCopy.sectionOrder = sectionOrder;
+        prescriptionFormTemplateCopy.controlOrder[newSection.id] = [];
+
+        this.setState({
+            prescriptionFormTemplate: prescriptionFormTemplateCopy,
+        })
+    }
+
+    // private onDropControl = (sectionId: string, index: number) => () => {
+    //     //
+    // }
+
     private handleControlValueChange = (controlId: string) => (event: any) => {
         const value = event.target.value;
         const controlValuesCopy = cloneDeep(this.state.controlValues);
@@ -249,30 +263,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
         this.setState({
             selectedSection: sectionId,
             selectedControl: null,
-        })
-    }
-
-    private addSection = (insertPosition: number) => () => {
-        const id = generateUniqueId();
-        const newSection: IPrescriptionSectionTemplate = {
-            id,
-            validators: [],
-            canDuplicate: false,
-            duplicateButtonText: null,
-        }
-
-        const prescriptionFormTemplateCopy = cloneDeep(this.state.prescriptionFormTemplate);
-
-        const before = prescriptionFormTemplateCopy.sectionOrder.slice(0, insertPosition);
-        const after = prescriptionFormTemplateCopy.sectionOrder.slice(insertPosition);
-        const sectionOrder = before.concat([id]).concat(after);
-
-        prescriptionFormTemplateCopy.sections[id] = newSection;
-        prescriptionFormTemplateCopy.sectionOrder = sectionOrder;
-        prescriptionFormTemplateCopy.controlOrder[newSection.id] = [];
-
-        this.setState({
-            prescriptionFormTemplate: prescriptionFormTemplateCopy,
         })
     }
 

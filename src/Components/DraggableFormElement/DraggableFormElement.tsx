@@ -32,11 +32,6 @@ const collect: DragSourceCollector<IDraggableFormElementCollectorProps> = (
     }
 }
 
-interface IDraggableFormElementPresentation extends React.Component<
-    IDraggableFormElementProps,
-    IDraggableFormElementState
-> {};
-
 export class DraggableFormElementPresentation extends React.Component<
     IDraggableFormElementProps,
     IDraggableFormElementState

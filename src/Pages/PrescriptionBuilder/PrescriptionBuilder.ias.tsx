@@ -100,6 +100,7 @@ export const createPrescriptionBuilderClasses = (
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'column',
+        width: '100%',
     });
 
     const noControlForSectionClass = css({
