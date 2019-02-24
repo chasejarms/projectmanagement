@@ -14,11 +14,13 @@ import * as React from 'react';
 import { DragSource, DragSourceCollector, DragSourceConnector, DragSourceMonitor } from 'react-dnd';
 import { IDraggableTypes } from 'src/Models/draggableTypes';
 import { IPrescriptionControlTemplateType } from 'src/Models/prescription/controls/prescriptionControlTemplateType';
-import { createDraggableFormElementClasses, IDraggableFormElementCollectorProps, IDraggableFormElementProps, IDraggableFormElementState } from './DraggableFormElement.ias';
+import { createDraggableFormElementClasses, IDraggableFormElementCollectorProps, IDraggableFormElementProps, IDraggableFormElementPropsFromParentComponent, IDraggableFormElementState } from './DraggableFormElement.ias';
 
 const draggableFormElementSource = {
-    beginDrag() {
-        return {};
+    beginDrag(props: IDraggableFormElementPropsFromParentComponent) {
+        return {
+            type: props.type,
+        };
     },
 }
 

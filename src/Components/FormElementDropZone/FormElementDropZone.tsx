@@ -1,12 +1,13 @@
 import { Typography, withTheme } from '@material-ui/core';
 import * as React from 'react';
-import { DropTarget, DropTargetCollector } from 'react-dnd';
+import { DropTarget, DropTargetCollector, DropTargetMonitor } from 'react-dnd';
 import { IDraggableTypes } from 'src/Models/draggableTypes';
 import { createFormElementDropZoneClasses, IFormElementDropZoneDropTargetCollectorProps, IFormElementDropZoneProps, IFormElementDropZonePropsFromParentComponent, IFormElementDropZoneState } from './FormElementDropZone.ias';
 
 const formElementDropZoneTarget = {
-    drop(props: IFormElementDropZonePropsFromParentComponent) {
-        props.onDrop();
+    drop(props: IFormElementDropZonePropsFromParentComponent, monitor: DropTargetMonitor) {
+        const item = monitor.getItem();
+        props.onDrop(item);
     }
 }
 

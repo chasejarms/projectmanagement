@@ -7,7 +7,7 @@ export interface IFormElementDropZoneProps extends IFormElementDropZoneDropTarge
 export interface IFormElementDropZonePropsFromParentComponent {
     showBorderWithNoDragInProgress?: boolean;
     text?: string;
-    onDrop: () => void;
+    onDrop: (item: any) => void;
     heightInPixels: number;
 }
 

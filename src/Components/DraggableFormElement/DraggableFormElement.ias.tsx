@@ -2,10 +2,12 @@ import { css } from 'emotion';
 import { ConnectDragSource } from 'react-dnd';
 import { IPrescriptionControlTemplateType } from 'src/Models/prescription/controls/prescriptionControlTemplateType';
 
-// tslint:disable-next-line:no-empty-interface
-export interface IDraggableFormElementProps extends IDraggableFormElementCollectorProps {
+export interface IDraggableFormElementProps extends IDraggableFormElementCollectorProps, IDraggableFormElementPropsFromParentComponent {}
+
+export interface IDraggableFormElementPropsFromParentComponent {
     type: IPrescriptionControlTemplateType | null;
 }
+
 // tslint:disable-next-line:no-empty-interface
 export interface IDraggableFormElementState {}
 

@@ -7,8 +7,6 @@ export interface IPrescriptionBuilderProps extends WithTheme {}
 // tslint:disable-next-line:no-empty-interface
 export interface IPrescriptionBuilderState {
     prescriptionFormTemplate: IPrescriptionFormTemplate;
-    hoveredSection: string | null;
-    hoveredControl: string | null;
     selectedSection: string | null;
     selectedControl: string | null;
     editMode: boolean;
@@ -62,10 +60,6 @@ export const createPrescriptionBuilderClasses = (
         },
         minHeight: 120,
         boxSizing: 'border-box',
-    });
-
-    const hoverArea = css({
-        borderColor: `${props.theme.palette.primary.main} !important`
     });
 
     const innerDrawerContainer = css({
@@ -236,7 +230,6 @@ export const createPrescriptionBuilderClasses = (
         drawerReplacement,
         sectionContainer,
         sectionsContainer,
-        hoverArea,
         innerDrawerContainer,
         drawerVerticalSpacing,
         addSectionOrFieldContainer,

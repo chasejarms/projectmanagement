@@ -20,7 +20,19 @@ import { DateFormatInput } from 'material-ui-next-pickers';
 import * as React from 'react';
 import { DraggableFormElement } from 'src/Components/DraggableFormElement/DraggableFormElement';
 import { FormElementDropZone } from 'src/Components/FormElementDropZone/FormElementDropZone';
+import { ICheckboxTemplateControl } from 'src/Models/prescription/controls/checkboxTemplateControl';
+import { IDateTemplateControl } from 'src/Models/prescription/controls/dateControlTemplate';
+import { IDoctorInformationTemplateControl } from 'src/Models/prescription/controls/doctorInformationTemplateControl';
+import { IDropdownTemplateControl } from 'src/Models/prescription/controls/dropdownTemplateControl';
+import { IMultilineTextControl } from 'src/Models/prescription/controls/multilineTextControlTemplate';
+import { INonEditableTextField } from 'src/Models/prescription/controls/nonEditableTextField';
+import { INumberTemplateControl } from 'src/Models/prescription/controls/numberTemplateControl';
+import { IOption } from 'src/Models/prescription/controls/option';
+import { IPrescriptionControlTemplate } from 'src/Models/prescription/controls/prescriptionControlTemplate';
 import { IPrescriptionControlTemplateType } from 'src/Models/prescription/controls/prescriptionControlTemplateType';
+import { ISingleLineTextControlTemplate } from 'src/Models/prescription/controls/singleLineTextControlTemplate';
+import { ITitleTemplateControl } from 'src/Models/prescription/controls/titleTemplateControl';
+import { IUnitSelectionControlTemplate } from 'src/Models/prescription/controls/unitSelectionControlTemplate';
 import { IPrescriptionSectionTemplate } from 'src/Models/prescription/prescriptionSectionTemplate';
 import { generateUniqueId } from 'src/Utils/generateUniqueId';
 import {
@@ -40,8 +52,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
             sections: {},
             controls: {},
         },
-        hoveredSection: null,
-        hoveredControl: null,
         selectedSection: null,
         selectedControl: null,
         editMode: true,
@@ -56,12 +66,11 @@ export class PrescriptionBuilderPresentation extends React.Component<
             drawerReplacement,
             sectionsContainer,
             sectionContainer,
-            hoverArea,
             noControlForSectionClass,
             duplicateSectionButtonContainer,
             controlContainer,
             controlsContainer,
-            editModeButtonContainer,
+            // editModeButtonContainer,
             draggableIconsContainer,
             drawerInnerContainer,
             topDrawerContainer,
@@ -119,17 +128,11 @@ export class PrescriptionBuilderPresentation extends React.Component<
                         </div>
                     ) : (
                         <div>
-                            <div className={editModeButtonContainer}>
+                            {/* <div className={editModeButtonContainer}>
                                 <Button onClick={this.toggleEditMode} color="secondary">{this.state.editMode ? 'Switch To View Mode' : 'Switch To Edit Mode'}</Button>
-                            </div>
+                            </div> */}
                             <div className={sectionsContainer}>
                             {sectionOrder.map((sectionId) => {
-                                let sectionClasses = sectionContainer;
-
-                                if (sectionId === this.state.hoveredSection && !this.state.hoveredControl) {
-                                    sectionClasses += ` ${hoverArea}`;
-                                }
-
                                 const currentSection = sections[sectionId];
                                 const controlOrderForSection = controlOrder[sectionId];
                                 const noControlForSection = controlOrderForSection.length === 0;
@@ -137,28 +140,23 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                 return (
                                     <div key={sectionId}>
                                         <div
-                                            className={`${sectionClasses} ${noControlForSection ? noControlForSectionClass : ''}`}
-                                            onMouseEnter={this.setHoverSection(sectionId)}
-                                            onMouseLeave={this.removeHoverSection}
+                                            className={`${sectionContainer} ${noControlForSection ? noControlForSectionClass : ''}`}
                                             onClick={this.selectSection(sectionId)}
                                         >
                                             {noControlForSection ? (
-                                                <Typography>Click on this section to add fields or other sections</Typography>
+                                                <FormElementDropZone
+                                                    heightInPixels={80}
+                                                    showBorderWithNoDragInProgress={true}
+                                                    text={'Drag any non-section form elements into this box to add a field.'}
+                                                    onDrop={this.onDropControl(sectionId, 0)}
+                                                />
                                             ) : (
                                                 <div className={controlsContainer}>
                                                     {controlOrderForSection.map((controlId) => {
-                                                        let controlClasses = controlContainer;
-
-                                                        if (controlId === this.state.hoveredControl) {
-                                                            controlClasses += ` ${hoverArea}`;
-                                                        }
-
                                                         return (
                                                             <div
                                                                 key={controlId}
-                                                                className={controlClasses}
-                                                                onMouseEnter={this.setHoverControl(controlId)}
-                                                                onMouseLeave={this.removeHoverControl}
+                                                                className={controlContainer}
                                                                 // onClick={this.selectControl(controlId)}
                                                             >
                                                                 {this.correctControlDisplay(controlId)}
@@ -185,7 +183,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
         )
     }
 
-    private onDropSection = (insertPosition: number) => () => {
+    private onDropSection = (insertPosition: number) => (item: any) => {
         const id = generateUniqueId();
         const newSection: IPrescriptionSectionTemplate = {
             id,
@@ -209,9 +207,136 @@ export class PrescriptionBuilderPresentation extends React.Component<
         })
     }
 
-    // private onDropControl = (sectionId: string, index: number) => () => {
-    //     //
-    // }
+    private onDropControl = (sectionId: string, insertPosition: number) => (item: any) => {
+        const type = item.type;
+        const id = generateUniqueId();
+        const prescriptionFormTemplateCopy = cloneDeep(this.state.prescriptionFormTemplate);
+
+        let control: IPrescriptionControlTemplate;
+
+        if (type === IPrescriptionControlTemplateType.Title) {
+
+            const titleControl: ITitleTemplateControl = {
+                id,
+                type: IPrescriptionControlTemplateType.Title,
+                title: 'New Title',
+                sectionId,
+            }
+            control = titleControl;
+        } else if (type === IPrescriptionControlTemplateType.Dropdown) {
+            const options: IOption[] = [];
+            for (let i = 0; i < 3; i++) {
+                const uniqueOptionId = generateUniqueId();
+                options.push({
+                    id: uniqueOptionId,
+                    text: `Option Text`,
+                })
+            }
+            const dropdownControl: IDropdownTemplateControl = {
+                id,
+                label: 'Dropdown Label',
+                type: IPrescriptionControlTemplateType.Dropdown,
+                options,
+                sectionId,
+            }
+
+            control = dropdownControl;
+        } else if (type === IPrescriptionControlTemplateType.DoctorInformation) {
+            const doctorControl: IDoctorInformationTemplateControl = {
+                id,
+                type: IPrescriptionControlTemplateType.DoctorInformation,
+                sectionId,
+            }
+
+            control = doctorControl;
+        } else if (type === IPrescriptionControlTemplateType.MultilineText) {
+            const multilineTextControl: IMultilineTextControl = {
+                id,
+                type: IPrescriptionControlTemplateType.MultilineText,
+                sectionId,
+                label: 'Notepad Label',
+            }
+
+            control = multilineTextControl;
+        } else if (type === IPrescriptionControlTemplateType.SingleLineText) {
+            const singleLineText: ISingleLineTextControlTemplate = {
+                id,
+                type: IPrescriptionControlTemplateType.SingleLineText,
+                sectionId,
+                label: 'Single Line Text Label',
+            }
+
+            control = singleLineText;
+        } else if (type === IPrescriptionControlTemplateType.Checkbox) {
+            const options: IOption[] = [];
+            for (let i = 0; i < 3; i++) {
+                const uniqueOptionId = generateUniqueId();
+                options.push({
+                    id: uniqueOptionId,
+                    text: `Option Text`,
+                })
+            }
+            const checkboxControl: ICheckboxTemplateControl = {
+                id,
+                type: IPrescriptionControlTemplateType.Checkbox,
+                options,
+                sectionId,
+            }
+
+            control = checkboxControl;
+        } else if (type === IPrescriptionControlTemplateType.Number) {
+            const numberControl: INumberTemplateControl = {
+                id,
+                type: IPrescriptionControlTemplateType.Number,
+                sectionId,
+                label: 'Number Field Label',
+                prefix: '',
+                suffix: '',
+            }
+
+            control = numberControl;
+        } else if (type === IPrescriptionControlTemplateType.NonEditableText) {
+            const nonEditableTextControl: INonEditableTextField = {
+                id,
+                sectionId,
+                text: 'Replace this text by clicking on this field',
+                type: IPrescriptionControlTemplateType.NonEditableText,
+            }
+
+            control = nonEditableTextControl;
+        } else if (type === IPrescriptionControlTemplateType.UnitSelection) {
+            const unitSelectionControl: IUnitSelectionControlTemplate = {
+                id,
+                sectionId,
+                type: IPrescriptionControlTemplateType.UnitSelection,
+                units: [],
+            }
+
+            control = unitSelectionControl;
+        } else if (type === IPrescriptionControlTemplateType.Date) {
+            const dateControl: IDateTemplateControl = {
+                id,
+                sectionId,
+                type: IPrescriptionControlTemplateType.Date,
+                label: 'Date Control Label',
+            }
+
+            control = dateControl;
+        }
+
+        prescriptionFormTemplateCopy.controls[id] = control!;
+        const currentControlOrder = prescriptionFormTemplateCopy.controlOrder[sectionId];
+
+        const before = currentControlOrder.slice(0, insertPosition);
+        const after = currentControlOrder.slice(insertPosition);
+        const updatedControlOrder = before.concat([id]).concat(after);
+
+        prescriptionFormTemplateCopy.controlOrder[sectionId] = updatedControlOrder;
+
+        this.setState({
+            prescriptionFormTemplate: prescriptionFormTemplateCopy,
+        })
+    }
 
     private handleControlValueChange = (controlId: string) => (event: any) => {
         const value = event.target.value;
@@ -224,40 +349,11 @@ export class PrescriptionBuilderPresentation extends React.Component<
         })
     }
 
-    private toggleEditMode = () => {
-        this.setState({
-            editMode: !this.state.editMode,
-        })
-    }
-
-    private setHoverSection = (sectionId: string) => () => {
-        if (this.state.editMode) {
-            this.setState({
-                hoveredSection: sectionId,
-                hoveredControl: null,
-            });
-        }
-    }
-
-    private removeHoverSection = () => {
-        this.setState({
-            hoveredSection: null,
-        })
-    }
-
-    private setHoverControl = (controlId: string) => () => {
-        if (this.state.editMode) {
-            this.setState({
-                hoveredControl: controlId,
-            })
-        }
-    }
-
-    private removeHoverControl = () => {
-        this.setState({
-            hoveredControl: null,
-        })
-    }
+    // private toggleEditMode = () => {
+    //     this.setState({
+    //         editMode: !this.state.editMode,
+    //     })
+    // }
 
     private selectSection = (sectionId: string) => () => {
         this.setState({
