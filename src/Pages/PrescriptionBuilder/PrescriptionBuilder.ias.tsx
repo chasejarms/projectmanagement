@@ -123,7 +123,6 @@ export const createPrescriptionBuilderClasses = (
     const controlContainer = css({
         border: '3px solid transparent',
         borderRadius: 3,
-        padding: 8,
         position: 'relative',
     });
 
@@ -173,10 +172,6 @@ export const createPrescriptionBuilderClasses = (
         justifyContent: 'space-between',
         flexDirection: 'column',
         height: '100%',
-    });
-
-    const titleControlContainer = css({
-        marginBottom: 16,
     });
 
     const cityStateZipContainer = css({
@@ -258,7 +253,6 @@ export const createPrescriptionBuilderClasses = (
         trashIcon,
         addOptionButtonContainer,
         drawerSplitSections,
-        titleControlContainer,
         cityStateZipContainer,
         editModeButtonContainer,
         draggableIconsContainer,

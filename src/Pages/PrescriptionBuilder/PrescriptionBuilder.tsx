@@ -4,6 +4,7 @@ import {
     Drawer,
     FormControl,
     FormControlLabel,
+    FormGroup,
     Input,
     InputAdornment,
     InputLabel,
@@ -171,14 +172,14 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                                             >
                                                                 {controlIndex === 0 ? (
                                                                     <FormElementDropZone
-                                                                        heightInPixels={24}
+                                                                        heightInPixels={16}
                                                                         onDrop={this.onDropControl(sectionId, controlIndex)}
                                                                         allowSectionOrElement={SectionOrElement.Element}
                                                                     />
                                                                 ) : undefined}
                                                                 {this.correctControlDisplay(controlId)}
                                                                 <FormElementDropZone
-                                                                    heightInPixels={24}
+                                                                    heightInPixels={16}
                                                                     onDrop={this.onDropControl(sectionId, controlIndex + 1)}
                                                                     allowSectionOrElement={SectionOrElement.Element}
                                                                 />
@@ -730,13 +731,12 @@ export class PrescriptionBuilderPresentation extends React.Component<
     private correctControlDisplay = (controlId: string) => {
         const control = this.state.prescriptionFormTemplate.controls[controlId];
         const {
-            titleControlContainer,
             cityStateZipContainer,
         } = createPrescriptionBuilderClasses(this.props, this.state);
 
         if (control.type === IPrescriptionControlTemplateType.Title) {
             return (
-                <div className={titleControlContainer}>
+                <div>
                     <Typography variant="title">{control.title}</Typography>
                 </div>
             )
@@ -828,19 +828,19 @@ export class PrescriptionBuilderPresentation extends React.Component<
         } else if (control.type === IPrescriptionControlTemplateType.Checkbox) {
             return (
                 <div>
-                    <FormControl fullWidth={true} disabled={this.state.editMode}>
+                    <FormGroup row={true}>
                         {control.options.map(({ text, id }) => {
                             return (
                                 <FormControlLabel
                                     key={id}
                                     label={text}
                                     control={
-                                        <Checkbox checked={false} value={''}/>
+                                        <Checkbox checked={false} value={''} disabled={this.state.editMode}/>
                                     }
                                 />
                             )
                         })}
-                    </FormControl>
+                    </FormGroup>
                 </div>
             )
         } else if (control.type === IPrescriptionControlTemplateType.Number) {
