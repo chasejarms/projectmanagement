@@ -19,7 +19,7 @@ export const createPrescriptionBuilderClasses = (
     props: IPrescriptionBuilderProps,
     state: IPrescriptionBuilderState,
 ) => {
-    const paddingTop = state.prescriptionFormTemplate.sectionOrder.length > 0 ? 0 : 32;
+    const paddingFromSectionCount = state.prescriptionFormTemplate.sectionOrder.length > 0 ? 0 : 32;
     const drawerWidth = 320;
 
     const drawerPaper = css({
@@ -37,7 +37,8 @@ export const createPrescriptionBuilderClasses = (
         flexGrow: 1,
         margin: 32,
         padding: 32,
-        paddingTop,
+        paddingTop: paddingFromSectionCount,
+        paddingBottom: paddingFromSectionCount,
         boxSizing: 'border-box',
         overflowY: 'auto',
     })
