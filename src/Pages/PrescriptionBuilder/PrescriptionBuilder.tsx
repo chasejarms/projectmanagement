@@ -34,6 +34,7 @@ import { ISingleLineTextControlTemplate } from 'src/Models/prescription/controls
 import { ITitleTemplateControl } from 'src/Models/prescription/controls/titleTemplateControl';
 import { IUnitSelectionControlTemplate } from 'src/Models/prescription/controls/unitSelectionControlTemplate';
 import { IPrescriptionSectionTemplate } from 'src/Models/prescription/prescriptionSectionTemplate';
+import { SectionOrElement } from 'src/Models/sectionOrElement';
 import { generateUniqueId } from 'src/Utils/generateUniqueId';
 import {
     createPrescriptionBuilderClasses,
@@ -124,6 +125,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                 showBorderWithNoDragInProgress={true}
                                 text={'Drag the section form element into this box to get started.'}
                                 onDrop={this.onDropSection(0)}
+                                allowSectionOrElement={SectionOrElement.Section}
                             />
                         </div>
                     ) : (
@@ -143,6 +145,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                             <FormElementDropZone
                                                 heightInPixels={32}
                                                 onDrop={this.onDropSection(sectionIndex)}
+                                                allowSectionOrElement={SectionOrElement.Section}
                                             />
                                         ) : undefined}
                                         <div
@@ -155,6 +158,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                                     showBorderWithNoDragInProgress={true}
                                                     text={'Drag any non-section form elements into this box to add a field.'}
                                                     onDrop={this.onDropControl(sectionId, 0)}
+                                                    allowSectionOrElement={SectionOrElement.Element}
                                                 />
                                             ) : (
                                                 <div className={controlsContainer}>
@@ -169,12 +173,14 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                                                     <FormElementDropZone
                                                                         heightInPixels={24}
                                                                         onDrop={this.onDropControl(sectionId, controlIndex)}
+                                                                        allowSectionOrElement={SectionOrElement.Element}
                                                                     />
                                                                 ) : undefined}
                                                                 {this.correctControlDisplay(controlId)}
                                                                 <FormElementDropZone
                                                                     heightInPixels={24}
                                                                     onDrop={this.onDropControl(sectionId, controlIndex + 1)}
+                                                                    allowSectionOrElement={SectionOrElement.Element}
                                                                 />
                                                             </div>
                                                         )
@@ -190,6 +196,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                         <FormElementDropZone
                                             heightInPixels={32}
                                             onDrop={this.onDropSection(sectionIndex + 1)}
+                                            allowSectionOrElement={SectionOrElement.Section}
                                         />
                                     </div>
                                 )

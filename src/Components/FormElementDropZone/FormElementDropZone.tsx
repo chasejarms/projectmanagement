@@ -2,12 +2,18 @@ import { Typography, withTheme } from '@material-ui/core';
 import * as React from 'react';
 import { DropTarget, DropTargetCollector, DropTargetMonitor } from 'react-dnd';
 import { IDraggableTypes } from 'src/Models/draggableTypes';
+import { SectionOrElement } from 'src/Models/sectionOrElement';
 import { createFormElementDropZoneClasses, IFormElementDropZoneDropTargetCollectorProps, IFormElementDropZoneProps, IFormElementDropZonePropsFromParentComponent, IFormElementDropZoneState } from './FormElementDropZone.ias';
 
 const formElementDropZoneTarget = {
     drop(props: IFormElementDropZonePropsFromParentComponent, monitor: DropTargetMonitor) {
         const item = monitor.getItem();
         props.onDrop(item);
+    },
+    canDrop(props: IFormElementDropZonePropsFromParentComponent, monitor: DropTargetMonitor) {
+        const itemIsSection = monitor.getItem().type === null;
+        const sectionIsAllowed = props.allowSectionOrElement === SectionOrElement.Section;
+        return (itemIsSection && sectionIsAllowed) || (!itemIsSection && !sectionIsAllowed);
     }
 }
 
@@ -15,7 +21,7 @@ const collect: DropTargetCollector<IFormElementDropZoneDropTargetCollectorProps>
     return {
         connectDropTarget: connect.dropTarget(),
         isOver: monitor.isOver(),
-        dragActionInProgress: monitor.canDrop(),
+        canDrop: monitor.canDrop(),
     }
 }
 
