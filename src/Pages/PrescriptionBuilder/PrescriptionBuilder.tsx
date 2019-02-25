@@ -80,6 +80,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
         const {
             prescriptionFormTemplate,
+            selectedControl,
         } = this.state;
 
         const {
@@ -164,11 +165,12 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                             ) : (
                                                 <div className={controlsContainer}>
                                                     {controlOrderForSection.map((controlId, controlIndex) => {
+                                                        const isSelectedControl = controlId === selectedControl;
                                                         return (
                                                             <div
                                                                 key={controlId}
                                                                 className={controlContainer}
-                                                                // onClick={this.selectControl(controlId)}
+                                                                onClick={this.selectControl(controlId)}
                                                             >
                                                                 {controlIndex === 0 ? (
                                                                     <FormElementDropZone
@@ -177,7 +179,11 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                                                         allowSectionOrElement={SectionOrElement.Element}
                                                                     />
                                                                 ) : undefined}
-                                                                {this.correctControlDisplay(controlId)}
+                                                                {isSelectedControl ? (
+                                                                    this.correctControlEdit(controlId)
+                                                                ): (
+                                                                    this.correctControlDisplay(controlId)
+                                                                )}
                                                                 <FormElementDropZone
                                                                     heightInPixels={16}
                                                                     onDrop={this.onDropControl(sectionId, controlIndex + 1)}
@@ -390,16 +396,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
         })
     }
 
-    // private addSectionBeforeSelected = () => {
-    //     const index = this.indexOfSelectedSection();
-    //     this.addSection(index)();
-    // }
-
-    // private addSectionAfterSelected = () => {
-    //     const index = this.indexOfSelectedSection();
-    //     this.addSection(index + 1)();
-    // }
-
     // private indexOfSelectedSection = (): number => {
     //     return this.state.prescriptionFormTemplate.sectionOrder.findIndex((sectionId) => {
     //         return this.state.selectedSection === sectionId;
@@ -428,300 +424,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
     //     section.duplicateButtonText = newText;
 
     //     prescriptionFormTemplateCopy.sections[this.state.selectedSection!] = section;
-
-    //     this.setState({
-    //         prescriptionFormTemplate: prescriptionFormTemplateCopy,
-    //     })
-    // }
-
-    // private controlOptionsSelect = (sectionId: string, label: string, beginningOrEnd: IBeginningOrEnd) => {
-    //     const controlOptions = [];
-    //     for (const templateType in IPrescriptionControlTemplateType) {
-    //         if (true) {
-    //             let displayName: string;
-    //             switch (templateType) {
-    //                 case IPrescriptionControlTemplateType.DoctorInformation:
-    //                     displayName = 'Doctor Information';
-    //                     break;
-    //                 case IPrescriptionControlTemplateType.Title:
-    //                     displayName = 'Title';
-    //                     break;
-    //                 case IPrescriptionControlTemplateType.Dropdown:
-    //                     displayName = 'Dropdown';
-    //                     break;
-    //                 case IPrescriptionControlTemplateType.MultilineText:
-    //                     displayName = 'Notepad';
-    //                     break;
-    //                 case IPrescriptionControlTemplateType.SingleLineText:
-    //                     displayName = 'Single Line Text';
-    //                     break;
-    //                 case IPrescriptionControlTemplateType.Checkbox:
-    //                     displayName = 'Checkbox';
-    //                     break;
-    //                 case IPrescriptionControlTemplateType.Number:
-    //                     displayName = 'Number';
-    //                     break;
-    //                 case IPrescriptionControlTemplateType.NonEditableText:
-    //                     displayName = 'Description';
-    //                     break;
-    //                 case IPrescriptionControlTemplateType.UnitSelection:
-    //                     displayName = 'Unit Selection';
-    //                     break;
-    //                 case IPrescriptionControlTemplateType.Date:
-    //                     displayName = 'Date';
-    //                     break;
-    //                 default:
-    //                     break;
-    //             }
-
-    //             controlOptions.push({
-    //                 value: templateType,
-    //                 displayName: displayName!,
-    //             });
-    //         }
-    //     }
-    //     return (
-    //         <FormControl>
-    //             <InputLabel>{label}</InputLabel>
-    //             <Select
-    //                 value={''}
-    //                 onChange={this.handleAddControlOption(sectionId, beginningOrEnd)}
-    //             >
-    //                 {controlOptions.map(({ value, displayName }) => {
-    //                     return <MenuItem key={value} value={value}>{displayName}</MenuItem>
-    //                 })}
-    //             </Select>
-    //         </FormControl>
-    //     )
-    // }
-
-    // private handleAddControlOption = (sectionId: string, beginningOrEnd: IBeginningOrEnd) => (event: any) => {
-    //     const value = event.target.value;
-    //     const id = generateUniqueId();
-    //     const prescriptionFormTemplateCopy = cloneDeep(this.state.prescriptionFormTemplate);
-
-    //     let control: IPrescriptionControlTemplate;
-
-    //     if (value === IPrescriptionControlTemplateType.Title) {
-
-    //         const titleControl: ITitleTemplateControl = {
-    //             id,
-    //             type: IPrescriptionControlTemplateType.Title,
-    //             title: 'New Title',
-    //             sectionId,
-    //         }
-    //         control = titleControl;
-    //     } else if (value === IPrescriptionControlTemplateType.Dropdown) {
-    //         const options: IOption[] = [];
-    //         for (let i = 0; i < 3; i++) {
-    //             const uniqueOptionId = generateUniqueId();
-    //             options.push({
-    //                 id: uniqueOptionId,
-    //                 text: `Option Text`,
-    //             })
-    //         }
-    //         const dropdownControl: IDropdownTemplateControl = {
-    //             id,
-    //             label: 'Dropdown Label',
-    //             type: IPrescriptionControlTemplateType.Dropdown,
-    //             options,
-    //             sectionId,
-    //         }
-
-    //         control = dropdownControl;
-    //     } else if (value === IPrescriptionControlTemplateType.DoctorInformation) {
-    //         const doctorControl: IDoctorInformationTemplateControl = {
-    //             id,
-    //             type: IPrescriptionControlTemplateType.DoctorInformation,
-    //             sectionId,
-    //         }
-
-    //         control = doctorControl;
-    //     } else if (value === IPrescriptionControlTemplateType.MultilineText) {
-    //         const multilineTextControl: IMultilineTextControl = {
-    //             id,
-    //             type: IPrescriptionControlTemplateType.MultilineText,
-    //             sectionId,
-    //             label: 'Notepad Label',
-    //         }
-
-    //         control = multilineTextControl;
-    //     } else if (value === IPrescriptionControlTemplateType.SingleLineText) {
-    //         const singleLineText: ISingleLineTextControlTemplate = {
-    //             id,
-    //             type: IPrescriptionControlTemplateType.SingleLineText,
-    //             sectionId,
-    //             label: 'Single Line Text Label',
-    //         }
-
-    //         control = singleLineText;
-    //     } else if (value === IPrescriptionControlTemplateType.Checkbox) {
-    //         const options: IOption[] = [];
-    //         for (let i = 0; i < 3; i++) {
-    //             const uniqueOptionId = generateUniqueId();
-    //             options.push({
-    //                 id: uniqueOptionId,
-    //                 text: `Option Text`,
-    //             })
-    //         }
-    //         const checkboxControl: ICheckboxTemplateControl = {
-    //             id,
-    //             type: IPrescriptionControlTemplateType.Checkbox,
-    //             options,
-    //             sectionId,
-    //         }
-
-    //         control = checkboxControl;
-    //     } else if (value === IPrescriptionControlTemplateType.Number) {
-    //         const numberControl: INumberTemplateControl = {
-    //             id,
-    //             type: IPrescriptionControlTemplateType.Number,
-    //             sectionId,
-    //             label: 'Number Field Label',
-    //             prefix: '',
-    //             suffix: '',
-    //         }
-
-    //         control = numberControl;
-    //     } else if (value === IPrescriptionControlTemplateType.NonEditableText) {
-    //         const nonEditableTextControl: INonEditableTextField = {
-    //             id,
-    //             sectionId,
-    //             text: 'Replace this text by clicking on this field',
-    //             type: IPrescriptionControlTemplateType.NonEditableText,
-    //         }
-
-    //         control = nonEditableTextControl;
-    //     } else if (value === IPrescriptionControlTemplateType.UnitSelection) {
-    //         const unitSelectionControl: IUnitSelectionControlTemplate = {
-    //             id,
-    //             sectionId,
-    //             type: IPrescriptionControlTemplateType.UnitSelection,
-    //             units: [],
-    //         }
-
-    //         control = unitSelectionControl;
-    //     } else if (value === IPrescriptionControlTemplateType.Date) {
-    //         const dateControl: IDateTemplateControl = {
-    //             id,
-    //             sectionId,
-    //             type: IPrescriptionControlTemplateType.Date,
-    //             label: 'Date Control Label',
-    //         }
-
-    //         control = dateControl;
-    //     }
-
-    //     prescriptionFormTemplateCopy.controls[id] = control!;
-    //     const currentControlOrder = prescriptionFormTemplateCopy.controlOrder[sectionId];
-
-    //     if (beginningOrEnd === IBeginningOrEnd.Beginning) {
-    //         const newControlOrder = [id, ...currentControlOrder];
-    //         prescriptionFormTemplateCopy.controlOrder[sectionId] = newControlOrder;
-    //     } else {
-    //         const newControlOrder = [...currentControlOrder, id];
-    //         prescriptionFormTemplateCopy.controlOrder[sectionId] = newControlOrder;
-    //     }
-
-    //     this.setState({
-    //         prescriptionFormTemplate: prescriptionFormTemplateCopy,
-    //     })
-    // }
-
-    // private controlOptionsSelectForControl = (controlId: string, label: string, beforeOrAfter: IBeforeOrAfter) => {
-    //     const controlOptions = [];
-    //     for (const templateType in IPrescriptionControlTemplateType) {
-    //         if (true) {
-    //             let displayName: string;
-    //             switch (templateType) {
-    //                 case IPrescriptionControlTemplateType.DoctorInformation:
-    //                     displayName = 'Doctor Information';
-    //                     break;
-    //                 case IPrescriptionControlTemplateType.Title:
-    //                     displayName = 'Title';
-    //                     break;
-    //                 case IPrescriptionControlTemplateType.Dropdown:
-    //                     displayName = 'Dropdown';
-    //                     break;
-    //                 case IPrescriptionControlTemplateType.MultilineText:
-    //                     displayName = 'Notepad';
-    //                     break;
-    //                 case IPrescriptionControlTemplateType.SingleLineText:
-    //                     displayName = 'Single Line Text';
-    //                     break;
-    //                 case IPrescriptionControlTemplateType.Checkbox:
-    //                     displayName = 'Checkbox';
-    //                     break;
-    //                 case IPrescriptionControlTemplateType.Number:
-    //                     displayName = 'Number';
-    //                     break;
-    //                 case IPrescriptionControlTemplateType.NonEditableText:
-    //                     displayName = 'Description';
-    //                     break;
-    //                 case IPrescriptionControlTemplateType.UnitSelection:
-    //                     displayName = 'Unit Selection';
-    //                     break;
-    //                 case IPrescriptionControlTemplateType.Date:
-    //                     displayName = 'Date';
-    //                     break;
-    //                 default:
-    //                     break;
-    //             }
-
-    //             controlOptions.push({
-    //                 value: templateType,
-    //                 displayName: displayName!,
-    //             });
-    //         }
-    //     }
-    //     return (
-    //         <FormControl>
-    //             <InputLabel>{label}</InputLabel>
-    //             <Select
-    //                 value={''}
-    //                 onChange={this.handleAddControlOptionForControl(controlId, beforeOrAfter)}
-    //             >
-    //                 {controlOptions.map(({ value, displayName }) => {
-    //                     return <MenuItem key={value} value={value}>{displayName}</MenuItem>
-    //                 })}
-    //             </Select>
-    //         </FormControl>
-    //     )
-    // }
-
-    // private handleAddControlOptionForControl = (controlId: string, beforeOrAfter: IBeforeOrAfter) => (event: any) => {
-    //     const value = event.target.value;
-    //     const id = generateUniqueId();
-    //     const prescriptionFormTemplateCopy = cloneDeep(this.state.prescriptionFormTemplate);
-    //     const selectedControlCopy = cloneDeep(this.state.prescriptionFormTemplate.controls[controlId]);
-    //     const indexOfSelectedControl = prescriptionFormTemplateCopy.controlOrder[selectedControlCopy.sectionId].findIndex((compareControlId) => {
-    //         return compareControlId === controlId;
-    //     });
-
-    //     if (value === IPrescriptionControlTemplateType.Title) {
-
-    //         const titleControl: ITitleTemplateControl = {
-    //             id,
-    //             type: IPrescriptionControlTemplateType.Title,
-    //             title: 'New Title',
-    //             sectionId: selectedControlCopy.sectionId,
-    //         }
-
-    //         prescriptionFormTemplateCopy.controls[id] = titleControl;
-    //         const currentControlOrder = prescriptionFormTemplateCopy.controlOrder[selectedControlCopy.sectionId];
-
-    //         if (beforeOrAfter === IBeforeOrAfter.Before) {
-    //             const before = currentControlOrder.slice(0, indexOfSelectedControl);
-    //             const after = currentControlOrder.slice(indexOfSelectedControl);
-    //             const newControlOrder = [...before, titleControl.id, ...after];
-    //             prescriptionFormTemplateCopy.controlOrder[selectedControlCopy.sectionId] = newControlOrder;
-    //         } else {
-    //             const before = currentControlOrder.slice(0, indexOfSelectedControl + 1);
-    //             const after = currentControlOrder.slice(indexOfSelectedControl + 1);
-    //             const newControlOrder = [...before, titleControl.id, ...after];
-    //             prescriptionFormTemplateCopy.controlOrder[selectedControlCopy.sectionId] = newControlOrder;
-    //         }
-    //     }
 
     //     this.setState({
     //         prescriptionFormTemplate: prescriptionFormTemplateCopy,
@@ -890,6 +592,21 @@ export class PrescriptionBuilderPresentation extends React.Component<
         return <div/>
     }
 
+    private correctControlEdit = (controlId: string) => {
+        const control = this.state.prescriptionFormTemplate.controls[controlId];
+        if (control.type === IPrescriptionControlTemplateType.Title) {
+            return (
+                <TextField
+                    fullWidth={true}
+                    label='Title Text'
+                    value={control.title}
+                    onChange={this.handleControlTitleChange}
+                />
+            )
+        }
+        return <div>Editing this control: {controlId}</div>
+    }
+
     private handleDeadlineChange = (controlId: string) => (newDeadline: any) => {
         const controlValuesCopy = cloneDeep(this.state.controlValues);
 
@@ -915,145 +632,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
             )
         });
     }
-
-    // private correctControlDisplayForDropdown = (controlId: string) => {
-    //     const {
-    //         fullWidthClass,
-    //         optionsContainer,
-    //         sixteenPixelSpacing,
-    //         optionAndTrashContainer,
-    //         trashIcon,
-    //         optionName,
-    //         addOptionButtonContainer,
-    //         addSectionOrFieldContainer,
-    //     } = createPrescriptionBuilderClasses(this.props, this.state);
-
-    //     const control = this.state.prescriptionFormTemplate.controls[controlId];
-
-    //     if (control.type === IPrescriptionControlTemplateType.Dropdown || control.type === IPrescriptionControlTemplateType.Checkbox) {
-    //         return (
-    //             <div className={`${fullWidthClass} ${sixteenPixelSpacing}`}>
-    //                 {control.type === IPrescriptionControlTemplateType.Dropdown ? (
-    //                     <FormControl fullWidth={true}>
-    //                         <InputLabel>Label</InputLabel>
-    //                         <Input
-    //                             value={control.label}
-    //                             onChange={this.handleControlLabelChange}
-    //                         />
-    //                     </FormControl>
-    //                 ) : undefined}
-    //                 <div className={optionsContainer}>
-    //                     <Typography variant="subheading">Options:</Typography>
-    //                     { control.options.map(({ id, text }, index) => {
-    //                         return (
-    //                             <div key={id} className={optionAndTrashContainer}>
-    //                                 <FormControl fullWidth={true} className={optionName}>
-    //                                     <InputLabel>Option {index + 1}</InputLabel>
-    //                                     <Input
-    //                                         value={text}
-    //                                         onChange={this.handleOptionTextChange(id)}
-    //                                     />
-    //                                 </FormControl>
-    //                                 {control.options.length > 2 ? (
-    //                                     <DeleteIcon className={trashIcon} onClick={this.deleteOption(id)}/>
-    //                                 ) : undefined}
-    //                             </div>
-    //                         )
-    //                     })}
-    //                     <div className={addOptionButtonContainer}>
-    //                         <Button onClick={this.handleAddOptionToDropdown} color="secondary">Add Option</Button>
-    //                     </div>
-    //                 </div>
-    //             </div>
-    //         )
-    //     } else if (control.type === IPrescriptionControlTemplateType.Title) {
-    //         return (
-    //             <FormControl fullWidth={true}>
-    //                 <InputLabel>Title</InputLabel>
-    //                 <Input
-    //                     value={control.title}
-    //                     onChange={this.handleControlTitleChange}
-    //                 />
-    //             </FormControl>
-    //         )
-    //     } else if (control.type === IPrescriptionControlTemplateType.DoctorInformation) {
-    //         return (
-    //             <Typography variant="body1">*The doctor field has no configurable options*</Typography>
-    //         )
-    //     } else if (control.type === IPrescriptionControlTemplateType.MultilineText) {
-    //         return (
-    //             <FormControl fullWidth={true}>
-    //                 <InputLabel>Label</InputLabel>
-    //                 <Input
-    //                     value={control.label}
-    //                     onChange={this.handleControlLabelChange}
-    //                 />
-    //             </FormControl>
-    //         )
-    //     } else if (control.type === IPrescriptionControlTemplateType.SingleLineText) {
-    //         return (
-    //             <FormControl fullWidth={true}>
-    //                 <InputLabel>Label</InputLabel>
-    //                 <Input
-    //                     value={control.label}
-    //                     onChange={this.handleControlLabelChange}
-    //                 />
-    //             </FormControl>
-    //         )
-    //     } else if (control.type === IPrescriptionControlTemplateType.Number) {
-    //         return (
-    //             <div className={addSectionOrFieldContainer}>
-    //                 <FormControl fullWidth={true}>
-    //                     <InputLabel>Label</InputLabel>
-    //                     <Input
-    //                         value={control.label}
-    //                         onChange={this.handleControlLabelChange}
-    //                     />
-    //                 </FormControl>
-    //                 <FormControl fullWidth={true}>
-    //                     <InputLabel>Prefix</InputLabel>
-    //                     <Input
-    //                         value={control.prefix}
-    //                         onChange={this.handlePrefixChange}
-    //                     />
-    //                 </FormControl>
-    //                 <FormControl fullWidth={true}>
-    //                     <InputLabel>Suffix</InputLabel>
-    //                     <Input
-    //                         value={control.suffix}
-    //                         onChange={this.handleSuffixChange}
-    //                     />
-    //                 </FormControl>
-    //             </div>
-    //         )
-    //     } else if (control.type === IPrescriptionControlTemplateType.NonEditableText) {
-    //         return (
-    //             <FormControl fullWidth={true}>
-    //                 <InputLabel>Text</InputLabel>
-    //                 <Input
-    //                     multiline={true}
-    //                     value={control.text}
-    //                     onChange={this.handleControlTextChange}
-    //                 />
-    //             </FormControl>
-    //         )
-    //     } else if (control.type === IPrescriptionControlTemplateType.Date) {
-    //         return (
-    //             <div>
-    //                 <FormControl fullWidth={true}>
-    //                     <InputLabel>Label</InputLabel>
-    //                     <Input
-    //                         value={control.label}
-    //                         onChange={this.handleControlLabelChange}
-    //                     />
-    //                 </FormControl>
-    //             </div>
-
-    //         )
-    //     }
-
-    //     return <div/>
-    // }
 
     // private handlePrefixChange = (event: any) => {
     //     const newPrefix = event.target.value;
@@ -1088,25 +666,25 @@ export class PrescriptionBuilderPresentation extends React.Component<
     //     })
     // }
 
-    // private selectControl = (controlId: string) => (event: any) => {
-    //     event.stopPropagation();
-    //     event.preventDefault();
-    //     this.setState({
-    //         selectedControl: controlId,
-    //         selectedSection: null,
-    //     })
-    // }
+    private selectControl = (controlId: string) => (event: any) => {
+        event.stopPropagation();
+        event.preventDefault();
+        this.setState({
+            selectedControl: controlId,
+            selectedSection: null,
+        })
+    }
 
-    // private handleControlTitleChange = (event: any) => {
-    //     const newTitle = event.target.value;
-    //     const selectedControlId = this.state.selectedControl;
+    private handleControlTitleChange = (event: any) => {
+        const newTitle = event.target.value;
+        const selectedControlId = this.state.selectedControl;
 
-    //     const prescriptionFormTemplateCopy = cloneDeep(this.state.prescriptionFormTemplate);
-    //     (prescriptionFormTemplateCopy.controls[selectedControlId!] as ITitleTemplateControl).title = newTitle;
-    //     this.setState({
-    //         prescriptionFormTemplate: prescriptionFormTemplateCopy,
-    //     })
-    // }
+        const prescriptionFormTemplateCopy = cloneDeep(this.state.prescriptionFormTemplate);
+        (prescriptionFormTemplateCopy.controls[selectedControlId!] as ITitleTemplateControl).title = newTitle;
+        this.setState({
+            prescriptionFormTemplate: prescriptionFormTemplateCopy,
+        })
+    }
 
     // private handleControlLabelChange = (event: any) => {
     //     const newLabel = event.target.value;

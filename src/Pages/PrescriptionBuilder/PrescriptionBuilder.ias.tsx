@@ -54,7 +54,7 @@ export const createPrescriptionBuilderClasses = (
 
     const sectionContainer = css({
         border: '3px solid rgba(0,0,0,0.08)',
-        backgroundColor: 'rgba(0,0,0,0.08)',
+        backgroundColor: '#f9f9f9',
         padding: 16,
         borderRadius: 3,
         '&:hover': {
