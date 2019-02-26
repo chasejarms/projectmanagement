@@ -55,7 +55,6 @@ export const createPrescriptionBuilderClasses = (
     const sectionContainer = css({
         border: '3px solid rgba(0,0,0,0.08)',
         backgroundColor: '#f9f9f9',
-        padding: 16,
         borderRadius: 3,
         '&:hover': {
             cursor: 'pointer',
@@ -124,6 +123,8 @@ export const createPrescriptionBuilderClasses = (
         border: '3px solid transparent',
         borderRadius: 3,
         position: 'relative',
+        marginRight: 16,
+        marginLeft: 16,
     });
 
     const controlsContainer = css({
@@ -227,6 +228,32 @@ export const createPrescriptionBuilderClasses = (
         zIndex: 1,
     });
 
+    const noFieldsContainer = css({
+        marginRight: 16,
+        marginLeft: 16,
+        width: '100%',
+    });
+
+    const selectedControlContainerClass = css({
+        background: 'white',
+        boxShadow: '0px 1px 5px 0px rgba(0, 0, 0, 0.2)',
+        padding: 16,
+        borderRadius: 3,
+    });
+
+    const fieldPaletteClass = css({
+        display: 'flex',
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+        marginTop: 16,
+    });
+
+    const hrClass = css({
+        borderColor: props.theme.palette.grey[100],
+        backgroundColor: props.theme.palette.grey[100],
+        marginTop: 16,
+    });
+
     return {
         drawerPaper,
         prescriptionBuilderContainer,
@@ -260,5 +287,9 @@ export const createPrescriptionBuilderClasses = (
         darkGrey,
         topDrawerContainer,
         formElementDropZoneClass,
+        noFieldsContainer,
+        selectedControlContainerClass,
+        fieldPaletteClass,
+        hrClass,
     };
 }

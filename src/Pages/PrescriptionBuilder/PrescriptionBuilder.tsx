@@ -76,6 +76,10 @@ export class PrescriptionBuilderPresentation extends React.Component<
             draggableIconsContainer,
             drawerInnerContainer,
             topDrawerContainer,
+            noFieldsContainer,
+            selectedControlContainerClass,
+            fieldPaletteClass,
+            hrClass,
         } = createPrescriptionBuilderClasses(this.props, this.state);
 
         const {
@@ -155,13 +159,15 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                             onClick={this.selectSection(sectionId)}
                                         >
                                             {noControlForSection ? (
-                                                <FormElementDropZone
-                                                    heightInPixels={80}
-                                                    showBorderWithNoDragInProgress={true}
-                                                    text={'Drag any non-section form elements into this box to add a field.'}
-                                                    onDrop={this.onDropControl(sectionId, 0)}
-                                                    allowSectionOrElement={SectionOrElement.Element}
-                                                />
+                                                <div className={noFieldsContainer}>
+                                                    <FormElementDropZone
+                                                        heightInPixels={80}
+                                                        showBorderWithNoDragInProgress={true}
+                                                        text={'Drag any non-section form elements into this box to add a field.'}
+                                                        onDrop={this.onDropControl(sectionId, 0)}
+                                                        allowSectionOrElement={SectionOrElement.Element}
+                                                    />
+                                                </div>
                                             ) : (
                                                 <div className={controlsContainer}>
                                                     {controlOrderForSection.map((controlId, controlIndex) => {
@@ -180,7 +186,14 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                                                     />
                                                                 ) : undefined}
                                                                 {isSelectedControl ? (
-                                                                    this.correctControlEdit(controlId)
+                                                                    <div className={selectedControlContainerClass}>
+                                                                        {this.correctControlEdit(controlId)}
+                                                                        <hr className={hrClass}/>
+                                                                        <div className={fieldPaletteClass}>
+                                                                            <Button color="secondary" onClick={this.removeControl}>Delete Field</Button>
+                                                                            <Button color="secondary" onClick={this.unselectControl}>Exit Field Edit</Button>
+                                                                        </div>
+                                                                    </div>
                                                                 ): (
                                                                     this.correctControlDisplay(controlId)
                                                                 )}
@@ -675,6 +688,14 @@ export class PrescriptionBuilderPresentation extends React.Component<
         })
     }
 
+    private unselectControl = (event: any) => {
+        event.stopPropagation();
+        event.preventDefault();
+        this.setState({
+            selectedControl: null,
+        })
+    }
+
     private handleControlTitleChange = (event: any) => {
         const newTitle = event.target.value;
         const selectedControlId = this.state.selectedControl;
@@ -735,9 +756,9 @@ export class PrescriptionBuilderPresentation extends React.Component<
     //     })
     // }
 
-    // private copyPrescriptionFormTemplate = () => {
-    //     return cloneDeep(this.state.prescriptionFormTemplate);
-    // }
+    private copyPrescriptionFormTemplate = () => {
+        return cloneDeep(this.state.prescriptionFormTemplate);
+    }
 
     // private handleAddOptionToDropdown = () => {
     //     const selectedControlId = this.state.selectedControl!;
@@ -778,29 +799,25 @@ export class PrescriptionBuilderPresentation extends React.Component<
     //     })
     // }
 
-    // private removeControl = (): void => {
-    //     const selectedControlId = this.state.selectedControl!;
+    private removeControl = (): void => {
+        const selectedControlId = this.state.selectedControl!;
 
-    //     const prescriptionFormTemplateCopy = this.copyPrescriptionFormTemplate();
-    //     const control = prescriptionFormTemplateCopy.controls[selectedControlId];
-    //     const sectionId = control.sectionId;
-    //     const controlsWithoutSelectedSection = prescriptionFormTemplateCopy.controlOrder[sectionId].filter((compareControlId) => {
-    //         return compareControlId !== selectedControlId;
-    //     });
+        const prescriptionFormTemplateCopy = this.copyPrescriptionFormTemplate();
+        const control = prescriptionFormTemplateCopy.controls[selectedControlId];
+        const sectionId = control.sectionId;
+        const controlsWithoutSelectedSection = prescriptionFormTemplateCopy.controlOrder[sectionId].filter((compareControlId) => {
+            return compareControlId !== selectedControlId;
+        });
 
-    //     prescriptionFormTemplateCopy.controlOrder[sectionId] = controlsWithoutSelectedSection;
+        prescriptionFormTemplateCopy.controlOrder[sectionId] = controlsWithoutSelectedSection;
 
-    //     delete prescriptionFormTemplateCopy.controls[selectedControlId];
+        delete prescriptionFormTemplateCopy.controls[selectedControlId];
 
-    //     this.setState({
-    //         prescriptionFormTemplate: prescriptionFormTemplateCopy,
-    //         selectedControl: null,
-    //     })
-    // }
-
-    // private removeControlFromSection =(): void => {
-    //     //
-    // }
+        this.setState({
+            prescriptionFormTemplate: prescriptionFormTemplateCopy,
+            selectedControl: null,
+        })
+    }
 }
 
 export const PrescriptionBuilder = withTheme()(PrescriptionBuilderPresentation)
