@@ -1,6 +1,7 @@
 import {
     Button,
     Checkbox,
+    Divider,
     Drawer,
     FormControl,
     FormControlLabel,
@@ -189,7 +190,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                                                 {isSelectedControl ? (
                                                                     <div className={selectedControlContainerClass}>
                                                                         {this.correctControlEdit(controlId)}
-                                                                        {/* <hr className={hrClass}/> */}
+                                                                        <Divider/>
                                                                         <div className={fieldPaletteClass}>
                                                                             <Button color="secondary" onClick={this.unselectControl}>Exit Field Edit</Button>
                                                                             <Button color="secondary" onClick={this.removeControl}>Delete Field</Button>
@@ -612,6 +613,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
             optionsContainer,
             inputAndTrashContainer,
             trashIcon,
+            addOptionButtonContainer,
         } = createPrescriptionBuilderClasses(this.props, this.state);
 
         const control = this.state.prescriptionFormTemplate.controls[controlId];
@@ -650,6 +652,9 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                 )
                             })
                         }
+                        <div className={addOptionButtonContainer}>
+                            <Button onClick={this.handleAddOptionToDropdown} color="secondary">Add Option</Button>
+                        </div>
                     </div>
                 </div>
             )
@@ -797,21 +802,21 @@ export class PrescriptionBuilderPresentation extends React.Component<
         return cloneDeep(this.state.prescriptionFormTemplate);
     }
 
-    // private handleAddOptionToDropdown = () => {
-    //     const selectedControlId = this.state.selectedControl!;
+    private handleAddOptionToDropdown = () => {
+        const selectedControlId = this.state.selectedControl!;
 
-    //     const prescriptionFormTemplateCopy = this.copyPrescriptionFormTemplate();
-    //     const currentOptions = (prescriptionFormTemplateCopy.controls[selectedControlId] as IDropdownTemplateControl).options;
-    //     const optionsWithNewOption = currentOptions.concat([{
-    //         id: generateUniqueId(),
-    //         text: 'Option Text',
-    //     }]);
+        const prescriptionFormTemplateCopy = this.copyPrescriptionFormTemplate();
+        const currentOptions = (prescriptionFormTemplateCopy.controls[selectedControlId] as IDropdownTemplateControl).options;
+        const optionsWithNewOption = currentOptions.concat([{
+            id: generateUniqueId(),
+            text: 'Option Text',
+        }]);
 
-    //     (prescriptionFormTemplateCopy.controls[selectedControlId] as IDropdownTemplateControl).options = optionsWithNewOption;
-    //     this.setState({
-    //         prescriptionFormTemplate: prescriptionFormTemplateCopy,
-    //     })
-    // }
+        (prescriptionFormTemplateCopy.controls[selectedControlId] as IDropdownTemplateControl).options = optionsWithNewOption;
+        this.setState({
+            prescriptionFormTemplate: prescriptionFormTemplateCopy,
+        })
+    }
 
     // private removeSection = (): void => {
     //     const selectedSectionId = this.state.selectedSection!;

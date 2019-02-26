@@ -138,6 +138,7 @@ export const createPrescriptionBuilderClasses = (
     const optionsContainer = css({
         display: 'grid',
         gridRowGap: 8,
+        marginBottom: 16,
     });
 
     const sixteenPixelSpacing = css({
@@ -168,6 +169,7 @@ export const createPrescriptionBuilderClasses = (
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'flex-end',
+        marginTop: 8,
     });
 
     const drawerSplitSections = css({
