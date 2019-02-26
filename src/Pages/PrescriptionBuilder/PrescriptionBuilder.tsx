@@ -745,6 +745,38 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     </div>
                 </div>
             )
+        } else if (control.type === IPrescriptionControlTemplateType.Number) {
+            return (
+                <div className={threeColumns}>
+                    <div>
+                        <FormControl fullWidth={true}>
+                            <InputLabel>Label</InputLabel>
+                            <Input
+                                value={control.label}
+                                onChange={this.handleControlLabelChange}
+                            />
+                        </FormControl>
+                    </div>
+                    <div>
+                        <FormControl fullWidth={true}>
+                            <InputLabel>Prefix</InputLabel>
+                            <Input
+                                value={control.prefix}
+                                onChange={this.handlePrefixChange}
+                            />
+                        </FormControl>
+                    </div>
+                    <div>
+                        <FormControl fullWidth={true}>
+                            <InputLabel>Suffix</InputLabel>
+                            <Input
+                                value={control.suffix}
+                                onChange={this.handleSuffixChange}
+                            />
+                        </FormControl>
+                    </div>
+                </div>
+            )
         }
 
 
@@ -777,16 +809,16 @@ export class PrescriptionBuilderPresentation extends React.Component<
         });
     }
 
-    // private handlePrefixChange = (event: any) => {
-    //     const newPrefix = event.target.value;
-    //     const selectedControlId = this.state.selectedControl;
+    private handlePrefixChange = (event: any) => {
+        const newPrefix = event.target.value;
+        const selectedControlId = this.state.selectedControl;
 
-    //     const prescriptionFormTemplateCopy = cloneDeep(this.state.prescriptionFormTemplate);
-    //     (prescriptionFormTemplateCopy.controls[selectedControlId!] as INumberTemplateControl).prefix = newPrefix;
-    //     this.setState({
-    //         prescriptionFormTemplate: prescriptionFormTemplateCopy,
-    //     })
-    // }
+        const prescriptionFormTemplateCopy = cloneDeep(this.state.prescriptionFormTemplate);
+        (prescriptionFormTemplateCopy.controls[selectedControlId!] as INumberTemplateControl).prefix = newPrefix;
+        this.setState({
+            prescriptionFormTemplate: prescriptionFormTemplateCopy,
+        })
+    }
 
     private handleControlTextChange = (event: any) => {
         const newText = event.target.value;
@@ -799,16 +831,16 @@ export class PrescriptionBuilderPresentation extends React.Component<
         })
     }
 
-    // private handleSuffixChange = (event: any) => {
-    //     const newSuffix = event.target.value;
-    //     const selectedControlId = this.state.selectedControl;
+    private handleSuffixChange = (event: any) => {
+        const newSuffix = event.target.value;
+        const selectedControlId = this.state.selectedControl;
 
-    //     const prescriptionFormTemplateCopy = cloneDeep(this.state.prescriptionFormTemplate);
-    //     (prescriptionFormTemplateCopy.controls[selectedControlId!] as INumberTemplateControl).suffix = newSuffix;
-    //     this.setState({
-    //         prescriptionFormTemplate: prescriptionFormTemplateCopy,
-    //     })
-    // }
+        const prescriptionFormTemplateCopy = cloneDeep(this.state.prescriptionFormTemplate);
+        (prescriptionFormTemplateCopy.controls[selectedControlId!] as INumberTemplateControl).suffix = newSuffix;
+        this.setState({
+            prescriptionFormTemplate: prescriptionFormTemplateCopy,
+        })
+    }
 
     private selectControl = (controlId: string) => (event: any) => {
         event.stopPropagation();
