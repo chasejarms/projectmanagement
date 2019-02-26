@@ -731,6 +731,20 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     </div>
                 </div>
             )
+        } else if (control.type === IPrescriptionControlTemplateType.MultilineText) {
+            return (
+                <div className={threeColumns}>
+                    <div>
+                        <FormControl fullWidth={true}>
+                            <InputLabel>Label</InputLabel>
+                            <Input
+                                value={control.label}
+                                onChange={this.handleControlLabelChange}
+                            />
+                        </FormControl>
+                    </div>
+                </div>
+            )
         }
 
 
