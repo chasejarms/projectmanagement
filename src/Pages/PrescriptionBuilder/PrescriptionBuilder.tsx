@@ -82,6 +82,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
             selectedControlContainerClass,
             fieldPaletteClass,
             // hrClass,
+            editControlContainer,
         } = createPrescriptionBuilderClasses(this.props, this.state);
 
         const {
@@ -189,7 +190,9 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                                                 ) : undefined}
                                                                 {isSelectedControl ? (
                                                                     <div className={selectedControlContainerClass}>
-                                                                        {this.correctControlEdit(controlId)}
+                                                                        <div className={editControlContainer}>
+                                                                            {this.correctControlEdit(controlId)}
+                                                                        </div>
                                                                         <Divider/>
                                                                         <div className={fieldPaletteClass}>
                                                                             <Button color="secondary" onClick={this.unselectControl}>Exit Field Edit</Button>
@@ -658,6 +661,20 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     </div>
                 </div>
             )
+        } else if (control.type === IPrescriptionControlTemplateType.Date) {
+            return (
+                <div className={threeColumns}>
+                    <div>
+                        <FormControl fullWidth={true}>
+                            <InputLabel>Label</InputLabel>
+                            <Input
+                                value={control.label}
+                                onChange={this.handleControlLabelChange}
+                            />
+                        </FormControl>
+                    </div>
+                </div>
+            )
         }
         return <div>Editing this control: {controlId}</div>
     }
@@ -749,16 +766,16 @@ export class PrescriptionBuilderPresentation extends React.Component<
         })
     }
 
-    // private handleControlLabelChange = (event: any) => {
-    //     const newLabel = event.target.value;
-    //     const selectedControlId = this.state.selectedControl;
+    private handleControlLabelChange = (event: any) => {
+        const newLabel = event.target.value;
+        const selectedControlId = this.state.selectedControl;
 
-    //     const prescriptionFormTemplateCopy = this.copyPrescriptionFormTemplate();
-    //     (prescriptionFormTemplateCopy.controls[selectedControlId!] as IDropdownTemplateControl).label = newLabel;
-    //     this.setState({
-    //         prescriptionFormTemplate: prescriptionFormTemplateCopy,
-    //     })
-    // }
+        const prescriptionFormTemplateCopy = this.copyPrescriptionFormTemplate();
+        (prescriptionFormTemplateCopy.controls[selectedControlId!] as IDropdownTemplateControl).label = newLabel;
+        this.setState({
+            prescriptionFormTemplate: prescriptionFormTemplateCopy,
+        })
+    }
 
     private handleOptionTextChange = (optionId: string) => (event: any) => {
         const newOptionText = event.target.value;

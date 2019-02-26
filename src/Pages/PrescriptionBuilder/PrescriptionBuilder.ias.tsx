@@ -138,7 +138,6 @@ export const createPrescriptionBuilderClasses = (
     const optionsContainer = css({
         display: 'grid',
         gridRowGap: 8,
-        marginBottom: 16,
     });
 
     const sixteenPixelSpacing = css({
@@ -268,6 +267,10 @@ export const createPrescriptionBuilderClasses = (
         flexDirection: 'row',
     });
 
+    const editControlContainer = css({
+        marginBottom: 16,
+    });
+
     return {
         drawerPaper,
         prescriptionBuilderContainer,
@@ -307,5 +310,6 @@ export const createPrescriptionBuilderClasses = (
         hrClass,
         threeColumns,
         inputAndTrashContainer,
+        editControlContainer,
     };
 }
