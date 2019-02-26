@@ -466,14 +466,21 @@ export class PrescriptionBuilderPresentation extends React.Component<
                 </div>
             )
         } else if (control.type === IPrescriptionControlTemplateType.Dropdown) {
+            const value = this.state.controlValues[control.id] || '';
+
             return (
                 <div>
                     <FormControl fullWidth={true} disabled={this.state.editMode}>
-                        <InputLabel>{control.label}</InputLabel>
+                        <InputLabel htmlFor={`${control.id}`}>{control.label}</InputLabel>
                         <Select
-                            value={this.state.controlValues[control.id]}
+                            inputProps={{
+                                name: control.id,
+                                id: control.id,
+                            }}
+                            value={value}
                             onChange={this.handleControlValueChange(control.id)}
                         >
+                            <MenuItem value={''}>No Selection</MenuItem>
                             {control.options.map(({ text, id }) => {
                                 return <MenuItem key={id} value={id}>{text}</MenuItem>
                             })}
