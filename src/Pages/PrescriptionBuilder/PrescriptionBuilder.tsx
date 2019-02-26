@@ -190,8 +190,8 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                                                         {this.correctControlEdit(controlId)}
                                                                         {/* <hr className={hrClass}/> */}
                                                                         <div className={fieldPaletteClass}>
-                                                                            <Button color="secondary" onClick={this.removeControl}>Delete Field</Button>
                                                                             <Button color="secondary" onClick={this.unselectControl}>Exit Field Edit</Button>
+                                                                            <Button color="secondary" onClick={this.removeControl}>Delete Field</Button>
                                                                         </div>
                                                                     </div>
                                                                 ): (
@@ -608,6 +608,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
     private correctControlEdit = (controlId: string) => {
         const {
             threeColumns,
+            optionsContainer,
         } = createPrescriptionBuilderClasses(this.props, this.state);
 
         const control = this.state.prescriptionFormTemplate.controls[controlId];
@@ -622,8 +623,26 @@ export class PrescriptionBuilderPresentation extends React.Component<
                             onChange={this.handleControlTitleChange}
                         />
                     </div>
-                    <div/>
-                    <div/>
+                </div>
+            )
+        } else if (control.type === IPrescriptionControlTemplateType.Checkbox) {
+            return (
+                <div className={threeColumns}>
+                    <div className={optionsContainer}>
+                        {
+                            control.options.map((option, optionIndex) => {
+                                return (
+                                    <FormControl fullWidth={true} key={option.id}>
+                                        <InputLabel>Option {optionIndex + 1}</InputLabel>
+                                        <Input
+                                            value={option.text}
+                                            onChange={this.handleOptionTextChange(option.id)}
+                                        />
+                                    </FormControl>
+                                )
+                            })
+                        }
+                    </div>
                 </div>
             )
         }
@@ -728,28 +747,28 @@ export class PrescriptionBuilderPresentation extends React.Component<
     //     })
     // }
 
-    // private handleOptionTextChange = (optionId: string) => (event: any) => {
-    //     const newOptionText = event.target.value;
-    //     const selectedControlId = this.state.selectedControl!;
+    private handleOptionTextChange = (optionId: string) => (event: any) => {
+        const newOptionText = event.target.value;
+        const selectedControlId = this.state.selectedControl!;
 
-    //     const prescriptionFormTemplateCopy = this.copyPrescriptionFormTemplate();
-    //     const currentOptions = (prescriptionFormTemplateCopy.controls[selectedControlId] as IDropdownTemplateControl).options;
-    //     const updatedOptions = currentOptions.map((currentOption) => {
-    //         if (optionId === currentOption.id) {
-    //             return {
-    //                 id: currentOption.id,
-    //                 text: newOptionText,
-    //             }
-    //         } else {
-    //             return currentOption;
-    //         }
-    //     });
+        const prescriptionFormTemplateCopy = this.copyPrescriptionFormTemplate();
+        const currentOptions = (prescriptionFormTemplateCopy.controls[selectedControlId] as IDropdownTemplateControl).options;
+        const updatedOptions = currentOptions.map((currentOption) => {
+            if (optionId === currentOption.id) {
+                return {
+                    id: currentOption.id,
+                    text: newOptionText,
+                }
+            } else {
+                return currentOption;
+            }
+        });
 
-    //     (prescriptionFormTemplateCopy.controls[selectedControlId] as IDropdownTemplateControl).options = updatedOptions;
-    //     this.setState({
-    //         prescriptionFormTemplate: prescriptionFormTemplateCopy,
-    //     })
-    // }
+        (prescriptionFormTemplateCopy.controls[selectedControlId] as IDropdownTemplateControl).options = updatedOptions;
+        this.setState({
+            prescriptionFormTemplate: prescriptionFormTemplateCopy,
+        })
+    }
 
     // private deleteOption = (optionId: string) => () => {
     //     const selectedControlId = this.state.selectedControl!;
