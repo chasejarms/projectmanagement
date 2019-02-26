@@ -408,6 +408,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
     private toggleEditMode = () => {
         this.setState({
             editMode: !this.state.editMode,
+            controlValues: {},
         })
     }
 
@@ -552,19 +553,26 @@ export class PrescriptionBuilderPresentation extends React.Component<
         } else if (control.type === IPrescriptionControlTemplateType.Checkbox) {
             return (
                 <div>
-                    <FormGroup row={true}>
-                        {control.options.map(({ text, id }) => {
-                            return (
-                                <FormControlLabel
-                                    key={id}
-                                    label={text}
-                                    control={
-                                        <Checkbox checked={false} value={''} disabled={this.state.editMode}/>
-                                    }
-                                />
-                            )
-                        })}
-                    </FormGroup>
+                    <FormControl>
+                        <FormGroup row={true}>
+                            {control.options.map(({ text, id }) => {
+                                const valueForControl = this.state.controlValues[control.id];
+                                const valuesExistForControl = !!valueForControl;
+                                const checked = valuesExistForControl && !!valueForControl[id];
+
+                                return (
+                                    <FormControlLabel
+                                        key={id}
+                                        label={text}
+                                        onClick={this.handleCheckboxChange(control.id, id)}
+                                        control={
+                                            <Checkbox value={id} checked={checked} disabled={this.state.editMode}/>
+                                        }
+                                    />
+                                )
+                            })}
+                        </FormGroup>
+                    </FormControl>
                 </div>
             )
         } else if (control.type === IPrescriptionControlTemplateType.Number) {
@@ -800,6 +808,28 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
 
         return <div>Editing this control: {controlId}</div>
+    }
+
+    private handleCheckboxChange = (controlId: string, optionId: string) => (event: any) => {
+        if (this.state.editMode) {
+            return;
+        }
+
+        const controlValuesCopy = cloneDeep(this.state.controlValues);
+        const valuesExists = !!controlValuesCopy[controlId];
+
+        if (valuesExists) {
+            const currentValue = !!controlValuesCopy[controlId][optionId];
+            controlValuesCopy[controlId][optionId] = !currentValue;
+        } else {
+            controlValuesCopy[controlId] = {
+                [optionId]: true,
+            }
+        }
+
+        this.setState({
+            controlValues: controlValuesCopy,
+        })
     }
 
     private handleDeadlineChange = (controlId: string) => (newDeadline: any) => {

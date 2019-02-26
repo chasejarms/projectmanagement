@@ -187,7 +187,7 @@ export const createPrescriptionBuilderClasses = (
 
     const editModeButtonContainer = css({
         display: 'flex',
-        justifyContent: 'flex-end',
+        justifyContent: 'flex-start',
         padding: 16,
     });
 
