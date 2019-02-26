@@ -254,6 +254,11 @@ export const createPrescriptionBuilderClasses = (
         marginTop: 16,
     });
 
+    const threeColumns = css({
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr 1fr',
+    });
+
     return {
         drawerPaper,
         prescriptionBuilderContainer,
@@ -291,5 +296,6 @@ export const createPrescriptionBuilderClasses = (
         selectedControlContainerClass,
         fieldPaletteClass,
         hrClass,
+        threeColumns,
     };
 }

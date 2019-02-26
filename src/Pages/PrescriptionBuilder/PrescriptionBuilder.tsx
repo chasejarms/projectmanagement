@@ -79,7 +79,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
             noFieldsContainer,
             selectedControlContainerClass,
             fieldPaletteClass,
-            hrClass,
+            // hrClass,
         } = createPrescriptionBuilderClasses(this.props, this.state);
 
         const {
@@ -188,7 +188,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                                                 {isSelectedControl ? (
                                                                     <div className={selectedControlContainerClass}>
                                                                         {this.correctControlEdit(controlId)}
-                                                                        <hr className={hrClass}/>
+                                                                        {/* <hr className={hrClass}/> */}
                                                                         <div className={fieldPaletteClass}>
                                                                             <Button color="secondary" onClick={this.removeControl}>Delete Field</Button>
                                                                             <Button color="secondary" onClick={this.unselectControl}>Exit Field Edit</Button>
@@ -606,15 +606,25 @@ export class PrescriptionBuilderPresentation extends React.Component<
     }
 
     private correctControlEdit = (controlId: string) => {
+        const {
+            threeColumns,
+        } = createPrescriptionBuilderClasses(this.props, this.state);
+
         const control = this.state.prescriptionFormTemplate.controls[controlId];
         if (control.type === IPrescriptionControlTemplateType.Title) {
             return (
-                <TextField
-                    fullWidth={true}
-                    label='Title Text'
-                    value={control.title}
-                    onChange={this.handleControlTitleChange}
-                />
+                <div className={threeColumns}>
+                    <div>
+                        <TextField
+                            fullWidth={true}
+                            label='Title Text'
+                            value={control.title}
+                            onChange={this.handleControlTitleChange}
+                        />
+                    </div>
+                    <div/>
+                    <div/>
+                </div>
             )
         }
         return <div>Editing this control: {controlId}</div>
