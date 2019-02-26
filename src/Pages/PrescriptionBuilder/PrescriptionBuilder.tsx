@@ -594,15 +594,26 @@ export class PrescriptionBuilderPresentation extends React.Component<
                 <Typography variant="body1">{control.text}</Typography>
             )
         } else if (control.type === IPrescriptionControlTemplateType.UnitSelection) {
+            const value = this.state.controlValues[control.id] || [];
+
             return (
                 <FormControl fullWidth={true} disabled={this.state.editMode}>
                     <InputLabel>Select Units</InputLabel>
                     <Select
                         multiple={true}
                         onChange={this.handleControlValueChange(control.id)}
-                        value={this.state.controlValues[control.id] || []}
+                        value={value}
+                        native={false}
+                        // tslint:disable-next-line:jsx-no-lambda
+                        renderValue={selected => {
+                            if (selected) {
+                                return (selected as any[]).join(', ');
+                            } else {
+                                return '';
+                            }
+                        }}
                     >
-                        {this.createUnits()}
+                        {this.createUnits(control.id)}
                     </Select>
                 </FormControl>
             )
@@ -842,16 +853,19 @@ export class PrescriptionBuilderPresentation extends React.Component<
         })
     }
 
-    private createUnits = () => {
+    private createUnits = (controlId: string) => {
         const units = [];
         for (let i = 1; i <= 32; i++) {
             units.push(i);
         }
 
         return units.map((unitNumber) => {
+            const valuesExists = !!this.state.controlValues[controlId];
+            const checked = valuesExists && this.state.controlValues[controlId].indexOf(unitNumber) > -1;
+
             return (
-                <MenuItem key={unitNumber}>
-                    <Checkbox checked={false}/>
+                <MenuItem key={unitNumber} value={unitNumber}>
+                    <Checkbox checked={checked}/>
                     <ListItemText primary={unitNumber}/>
                 </MenuItem>
             )
