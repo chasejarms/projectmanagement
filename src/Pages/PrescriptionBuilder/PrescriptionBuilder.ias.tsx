@@ -188,7 +188,7 @@ export const createPrescriptionBuilderClasses = (
     const editModeButtonContainer = css({
         display: 'flex',
         justifyContent: 'flex-end',
-        marginBottom: 8,
+        padding: 16,
     });
 
     const draggableIconsContainer = css({
@@ -212,6 +212,9 @@ export const createPrescriptionBuilderClasses = (
 
     const drawerInnerContainer = css({
         backgroundColor: '#f9f9f9',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
         height: '100%',
     })
 
@@ -272,6 +275,10 @@ export const createPrescriptionBuilderClasses = (
         marginBottom: 16,
     });
 
+    const prescriptionFormInnerContainer = css({
+        position: 'relative',
+    });
+
     return {
         drawerPaper,
         prescriptionBuilderContainer,
@@ -312,5 +319,6 @@ export const createPrescriptionBuilderClasses = (
         threeColumns,
         inputAndTrashContainer,
         editControlContainer,
+        prescriptionFormInnerContainer,
     };
 }

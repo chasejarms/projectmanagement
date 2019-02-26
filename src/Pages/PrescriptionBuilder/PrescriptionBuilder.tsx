@@ -66,6 +66,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
         const {
             drawerPaper,
             prescriptionBuilderContainer,
+            prescriptionFormInnerContainer,
             prescriptionFormContainer,
             drawerReplacement,
             sectionsContainer,
@@ -83,6 +84,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
             fieldPaletteClass,
             // hrClass,
             editControlContainer,
+            editModeButtonContainer,
         } = createPrescriptionBuilderClasses(this.props, this.state);
 
         const {
@@ -107,22 +109,27 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     }}
                 >
                     <div className={drawerInnerContainer}>
-                        <div className={topDrawerContainer}>
-                            <Typography variant="title">Form Elements</Typography>
-                            <Typography variant="caption">Drag an element to the left to get started</Typography>
+                        <div>
+                            <div className={topDrawerContainer}>
+                                <Typography variant="title">Form Elements</Typography>
+                                <Typography variant="caption">Drag an element to the left to get started</Typography>
+                            </div>
+                            <div className={draggableIconsContainer}>
+                                <DraggableFormElement type={null}/>
+                                <DraggableFormElement type={IPrescriptionControlTemplateType.Checkbox}/>
+                                <DraggableFormElement type={IPrescriptionControlTemplateType.Date}/>
+                                <DraggableFormElement type={IPrescriptionControlTemplateType.NonEditableText}/>
+                                <DraggableFormElement type={IPrescriptionControlTemplateType.DoctorInformation}/>
+                                <DraggableFormElement type={IPrescriptionControlTemplateType.Dropdown}/>
+                                <DraggableFormElement type={IPrescriptionControlTemplateType.MultilineText}/>
+                                <DraggableFormElement type={IPrescriptionControlTemplateType.Number}/>
+                                <DraggableFormElement type={IPrescriptionControlTemplateType.SingleLineText}/>
+                                <DraggableFormElement type={IPrescriptionControlTemplateType.Title}/>
+                                <DraggableFormElement type={IPrescriptionControlTemplateType.UnitSelection}/>
+                            </div>
                         </div>
-                        <div className={draggableIconsContainer}>
-                            <DraggableFormElement type={null}/>
-                            <DraggableFormElement type={IPrescriptionControlTemplateType.Checkbox}/>
-                            <DraggableFormElement type={IPrescriptionControlTemplateType.Date}/>
-                            <DraggableFormElement type={IPrescriptionControlTemplateType.NonEditableText}/>
-                            <DraggableFormElement type={IPrescriptionControlTemplateType.DoctorInformation}/>
-                            <DraggableFormElement type={IPrescriptionControlTemplateType.Dropdown}/>
-                            <DraggableFormElement type={IPrescriptionControlTemplateType.MultilineText}/>
-                            <DraggableFormElement type={IPrescriptionControlTemplateType.Number}/>
-                            <DraggableFormElement type={IPrescriptionControlTemplateType.SingleLineText}/>
-                            <DraggableFormElement type={IPrescriptionControlTemplateType.Title}/>
-                            <DraggableFormElement type={IPrescriptionControlTemplateType.UnitSelection}/>
+                        <div className={editModeButtonContainer}>
+                            <Button onClick={this.toggleEditMode} color="secondary">{this.state.editMode ? 'Enter View Mode' : 'Enter Edit Mode'}</Button>
                         </div>
                     </div>
                 </Drawer>
@@ -138,10 +145,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                             />
                         </div>
                     ) : (
-                        <div>
-                            {/* <div className={editModeButtonContainer}>
-                                <Button onClick={this.toggleEditMode} color="secondary">{this.state.editMode ? 'Switch To View Mode' : 'Switch To Edit Mode'}</Button>
-                            </div> */}
+                        <div className={prescriptionFormInnerContainer}>
                             <div className={sectionsContainer}>
                             {sectionOrder.map((sectionId, sectionIndex) => {
                                 const currentSection = sections[sectionId];
@@ -401,11 +405,11 @@ export class PrescriptionBuilderPresentation extends React.Component<
         })
     }
 
-    // private toggleEditMode = () => {
-    //     this.setState({
-    //         editMode: !this.state.editMode,
-    //     })
-    // }
+    private toggleEditMode = () => {
+        this.setState({
+            editMode: !this.state.editMode,
+        })
+    }
 
     private selectSection = (sectionId: string) => () => {
         this.setState({
@@ -568,6 +572,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                 <FormControl fullWidth={true} disabled={this.state.editMode}>
                     <InputLabel htmlFor={`${control.id}-number`}>{control.label}</InputLabel>
                     <Input
+                        type="number"
                         id={`${control.id}-number`}
                         value={this.state.controlValues[control.id]}
                         onChange={this.handleControlValueChange(control.id)}
@@ -690,7 +695,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     </div>
                 </div>
             )
-        } else if (control.type === IPrescriptionControlTemplateType.DoctorInformation) {
+        } else if (control.type === IPrescriptionControlTemplateType.DoctorInformation || control.type === IPrescriptionControlTemplateType.UnitSelection) {
             return (
                 <Typography variant="body1">This field has no configurable options</Typography>
             )
@@ -859,6 +864,11 @@ export class PrescriptionBuilderPresentation extends React.Component<
     private selectControl = (controlId: string) => (event: any) => {
         event.stopPropagation();
         event.preventDefault();
+
+        if (!this.state.editMode) {
+            return;
+        }
+
         this.setState({
             selectedControl: controlId,
             selectedSection: null,
