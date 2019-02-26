@@ -16,6 +16,7 @@ import {
     Typography,
     withTheme,
 } from '@material-ui/core';
+import TrashIcon from '@material-ui/icons/Delete';
 import { cloneDeep } from 'lodash';
 import { DateFormatInput } from 'material-ui-next-pickers';
 import * as React from 'react';
@@ -609,6 +610,8 @@ export class PrescriptionBuilderPresentation extends React.Component<
         const {
             threeColumns,
             optionsContainer,
+            inputAndTrashContainer,
+            trashIcon,
         } = createPrescriptionBuilderClasses(this.props, this.state);
 
         const control = this.state.prescriptionFormTemplate.controls[controlId];
@@ -632,13 +635,18 @@ export class PrescriptionBuilderPresentation extends React.Component<
                         {
                             control.options.map((option, optionIndex) => {
                                 return (
-                                    <FormControl fullWidth={true} key={option.id}>
-                                        <InputLabel>Option {optionIndex + 1}</InputLabel>
-                                        <Input
-                                            value={option.text}
-                                            onChange={this.handleOptionTextChange(option.id)}
-                                        />
-                                    </FormControl>
+                                    <div key={option.id} className={inputAndTrashContainer}>
+                                        <FormControl fullWidth={true}>
+                                            <InputLabel>Option {optionIndex + 1}</InputLabel>
+                                            <Input
+                                                value={option.text}
+                                                onChange={this.handleOptionTextChange(option.id)}
+                                            />
+                                        </FormControl>
+                                        {control.options.length > 2 ? (
+                                            <TrashIcon onClick={this.deleteOption(option.id)} className={trashIcon}/>
+                                        ) : undefined}
+                                    </div>
                                 )
                             })
                         }
@@ -770,20 +778,20 @@ export class PrescriptionBuilderPresentation extends React.Component<
         })
     }
 
-    // private deleteOption = (optionId: string) => () => {
-    //     const selectedControlId = this.state.selectedControl!;
+    private deleteOption = (optionId: string) => () => {
+        const selectedControlId = this.state.selectedControl!;
 
-    //     const prescriptionFormTemplateCopy = this.copyPrescriptionFormTemplate();
-    //     const currentOptions = (prescriptionFormTemplateCopy.controls[selectedControlId] as IDropdownTemplateControl).options;
-    //     const optionsWithoutDeletedOption = currentOptions.filter((currentOption) => {
-    //         return currentOption.id !== optionId;
-    //     });
+        const prescriptionFormTemplateCopy = this.copyPrescriptionFormTemplate();
+        const currentOptions = (prescriptionFormTemplateCopy.controls[selectedControlId] as IDropdownTemplateControl).options;
+        const optionsWithoutDeletedOption = currentOptions.filter((currentOption) => {
+            return currentOption.id !== optionId;
+        });
 
-    //     (prescriptionFormTemplateCopy.controls[selectedControlId] as IDropdownTemplateControl).options = optionsWithoutDeletedOption;
-    //     this.setState({
-    //         prescriptionFormTemplate: prescriptionFormTemplateCopy,
-    //     })
-    // }
+        (prescriptionFormTemplateCopy.controls[selectedControlId] as IDropdownTemplateControl).options = optionsWithoutDeletedOption;
+        this.setState({
+            prescriptionFormTemplate: prescriptionFormTemplateCopy,
+        })
+    }
 
     private copyPrescriptionFormTemplate = () => {
         return cloneDeep(this.state.prescriptionFormTemplate);

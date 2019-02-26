@@ -156,10 +156,12 @@ export const createPrescriptionBuilderClasses = (
 
     const trashIcon = css({
         flex: '0 0 auto',
+        marginLeft: 8,
         position: 'relative',
         top: 19,
-        marginLeft: 8,
-        cursor: 'pointer',
+        '&:hover': {
+            cursor: 'pointer',
+        }
     })
 
     const addOptionButtonContainer = css({
@@ -259,6 +261,11 @@ export const createPrescriptionBuilderClasses = (
         gridTemplateColumns: '1fr 1fr 1fr',
     });
 
+    const inputAndTrashContainer = css({
+        display: 'flex',
+        flexDirection: 'row',
+    });
+
     return {
         drawerPaper,
         prescriptionBuilderContainer,
@@ -297,5 +304,6 @@ export const createPrescriptionBuilderClasses = (
         fieldPaletteClass,
         hrClass,
         threeColumns,
+        inputAndTrashContainer,
     };
 }
