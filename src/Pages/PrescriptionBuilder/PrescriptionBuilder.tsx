@@ -690,6 +690,47 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     </div>
                 </div>
             )
+        } else if (control.type === IPrescriptionControlTemplateType.DoctorInformation) {
+            return (
+                <Typography variant="body1">This field has no configurable options</Typography>
+            )
+        } else if (control.type === IPrescriptionControlTemplateType.Dropdown) {
+            return (
+                <div className={threeColumns}>
+                    <div>
+                        <FormControl fullWidth={true}>
+                            <InputLabel>Label</InputLabel>
+                            <Input
+                                value={control.label}
+                                onChange={this.handleControlLabelChange}
+                            />
+                        </FormControl>
+                    </div>
+                    <div className={optionsContainer}>
+                        {
+                            control.options.map((option, optionIndex) => {
+                                return (
+                                    <div key={option.id} className={inputAndTrashContainer}>
+                                        <FormControl fullWidth={true}>
+                                            <InputLabel>Option {optionIndex + 1}</InputLabel>
+                                            <Input
+                                                value={option.text}
+                                                onChange={this.handleOptionTextChange(option.id)}
+                                            />
+                                        </FormControl>
+                                        {control.options.length > 2 ? (
+                                            <TrashIcon onClick={this.deleteOption(option.id)} className={trashIcon}/>
+                                        ) : undefined}
+                                    </div>
+                                )
+                            })
+                        }
+                        <div className={addOptionButtonContainer}>
+                            <Button onClick={this.handleAddOptionToDropdown} color="secondary">Add Option</Button>
+                        </div>
+                    </div>
+                </div>
+            )
         }
 
 

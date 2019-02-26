@@ -260,6 +260,7 @@ export const createPrescriptionBuilderClasses = (
     const threeColumns = css({
         display: 'grid',
         gridTemplateColumns: '1fr 1fr 1fr',
+        gridGap: 16,
     });
 
     const inputAndTrashContainer = css({
