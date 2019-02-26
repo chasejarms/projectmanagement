@@ -675,7 +675,24 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     </div>
                 </div>
             )
+        } else if (control.type === IPrescriptionControlTemplateType.NonEditableText) {
+            return (
+                <div className={threeColumns}>
+                    <div>
+                        <FormControl fullWidth={true}>
+                            <InputLabel>Text</InputLabel>
+                            <Input
+                                multiline={true}
+                                value={control.text}
+                                onChange={this.handleControlTextChange}
+                            />
+                        </FormControl>
+                    </div>
+                </div>
+            )
         }
+
+
         return <div>Editing this control: {controlId}</div>
     }
 
@@ -716,16 +733,16 @@ export class PrescriptionBuilderPresentation extends React.Component<
     //     })
     // }
 
-    // private handleControlTextChange = (event: any) => {
-    //     const newText = event.target.value;
-    //     const selectedControlId = this.state.selectedControl;
+    private handleControlTextChange = (event: any) => {
+        const newText = event.target.value;
+        const selectedControlId = this.state.selectedControl;
 
-    //     const prescriptionFormTemplateCopy = cloneDeep(this.state.prescriptionFormTemplate);
-    //     (prescriptionFormTemplateCopy.controls[selectedControlId!] as INonEditableTextField).text = newText;
-    //     this.setState({
-    //         prescriptionFormTemplate: prescriptionFormTemplateCopy,
-    //     })
-    // }
+        const prescriptionFormTemplateCopy = cloneDeep(this.state.prescriptionFormTemplate);
+        (prescriptionFormTemplateCopy.controls[selectedControlId!] as INonEditableTextField).text = newText;
+        this.setState({
+            prescriptionFormTemplate: prescriptionFormTemplateCopy,
+        })
+    }
 
     // private handleSuffixChange = (event: any) => {
     //     const newSuffix = event.target.value;
