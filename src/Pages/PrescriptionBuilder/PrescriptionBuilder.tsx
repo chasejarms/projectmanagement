@@ -224,7 +224,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                         </div>
                                         {(currentSection.type === IPrescriptionSectionTemplateType.Duplicatable) ? (
                                             <div className={duplicateSectionButtonContainer}>
-                                                <Button color="secondary">Duplicate</Button>
+                                                <Button color="secondary" disabled={this.state.editMode}>Duplicate</Button>
                                             </div>
                                         ) : undefined}
                                         <FormElementDropZone
