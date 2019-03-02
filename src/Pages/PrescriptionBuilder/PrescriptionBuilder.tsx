@@ -189,7 +189,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                                             </div>
                                                             <Divider/>
                                                             <div className={fieldPaletteClass}>
-                                                                <Button color="secondary" onClick={this.unselectControl}>Exit Field Edit</Button>
+                                                                <Button color="secondary" onClick={this.unselectControl}>Exit</Button>
                                                                 <Button color="secondary" onClick={this.removeSection}>Delete Section</Button>
                                                             </div>
                                                         </div>
@@ -216,7 +216,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                                                         </div>
                                                                         <Divider/>
                                                                         <div className={fieldPaletteClass}>
-                                                                            <Button color="secondary" onClick={this.unselectControl}>Exit Field Edit</Button>
+                                                                            <Button color="secondary" onClick={this.unselectControl}>Exit</Button>
                                                                             <Button color="secondary" onClick={this.removeControl}>Delete Field</Button>
                                                                         </div>
                                                                     </div>
@@ -1017,7 +1017,10 @@ export class PrescriptionBuilderPresentation extends React.Component<
         })
     }
 
-    private removeSection = (): void => {
+    private removeSection = (event: any): void => {
+        event.stopPropagation();
+        event.preventDefault();
+
         const selectedSectionId = this.state.selectedSection!;
 
         const prescriptionFormTemplateCopy = this.copyPrescriptionFormTemplate();
@@ -1040,7 +1043,10 @@ export class PrescriptionBuilderPresentation extends React.Component<
         })
     }
 
-    private removeControl = (): void => {
+    private removeControl = (event: any): void => {
+        event.stopPropagation();
+        event.preventDefault();
+
         const selectedControlId = this.state.selectedControl!;
 
         const prescriptionFormTemplateCopy = this.copyPrescriptionFormTemplate();
@@ -1059,6 +1065,9 @@ export class PrescriptionBuilderPresentation extends React.Component<
             selectedControl: null,
             selectedSection: null,
         })
+
+        // tslint:disable-next-line:no-console
+        console.log(this.state);
     }
 }
 
