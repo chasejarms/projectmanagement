@@ -129,7 +129,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                             </div>
                         </div>
                         <div className={editModeButtonContainer}>
-                            <Button onClick={this.toggleEditMode} color="secondary">{this.state.editMode ? 'Enter View Mode' : 'Enter Edit Mode'}</Button>
+                            <Button onClick={this.toggleEditMode} color="secondary">{this.state.editMode ? 'View Mode' : 'Edit Mode'}</Button>
                         </div>
                     </div>
                 </Drawer>
@@ -409,6 +409,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
         this.setState({
             editMode: !this.state.editMode,
             controlValues: {},
+            selectedControl: null,
         })
     }
 
@@ -418,40 +419,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
             selectedControl: null,
         })
     }
-
-    // private indexOfSelectedSection = (): number => {
-    //     return this.state.prescriptionFormTemplate.sectionOrder.findIndex((sectionId) => {
-    //         return this.state.selectedSection === sectionId;
-    //     });
-    // }
-
-    // private handleSectionDuplicationChange = (event: any) => {
-    //     const isDuplicatable = event.target.checked;
-
-    //     const prescriptionFormTemplateCopy = cloneDeep(this.state.prescriptionFormTemplate);
-    //     const section = prescriptionFormTemplateCopy.sections[this.state.selectedSection!];
-    //     section.canDuplicate = isDuplicatable;
-
-    //     prescriptionFormTemplateCopy.sections[this.state.selectedSection!] = section;
-
-    //     this.setState({
-    //         prescriptionFormTemplate: prescriptionFormTemplateCopy,
-    //     })
-    // }
-
-    // private handleDuplicationButtonTextChange = (event: any) => {
-    //     const newText = event.target.value;
-
-    //     const prescriptionFormTemplateCopy = cloneDeep(this.state.prescriptionFormTemplate);
-    //     const section = prescriptionFormTemplateCopy.sections[this.state.selectedSection!];
-    //     section.duplicateButtonText = newText;
-
-    //     prescriptionFormTemplateCopy.sections[this.state.selectedSection!] = section;
-
-    //     this.setState({
-    //         prescriptionFormTemplate: prescriptionFormTemplateCopy,
-    //     })
-    // }
 
     private correctControlDisplay = (controlId: string) => {
         const control = this.state.prescriptionFormTemplate.controls[controlId];
