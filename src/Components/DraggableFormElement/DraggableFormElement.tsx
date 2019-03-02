@@ -14,12 +14,16 @@ import * as React from 'react';
 import { DragSource, DragSourceCollector, DragSourceConnector, DragSourceMonitor } from 'react-dnd';
 import { IDraggableTypes } from 'src/Models/draggableTypes';
 import { IPrescriptionControlTemplateType } from 'src/Models/prescription/controls/prescriptionControlTemplateType';
+import { IPrescriptionSectionTemplateType } from 'src/Models/prescription/sections/prescriptionSectionTemplateType';
 import { createDraggableFormElementClasses, IDraggableFormElementCollectorProps, IDraggableFormElementProps, IDraggableFormElementPropsFromParentComponent, IDraggableFormElementState } from './DraggableFormElement.ias';
 
 const draggableFormElementSource = {
     beginDrag(props: IDraggableFormElementPropsFromParentComponent) {
+        const type = props.controlType || props.sectionType;
+        const isSection = !!props.sectionType;
         return {
-            type: props.type,
+            type,
+            isSection,
         };
     },
 }
@@ -33,6 +37,9 @@ const collect: DragSourceCollector<IDraggableFormElementCollectorProps> = (
         isDragging: monitor.isDragging(),
     }
 }
+
+const invalidControlTypeError = 'The passed in control type was not valid.';
+const invalidSectionTypeError = 'The passed in section type was not valid.';
 
 export class DraggableFormElementPresentation extends React.Component<
     IDraggableFormElementProps,
@@ -58,56 +65,82 @@ export class DraggableFormElementPresentation extends React.Component<
     }
 
     private correctIcon= () => {
-        switch (this.props.type) {
-            case null:
-                return <SectionIcon/>;
-            case IPrescriptionControlTemplateType.Checkbox:
-                return <CheckboxIcon/>;
-            case IPrescriptionControlTemplateType.Date:
-                return <DateIcon/>;
-            case IPrescriptionControlTemplateType.DoctorInformation:
-                return <PersonIcon/>;
-            case IPrescriptionControlTemplateType.Dropdown:
-                return <DropdownIcon/>;
-            case IPrescriptionControlTemplateType.MultilineText:
-                return <NotePadIcon/>;
-            case IPrescriptionControlTemplateType.NonEditableText:
-                return <DescriptionIcon/>;
-            case IPrescriptionControlTemplateType.Number:
-                return <NumberIcon/>;
-            case IPrescriptionControlTemplateType.SingleLineText:
-                return <TextIcon/>;
-            case IPrescriptionControlTemplateType.Title:
-                return <TitleIcon/>;
-            case IPrescriptionControlTemplateType.UnitSelection:
-                return <UnitSelectionIcon/>;
+        if (this.props.controlType) {
+            switch (this.props.controlType) {
+                case IPrescriptionControlTemplateType.Checkbox:
+                    return <CheckboxIcon/>;
+                case IPrescriptionControlTemplateType.Date:
+                    return <DateIcon/>;
+                case IPrescriptionControlTemplateType.DoctorInformation:
+                    return <PersonIcon/>;
+                case IPrescriptionControlTemplateType.Dropdown:
+                    return <DropdownIcon/>;
+                case IPrescriptionControlTemplateType.MultilineText:
+                    return <NotePadIcon/>;
+                case IPrescriptionControlTemplateType.NonEditableText:
+                    return <DescriptionIcon/>;
+                case IPrescriptionControlTemplateType.Number:
+                    return <NumberIcon/>;
+                case IPrescriptionControlTemplateType.SingleLineText:
+                    return <TextIcon/>;
+                case IPrescriptionControlTemplateType.Title:
+                    return <TitleIcon/>;
+                case IPrescriptionControlTemplateType.UnitSelection:
+                    return <UnitSelectionIcon/>;
+                default:
+                    throw new Error(invalidControlTypeError);
+            }
+        } else {
+            switch (this.props.sectionType) {
+                case IPrescriptionSectionTemplateType.Regular:
+                    return <SectionIcon/>;
+                case IPrescriptionSectionTemplateType.Duplicatable:
+                    return <SectionIcon/>;
+                case IPrescriptionSectionTemplateType.Advanced:
+                    return <SectionIcon/>;
+                default:
+                    throw new Error(invalidSectionTypeError);
+            }
         }
     }
 
     private correctText = () => {
-        switch (this.props.type) {
-            case null:
-                return 'Section';
-            case IPrescriptionControlTemplateType.Checkbox:
-                return 'Checkbox';
-            case IPrescriptionControlTemplateType.Date:
-                return 'Date'
-            case IPrescriptionControlTemplateType.DoctorInformation:
-                return 'Doctor Information';
-            case IPrescriptionControlTemplateType.Dropdown:
-                return 'Dropdown';
-            case IPrescriptionControlTemplateType.MultilineText:
-                return 'Notepad';
-            case IPrescriptionControlTemplateType.NonEditableText:
-                return 'Description';
-            case IPrescriptionControlTemplateType.Number:
-                return 'Number';
-            case IPrescriptionControlTemplateType.SingleLineText:
-                return 'Text';
-            case IPrescriptionControlTemplateType.Title:
-                return 'Title';
-            case IPrescriptionControlTemplateType.UnitSelection:
-                return 'Unit Selection';
+        if (this.props.controlType) {
+            switch (this.props.controlType) {
+                case IPrescriptionControlTemplateType.Checkbox:
+                    return 'Checkbox';
+                case IPrescriptionControlTemplateType.Date:
+                    return 'Date'
+                case IPrescriptionControlTemplateType.DoctorInformation:
+                    return 'Doctor Information';
+                case IPrescriptionControlTemplateType.Dropdown:
+                    return 'Dropdown';
+                case IPrescriptionControlTemplateType.MultilineText:
+                    return 'Notepad';
+                case IPrescriptionControlTemplateType.NonEditableText:
+                    return 'Description';
+                case IPrescriptionControlTemplateType.Number:
+                    return 'Number';
+                case IPrescriptionControlTemplateType.SingleLineText:
+                    return 'Text';
+                case IPrescriptionControlTemplateType.Title:
+                    return 'Title';
+                case IPrescriptionControlTemplateType.UnitSelection:
+                    return 'Unit Selection';
+                default:
+                    throw new Error(invalidControlTypeError);
+            }
+        } else {
+            switch (this.props.sectionType) {
+                case IPrescriptionSectionTemplateType.Regular:
+                    return 'Section';
+                case IPrescriptionSectionTemplateType.Duplicatable:
+                    return 'Duplicatable Section';
+                case IPrescriptionSectionTemplateType.Advanced:
+                    return 'Advanced Section';
+                default:
+                    throw new Error(invalidSectionTypeError);
+            }
         }
     }
 }

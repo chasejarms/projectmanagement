@@ -78,7 +78,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
             // editModeButtonContainer,
             draggableIconsContainer,
             drawerInnerContainer,
-            topDrawerContainer,
+            drawerTitleContainer,
             noFieldsContainer,
             selectedControlContainerClass,
             fieldPaletteClass,
@@ -109,22 +109,28 @@ export class PrescriptionBuilderPresentation extends React.Component<
                 >
                     <div className={drawerInnerContainer}>
                         <div>
-                            <div className={topDrawerContainer}>
-                                <Typography variant="title">Form Elements</Typography>
-                                <Typography variant="caption">Drag an element to the left to get started</Typography>
+                            <div className={drawerTitleContainer}>
+                                <Typography variant="title">Sections</Typography>
                             </div>
                             <div className={draggableIconsContainer}>
-                                <DraggableFormElement type={null}/>
-                                <DraggableFormElement type={IPrescriptionControlTemplateType.Checkbox}/>
-                                <DraggableFormElement type={IPrescriptionControlTemplateType.Date}/>
-                                <DraggableFormElement type={IPrescriptionControlTemplateType.NonEditableText}/>
-                                <DraggableFormElement type={IPrescriptionControlTemplateType.DoctorInformation}/>
-                                <DraggableFormElement type={IPrescriptionControlTemplateType.Dropdown}/>
-                                <DraggableFormElement type={IPrescriptionControlTemplateType.MultilineText}/>
-                                <DraggableFormElement type={IPrescriptionControlTemplateType.Number}/>
-                                <DraggableFormElement type={IPrescriptionControlTemplateType.SingleLineText}/>
-                                <DraggableFormElement type={IPrescriptionControlTemplateType.Title}/>
-                                <DraggableFormElement type={IPrescriptionControlTemplateType.UnitSelection}/>
+                                <DraggableFormElement sectionType={IPrescriptionSectionTemplateType.Regular}/>
+                                <DraggableFormElement sectionType={IPrescriptionSectionTemplateType.Duplicatable}/>
+                                <DraggableFormElement sectionType={IPrescriptionSectionTemplateType.Advanced}/>
+                            </div>
+                            <div className={drawerTitleContainer}>
+                                <Typography variant="title">Elements</Typography>
+                            </div>
+                            <div className={draggableIconsContainer}>
+                                <DraggableFormElement controlType={IPrescriptionControlTemplateType.Checkbox}/>
+                                <DraggableFormElement controlType={IPrescriptionControlTemplateType.Date}/>
+                                <DraggableFormElement controlType={IPrescriptionControlTemplateType.NonEditableText}/>
+                                <DraggableFormElement controlType={IPrescriptionControlTemplateType.DoctorInformation}/>
+                                <DraggableFormElement controlType={IPrescriptionControlTemplateType.Dropdown}/>
+                                <DraggableFormElement controlType={IPrescriptionControlTemplateType.MultilineText}/>
+                                <DraggableFormElement controlType={IPrescriptionControlTemplateType.Number}/>
+                                <DraggableFormElement controlType={IPrescriptionControlTemplateType.SingleLineText}/>
+                                <DraggableFormElement controlType={IPrescriptionControlTemplateType.Title}/>
+                                <DraggableFormElement controlType={IPrescriptionControlTemplateType.UnitSelection}/>
                             </div>
                         </div>
                         <div className={editModeButtonContainer}>
@@ -138,7 +144,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                             <FormElementDropZone
                                 heightInPixels={100}
                                 showBorderWithNoDragInProgress={true}
-                                text={'Drag the section form element into this box to get started.'}
+                                text={'Drag a section into this box to get started.'}
                                 onDrop={this.onDropSection(0)}
                                 allowSectionOrElement={SectionOrElement.Section}
                             />
@@ -169,7 +175,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                                     <FormElementDropZone
                                                         heightInPixels={80}
                                                         showBorderWithNoDragInProgress={true}
-                                                        text={'Drag any non-section form elements into this box to add a field.'}
+                                                        text={'Drag elements into this box.'}
                                                         onDrop={this.onDropControl(sectionId, 0)}
                                                         allowSectionOrElement={SectionOrElement.Element}
                                                     />
@@ -239,11 +245,28 @@ export class PrescriptionBuilderPresentation extends React.Component<
     }
 
     private onDropSection = (insertPosition: number) => (item: any) => {
+        const sectionType = item.type;
         const id = generateUniqueId();
-        const newSection: IPrescriptionSectionTemplate = {
-            id,
-            type: IPrescriptionSectionTemplateType.Regular,
-            controlOrder: [],
+        let newSection: IPrescriptionSectionTemplate;
+
+        if (sectionType === IPrescriptionSectionTemplateType.Regular) {
+            newSection = {
+                id,
+                type: IPrescriptionSectionTemplateType.Regular,
+                controlOrder: [],
+            }
+        } else if (sectionType === IPrescriptionSectionTemplateType.Advanced) {
+            newSection = {
+                id,
+                type: IPrescriptionSectionTemplateType.Advanced,
+                controlOrder: [],
+            }
+        } else if (sectionType === IPrescriptionSectionTemplateType.Duplicatable) {
+            newSection = {
+                id,
+                type: IPrescriptionSectionTemplateType.Duplicatable,
+                controlOrder: [],
+            }
         }
 
         const prescriptionFormTemplateCopy = cloneDeep(this.state.prescriptionFormTemplate);
@@ -252,7 +275,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
         const after = prescriptionFormTemplateCopy.sectionOrder.slice(insertPosition);
         const sectionOrder = before.concat([id]).concat(after);
 
-        prescriptionFormTemplateCopy.sections[id] = newSection;
+        prescriptionFormTemplateCopy.sections[id] = newSection!;
         prescriptionFormTemplateCopy.sectionOrder = sectionOrder;
 
         this.setState({

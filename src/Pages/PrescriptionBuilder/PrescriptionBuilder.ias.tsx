@@ -222,10 +222,8 @@ export const createPrescriptionBuilderClasses = (
         color: '#9e9e9e',
     });
 
-    const topDrawerContainer = css({
+    const drawerTitleContainer = css({
         padding: 16,
-        display: 'grid',
-        gridRowGap: 16,
     });
 
     const formElementDropZoneClass = css({
@@ -310,7 +308,7 @@ export const createPrescriptionBuilderClasses = (
         draggableIconsContainer,
         drawerInnerContainer,
         darkGrey,
-        topDrawerContainer,
+        drawerTitleContainer,
         formElementDropZoneClass,
         noFieldsContainer,
         selectedControlContainerClass,

@@ -11,7 +11,7 @@ const formElementDropZoneTarget = {
         props.onDrop(item);
     },
     canDrop(props: IFormElementDropZonePropsFromParentComponent, monitor: DropTargetMonitor) {
-        const itemIsSection = monitor.getItem().type === null;
+        const itemIsSection = monitor.getItem().isSection;
         const sectionIsAllowed = props.allowSectionOrElement === SectionOrElement.Section;
         return (itemIsSection && sectionIsAllowed) || (!itemIsSection && !sectionIsAllowed);
     }
