@@ -277,6 +277,11 @@ export const createPrescriptionBuilderClasses = (
         position: 'relative',
     });
 
+    const dragIconContainerClass = css({
+        display: 'flex',
+        justifyContent: 'flex-end',
+    });
+
     return {
         drawerPaper,
         prescriptionBuilderContainer,
@@ -318,5 +323,6 @@ export const createPrescriptionBuilderClasses = (
         inputAndTrashContainer,
         editControlContainer,
         prescriptionFormInnerContainer,
+        dragIconContainerClass,
     };
 }

@@ -21,6 +21,7 @@ import TrashIcon from '@material-ui/icons/Delete';
 import { cloneDeep } from 'lodash';
 import { DateFormatInput } from 'material-ui-next-pickers';
 import * as React from 'react';
+import { DraggableExistingFormElement } from 'src/Components/DraggableExistingFormElement/DraggableExistingFormElement';
 import { DraggableFormElement } from 'src/Components/DraggableFormElement/DraggableFormElement';
 import { FormElementDropZone } from 'src/Components/FormElementDropZone/FormElementDropZone';
 import { ICheckboxTemplateControl } from 'src/Models/prescription/controls/checkboxTemplateControl';
@@ -85,6 +86,8 @@ export class PrescriptionBuilderPresentation extends React.Component<
             // hrClass,
             editControlContainer,
             editModeButtonContainer,
+            threeColumns,
+            dragIconContainerClass,
         } = createPrescriptionBuilderClasses(this.props, this.state);
 
         const {
@@ -185,7 +188,13 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                                     {this.state.selectedSection === sectionId ? (
                                                         <div className={selectedControlContainerClass}>
                                                             <div className={editControlContainer}>
-                                                                <Typography variant="body1">This section has no configurable options</Typography>
+                                                                <div className={threeColumns}>
+                                                                    <Typography variant="body1">This section has no configurable options</Typography>
+                                                                    <div/>
+                                                                    <div className={dragIconContainerClass}>
+                                                                        <DraggableExistingFormElement sectionType={IPrescriptionSectionTemplateType.Regular} id={sectionId}/>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                             <Divider/>
                                                             <div className={fieldPaletteClass}>
@@ -257,6 +266,17 @@ export class PrescriptionBuilderPresentation extends React.Component<
     }
 
     private onDropSection = (insertPosition: number) => (item: any) => {
+        // tslint:disable-next-line:no-console
+        console.log(item);
+        const isExistingSection = !!item.id;
+        if (isExistingSection) {
+            this.onDropExistingSection(item, insertPosition);
+        } else {
+            this.onDropNewSection(item, insertPosition);
+        }
+    }
+
+    private onDropNewSection = (item: any, insertPosition: number) => {
         const sectionType = item.type;
         const id = generateUniqueId();
         let newSection: IPrescriptionSectionTemplate;
@@ -289,6 +309,36 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
         prescriptionFormTemplateCopy.sections[id] = newSection!;
         prescriptionFormTemplateCopy.sectionOrder = sectionOrder;
+
+        this.setState({
+            prescriptionFormTemplate: prescriptionFormTemplateCopy,
+        })
+    }
+
+    private onDropExistingSection = (item: any, insertPosition: number) => {
+        const sectionId = item.id;
+        const prescriptionFormTemplateCopy = cloneDeep(this.state.prescriptionFormTemplate);
+
+        const currentIndexOfSection = prescriptionFormTemplateCopy.sectionOrder.findIndex((compareSectionId) => {
+            return compareSectionId === sectionId;
+        });
+
+        // Insert the id at the new location
+
+        const before = prescriptionFormTemplateCopy.sectionOrder.slice(0, insertPosition);
+        const after = prescriptionFormTemplateCopy.sectionOrder.slice(insertPosition);
+        const sectionOrderWithAddedId = before.concat([sectionId]).concat(after);
+
+        // Remove the id from the old location
+
+        const indexOfIdToRemove = insertPosition < currentIndexOfSection ? currentIndexOfSection + 1 : currentIndexOfSection;
+
+        const beforeItemToRemove = sectionOrderWithAddedId.slice(0, indexOfIdToRemove);
+        const afterItemToRemove = sectionOrderWithAddedId.slice(indexOfIdToRemove + 1);
+
+        const updatedSectionOrder = beforeItemToRemove.concat(afterItemToRemove);
+
+        prescriptionFormTemplateCopy.sectionOrder = updatedSectionOrder;
 
         this.setState({
             prescriptionFormTemplate: prescriptionFormTemplateCopy,
