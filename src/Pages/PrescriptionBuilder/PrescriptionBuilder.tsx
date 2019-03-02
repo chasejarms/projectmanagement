@@ -114,8 +114,8 @@ export class PrescriptionBuilderPresentation extends React.Component<
                             </div>
                             <div className={draggableIconsContainer}>
                                 <DraggableFormElement sectionType={IPrescriptionSectionTemplateType.Regular}/>
-                                <DraggableFormElement sectionType={IPrescriptionSectionTemplateType.Duplicatable}/>
-                                <DraggableFormElement sectionType={IPrescriptionSectionTemplateType.Advanced}/>
+                                {/* <DraggableFormElement sectionType={IPrescriptionSectionTemplateType.Duplicatable}/>
+                                <DraggableFormElement sectionType={IPrescriptionSectionTemplateType.Advanced}/> */}
                             </div>
                             <div className={drawerTitleContainer}>
                                 <Typography variant="title">Elements</Typography>
@@ -182,6 +182,18 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                                 </div>
                                             ) : (
                                                 <div className={controlsContainer}>
+                                                    {this.state.selectedSection === sectionId ? (
+                                                        <div className={selectedControlContainerClass}>
+                                                            <div className={editControlContainer}>
+                                                                <Typography variant="body1">This section has no configurable options</Typography>
+                                                            </div>
+                                                            <Divider/>
+                                                            <div className={fieldPaletteClass}>
+                                                                <Button color="secondary" onClick={this.unselectControl}>Exit Field Edit</Button>
+                                                                <Button color="secondary" onClick={this.removeSection}>Delete Section</Button>
+                                                            </div>
+                                                        </div>
+                                                    ) : undefined}
                                                     {controlOrderForSection.map((controlId, controlIndex) => {
                                                         const isSelectedControl = controlId === selectedControl;
                                                         return (
@@ -430,6 +442,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
             editMode: !this.state.editMode,
             controlValues: {},
             selectedControl: null,
+            selectedSection: null,
         })
     }
 
@@ -907,9 +920,11 @@ export class PrescriptionBuilderPresentation extends React.Component<
             return;
         }
 
+        const sectionId = this.state.prescriptionFormTemplate.controls[controlId].sectionId;
+
         this.setState({
             selectedControl: controlId,
-            selectedSection: null,
+            selectedSection: sectionId,
         })
     }
 
@@ -918,6 +933,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
         event.preventDefault();
         this.setState({
             selectedControl: null,
+            selectedSection: null,
         })
     }
 
@@ -1001,28 +1017,28 @@ export class PrescriptionBuilderPresentation extends React.Component<
         })
     }
 
-    // private removeSection = (): void => {
-    //     const selectedSectionId = this.state.selectedSection!;
+    private removeSection = (): void => {
+        const selectedSectionId = this.state.selectedSection!;
 
-    //     const prescriptionFormTemplateCopy = this.copyPrescriptionFormTemplate();
-    //     const sectionsWithoutSelectedSection = prescriptionFormTemplateCopy.sectionOrder.filter((compareSectionId) => {
-    //         return compareSectionId !== selectedSectionId;
-    //     });
+        const prescriptionFormTemplateCopy = this.copyPrescriptionFormTemplate();
+        const sectionsWithoutSelectedSection = prescriptionFormTemplateCopy.sectionOrder.filter((compareSectionId) => {
+            return compareSectionId !== selectedSectionId;
+        });
 
-    //     delete prescriptionFormTemplateCopy.sections[selectedSectionId];
-    //     prescriptionFormTemplateCopy.sectionOrder = sectionsWithoutSelectedSection;
+        const controlsToDelete = prescriptionFormTemplateCopy.sections[selectedSectionId].controlOrder;
+        controlsToDelete.forEach((controlIdToDelete) => {
+            delete prescriptionFormTemplateCopy.controls[controlIdToDelete];
+        });
 
-    //     prescriptionFormTemplateCopy.controlOrder[selectedSectionId].forEach((controlId) => {
-    //         delete prescriptionFormTemplateCopy.controls[controlId];
-    //     });
+        delete prescriptionFormTemplateCopy.sections[selectedSectionId];
+        prescriptionFormTemplateCopy.sectionOrder = sectionsWithoutSelectedSection;
 
-    //     delete prescriptionFormTemplateCopy.controlOrder[selectedSectionId];
-
-    //     this.setState({
-    //         prescriptionFormTemplate: prescriptionFormTemplateCopy,
-    //         selectedSection: null,
-    //     })
-    // }
+        this.setState({
+            prescriptionFormTemplate: prescriptionFormTemplateCopy,
+            selectedSection: null,
+            selectedControl: null,
+        })
+    }
 
     private removeControl = (): void => {
         const selectedControlId = this.state.selectedControl!;
@@ -1041,6 +1057,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
         this.setState({
             prescriptionFormTemplate: prescriptionFormTemplateCopy,
             selectedControl: null,
+            selectedSection: null,
         })
     }
 }
