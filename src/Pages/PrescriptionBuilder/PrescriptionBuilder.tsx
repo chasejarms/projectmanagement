@@ -36,7 +36,8 @@ import { IPrescriptionControlTemplateType } from 'src/Models/prescription/contro
 import { ISingleLineTextControlTemplate } from 'src/Models/prescription/controls/singleLineTextControlTemplate';
 import { ITitleTemplateControl } from 'src/Models/prescription/controls/titleTemplateControl';
 import { IUnitSelectionControlTemplate } from 'src/Models/prescription/controls/unitSelectionControlTemplate';
-import { IPrescriptionSectionTemplate } from 'src/Models/prescription/prescriptionSectionTemplate';
+import { IPrescriptionSectionTemplate } from 'src/Models/prescription/sections/prescriptionSectionTemplate';
+import { IPrescriptionSectionTemplateType } from 'src/Models/prescription/sections/prescriptionSectionTemplateType';
 import { SectionOrElement } from 'src/Models/sectionOrElement';
 import { generateUniqueId } from 'src/Utils/generateUniqueId';
 import {
@@ -52,7 +53,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
     public state: IPrescriptionBuilderState = {
         prescriptionFormTemplate: {
             sectionOrder: [],
-            controlOrder: {},
             sections: {},
             controls: {},
         },
@@ -95,7 +95,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
         const {
             sections,
             sectionOrder,
-            controlOrder,
         } = prescriptionFormTemplate;
 
         return (
@@ -149,7 +148,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                             <div className={sectionsContainer}>
                             {sectionOrder.map((sectionId, sectionIndex) => {
                                 const currentSection = sections[sectionId];
-                                const controlOrderForSection = controlOrder[sectionId];
+                                const controlOrderForSection = currentSection.controlOrder;
                                 const noControlForSection = controlOrderForSection.length === 0;
 
                                 return (
@@ -217,9 +216,9 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                                 </div>
                                             )}
                                         </div>
-                                        {currentSection.canDuplicate && currentSection.duplicateButtonText ? (
+                                        {(currentSection.type === IPrescriptionSectionTemplateType.Duplicatable) ? (
                                             <div className={duplicateSectionButtonContainer}>
-                                                <Button color="secondary">{currentSection.duplicateButtonText}</Button>
+                                                <Button color="secondary">Duplicate</Button>
                                             </div>
                                         ) : undefined}
                                         <FormElementDropZone
@@ -243,9 +242,8 @@ export class PrescriptionBuilderPresentation extends React.Component<
         const id = generateUniqueId();
         const newSection: IPrescriptionSectionTemplate = {
             id,
-            validators: [],
-            canDuplicate: false,
-            duplicateButtonText: null,
+            type: IPrescriptionSectionTemplateType.Regular,
+            controlOrder: [],
         }
 
         const prescriptionFormTemplateCopy = cloneDeep(this.state.prescriptionFormTemplate);
@@ -256,7 +254,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
         prescriptionFormTemplateCopy.sections[id] = newSection;
         prescriptionFormTemplateCopy.sectionOrder = sectionOrder;
-        prescriptionFormTemplateCopy.controlOrder[newSection.id] = [];
 
         this.setState({
             prescriptionFormTemplate: prescriptionFormTemplateCopy,
@@ -381,13 +378,13 @@ export class PrescriptionBuilderPresentation extends React.Component<
         }
 
         prescriptionFormTemplateCopy.controls[id] = control!;
-        const currentControlOrder = prescriptionFormTemplateCopy.controlOrder[sectionId];
+        const currentControlOrder = prescriptionFormTemplateCopy.sections[sectionId].controlOrder;
 
         const before = currentControlOrder.slice(0, insertPosition);
         const after = currentControlOrder.slice(insertPosition);
         const updatedControlOrder = before.concat([id]).concat(after);
 
-        prescriptionFormTemplateCopy.controlOrder[sectionId] = updatedControlOrder;
+        prescriptionFormTemplateCopy.sections[sectionId].controlOrder = updatedControlOrder;
 
         this.setState({
             prescriptionFormTemplate: prescriptionFormTemplateCopy,
@@ -1010,11 +1007,11 @@ export class PrescriptionBuilderPresentation extends React.Component<
         const prescriptionFormTemplateCopy = this.copyPrescriptionFormTemplate();
         const control = prescriptionFormTemplateCopy.controls[selectedControlId];
         const sectionId = control.sectionId;
-        const controlsWithoutSelectedSection = prescriptionFormTemplateCopy.controlOrder[sectionId].filter((compareControlId) => {
+        const controlsWithoutSelectedSection = prescriptionFormTemplateCopy.sections[sectionId].controlOrder.filter((compareControlId) => {
             return compareControlId !== selectedControlId;
         });
 
-        prescriptionFormTemplateCopy.controlOrder[sectionId] = controlsWithoutSelectedSection;
+        prescriptionFormTemplateCopy.sections[sectionId].controlOrder = controlsWithoutSelectedSection;
 
         delete prescriptionFormTemplateCopy.controls[selectedControlId];
 

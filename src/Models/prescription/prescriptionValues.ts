@@ -1,5 +1,7 @@
 export interface IPrescriptionValues {
     id: string;
     prescriptionFormTemplateId: string;
-    [controlId: string]: any;
+    controlValues: {
+        [sectionIdControlId: string]: any;
+    }
 }
