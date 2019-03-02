@@ -1,3 +1,4 @@
+import { css } from 'emotion';
 import { ConnectDragSource } from 'react-dnd';
 import { IPrescriptionControlTemplateType } from 'src/Models/prescription/controls/prescriptionControlTemplateType';
 import { IPrescriptionSectionTemplateType } from 'src/Models/prescription/sections/prescriptionSectionTemplateType';
@@ -20,5 +21,11 @@ export const createExistingDraggableFormElementClasses = (
     props: IDraggableExistingFormElementProps,
     state: IDraggableExistingFormElementState,
 ) => {
-    return {};
+    const dragIndicatorIconContainer = css({
+        height: 'min-content',
+    })
+
+    return {
+        dragIndicatorIconContainer,
+    };
 }

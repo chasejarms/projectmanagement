@@ -266,8 +266,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
     }
 
     private onDropSection = (insertPosition: number) => (item: any) => {
-        // tslint:disable-next-line:no-console
-        console.log(item);
         const isExistingSection = !!item.id;
         if (isExistingSection) {
             this.onDropExistingSection(item, insertPosition);
@@ -346,6 +344,73 @@ export class PrescriptionBuilderPresentation extends React.Component<
     }
 
     private onDropControl = (sectionId: string, insertPosition: number) => (item: any) => {
+        const isExistingControl = !!item.id;
+        if (isExistingControl) {
+            this.onDropExistingControl(sectionId, insertPosition, item);
+        } else {
+            this.onDropNewControl(sectionId, insertPosition, item);
+        }
+    }
+
+    private onDropExistingControl = (targetSectionId: string, insertPosition: number, item: any) => {
+        const controlId = item.id;
+        const prescriptionFormTemplateCopy = cloneDeep(this.state.prescriptionFormTemplate);
+        const currentSectionIdForControl = prescriptionFormTemplateCopy.controls[controlId].sectionId;
+
+        const isSameSection = prescriptionFormTemplateCopy.sections[targetSectionId].controlOrder.some((compareControlId) => {
+            return compareControlId === controlId;
+        });
+
+        const controlOrderOfCurrentSection = prescriptionFormTemplateCopy.sections[currentSectionIdForControl].controlOrder;
+
+        if (isSameSection) {
+            const currentIndexOfControl = prescriptionFormTemplateCopy.sections[targetSectionId].controlOrder.findIndex((compareControlId) => {
+                return compareControlId === controlId;
+            });
+    
+            // Insert the id at the new location
+    
+            const before = prescriptionFormTemplateCopy.sections[targetSectionId].controlOrder.slice(0, insertPosition);
+            const after = prescriptionFormTemplateCopy.sections[targetSectionId].controlOrder.slice(insertPosition);
+            const controlOrderAfterAddedId = before.concat([controlId]).concat(after);
+    
+            // Remove the id from the old location
+    
+            const indexOfIdToRemove = insertPosition < currentIndexOfControl ? currentIndexOfControl + 1 : currentIndexOfControl;
+    
+            const beforeItemToRemove = controlOrderAfterAddedId.slice(0, indexOfIdToRemove);
+            const afterItemToRemove = controlOrderAfterAddedId.slice(indexOfIdToRemove + 1);
+    
+            const updatedControlOrder = beforeItemToRemove.concat(afterItemToRemove);
+    
+            prescriptionFormTemplateCopy.sections[targetSectionId].controlOrder= updatedControlOrder;
+    
+            this.setState({
+                prescriptionFormTemplate: prescriptionFormTemplateCopy,
+            })
+        } else {
+            const updatedControlOrderForCurrentSection = controlOrderOfCurrentSection.filter((compareControlId) => {
+                return compareControlId !== controlId;
+            });
+            prescriptionFormTemplateCopy.sections[currentSectionIdForControl].controlOrder = updatedControlOrderForCurrentSection;
+
+            const controlOrderOfTargetSection = prescriptionFormTemplateCopy.sections[targetSectionId].controlOrder;
+
+            const before = controlOrderOfTargetSection.slice(0, insertPosition);
+            const after = controlOrderOfTargetSection.slice(insertPosition);
+            const updatedControlOrder = before.concat([controlId]).concat(after);
+
+            prescriptionFormTemplateCopy.sections[targetSectionId].controlOrder = updatedControlOrder;
+
+            prescriptionFormTemplateCopy.controls[controlId].sectionId = targetSectionId;
+
+            this.setState({
+                prescriptionFormTemplate: prescriptionFormTemplateCopy,
+            })
+        }
+    }
+
+    private onDropNewControl = (sectionId: string, insertPosition: number, item: any) => {
         const type = item.type;
         const id = generateUniqueId();
         const prescriptionFormTemplateCopy = cloneDeep(this.state.prescriptionFormTemplate);
@@ -698,6 +763,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
             inputAndTrashContainer,
             trashIcon,
             addOptionButtonContainer,
+            dragIconContainerClass,
         } = createPrescriptionBuilderClasses(this.props, this.state);
 
         const control = this.state.prescriptionFormTemplate.controls[controlId];
@@ -711,6 +777,10 @@ export class PrescriptionBuilderPresentation extends React.Component<
                             value={control.title}
                             onChange={this.handleControlTitleChange}
                         />
+                    </div>
+                    <div/>
+                    <div className={dragIconContainerClass}>
+                        <DraggableExistingFormElement controlType={IPrescriptionControlTemplateType.Title} id={control.id}/>
                     </div>
                 </div>
             )
@@ -740,6 +810,10 @@ export class PrescriptionBuilderPresentation extends React.Component<
                             <Button onClick={this.handleAddOptionToDropdown} color="secondary">Add Option</Button>
                         </div>
                     </div>
+                    <div/>
+                    <div className={dragIconContainerClass}>
+                        <DraggableExistingFormElement controlType={IPrescriptionControlTemplateType.Checkbox} id={control.id}/>
+                    </div>
                 </div>
             )
         } else if (control.type === IPrescriptionControlTemplateType.Date) {
@@ -753,6 +827,10 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                 onChange={this.handleControlLabelChange}
                             />
                         </FormControl>
+                    </div>
+                    <div/>
+                    <div className={dragIconContainerClass}>
+                        <DraggableExistingFormElement controlType={IPrescriptionControlTemplateType.Date} id={control.id}/>
                     </div>
                 </div>
             )
@@ -769,11 +847,23 @@ export class PrescriptionBuilderPresentation extends React.Component<
                             />
                         </FormControl>
                     </div>
+                    <div/>
+                    <div className={dragIconContainerClass}>
+                        <DraggableExistingFormElement controlType={IPrescriptionControlTemplateType.NonEditableText} id={control.id}/>
+                    </div>
                 </div>
             )
         } else if (control.type === IPrescriptionControlTemplateType.DoctorInformation || control.type === IPrescriptionControlTemplateType.UnitSelection) {
             return (
-                <Typography variant="body1">This field has no configurable options</Typography>
+                <div className={threeColumns}>
+                    <div>
+                        <Typography variant="body1">This field has no configurable options</Typography>
+                    </div>
+                    <div/>
+                    <div className={dragIconContainerClass}>
+                        <DraggableExistingFormElement controlType={IPrescriptionControlTemplateType.DoctorInformation} id={control.id}/>
+                    </div>
+                </div>
             )
         } else if (control.type === IPrescriptionControlTemplateType.Dropdown) {
             return (
@@ -810,6 +900,9 @@ export class PrescriptionBuilderPresentation extends React.Component<
                             <Button onClick={this.handleAddOptionToDropdown} color="secondary">Add Option</Button>
                         </div>
                     </div>
+                    <div className={dragIconContainerClass}>
+                        <DraggableExistingFormElement controlType={IPrescriptionControlTemplateType.Dropdown} id={control.id}/>
+                    </div>
                 </div>
             )
         } else if (control.type === IPrescriptionControlTemplateType.MultilineText) {
@@ -823,6 +916,10 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                 onChange={this.handleControlLabelChange}
                             />
                         </FormControl>
+                    </div>
+                    <div/>
+                    <div className={dragIconContainerClass}>
+                        <DraggableExistingFormElement controlType={IPrescriptionControlTemplateType.MultilineText} id={control.id}/>
                     </div>
                 </div>
             )
@@ -846,8 +943,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                 onChange={this.handlePrefixChange}
                             />
                         </FormControl>
-                    </div>
-                    <div>
                         <FormControl fullWidth={true}>
                             <InputLabel>Suffix</InputLabel>
                             <Input
@@ -855,6 +950,9 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                 onChange={this.handleSuffixChange}
                             />
                         </FormControl>
+                    </div>
+                    <div className={dragIconContainerClass}>
+                        <DraggableExistingFormElement controlType={IPrescriptionControlTemplateType.Number} id={control.id}/>
                     </div>
                 </div>
             )
@@ -869,6 +967,10 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                 onChange={this.handleControlLabelChange}
                             />
                         </FormControl>
+                    </div>
+                    <div/>
+                    <div className={dragIconContainerClass}>
+                        <DraggableExistingFormElement controlType={IPrescriptionControlTemplateType.SingleLineText} id={control.id}/>
                     </div>
                 </div>
             )
@@ -1115,9 +1217,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
             selectedControl: null,
             selectedSection: null,
         })
-
-        // tslint:disable-next-line:no-console
-        console.log(this.state);
     }
 }
 

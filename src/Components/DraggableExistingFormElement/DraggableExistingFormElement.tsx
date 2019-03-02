@@ -8,6 +8,7 @@ import {
 } from 'react-dnd';
 import { IDraggableTypes } from 'src/Models/draggableTypes';
 import {
+    createExistingDraggableFormElementClasses,
     IDraggableExistingFormElementCollectorProps,
     IDraggableExistingFormElementProps,
     IDraggableExistingFormElementPropsFromParentComponent,
@@ -42,11 +43,15 @@ export class DraggableExistingFormElementPresentation extends React.Component<
 > {
     public render() {
         const {
+            dragIndicatorIconContainer,
+        } = createExistingDraggableFormElementClasses(this.props, this.state);
+
+        const {
             connectDragSource,
         } = this.props;
 
         return connectDragSource(
-            <div>
+            <div className={dragIndicatorIconContainer}>
                 <DragIndicatorIcon/>
             </div>
         )
