@@ -367,24 +367,24 @@ export class PrescriptionBuilderPresentation extends React.Component<
             const currentIndexOfControl = prescriptionFormTemplateCopy.sections[targetSectionId].controlOrder.findIndex((compareControlId) => {
                 return compareControlId === controlId;
             });
-    
+
             // Insert the id at the new location
-    
+
             const before = prescriptionFormTemplateCopy.sections[targetSectionId].controlOrder.slice(0, insertPosition);
             const after = prescriptionFormTemplateCopy.sections[targetSectionId].controlOrder.slice(insertPosition);
             const controlOrderAfterAddedId = before.concat([controlId]).concat(after);
-    
+
             // Remove the id from the old location
-    
+
             const indexOfIdToRemove = insertPosition < currentIndexOfControl ? currentIndexOfControl + 1 : currentIndexOfControl;
-    
+
             const beforeItemToRemove = controlOrderAfterAddedId.slice(0, indexOfIdToRemove);
             const afterItemToRemove = controlOrderAfterAddedId.slice(indexOfIdToRemove + 1);
-    
+
             const updatedControlOrder = beforeItemToRemove.concat(afterItemToRemove);
-    
+
             prescriptionFormTemplateCopy.sections[targetSectionId].controlOrder= updatedControlOrder;
-    
+
             this.setState({
                 prescriptionFormTemplate: prescriptionFormTemplateCopy,
             })

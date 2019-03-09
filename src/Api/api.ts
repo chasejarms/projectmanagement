@@ -1,7 +1,5 @@
 import { AuthenticationApi } from './Authentication/authentication'
 import { IAuthenticationApi } from './Authentication/authenticationInterface';
-import { CaseNotesApi } from './CaseNotesApi/caseNotes';
-import { ICaseNotesApi } from './CaseNotesApi/caseNotesInterface';
 import { CheckpointsApi } from './Checkpoints/checkpoints';
 import { ICheckpointsApi } from './Checkpoints/checkpointsInterface';
 import { CompanySelectionApi } from './CompanySelection/companySelection';
@@ -19,7 +17,6 @@ export interface IApi {
     workflowApi: IWorkflowApi;
     projectsApi: ICaseApi;
     checkpointsApi: ICheckpointsApi;
-    caseNotesApi: ICaseNotesApi;
     companySelectionApi: ICompanySelectionApi;
 }
 
@@ -29,7 +26,6 @@ const api: IApi = {
     workflowApi: new WorkflowApi(),
     projectsApi: new ProjectsApi(),
     checkpointsApi: new CheckpointsApi(),
-    caseNotesApi: new CaseNotesApi(),
     companySelectionApi: new CompanySelectionApi(),
 }
 

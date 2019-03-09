@@ -15,14 +15,12 @@ import AddIcon from '@material-ui/icons/Add';
 import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import PrintIcon from '@material-ui/icons/Print';
 import * as firebase from 'firebase';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { ISlimCasesSearchRequest } from 'src/Api/Projects/projectsInterface';
 import { QRCodeDisplay } from 'src/Components/QRCodeDisplay/QRCodeDisplay';
-import { IQRCodeKeys } from 'src/Components/QRCodeDisplay/QRCodeDisplay.ias';
 import { ShowNewInfoFromType } from 'src/Models/showNewInfoFromTypes';
 import { ISlimCase } from 'src/Models/slimCase';
 import { UserType } from 'src/Models/userTypes';
@@ -132,18 +130,6 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                             Cases
                         </Typography>
                         <div>
-                            {userIsDoctor ? undefined : (
-                                <Tooltip title="Print New Project QR Codes" placement="left" disableFocusListener={true}>
-                                    <IconButton
-                                        disabled={this.state.retrievingQRCodes}
-                                        aria-label="Print QR Codes"
-                                        onClick={this.printQRCodes}
-                                        color="secondary"
-                                    >
-                                        <PrintIcon />
-                                    </IconButton>
-                                </Tooltip>
-                            )}
                             <Tooltip title="New Case" placement="left" disableFocusListener={true}>
                                 <IconButton
                                     aria-label="New Case"
@@ -281,45 +267,6 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
 
     private noMoreCasesAvailable = () => {
         return this.state.slimCases.length !== this.state.limit;
-    }
-
-    private printQRCodes = async() => {
-        const companyId = this.props.match.path.split('/')[2];
-
-        if (this._isMounted) {
-            this.setState({
-                retrievingQRCodes: true,
-            })
-        }
-
-        const cases = await Api.projectsApi.getNewCases(companyId);
-        // tslint:disable-next-line:no-console
-        console.log('cases: ', cases);
-        const qrCodeKeys: IQRCodeKeys[] = cases.map((project) => {
-            return {
-                caseId: project.id,
-                caseName: project.name,
-                caseDeadline: this.makeDeadlinePretty(project.deadline.toDate()),
-            }
-        })
-
-        // tslint:disable-next-line:no-console
-        console.log('qrCodeKeys: ', qrCodeKeys);
-
-        if (this._isMounted) {
-            this.setState({
-                qrCodeKeys,
-            })
-        }
-
-        setTimeout(() => {
-            if (this._isMounted) {
-                this.setState({
-                    retrievingQRCodes: false,
-                })
-            }
-            window.print();
-        }, 1000);
     }
 
     private makeDeadlinePretty = (date: Date): string => {

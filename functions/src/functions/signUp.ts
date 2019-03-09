@@ -30,11 +30,15 @@ export const signUpLocal = (passedInAdmin: admin.app.App) => functions.https.onC
             uid: firebaseAuthenticationUser.uid,
         })
 
-        const caseNotesTemplateDocumentReference = await firebase.collection('caseNotesTemplate').add({ notes: '' });
+        const prescriptionTemplateDocumentReference = await firebase.collection('prescriptionTemplates').add({
+            sectionOrder: [],
+            sections: {},
+            controls: {},
+        });
         const createCompanyWorkflowPromise = firebase.collection('companyWorkflows').add({
             companyId: companyDocumentReference.id,
             workflowCheckpoints: [],
-            caseNotesTemplate: caseNotesTemplateDocumentReference.id,
+            prescriptionTemplate: prescriptionTemplateDocumentReference.id,
         });
 
         const createCompanyUserJoinPromise = firebase.collection('companyUserJoin')

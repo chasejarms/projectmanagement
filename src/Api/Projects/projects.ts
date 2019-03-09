@@ -56,13 +56,11 @@ export class ProjectsApi implements ICaseApi {
             .get();
 
         const createdFromRequest = documentReference.data()!.created as firebase.firestore.Timestamp;
-        const deadlineFromRequest = documentReference.data()!.deadline as firebase.firestore.Timestamp;
 
 
         return {
             ...documentReference.data(),
             created: new firebase.firestore.Timestamp(createdFromRequest.seconds, createdFromRequest.nanoseconds),
-            deadline: new firebase.firestore.Timestamp(deadlineFromRequest.seconds, deadlineFromRequest.nanoseconds),
             id: caseId,
         } as ICase;
     }
@@ -108,13 +106,11 @@ export class ProjectsApi implements ICaseApi {
             .where('hasStarted', '==', false)
             .orderBy('name', 'asc')
             .get();
+
         return casesQuerySnapshot.docs.map((doc) => {
-            const currentDeadline = doc.data().deadline as firebase.firestore.Timestamp;
-            const deadlineAsTimestamp = new firebase.firestore.Timestamp(currentDeadline.seconds, currentDeadline.nanoseconds);
             return {
                 id: doc.id,
                 ...doc.data(),
-                deadline: deadlineAsTimestamp,
             } as ICase;
         });
     }
