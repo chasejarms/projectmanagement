@@ -16,6 +16,8 @@ export interface IPrescriptionBuilderState {
     };
     updatingPrescriptionTemplate: boolean;
     loadingPrescriptionTemplate: boolean;
+    snackbarIsOpen: boolean;
+    updatingPrescriptionTemplateSuccess: boolean;
 }
 
 export const createPrescriptionBuilderClasses = (

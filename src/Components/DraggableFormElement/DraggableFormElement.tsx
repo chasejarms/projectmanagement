@@ -26,6 +26,9 @@ const draggableFormElementSource = {
             isSection,
         };
     },
+    canDrag(props: IDraggableFormElementPropsFromParentComponent) {
+        return !props.disableDrag;
+    }
 }
 
 const collect: DragSourceCollector<IDraggableFormElementCollectorProps> = (
