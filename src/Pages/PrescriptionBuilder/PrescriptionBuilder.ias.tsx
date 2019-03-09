@@ -15,6 +15,7 @@ export interface IPrescriptionBuilderState {
         [controlId: string]: any,
     };
     updatingPrescriptionTemplate: boolean;
+    loadingPrescriptionTemplate: boolean;
 }
 
 export const createPrescriptionBuilderClasses = (
@@ -295,6 +296,14 @@ export const createPrescriptionBuilderClasses = (
         marginTop: bottomMarginPrescriptionTemplateContainer,
     })
 
+    const circularProgressContainer = css({
+        display: 'flex',
+        height: '100%',
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    });
+
     return {
         drawerPaper,
         prescriptionBuilderContainer,
@@ -338,5 +347,6 @@ export const createPrescriptionBuilderClasses = (
         prescriptionFormInnerContainer,
         dragIconContainerClass,
         savePrescriptionTemplateContainer,
+        circularProgressContainer,
     };
 }

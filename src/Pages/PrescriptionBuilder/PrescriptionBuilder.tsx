@@ -1,6 +1,7 @@
 import {
     Button,
     Checkbox,
+    CircularProgress,
     Divider,
     Drawer,
     FormControl,
@@ -65,6 +66,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
         editMode: true,
         controlValues: {},
         updatingPrescriptionTemplate: false,
+        loadingPrescriptionTemplate: true,
     }
 
     public async componentWillMount(): Promise<void> {
@@ -72,6 +74,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
         const prescriptionFormTemplate = await Api.prescriptionTemplateApi.getPrescriptionTemplate(companyId);
         this.setState({
             prescriptionFormTemplate,
+            loadingPrescriptionTemplate: false,
         })
     }
 
@@ -101,6 +104,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
             threeColumns,
             dragIconContainerClass,
             savePrescriptionTemplateContainer,
+            circularProgressContainer,
         } = createPrescriptionBuilderClasses(this.props, this.state);
 
         const {
@@ -154,136 +158,148 @@ export class PrescriptionBuilderPresentation extends React.Component<
                         </div>
                     </div>
                 </Drawer>
-                <Paper className={prescriptionFormContainer}>
-                    {this.state.editMode ? (
-                        <div className={savePrescriptionTemplateContainer}>
-                            <AsyncButton
-                                color="secondary"
-                                disabled={this.state.updatingPrescriptionTemplate}
-                                asyncActionInProgress={this.state.updatingPrescriptionTemplate}
-                                onClick={this.updatePrescriptionTemplate}>
-                                Save Prescription Template
-                            </AsyncButton>
-                        </div>
-                    ) : undefined}
-                    {sectionOrder.length === 0 ? (
-                        <div>
-                            <FormElementDropZone
-                                heightInPixels={100}
-                                showBorderWithNoDragInProgress={true}
-                                text={'Drag a section into this box to get started.'}
-                                onDrop={this.onDropSection(0)}
-                                allowSectionOrElement={SectionOrElement.Section}
+                {this.state.loadingPrescriptionTemplate ? (
+                    <Paper className={prescriptionFormContainer}>
+                        <div className={circularProgressContainer}>
+                            <CircularProgress
+                                color="primary"
+                                size={64}
+                                thickness={3}
                             />
                         </div>
-                    ) : (
-                        <div className={prescriptionFormInnerContainer}>
-                            <div className={sectionsContainer}>
-                            {sectionOrder.map((sectionId, sectionIndex) => {
-                                const currentSection = sections[sectionId];
-                                const controlOrderForSection = currentSection.controlOrder;
-                                const noControlForSection = controlOrderForSection.length === 0;
+                    </Paper>
+                ) : (
+                    <Paper className={prescriptionFormContainer}>
+                        {this.state.editMode ? (
+                            <div className={savePrescriptionTemplateContainer}>
+                                <AsyncButton
+                                    color="secondary"
+                                    disabled={this.state.updatingPrescriptionTemplate}
+                                    asyncActionInProgress={this.state.updatingPrescriptionTemplate}
+                                    onClick={this.updatePrescriptionTemplate}>
+                                    Save Prescription Template
+                                </AsyncButton>
+                            </div>
+                        ) : undefined}
+                        {sectionOrder.length === 0 ? (
+                            <div>
+                                <FormElementDropZone
+                                    heightInPixels={100}
+                                    showBorderWithNoDragInProgress={true}
+                                    text={'Drag a section into this box to get started.'}
+                                    onDrop={this.onDropSection(0)}
+                                    allowSectionOrElement={SectionOrElement.Section}
+                                />
+                            </div>
+                        ) : (
+                            <div className={prescriptionFormInnerContainer}>
+                                <div className={sectionsContainer}>
+                                {sectionOrder.map((sectionId, sectionIndex) => {
+                                    const currentSection = sections[sectionId];
+                                    const controlOrderForSection = currentSection.controlOrder;
+                                    const noControlForSection = controlOrderForSection.length === 0;
 
-                                return (
-                                    <div key={sectionId}>
-                                        {sectionIndex === 0 ? (
-                                            <FormElementDropZone
-                                                heightInPixels={32}
-                                                onDrop={this.onDropSection(sectionIndex)}
-                                                allowSectionOrElement={SectionOrElement.Section}
-                                            />
-                                        ) : undefined}
-                                        <div
-                                            className={`${sectionContainer} ${noControlForSection ? noControlForSectionClass : ''}`}
-                                            onClick={this.selectSection(sectionId)}
-                                        >
-                                            {noControlForSection ? (
-                                                <div className={noFieldsContainer}>
-                                                    <FormElementDropZone
-                                                        heightInPixels={80}
-                                                        showBorderWithNoDragInProgress={true}
-                                                        text={'Drag elements into this box.'}
-                                                        onDrop={this.onDropControl(sectionId, 0)}
-                                                        allowSectionOrElement={SectionOrElement.Element}
-                                                    />
-                                                </div>
-                                            ) : (
-                                                <div className={controlsContainer}>
-                                                    {this.state.selectedSection === sectionId ? (
-                                                        <div className={selectedControlContainerClass}>
-                                                            <div className={editControlContainer}>
-                                                                <div className={threeColumns}>
-                                                                    <Typography variant="body1">This section has no configurable options</Typography>
-                                                                    <div/>
-                                                                    <div className={dragIconContainerClass}>
-                                                                        <DraggableExistingFormElement sectionType={IPrescriptionSectionTemplateType.Regular} id={sectionId}/>
+                                    return (
+                                        <div key={sectionId}>
+                                            {sectionIndex === 0 ? (
+                                                <FormElementDropZone
+                                                    heightInPixels={32}
+                                                    onDrop={this.onDropSection(sectionIndex)}
+                                                    allowSectionOrElement={SectionOrElement.Section}
+                                                />
+                                            ) : undefined}
+                                            <div
+                                                className={`${sectionContainer} ${noControlForSection ? noControlForSectionClass : ''}`}
+                                                onClick={this.selectSection(sectionId)}
+                                            >
+                                                {noControlForSection ? (
+                                                    <div className={noFieldsContainer}>
+                                                        <FormElementDropZone
+                                                            heightInPixels={80}
+                                                            showBorderWithNoDragInProgress={true}
+                                                            text={'Drag elements into this box.'}
+                                                            onDrop={this.onDropControl(sectionId, 0)}
+                                                            allowSectionOrElement={SectionOrElement.Element}
+                                                        />
+                                                    </div>
+                                                ) : (
+                                                    <div className={controlsContainer}>
+                                                        {this.state.selectedSection === sectionId ? (
+                                                            <div className={selectedControlContainerClass}>
+                                                                <div className={editControlContainer}>
+                                                                    <div className={threeColumns}>
+                                                                        <Typography variant="body1">This section has no configurable options</Typography>
+                                                                        <div/>
+                                                                        <div className={dragIconContainerClass}>
+                                                                            <DraggableExistingFormElement sectionType={IPrescriptionSectionTemplateType.Regular} id={sectionId}/>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
+                                                                <Divider/>
+                                                                <div className={fieldPaletteClass}>
+                                                                    <Button color="secondary" onClick={this.unselectControl}>Exit</Button>
+                                                                    <Button color="secondary" onClick={this.removeSection}>Delete Section</Button>
+                                                                </div>
                                                             </div>
-                                                            <Divider/>
-                                                            <div className={fieldPaletteClass}>
-                                                                <Button color="secondary" onClick={this.unselectControl}>Exit</Button>
-                                                                <Button color="secondary" onClick={this.removeSection}>Delete Section</Button>
-                                                            </div>
-                                                        </div>
-                                                    ) : undefined}
-                                                    {controlOrderForSection.map((controlId, controlIndex) => {
-                                                        const isSelectedControl = controlId === selectedControl;
-                                                        return (
-                                                            <div
-                                                                key={controlId}
-                                                                className={controlContainer}
-                                                                onClick={this.selectControl(controlId)}
-                                                            >
-                                                                {controlIndex === 0 ? (
+                                                        ) : undefined}
+                                                        {controlOrderForSection.map((controlId, controlIndex) => {
+                                                            const isSelectedControl = controlId === selectedControl;
+                                                            return (
+                                                                <div
+                                                                    key={controlId}
+                                                                    className={controlContainer}
+                                                                    onClick={this.selectControl(controlId)}
+                                                                >
+                                                                    {controlIndex === 0 ? (
+                                                                        <FormElementDropZone
+                                                                            heightInPixels={16}
+                                                                            onDrop={this.onDropControl(sectionId, controlIndex)}
+                                                                            allowSectionOrElement={SectionOrElement.Element}
+                                                                        />
+                                                                    ) : undefined}
+                                                                    {isSelectedControl ? (
+                                                                        <div className={selectedControlContainerClass}>
+                                                                            <div className={editControlContainer}>
+                                                                                {this.correctControlEdit(controlId)}
+                                                                            </div>
+                                                                            <Divider/>
+                                                                            <div className={fieldPaletteClass}>
+                                                                                <Button color="secondary" onClick={this.unselectControl}>Exit</Button>
+                                                                                <Button color="secondary" onClick={this.removeControl}>Delete Field</Button>
+                                                                            </div>
+                                                                        </div>
+                                                                    ): (
+                                                                        this.correctControlDisplay(controlId)
+                                                                    )}
                                                                     <FormElementDropZone
                                                                         heightInPixels={16}
-                                                                        onDrop={this.onDropControl(sectionId, controlIndex)}
+                                                                        onDrop={this.onDropControl(sectionId, controlIndex + 1)}
                                                                         allowSectionOrElement={SectionOrElement.Element}
                                                                     />
-                                                                ) : undefined}
-                                                                {isSelectedControl ? (
-                                                                    <div className={selectedControlContainerClass}>
-                                                                        <div className={editControlContainer}>
-                                                                            {this.correctControlEdit(controlId)}
-                                                                        </div>
-                                                                        <Divider/>
-                                                                        <div className={fieldPaletteClass}>
-                                                                            <Button color="secondary" onClick={this.unselectControl}>Exit</Button>
-                                                                            <Button color="secondary" onClick={this.removeControl}>Delete Field</Button>
-                                                                        </div>
-                                                                    </div>
-                                                                ): (
-                                                                    this.correctControlDisplay(controlId)
-                                                                )}
-                                                                <FormElementDropZone
-                                                                    heightInPixels={16}
-                                                                    onDrop={this.onDropControl(sectionId, controlIndex + 1)}
-                                                                    allowSectionOrElement={SectionOrElement.Element}
-                                                                />
-                                                            </div>
-                                                        )
-                                                    })}
-                                                </div>
-                                            )}
-                                        </div>
-                                        {(currentSection.type === IPrescriptionSectionTemplateType.Duplicatable) ? (
-                                            <div className={duplicateSectionButtonContainer}>
-                                                <Button color="secondary" disabled={this.state.editMode}>Duplicate</Button>
+                                                                </div>
+                                                            )
+                                                        })}
+                                                    </div>
+                                                )}
                                             </div>
-                                        ) : undefined}
-                                        <FormElementDropZone
-                                            heightInPixels={32}
-                                            onDrop={this.onDropSection(sectionIndex + 1)}
-                                            allowSectionOrElement={SectionOrElement.Section}
-                                        />
-                                    </div>
-                                )
-                            })}
-                        </div>
-                        </div>
-                    )}
-                </Paper>
+                                            {(currentSection.type === IPrescriptionSectionTemplateType.Duplicatable) ? (
+                                                <div className={duplicateSectionButtonContainer}>
+                                                    <Button color="secondary" disabled={this.state.editMode}>Duplicate</Button>
+                                                </div>
+                                            ) : undefined}
+                                            <FormElementDropZone
+                                                heightInPixels={32}
+                                                onDrop={this.onDropSection(sectionIndex + 1)}
+                                                allowSectionOrElement={SectionOrElement.Section}
+                                            />
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                            </div>
+                        )}
+                    </Paper>
+                )}
                 <div className={drawerReplacement}/>
             </div>
         )
