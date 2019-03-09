@@ -4,6 +4,8 @@ import { CheckpointsApi } from './Checkpoints/checkpoints';
 import { ICheckpointsApi } from './Checkpoints/checkpointsInterface';
 import { CompanySelectionApi } from './CompanySelection/companySelection';
 import { ICompanySelectionApi } from './CompanySelection/companySelectionInterface';
+import { PrescriptionTemplateApi } from './PrescriptionTemplate/prescriptionTemplate';
+import { IPrescriptionTemplateApi } from './PrescriptionTemplate/prescriptionTemplateInterface';
 import { ProjectsApi } from './Projects/projects';
 import { ICaseApi } from './Projects/projectsInterface';
 import { UsersApi } from './Users/users';
@@ -18,6 +20,7 @@ export interface IApi {
     projectsApi: ICaseApi;
     checkpointsApi: ICheckpointsApi;
     companySelectionApi: ICompanySelectionApi;
+    prescriptionTemplateApi: IPrescriptionTemplateApi;
 }
 
 const api: IApi = {
@@ -27,6 +30,7 @@ const api: IApi = {
     projectsApi: new ProjectsApi(),
     checkpointsApi: new CheckpointsApi(),
     companySelectionApi: new CompanySelectionApi(),
+    prescriptionTemplateApi: new PrescriptionTemplateApi(),
 }
 
 export default api;

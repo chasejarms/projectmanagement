@@ -33,11 +33,15 @@ exports.signUpLocal = (passedInAdmin) => functions.https.onCall((data, context) 
             mustResetPassword: false,
             uid: firebaseAuthenticationUser.uid,
         });
-        const caseNotesTemplateDocumentReference = yield firebase.collection('caseNotesTemplate').add({ notes: '' });
+        const prescriptionTemplateDocumentReference = yield firebase.collection('prescriptionTemplates').add({
+            sectionOrder: [],
+            sections: {},
+            controls: {},
+        });
         const createCompanyWorkflowPromise = firebase.collection('companyWorkflows').add({
             companyId: companyDocumentReference.id,
             workflowCheckpoints: [],
-            caseNotesTemplate: caseNotesTemplateDocumentReference.id,
+            prescriptionTemplate: prescriptionTemplateDocumentReference.id,
         });
         const createCompanyUserJoinPromise = firebase.collection('companyUserJoin')
             .doc(`${companyDocumentReference.id}_${firebaseAuthenticationUser.uid}`)

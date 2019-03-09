@@ -1,9 +1,10 @@
 import { WithTheme } from '@material-ui/core';
 import { css } from 'emotion';
+import { RouteComponentProps } from 'react-router';
 import { IPrescriptionFormTemplate } from 'src/Models/prescription/prescriptionFormTemplate';
 
 // tslint:disable-next-line:no-empty-interface
-export interface IPrescriptionBuilderProps extends WithTheme {}
+export interface IPrescriptionBuilderProps extends WithTheme, RouteComponentProps<{}> {}
 // tslint:disable-next-line:no-empty-interface
 export interface IPrescriptionBuilderState {
     prescriptionFormTemplate: IPrescriptionFormTemplate;
@@ -12,7 +13,8 @@ export interface IPrescriptionBuilderState {
     editMode: boolean;
     controlValues: {
         [controlId: string]: any,
-    }
+    };
+    updatingPrescriptionTemplate: boolean;
 }
 
 export const createPrescriptionBuilderClasses = (
@@ -282,6 +284,17 @@ export const createPrescriptionBuilderClasses = (
         justifyContent: 'flex-end',
     });
 
+    const topMarginPrescriptionTemplateContainer = state.prescriptionFormTemplate.sectionOrder.length > 0 ? 0 : 32;
+    const bottomMarginPrescriptionTemplateContainer = state.prescriptionFormTemplate.sectionOrder.length === 0 ? 0 : 32;
+
+
+    const savePrescriptionTemplateContainer = css({
+        display: 'flex',
+        justifyContent: 'flex-end',
+        marginBottom: topMarginPrescriptionTemplateContainer,
+        marginTop: bottomMarginPrescriptionTemplateContainer,
+    })
+
     return {
         drawerPaper,
         prescriptionBuilderContainer,
@@ -324,5 +337,6 @@ export const createPrescriptionBuilderClasses = (
         editControlContainer,
         prescriptionFormInnerContainer,
         dragIconContainerClass,
+        savePrescriptionTemplateContainer,
     };
 }

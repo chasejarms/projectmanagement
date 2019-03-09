@@ -21,6 +21,8 @@ import TrashIcon from '@material-ui/icons/Delete';
 import { cloneDeep } from 'lodash';
 import { DateFormatInput } from 'material-ui-next-pickers';
 import * as React from 'react';
+import { withRouter } from 'react-router';
+import { AsyncButton } from 'src/Components/AsyncButton/AsyncButton';
 import { DraggableExistingFormElement } from 'src/Components/DraggableExistingFormElement/DraggableExistingFormElement';
 import { DraggableFormElement } from 'src/Components/DraggableFormElement/DraggableFormElement';
 import { FormElementDropZone } from 'src/Components/FormElementDropZone/FormElementDropZone';
@@ -41,6 +43,7 @@ import { IPrescriptionSectionTemplate } from 'src/Models/prescription/sections/p
 import { IPrescriptionSectionTemplateType } from 'src/Models/prescription/sections/prescriptionSectionTemplateType';
 import { SectionOrElement } from 'src/Models/sectionOrElement';
 import { generateUniqueId } from 'src/Utils/generateUniqueId';
+import Api from '../../Api/api';
 import {
     createPrescriptionBuilderClasses,
     IPrescriptionBuilderProps,
@@ -61,6 +64,15 @@ export class PrescriptionBuilderPresentation extends React.Component<
         selectedControl: null,
         editMode: true,
         controlValues: {},
+        updatingPrescriptionTemplate: false,
+    }
+
+    public async componentWillMount(): Promise<void> {
+        const companyId = this.props.match.path.split('/')[2];
+        const prescriptionFormTemplate = await Api.prescriptionTemplateApi.getPrescriptionTemplate(companyId);
+        this.setState({
+            prescriptionFormTemplate,
+        })
     }
 
     public render() {
@@ -88,6 +100,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
             editModeButtonContainer,
             threeColumns,
             dragIconContainerClass,
+            savePrescriptionTemplateContainer,
         } = createPrescriptionBuilderClasses(this.props, this.state);
 
         const {
@@ -137,11 +150,22 @@ export class PrescriptionBuilderPresentation extends React.Component<
                             </div>
                         </div>
                         <div className={editModeButtonContainer}>
-                            <Button onClick={this.toggleEditMode} color="secondary">{this.state.editMode ? 'View Mode' : 'Edit Mode'}</Button>
+                            <Button onClick={this.toggleEditMode} color="secondary">{this.state.editMode ? 'Switch To View Mode' : 'Switch To Edit Mode'}</Button>
                         </div>
                     </div>
                 </Drawer>
                 <Paper className={prescriptionFormContainer}>
+                    {this.state.editMode ? (
+                        <div className={savePrescriptionTemplateContainer}>
+                            <AsyncButton
+                                color="secondary"
+                                disabled={this.state.updatingPrescriptionTemplate}
+                                asyncActionInProgress={this.state.updatingPrescriptionTemplate}
+                                onClick={this.updatePrescriptionTemplate}>
+                                Save Prescription Template
+                            </AsyncButton>
+                        </div>
+                    ) : undefined}
                     {sectionOrder.length === 0 ? (
                         <div>
                             <FormElementDropZone
@@ -1218,6 +1242,21 @@ export class PrescriptionBuilderPresentation extends React.Component<
             selectedSection: null,
         })
     }
+
+    private updatePrescriptionTemplate = async (): Promise<void> => {
+        const prescriptionTemplate = this.state.prescriptionFormTemplate;
+        this.setState({
+            updatingPrescriptionTemplate: true,
+        })
+
+        const companyId = this.props.match.path.split('/')[2];
+        await Api.prescriptionTemplateApi.updatePrescriptionTemplate(companyId, prescriptionTemplate);
+
+        this.setState({
+            updatingPrescriptionTemplate: false,
+        })
+    }
 }
 
-export const PrescriptionBuilder = withTheme()(PrescriptionBuilderPresentation)
+const componentWithTheme = withTheme()(PrescriptionBuilderPresentation)
+export const PrescriptionBuilder = withRouter(componentWithTheme);
