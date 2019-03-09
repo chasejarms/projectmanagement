@@ -3,7 +3,6 @@ import {
     Checkbox,
     CircularProgress,
     Divider,
-    Drawer,
     FormControl,
     FormControlLabel,
     FormGroup,
@@ -26,8 +25,8 @@ import * as React from 'react';
 import { withRouter } from 'react-router';
 import { AsyncButton } from 'src/Components/AsyncButton/AsyncButton';
 import { DraggableExistingFormElement } from 'src/Components/DraggableExistingFormElement/DraggableExistingFormElement';
-import { DraggableFormElement } from 'src/Components/DraggableFormElement/DraggableFormElement';
 import { FormElementDropZone } from 'src/Components/FormElementDropZone/FormElementDropZone';
+import { PrescriptionBuilderDrawer } from 'src/Components/PrescriptionBuilderDrawer/PrescriptionBuilderDrawer';
 import { ICheckboxTemplateControl } from 'src/Models/prescription/controls/checkboxTemplateControl';
 import { IDateTemplateControl } from 'src/Models/prescription/controls/dateControlTemplate';
 import { IDoctorInformationTemplateControl } from 'src/Models/prescription/controls/doctorInformationTemplateControl';
@@ -71,7 +70,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
         snackbarIsOpen: false,
         updatingPrescriptionTemplateSuccess: false,
     }
-    
 
     public async componentWillMount(): Promise<void> {
         const companyId = this.props.match.path.split('/')[2];
@@ -84,7 +82,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
     public render() {
         const {
-            drawerPaper,
             prescriptionBuilderContainer,
             prescriptionFormInnerContainer,
             prescriptionFormContainer,
@@ -96,15 +93,11 @@ export class PrescriptionBuilderPresentation extends React.Component<
             controlContainer,
             controlsContainer,
             // editModeButtonContainer,
-            draggableIconsContainer,
-            drawerInnerContainer,
-            drawerTitleContainer,
             noFieldsContainer,
             selectedControlContainerClass,
             fieldPaletteClass,
             // hrClass,
             editControlContainer,
-            editModeButtonContainer,
             threeColumns,
             dragIconContainerClass,
             savePrescriptionTemplateContainer,
@@ -121,10 +114,9 @@ export class PrescriptionBuilderPresentation extends React.Component<
             sectionOrder,
         } = prescriptionFormTemplate;
 
-        const shouldDisableDrag = this.state.loadingPrescriptionTemplate || this.state.updatingPrescriptionTemplate || !this.state.editMode;
-
         return (
             <div className={prescriptionBuilderContainer}>
+                <PrescriptionBuilderDrawer/>
                 <Snackbar
                     open={this.state.snackbarIsOpen}
                     anchorOrigin={{
@@ -145,50 +137,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     }
                     onClose={this.handleSnackbarClose}
                 />
-                <Drawer
-                    open={true}
-                    variant="persistent"
-                    anchor="right"
-                    classes={{
-                        paper: drawerPaper,
-                    }}
-                >
-                    <div className={drawerInnerContainer}>
-                        <div>
-                            <div className={drawerTitleContainer}>
-                                <Typography variant="title">Sections</Typography>
-                            </div>
-                            <div className={draggableIconsContainer}>
-                                <DraggableFormElement sectionType={IPrescriptionSectionTemplateType.Regular} disableDrag={shouldDisableDrag}/>
-                                {/* <DraggableFormElement sectionType={IPrescriptionSectionTemplateType.Duplicatable}/>
-                                <DraggableFormElement sectionType={IPrescriptionSectionTemplateType.Advanced}/> */}
-                            </div>
-                            <div className={drawerTitleContainer}>
-                                <Typography variant="title">Elements</Typography>
-                            </div>
-                            <div className={draggableIconsContainer}>
-                                <DraggableFormElement controlType={IPrescriptionControlTemplateType.Checkbox} disableDrag={shouldDisableDrag}/>
-                                <DraggableFormElement controlType={IPrescriptionControlTemplateType.Date} disableDrag={shouldDisableDrag}/>
-                                <DraggableFormElement controlType={IPrescriptionControlTemplateType.NonEditableText} disableDrag={shouldDisableDrag}/>
-                                <DraggableFormElement controlType={IPrescriptionControlTemplateType.DoctorInformation} disableDrag={shouldDisableDrag}/>
-                                <DraggableFormElement controlType={IPrescriptionControlTemplateType.Dropdown} disableDrag={shouldDisableDrag}/>
-                                <DraggableFormElement controlType={IPrescriptionControlTemplateType.MultilineText} disableDrag={shouldDisableDrag}/>
-                                <DraggableFormElement controlType={IPrescriptionControlTemplateType.Number} disableDrag={shouldDisableDrag}/>
-                                <DraggableFormElement controlType={IPrescriptionControlTemplateType.SingleLineText} disableDrag={shouldDisableDrag}/>
-                                <DraggableFormElement controlType={IPrescriptionControlTemplateType.Title} disableDrag={shouldDisableDrag}/>
-                                <DraggableFormElement controlType={IPrescriptionControlTemplateType.UnitSelection} disableDrag={shouldDisableDrag}/>
-                            </div>
-                        </div>
-                        <div className={editModeButtonContainer}>
-                            <Button
-                                disabled={this.state.loadingPrescriptionTemplate || this.state.updatingPrescriptionTemplate}
-                                onClick={this.toggleEditMode}
-                                color="secondary">
-                                {this.state.editMode ? 'Switch To View Mode' : 'Switch To Edit Mode'}
-                            </Button>
-                        </div>
-                    </div>
-                </Drawer>
+
                 {this.state.loadingPrescriptionTemplate ? (
                     <Paper className={prescriptionFormContainer}>
                         <div className={circularProgressContainer}>
@@ -623,14 +572,14 @@ export class PrescriptionBuilderPresentation extends React.Component<
         })
     }
 
-    private toggleEditMode = () => {
-        this.setState({
-            editMode: !this.state.editMode,
-            controlValues: {},
-            selectedControl: null,
-            selectedSection: null,
-        })
-    }
+    // private toggleEditMode = () => {
+    //     this.setState({
+    //         editMode: !this.state.editMode,
+    //         controlValues: {},
+    //         selectedControl: null,
+    //         selectedSection: null,
+    //     })
+    // }
 
     private selectSection = (sectionId: string) => () => {
         this.setState({

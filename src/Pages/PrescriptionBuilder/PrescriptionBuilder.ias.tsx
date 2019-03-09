@@ -25,11 +25,6 @@ export const createPrescriptionBuilderClasses = (
     state: IPrescriptionBuilderState,
 ) => {
     const paddingFromSectionCount = state.prescriptionFormTemplate.sectionOrder.length > 0 ? 0 : 32;
-    const drawerWidth = 320;
-
-    const drawerPaper = css({
-        width: drawerWidth,
-    });
 
     const prescriptionBuilderContainer = css({
         width: '100%',
@@ -190,45 +185,8 @@ export const createPrescriptionBuilderClasses = (
         gridColumnGap: 16,
     });
 
-    const editModeButtonContainer = css({
-        display: 'flex',
-        justifyContent: 'flex-start',
-        padding: 16,
-    });
-
-    const draggableIconsContainer = css({
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr 1fr',
-        gridGap: 16,
-        padding: 16,
-        '&::before': {
-            content: '""',
-            width: 0,
-            paddingBottom: '100%',
-            gridRow: '1/1',
-            gridColumn: '1/1',
-        },
-        '& *:first-child': {
-            gridRow: '1/1',
-            gridColumn: '1/1',
-        },
-        gridAutoRows: '1fr',
-    });
-
-    const drawerInnerContainer = css({
-        backgroundColor: '#f9f9f9',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        height: '100%',
-    })
-
     const darkGrey = css({
         color: '#9e9e9e',
-    });
-
-    const drawerTitleContainer = css({
-        padding: 16,
     });
 
     const formElementDropZoneClass = css({
@@ -307,7 +265,6 @@ export const createPrescriptionBuilderClasses = (
     });
 
     return {
-        drawerPaper,
         prescriptionBuilderContainer,
         prescriptionFormContainer,
         drawerReplacement,
@@ -333,11 +290,7 @@ export const createPrescriptionBuilderClasses = (
         addOptionButtonContainer,
         drawerSplitSections,
         cityStateZipContainer,
-        editModeButtonContainer,
-        draggableIconsContainer,
-        drawerInnerContainer,
         darkGrey,
-        drawerTitleContainer,
         formElementDropZoneClass,
         noFieldsContainer,
         selectedControlContainerClass,
