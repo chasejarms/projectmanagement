@@ -114,9 +114,11 @@ export class PrescriptionBuilderPresentation extends React.Component<
             sectionOrder,
         } = prescriptionFormTemplate;
 
+        const disableEdits = this.state.loadingPrescriptionTemplate || this.state.updatingPrescriptionTemplate;
+
         return (
             <div className={prescriptionBuilderContainer}>
-                <PrescriptionBuilderDrawer/>
+                <PrescriptionBuilderDrawer disableEdits={disableEdits}/>
                 <Snackbar
                     open={this.state.snackbarIsOpen}
                     anchorOrigin={{

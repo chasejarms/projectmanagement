@@ -1,7 +1,9 @@
 import { css } from "emotion";
 
 // tslint:disable-next-line:no-empty-interface
-export interface IPrescriptionBuilderDrawerProps {}
+export interface IPrescriptionBuilderDrawerProps {
+    disableEdits: boolean;
+}
 // tslint:disable-next-line:no-empty-interface
 export interface IPrescriptionBuilderDrawerState {}
 

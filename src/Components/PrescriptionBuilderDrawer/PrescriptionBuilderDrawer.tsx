@@ -23,7 +23,7 @@ export class PrescriptionBuilderDrawer extends React.Component<
         } = createPrescriptionBuilderDrawerClasses(this.props, this.state);
 
         // const shouldDisableDrag = this.state.loadingPrescriptionTemplate || this.state.updatingPrescriptionTemplate || !this.state.editMode;
-        const shouldDisableDrag = false;
+        const shouldDisable = this.props.disableEdits;
 
         return (
             <Drawer
@@ -40,7 +40,7 @@ export class PrescriptionBuilderDrawer extends React.Component<
                             <Typography variant="title">Sections</Typography>
                         </div>
                         <div className={draggableIconsContainer}>
-                            <DraggableFormElement sectionType={IPrescriptionSectionTemplateType.Regular} disableDrag={shouldDisableDrag}/>
+                            <DraggableFormElement sectionType={IPrescriptionSectionTemplateType.Regular} disableDrag={shouldDisable}/>
                             {/* <DraggableFormElement sectionType={IPrescriptionSectionTemplateType.Duplicatable}/>
                             <DraggableFormElement sectionType={IPrescriptionSectionTemplateType.Advanced}/> */}
                         </div>
@@ -48,21 +48,21 @@ export class PrescriptionBuilderDrawer extends React.Component<
                             <Typography variant="title">Elements</Typography>
                         </div>
                         <div className={draggableIconsContainer}>
-                            <DraggableFormElement controlType={IPrescriptionControlTemplateType.Checkbox} disableDrag={shouldDisableDrag}/>
-                            <DraggableFormElement controlType={IPrescriptionControlTemplateType.Date} disableDrag={shouldDisableDrag}/>
-                            <DraggableFormElement controlType={IPrescriptionControlTemplateType.NonEditableText} disableDrag={shouldDisableDrag}/>
-                            <DraggableFormElement controlType={IPrescriptionControlTemplateType.DoctorInformation} disableDrag={shouldDisableDrag}/>
-                            <DraggableFormElement controlType={IPrescriptionControlTemplateType.Dropdown} disableDrag={shouldDisableDrag}/>
-                            <DraggableFormElement controlType={IPrescriptionControlTemplateType.MultilineText} disableDrag={shouldDisableDrag}/>
-                            <DraggableFormElement controlType={IPrescriptionControlTemplateType.Number} disableDrag={shouldDisableDrag}/>
-                            <DraggableFormElement controlType={IPrescriptionControlTemplateType.SingleLineText} disableDrag={shouldDisableDrag}/>
-                            <DraggableFormElement controlType={IPrescriptionControlTemplateType.Title} disableDrag={shouldDisableDrag}/>
-                            <DraggableFormElement controlType={IPrescriptionControlTemplateType.UnitSelection} disableDrag={shouldDisableDrag}/>
+                            <DraggableFormElement controlType={IPrescriptionControlTemplateType.Checkbox} disableDrag={shouldDisable}/>
+                            <DraggableFormElement controlType={IPrescriptionControlTemplateType.Date} disableDrag={shouldDisable}/>
+                            <DraggableFormElement controlType={IPrescriptionControlTemplateType.NonEditableText} disableDrag={shouldDisable}/>
+                            <DraggableFormElement controlType={IPrescriptionControlTemplateType.DoctorInformation} disableDrag={shouldDisable}/>
+                            <DraggableFormElement controlType={IPrescriptionControlTemplateType.Dropdown} disableDrag={shouldDisable}/>
+                            <DraggableFormElement controlType={IPrescriptionControlTemplateType.MultilineText} disableDrag={shouldDisable}/>
+                            <DraggableFormElement controlType={IPrescriptionControlTemplateType.Number} disableDrag={shouldDisable}/>
+                            <DraggableFormElement controlType={IPrescriptionControlTemplateType.SingleLineText} disableDrag={shouldDisable}/>
+                            <DraggableFormElement controlType={IPrescriptionControlTemplateType.Title} disableDrag={shouldDisable}/>
+                            <DraggableFormElement controlType={IPrescriptionControlTemplateType.UnitSelection} disableDrag={shouldDisable}/>
                         </div>
                     </div>
                     <div className={editModeButtonContainer}>
                         <Button
-                            // disabled={this.state.loadingPrescriptionTemplate || this.state.updatingPrescriptionTemplate}
+                            disabled={shouldDisable}
                             // onClick={this.toggleEditMode}
                             color="secondary">
                             {true/*this.state.editMode*/ ? 'Switch To View Mode' : 'Switch To Edit Mode'}
