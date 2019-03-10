@@ -1,8 +1,12 @@
 import { css } from "emotion";
+import { RouteComponentProps } from "react-router";
+import { IPrescriptionBuilderSliceOfState } from "src/Redux/Reducers/prescriptionBuilderReducer";
 
 // tslint:disable-next-line:no-empty-interface
-export interface IPrescriptionBuilderDrawerProps {
+export interface IPrescriptionBuilderDrawerProps extends RouteComponentProps<{}> {
     disableEdits: boolean;
+    toggleEditMode: (companyId: string, isCurrentlyEditMode: boolean) => void;
+    prescriptionBuilderState: IPrescriptionBuilderSliceOfState;
 }
 // tslint:disable-next-line:no-empty-interface
 export interface IPrescriptionBuilderDrawerState {}

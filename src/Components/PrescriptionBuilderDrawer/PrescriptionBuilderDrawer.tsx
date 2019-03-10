@@ -4,12 +4,16 @@ import {
     Typography,
 } from '@material-ui/core';
 import * as React from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
 import { IPrescriptionControlTemplateType } from 'src/Models/prescription/controls/prescriptionControlTemplateType';
 import { IPrescriptionSectionTemplateType } from 'src/Models/prescription/sections/prescriptionSectionTemplateType';
+import { setEditMode, setViewMode } from 'src/Redux/ActionCreators/prescriptionBuilderCreators';
+import { IAppState } from 'src/Redux/Reducers/rootReducer';
 import { DraggableFormElement } from '../DraggableFormElement/DraggableFormElement';
 import { createPrescriptionBuilderDrawerClasses, IPrescriptionBuilderDrawerProps, IPrescriptionBuilderDrawerState } from './PrescriptionBuilderDrawer.ias';
 
-export class PrescriptionBuilderDrawer extends React.Component<
+class PrescriptionBuilderDrawerPresentation extends React.Component<
     IPrescriptionBuilderDrawerProps,
     IPrescriptionBuilderDrawerState
 > {
@@ -73,3 +77,23 @@ export class PrescriptionBuilderDrawer extends React.Component<
         )
     }
 }
+
+const mapStateToProps = ({ prescriptionBuilderState }: IAppState) => ({
+    prescriptionBuilderState,
+});
+
+const mapDispatchToProps = (dispatch: React.Dispatch<any>) => ({
+    toggleEditMode: (companyId: string, isCurrentlyEditMode: boolean) => {
+        if (isCurrentlyEditMode) {
+            const setViewModeAction = setViewMode(companyId);
+            dispatch(setViewModeAction);
+        } else {
+            const setEditModeAction = setEditMode(companyId);
+            dispatch(setEditModeAction);
+        }
+    }
+});
+
+
+const connectedComponent = connect(mapStateToProps, mapDispatchToProps)(PrescriptionBuilderDrawerPresentation);
+export const PrescriptionBuilderDrawer = withRouter(connectedComponent);
