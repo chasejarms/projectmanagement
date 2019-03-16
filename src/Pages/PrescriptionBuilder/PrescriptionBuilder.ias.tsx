@@ -12,7 +12,6 @@ export interface IPrescriptionBuilderProps extends WithTheme, RouteComponentProp
 
 // tslint:disable-next-line:no-empty-interface
 export interface IPrescriptionBuilderState {
-    prescriptionFormTemplate: IPrescriptionFormTemplate;
     selectedSection: string | null;
     selectedControl: string | null;
     controlValues: {
@@ -28,7 +27,7 @@ export const createPrescriptionBuilderClasses = (
     props: IPrescriptionBuilderProps,
     state: IPrescriptionBuilderState,
 ) => {
-    const paddingFromSectionCount = state.prescriptionFormTemplate.sectionOrder.length > 0 ? 0 : 32;
+    const paddingFromSectionCount = props.prescriptionBuilderState.prescriptionFormTemplate.sectionOrder.length > 0 ? 0 : 32;
 
     const prescriptionBuilderContainer = css({
         width: '100%',
@@ -249,8 +248,8 @@ export const createPrescriptionBuilderClasses = (
         justifyContent: 'flex-end',
     });
 
-    const topMarginPrescriptionTemplateContainer = state.prescriptionFormTemplate.sectionOrder.length > 0 ? 0 : 32;
-    const bottomMarginPrescriptionTemplateContainer = state.prescriptionFormTemplate.sectionOrder.length === 0 ? 0 : 32;
+    const topMarginPrescriptionTemplateContainer = props.prescriptionBuilderState.prescriptionFormTemplate.sectionOrder.length > 0 ? 0 : 32;
+    const bottomMarginPrescriptionTemplateContainer = props.prescriptionBuilderState.prescriptionFormTemplate.sectionOrder.length === 0 ? 0 : 32;
 
 
     const savePrescriptionTemplateContainer = css({

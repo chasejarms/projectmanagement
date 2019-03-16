@@ -4,7 +4,7 @@ import { SET_EDIT_MODE, SET_PRESCRIPTION_FORM_TEMPLATE, SET_VIEW_MODE } from "..
 
 export interface IPrescriptionBuilderSliceOfState {
     editMode: boolean;
-    prescriptionFormTemplate?: IPrescriptionFormTemplate;
+    prescriptionFormTemplate: IPrescriptionFormTemplate;
 }
 
 const initialState = {
