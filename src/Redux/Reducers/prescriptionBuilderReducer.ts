@@ -22,11 +22,15 @@ import {
     IOnDropExistingSectionPrescriptionFormTemplateAction,
     IOnDropNewControlPrescriptionFormTemplateAction,
     IPrescriptionBuilderActions,
+    IRemoveControlPrescriptionFormTemplateAction,
+    IRemoveSectionPrescriptionFormTemplateAction,
     ISetPrescriptionFormTemplateAction,
 } from "../ActionCreators/prescriptionBuilderCreators";
 import {
     ON_DROP_EXISTING_SECTION_PRESCRIPTION_FORM_TEMPLATE,
     ON_DROP_NEW_SECTION_PRESCRIPTION_FORM_TEMPLATE,
+    REMOVE_CONTROL_PRESCRIPTION_FORM_TEMPLATE,
+    REMOVE_SECTION_PRESCRIPTION_FORM_TEMPLATE,
     SET_EDIT_MODE,
     SET_PRESCRIPTION_FORM_TEMPLATE,
     SET_VIEW_MODE,
@@ -86,6 +90,16 @@ export const prescriptionBuilderReducer = (state: IPrescriptionBuilderSliceOfSta
             return prescriptionFormTemplateFormExistingControl(
                 state,
                 action as IOnDropExistingControlPrescriptionFormTemplateAction,
+            );
+        case REMOVE_CONTROL_PRESCRIPTION_FORM_TEMPLATE:
+            return prescriptionFormTemplateAfterRemovingControl(
+                state,
+                action as IRemoveControlPrescriptionFormTemplateAction,
+            );
+        case REMOVE_SECTION_PRESCRIPTION_FORM_TEMPLATE:
+            return prescriptionFormTemplateAfterRemovingSection(
+                state,
+                action as IRemoveSectionPrescriptionFormTemplateAction,
             );
         default:
             return state;
@@ -311,7 +325,7 @@ const prescriptionFormTemplateFromNewControl = (state: IPrescriptionBuilderSlice
     }
 }
 
-const prescriptionFormTemplateFormExistingControl = (state: IPrescriptionBuilderSliceOfState, action: IOnDropExistingControlPrescriptionFormTemplateAction) => {
+const prescriptionFormTemplateFormExistingControl = (state: IPrescriptionBuilderSliceOfState, action: IOnDropExistingControlPrescriptionFormTemplateAction): IPrescriptionBuilderSliceOfState => {
     const {
         item,
         targetSectionId,
@@ -375,4 +389,46 @@ const prescriptionFormTemplateFormExistingControl = (state: IPrescriptionBuilder
             prescriptionFormTemplate: prescriptionFormTemplateCopy,
         }
     }
+}
+
+const prescriptionFormTemplateAfterRemovingControl = (state: IPrescriptionBuilderSliceOfState, action: IRemoveControlPrescriptionFormTemplateAction): IPrescriptionBuilderSliceOfState => {
+    const prescriptionFormTemplateCopy = cloneDeep(state.prescriptionFormTemplate)
+    const control = prescriptionFormTemplateCopy.controls[action.controlId];
+    const sectionId = control.sectionId;
+    const controlsWithoutSelectedSection = prescriptionFormTemplateCopy.sections[sectionId].controlOrder.filter((compareControlId) => {
+        return compareControlId !== action.controlId;
+    });
+
+    prescriptionFormTemplateCopy.sections[sectionId].controlOrder = controlsWithoutSelectedSection;
+
+    delete prescriptionFormTemplateCopy.controls[action.controlId];
+
+    return {
+        ...state,
+        prescriptionFormTemplate: prescriptionFormTemplateCopy,
+    }
+
+    // may need to set the selected section and control to null
+}
+
+const prescriptionFormTemplateAfterRemovingSection = (state: IPrescriptionBuilderSliceOfState, action: IRemoveSectionPrescriptionFormTemplateAction): IPrescriptionBuilderSliceOfState => {
+    const prescriptionFormTemplateCopy = cloneDeep(state.prescriptionFormTemplate);
+    const sectionsWithoutSelectedSection = prescriptionFormTemplateCopy.sectionOrder.filter((compareSectionId) => {
+        return compareSectionId !== action.sectionId;
+    });
+
+    const controlsToDelete = prescriptionFormTemplateCopy.sections[action.sectionId].controlOrder;
+    controlsToDelete.forEach((controlIdToDelete) => {
+        delete prescriptionFormTemplateCopy.controls[controlIdToDelete];
+    });
+
+    delete prescriptionFormTemplateCopy.sections[action.sectionId];
+    prescriptionFormTemplateCopy.sectionOrder = sectionsWithoutSelectedSection;
+
+    return {
+        ...state,
+        prescriptionFormTemplate: prescriptionFormTemplateCopy,
+    }
+
+    // may need to set the selected section and control to null
 }

@@ -5,6 +5,8 @@ import {
     ON_DROP_EXISTING_SECTION_PRESCRIPTION_FORM_TEMPLATE,
     ON_DROP_NEW_CONTROL_PRESCRIPTION_FORM_TEMPLATE,
     ON_DROP_NEW_SECTION_PRESCRIPTION_FORM_TEMPLATE,
+    REMOVE_CONTROL_PRESCRIPTION_FORM_TEMPLATE,
+    REMOVE_SECTION_PRESCRIPTION_FORM_TEMPLATE,
     SET_EDIT_MODE,
     SET_PRESCRIPTION_FORM_TEMPLATE,
     SET_VIEW_MODE,
@@ -40,13 +42,23 @@ export interface IOnDropExistingControlPrescriptionFormTemplateAction extends Ac
     item: any;
 }
 
+export interface IRemoveControlPrescriptionFormTemplateAction extends Action<typeof REMOVE_CONTROL_PRESCRIPTION_FORM_TEMPLATE> {
+    controlId: string;
+}
+
+export interface IRemoveSectionPrescriptionFormTemplateAction extends Action<typeof REMOVE_SECTION_PRESCRIPTION_FORM_TEMPLATE> {
+    sectionId: string;
+}
+
 export type IPrescriptionBuilderActions = ISetEditModeAction |
     ISetViewModeAction |
     ISetPrescriptionFormTemplateAction |
     IAddNewSectionPrescriptionFormTemplateAction |
     IOnDropExistingSectionPrescriptionFormTemplateAction |
     IOnDropNewControlPrescriptionFormTemplateAction |
-    IOnDropExistingControlPrescriptionFormTemplateAction;
+    IOnDropExistingControlPrescriptionFormTemplateAction |
+    IRemoveControlPrescriptionFormTemplateAction |
+    IRemoveSectionPrescriptionFormTemplateAction;
 
 export const setEditMode = (): ISetEditModeAction => {
     return {
@@ -106,11 +118,29 @@ export const onDropExistingControlPrescriptionFormTemplate = (
     targetSectionId: string,
     insertPosition: number,
     item: any,
-) => {
+): IOnDropExistingControlPrescriptionFormTemplateAction => {
     return {
         type: ON_DROP_EXISTING_CONTROL_PRESCRIPTION_FORM_TEMPLATE,
         targetSectionId,
         insertPosition,
         item,
+    }
+}
+
+export const removeControlPrescriptionFormTemplate = (
+    controlId: string,
+): IRemoveControlPrescriptionFormTemplateAction => {
+    return {
+        type: REMOVE_CONTROL_PRESCRIPTION_FORM_TEMPLATE,
+        controlId,
+    }
+}
+
+export const removeSectionPrescriptionFormTemplate = (
+    sectionId: string,
+): IRemoveSectionPrescriptionFormTemplateAction => {
+    return {
+        type: REMOVE_SECTION_PRESCRIPTION_FORM_TEMPLATE,
+        sectionId,
     }
 }

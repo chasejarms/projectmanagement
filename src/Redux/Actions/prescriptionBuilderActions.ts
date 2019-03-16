@@ -7,3 +7,5 @@ export const ON_DROP_NEW_SECTION_PRESCRIPTION_FORM_TEMPLATE = `${actionKey} on d
 export const ON_DROP_EXISTING_SECTION_PRESCRIPTION_FORM_TEMPLATE = `${actionKey} on drop existing section`;
 export const ON_DROP_NEW_CONTROL_PRESCRIPTION_FORM_TEMPLATE = `${actionKey} on drop new control`;
 export const ON_DROP_EXISTING_CONTROL_PRESCRIPTION_FORM_TEMPLATE = `${actionKey} on drop existing control`;
+export const REMOVE_CONTROL_PRESCRIPTION_FORM_TEMPLATE = `${actionKey} remove control`;
+export const REMOVE_SECTION_PRESCRIPTION_FORM_TEMPLATE = `${actionKey} remove section`;

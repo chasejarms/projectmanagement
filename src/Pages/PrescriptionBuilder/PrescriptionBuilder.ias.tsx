@@ -12,6 +12,8 @@ export interface IPrescriptionBuilderProps extends WithTheme, RouteComponentProp
     onDropExistingSection: (item: any, insertPosition: number) => void;
     onDropNewControl: (sectionId: string, item: any, insertPosition: number) => void;
     onDropExistingControl: (targetSectionId: string, insertPosition: number, item: any) => void;
+    removeControl: (controlId: string) => void;
+    removeSection: (sectionId: string) => void;
 }
 
 // tslint:disable-next-line:no-empty-interface

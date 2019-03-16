@@ -41,6 +41,8 @@ import {
     onDropExistingControlPrescriptionFormTemplate,
     onDropExistingSectionPrescriptionFormTemplate,
     onDropNewControlPrescriptionFormTemplate,
+    removeControlPrescriptionFormTemplate,
+    removeSectionPrescriptionFormTemplate,
     setPrescriptionFormTemplate,
 } from 'src/Redux/ActionCreators/prescriptionBuilderCreators';
 import { IAppState } from 'src/Redux/Reducers/rootReducer';
@@ -92,11 +94,9 @@ export class PrescriptionBuilderPresentation extends React.Component<
             duplicateSectionButtonContainer,
             controlContainer,
             controlsContainer,
-            // editModeButtonContainer,
             noFieldsContainer,
             selectedControlContainerClass,
             fieldPaletteClass,
-            // hrClass,
             editControlContainer,
             threeColumns,
             dragIconContainerClass,
@@ -915,52 +915,14 @@ export class PrescriptionBuilderPresentation extends React.Component<
         event.stopPropagation();
         event.preventDefault();
 
-        const selectedSectionId = this.state.selectedSection!;
-
-        const prescriptionFormTemplateCopy = this.copyPrescriptionFormTemplate();
-        const sectionsWithoutSelectedSection = prescriptionFormTemplateCopy.sectionOrder.filter((compareSectionId) => {
-            return compareSectionId !== selectedSectionId;
-        });
-
-        const controlsToDelete = prescriptionFormTemplateCopy.sections[selectedSectionId].controlOrder;
-        controlsToDelete.forEach((controlIdToDelete) => {
-            delete prescriptionFormTemplateCopy.controls[controlIdToDelete];
-        });
-
-        delete prescriptionFormTemplateCopy.sections[selectedSectionId];
-        prescriptionFormTemplateCopy.sectionOrder = sectionsWithoutSelectedSection;
-
-        this.props.setPrescriptionFormTemplate(prescriptionFormTemplateCopy);
-
-        this.setState({
-            selectedSection: null,
-            selectedControl: null,
-        })
+        this.props.removeSection(this.state.selectedSection!);
     }
 
     private removeControl = (event: any): void => {
         event.stopPropagation();
         event.preventDefault();
 
-        const selectedControlId = this.state.selectedControl!;
-
-        const prescriptionFormTemplateCopy = this.copyPrescriptionFormTemplate();
-        const control = prescriptionFormTemplateCopy.controls[selectedControlId];
-        const sectionId = control.sectionId;
-        const controlsWithoutSelectedSection = prescriptionFormTemplateCopy.sections[sectionId].controlOrder.filter((compareControlId) => {
-            return compareControlId !== selectedControlId;
-        });
-
-        prescriptionFormTemplateCopy.sections[sectionId].controlOrder = controlsWithoutSelectedSection;
-
-        delete prescriptionFormTemplateCopy.controls[selectedControlId];
-
-        this.props.setPrescriptionFormTemplate(prescriptionFormTemplateCopy);
-
-        this.setState({
-            selectedControl: null,
-            selectedSection: null,
-        })
+        this.props.removeControl(this.state.selectedControl!);
     }
 
     private updatePrescriptionTemplate = async (): Promise<void> => {
@@ -1018,6 +980,14 @@ const mapDispatchToProps = (dispatch: React.Dispatch<any>) => ({
             item,
         );
         dispatch(onDropExistingControlAction);
+    },
+    removeControl: (controlId: string) => {
+        const removeControlAction = removeControlPrescriptionFormTemplate(controlId);
+        dispatch(removeControlAction);
+    },
+    removeSection: (sectionId: string) => {
+        const removeSectionAction = removeSectionPrescriptionFormTemplate(sectionId);
+        dispatch(removeSectionAction);
     }
 })
 
