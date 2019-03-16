@@ -1,57 +1,27 @@
-import { cloneDeep } from 'lodash';
-import { IPrescriptionBuilderActions, ISetEditModeAction, ISetViewModeAction } from "../ActionCreators/prescriptionBuilderCreators";
+import { IPrescriptionFormTemplate } from 'src/Models/prescription/prescriptionFormTemplate';
+import { IPrescriptionBuilderActions } from "../ActionCreators/prescriptionBuilderCreators";
 import { SET_EDIT_MODE, SET_VIEW_MODE } from "../Actions/prescriptionBuilderActions";
 
 export interface IPrescriptionBuilderSliceOfState {
-    [companyId: string]: {
-        editMode: boolean;
-    }
+    editMode: boolean;
+    prescriptionFormTemplate?: IPrescriptionFormTemplate;
 }
 
-const initialState = {}
+const initialState = {
+    editMode: true,
+}
 
 export const prescriptionBuilderReducer = (state: IPrescriptionBuilderSliceOfState = initialState, action: IPrescriptionBuilderActions) => {
-    const currentCompanyState = cloneDeep(state[action.companyId]);
     switch (action.type) {
         case SET_VIEW_MODE:
-            const setViewModeAction = action as ISetViewModeAction;
-            if (!currentCompanyState) {
-                return {
-                    ...state,
-                    [setViewModeAction.companyId]: {
-                        editMode: false,
-                    }
-                }
-            } else {
-                const updatedCompanyState = {
-                    ...currentCompanyState,
-                    editMode: false,
-                }
-
-                return {
-                    ...state,
-                    [setViewModeAction.companyId]: updatedCompanyState,
-                }
+            return {
+                ...state,
+                editMode: false,
             }
         case SET_EDIT_MODE:
-            const setEditModeAction = action as ISetEditModeAction;
-            if (!currentCompanyState) {
-                return {
-                    ...state,
-                    [setEditModeAction.companyId]: {
-                        editMode: true,
-                    }
-                }
-            } else {
-                const updatedCompanyState = {
-                    ...currentCompanyState,
-                    editMode: true,
-                }
-
-                return {
-                    ...state,
-                    [setEditModeAction.companyId]: updatedCompanyState,
-                }
+            return {
+                ...state,
+                editMode: true,
             }
         default:
             return state;

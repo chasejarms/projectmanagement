@@ -44,7 +44,6 @@ import { IUnitSelectionControlTemplate } from 'src/Models/prescription/controls/
 import { IPrescriptionSectionTemplate } from 'src/Models/prescription/sections/prescriptionSectionTemplate';
 import { IPrescriptionSectionTemplateType } from 'src/Models/prescription/sections/prescriptionSectionTemplateType';
 import { SectionOrElement } from 'src/Models/sectionOrElement';
-import { setEditMode } from 'src/Redux/ActionCreators/prescriptionBuilderCreators';
 import { IAppState } from 'src/Redux/Reducers/rootReducer';
 import { generateUniqueId } from 'src/Utils/generateUniqueId';
 import Api from '../../Api/api';
@@ -75,7 +74,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
     public async componentWillMount(): Promise<void> {
         const companyId = this.props.match.path.split('/')[2];
-        this.props.setEditMode(companyId);
         const prescriptionFormTemplate = await Api.prescriptionTemplateApi.getPrescriptionTemplate(companyId);
         this.setState({
             prescriptionFormTemplate,
@@ -84,13 +82,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
     }
 
     public render() {
-        const companyId = this.props.match.path.split('/')[2];
-        const prescriptionBuilderState = this.props.prescriptionBuilderState[companyId];
-        if (!prescriptionBuilderState) {
-            return <div/>
-        }
-
-        const { editMode } = this.props.prescriptionBuilderState[companyId];
+        const { editMode } = this.props.prescriptionBuilderState;
 
         const {
             prescriptionBuilderContainer,
@@ -585,15 +577,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
         })
     }
 
-    // private toggleEditMode = () => {
-    //     this.setState({
-    //         editMode: !editMode,
-    //         controlValues: {},
-    //         selectedControl: null,
-    //         selectedSection: null,
-    //     })
-    // }
-
     private selectSection = (sectionId: string) => () => {
         this.setState({
             selectedSection: sectionId,
@@ -602,8 +585,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
     }
 
     private correctControlDisplay = (controlId: string) => {
-        const companyId = this.props.match.path.split('/')[2];
-        const { editMode } = this.props.prescriptionBuilderState[companyId];
+        const { editMode } = this.props.prescriptionBuilderState;
         const control = this.state.prescriptionFormTemplate.controls[controlId];
         const {
             cityStateZipContainer,
@@ -1016,8 +998,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
     }
 
     private handleCheckboxChange = (controlId: string, optionId: string) => (event: any) => {
-        const companyId = this.props.match.path.split('/')[2];
-        const { editMode } = this.props.prescriptionBuilderState[companyId];
+        const { editMode } = this.props.prescriptionBuilderState;
         if (editMode) {
             return;
         }
@@ -1102,8 +1083,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
     }
 
     private selectControl = (controlId: string) => (event: any) => {
-        const companyId = this.props.match.path.split('/')[2];
-        const { editMode } = this.props.prescriptionBuilderState[companyId];
+        const { editMode } = this.props.prescriptionBuilderState;
 
         event.stopPropagation();
         event.preventDefault();
@@ -1286,13 +1266,6 @@ const mapStateToProps = ({ prescriptionBuilderState }: IAppState) => ({
     prescriptionBuilderState,
 });
 
-const mapDispatchToProps = (dispatch: React.Dispatch<any>) => ({
-    setEditMode: (companyId: string) => {
-        const setEditModeAction = setEditMode(companyId);
-        dispatch(setEditModeAction);
-    },
-})
-
-const connectedComponent = connect(mapStateToProps, mapDispatchToProps)(PrescriptionBuilderPresentation);
+const connectedComponent = connect(mapStateToProps)(PrescriptionBuilderPresentation);
 const componentWithTheme = withTheme()(connectedComponent);
 export const PrescriptionBuilder = withRouter(componentWithTheme);

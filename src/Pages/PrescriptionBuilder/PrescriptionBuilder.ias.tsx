@@ -7,7 +7,6 @@ import { IPrescriptionBuilderSliceOfState } from 'src/Redux/Reducers/prescriptio
 // tslint:disable-next-line:no-empty-interface
 export interface IPrescriptionBuilderProps extends WithTheme, RouteComponentProps<{}> {
     prescriptionBuilderState: IPrescriptionBuilderSliceOfState;
-    setEditMode: (companyId: string) => void;
 }
 
 // tslint:disable-next-line:no-empty-interface

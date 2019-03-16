@@ -17,19 +17,7 @@ class PrescriptionBuilderDrawerPresentation extends React.Component<
     IPrescriptionBuilderDrawerProps,
     IPrescriptionBuilderDrawerState
 > {
-    public componentWillMount(): void {
-        const companyId = this.props.location.pathname.split('/')[2];
-        this.props.setEditMode(companyId);
-    }
-
     public render() {
-        const companyId = this.props.location.pathname.split('/')[2];
-        const prescriptionBuilderSliceOfStateExists = this.props.prescriptionBuilderState[companyId];
-
-        if (!prescriptionBuilderSliceOfStateExists) {
-            return <div/>
-        }
-
         const {
             drawerPaper,
             drawerInnerContainer,
@@ -38,8 +26,8 @@ class PrescriptionBuilderDrawerPresentation extends React.Component<
             editModeButtonContainer,
         } = createPrescriptionBuilderDrawerClasses(this.props, this.state);
 
-        const isEditMode = this.props.prescriptionBuilderState[companyId].editMode;
-        const shouldDisable = this.props.disableEdits || !isEditMode;
+        const { editMode } = this.props.prescriptionBuilderState;
+        const shouldDisable = this.props.disableEdits || !editMode;
 
         return (
             <Drawer
@@ -80,7 +68,7 @@ class PrescriptionBuilderDrawerPresentation extends React.Component<
                         <Button
                             onClick={this.toggleEditMode}
                             color="secondary">
-                            {isEditMode ? 'Switch To View Mode' : 'Switch To Edit Mode'}
+                            {editMode ? 'Switch To View Mode' : 'Switch To Edit Mode'}
                         </Button>
                     </div>
                 </div>
@@ -89,9 +77,12 @@ class PrescriptionBuilderDrawerPresentation extends React.Component<
     }
 
     private toggleEditMode = () => {
-        const companyId = this.props.location.pathname.split('/')[2];
-        const isEditMode = this.props.prescriptionBuilderState[companyId].editMode
-        this.props.toggleEditMode(companyId, isEditMode);
+        const { editMode } = this.props.prescriptionBuilderState;
+        if (editMode) {
+            this.props.setViewMode();
+        } else {
+            this.props.setEditMode();
+        }
     }
 }
 
@@ -100,21 +91,12 @@ const mapStateToProps = ({ prescriptionBuilderState }: IAppState) => ({
 });
 
 const mapDispatchToProps = (dispatch: React.Dispatch<any>) => ({
-    toggleEditMode: (companyId: string, isCurrentlyEditMode: boolean) => {
-        if (isCurrentlyEditMode) {
-            const setViewModeAction = setViewMode(companyId);
-            dispatch(setViewModeAction);
-        } else {
-            const setEditModeAction = setEditMode(companyId);
-            dispatch(setEditModeAction);
-        }
-    },
-    setViewMode: (companyId: string) => {
-        const setViewModeAction = setViewMode(companyId);
+    setViewMode: () => {
+        const setViewModeAction = setViewMode();
         dispatch(setViewModeAction);
     },
-    setEditMode: (companyId: string) => {
-        const setEditModeAction = setEditMode(companyId);
+    setEditMode: () => {
+        const setEditModeAction = setEditMode();
         dispatch(setEditModeAction);
     }
 });
