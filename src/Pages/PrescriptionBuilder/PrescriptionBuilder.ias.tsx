@@ -4,7 +4,6 @@ import { RouteComponentProps } from 'react-router';
 import { IPrescriptionFormTemplate } from 'src/Models/prescription/prescriptionFormTemplate';
 import { IPrescriptionBuilderSliceOfState } from 'src/Redux/Reducers/prescriptionBuilderReducer';
 
-// tslint:disable-next-line:no-empty-interface
 export interface IPrescriptionBuilderProps extends WithTheme, RouteComponentProps<{}> {
     prescriptionBuilderState: IPrescriptionBuilderSliceOfState;
     setPrescriptionFormTemplate: (prescriptionFormTemplate: IPrescriptionFormTemplate) => void;
@@ -16,13 +15,10 @@ export interface IPrescriptionBuilderProps extends WithTheme, RouteComponentProp
     removeSection: () => void;
     setSelectedControl: (controlId: string | null) => void;
     setSelectedSection: (sectionId: string | null) => void;
+    updateControlValue: (controlId: string, value: any) => void;
 }
 
-// tslint:disable-next-line:no-empty-interface
 export interface IPrescriptionBuilderState {
-    controlValues: {
-        [controlId: string]: any,
-    };
     updatingPrescriptionTemplate: boolean;
     loadingPrescriptionTemplate: boolean;
     snackbarIsOpen: boolean;

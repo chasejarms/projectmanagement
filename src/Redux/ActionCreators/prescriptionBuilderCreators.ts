@@ -12,6 +12,7 @@ import {
     SET_SELECTED_CONTROL_PRESCRIPTION_FORM_TEMPLATE,
     SET_SELECTED_SECTION_PRESCRIPTION_FORM_TEMPLATE,
     SET_VIEW_MODE,
+    UPDATE_CONTROL_VALUE_PRESCRIPTION_FORM_TEMPLATE,
 } from '../Actions/prescriptionBuilderActions';
 
 export interface ISetEditModeAction extends Action<typeof SET_EDIT_MODE> {}
@@ -56,6 +57,11 @@ export interface ISetSelectedSectionPrescriptionFormTemplateAction extends Actio
     sectionId: string | null;
 }
 
+export interface IUpdateControlValuePrescriptionFormTemplateAction extends Action<typeof UPDATE_CONTROL_VALUE_PRESCRIPTION_FORM_TEMPLATE> {
+    controlId: string;
+    value: any;
+}
+
 export type IPrescriptionBuilderActions = ISetEditModeAction |
     ISetViewModeAction |
     ISetPrescriptionFormTemplateAction |
@@ -66,7 +72,8 @@ export type IPrescriptionBuilderActions = ISetEditModeAction |
     IRemoveControlPrescriptionFormTemplateAction |
     IRemoveSectionPrescriptionFormTemplateAction |
     ISetSelectedControlPrescriptionFormTemplateAction |
-    ISetSelectedSectionPrescriptionFormTemplateAction;
+    ISetSelectedSectionPrescriptionFormTemplateAction |
+    IUpdateControlValuePrescriptionFormTemplateAction;
 
 export const setEditMode = (): ISetEditModeAction => {
     return {
@@ -162,5 +169,16 @@ export const setSelectedSection = (
     return {
         type: SET_SELECTED_SECTION_PRESCRIPTION_FORM_TEMPLATE,
         sectionId,
+    }
+}
+
+export const updateControlValue = (
+    controlId: string,
+    value: any,
+): IUpdateControlValuePrescriptionFormTemplateAction => {
+    return {
+        type: UPDATE_CONTROL_VALUE_PRESCRIPTION_FORM_TEMPLATE,
+        controlId,
+        value,
     }
 }

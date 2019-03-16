@@ -46,6 +46,7 @@ import {
     setPrescriptionFormTemplate,
     setSelectedControl,
     setSelectedSection,
+    updateControlValue,
 } from 'src/Redux/ActionCreators/prescriptionBuilderCreators';
 import { IAppState } from 'src/Redux/Reducers/rootReducer';
 import { generateUniqueId } from 'src/Utils/generateUniqueId';
@@ -61,7 +62,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
     IPrescriptionBuilderState
 > {
     public state: IPrescriptionBuilderState = {
-        controlValues: {},
         updatingPrescriptionTemplate: false,
         loadingPrescriptionTemplate: true,
         snackbarIsOpen: false,
@@ -302,14 +302,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
     }
 
     private handleControlValueChange = (controlId: string) => (event: any) => {
-        const value = event.target.value;
-        const controlValuesCopy = cloneDeep(this.state.controlValues);
-
-        controlValuesCopy[controlId] = value;
-
-        this.setState({
-            controlValues: controlValuesCopy,
-        })
+        this.props.updateControlValue(controlId, event.target.value);
     }
 
     private selectSection = (sectionId: string) => () => {
@@ -331,7 +324,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                 </div>
             )
         } else if (control.type === IPrescriptionControlTemplateType.Dropdown) {
-            const value = this.state.controlValues[control.id] || '';
+            const value = this.props.prescriptionBuilderState.controlValues[control.id] || '';
 
             return (
                 <div>
@@ -405,7 +398,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                         rows={5}
                         multiline={true}
                         label={control.label}
-                        value={this.state.controlValues[control.id]}
+                        value={this.props.prescriptionBuilderState.controlValues[control.id]}
                         onChange={this.handleControlValueChange(control.id)}
                     />
                 </div>
@@ -417,7 +410,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                         disabled={editMode}
                         fullWidth={true}
                         label={control.label}
-                        value={this.state.controlValues[control.id]}
+                        value={this.props.prescriptionBuilderState.controlValues[control.id]}
                         onChange={this.handleControlValueChange(control.id)}
                     />
                 </div>
@@ -428,7 +421,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     <FormControl>
                         <FormGroup row={true}>
                             {control.options.map(({ text, id }) => {
-                                const valueForControl = this.state.controlValues[control.id];
+                                const valueForControl = this.props.prescriptionBuilderState.controlValues[control.id];
                                 const valuesExistForControl = !!valueForControl;
                                 const checked = valuesExistForControl && !!valueForControl[id];
 
@@ -454,7 +447,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     <Input
                         type="number"
                         id={`${control.id}-number`}
-                        value={this.state.controlValues[control.id]}
+                        value={this.props.prescriptionBuilderState.controlValues[control.id]}
                         onChange={this.handleControlValueChange(control.id)}
                         startAdornment={control.prefix ? <InputAdornment position="start">{control.prefix}</InputAdornment> : undefined}
                         endAdornment={control.suffix ? <InputAdornment position="end">{control.suffix}</InputAdornment> : undefined}
@@ -466,7 +459,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                 <Typography variant="body1">{control.text}</Typography>
             )
         } else if (control.type === IPrescriptionControlTemplateType.UnitSelection) {
-            const value = this.state.controlValues[control.id] || [];
+            const value = this.props.prescriptionBuilderState.controlValues[control.id] || [];
 
             return (
                 <FormControl fullWidth={true} disabled={editMode}>
@@ -496,7 +489,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     fullWidth={true}
                     label={control.label}
                     name="date-input"
-                    value={this.state.controlValues[control.id]}
+                    value={this.props.prescriptionBuilderState.controlValues[control.id]}
                     onChange={this.handleDeadlineChange(control.id)}
                     min={new Date()}
                 />
@@ -736,7 +729,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
             return;
         }
 
-        const controlValuesCopy = cloneDeep(this.state.controlValues);
+        const controlValuesCopy = cloneDeep(this.props.prescriptionBuilderState.controlValues);
         const valuesExists = !!controlValuesCopy[controlId];
 
         if (valuesExists) {
@@ -748,19 +741,11 @@ export class PrescriptionBuilderPresentation extends React.Component<
             }
         }
 
-        this.setState({
-            controlValues: controlValuesCopy,
-        })
+        this.props.updateControlValue(controlId, controlValuesCopy[controlId]);
     }
 
     private handleDeadlineChange = (controlId: string) => (newDeadline: any) => {
-        const controlValuesCopy = cloneDeep(this.state.controlValues);
-
-        controlValuesCopy[controlId] = newDeadline;
-
-        this.setState({
-            controlValues: controlValuesCopy,
-        })
+        this.props.updateControlValue(controlId, newDeadline);
     }
 
     private createUnits = (controlId: string) => {
@@ -770,8 +755,8 @@ export class PrescriptionBuilderPresentation extends React.Component<
         }
 
         return units.map((unitNumber) => {
-            const valuesExists = !!this.state.controlValues[controlId];
-            const checked = valuesExists && this.state.controlValues[controlId].indexOf(unitNumber) > -1;
+            const valuesExists = !!this.props.prescriptionBuilderState.controlValues[controlId];
+            const checked = valuesExists && this.props.prescriptionBuilderState.controlValues[controlId].indexOf(unitNumber) > -1;
 
             return (
                 <MenuItem key={unitNumber} value={unitNumber}>
@@ -986,6 +971,10 @@ const mapDispatchToProps = (dispatch: React.Dispatch<any>) => ({
     setSelectedSection: (sectionId: string | null) => {
         const setSelectedSectionAtion = setSelectedSection(sectionId);
         dispatch(setSelectedSectionAtion);
+    },
+    updateControlValue: (controlId: string, value: any) => {
+        const updateControlValueAction = updateControlValue(controlId, value);
+        dispatch(updateControlValueAction);
     }
 })
 

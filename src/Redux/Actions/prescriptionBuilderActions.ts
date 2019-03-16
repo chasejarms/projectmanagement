@@ -11,3 +11,4 @@ export const REMOVE_CONTROL_PRESCRIPTION_FORM_TEMPLATE = `${actionKey} remove co
 export const REMOVE_SECTION_PRESCRIPTION_FORM_TEMPLATE = `${actionKey} remove section`;
 export const SET_SELECTED_CONTROL_PRESCRIPTION_FORM_TEMPLATE = `${actionKey} set selected control`;
 export const SET_SELECTED_SECTION_PRESCRIPTION_FORM_TEMPLATE = `${actionKey} set selected section`;
+export const UPDATE_CONTROL_VALUE_PRESCRIPTION_FORM_TEMPLATE = `${actionKey} update control value`;
