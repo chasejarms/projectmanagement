@@ -8,6 +8,9 @@ import { IPrescriptionBuilderSliceOfState } from 'src/Redux/Reducers/prescriptio
 export interface IPrescriptionBuilderProps extends WithTheme, RouteComponentProps<{}> {
     prescriptionBuilderState: IPrescriptionBuilderSliceOfState;
     setPrescriptionFormTemplate: (prescriptionFormTemplate: IPrescriptionFormTemplate) => void;
+    addNewSectionTemplate: (item: any, insertPosition: number) => void;
+    onDropExistingSection: (item: any, insertPosition: number) => void;
+    onDropNewControl: (sectionId: string, item: any, insertPosition: number) => void;
 }
 
 // tslint:disable-next-line:no-empty-interface
