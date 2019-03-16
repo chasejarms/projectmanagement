@@ -12,14 +12,14 @@ export interface IPrescriptionBuilderProps extends WithTheme, RouteComponentProp
     onDropExistingSection: (item: any, insertPosition: number) => void;
     onDropNewControl: (sectionId: string, item: any, insertPosition: number) => void;
     onDropExistingControl: (targetSectionId: string, insertPosition: number, item: any) => void;
-    removeControl: (controlId: string) => void;
+    removeControl: () => void;
     removeSection: (sectionId: string) => void;
+    setSelectedControl: (controlId: string | null) => void;
 }
 
 // tslint:disable-next-line:no-empty-interface
 export interface IPrescriptionBuilderState {
     selectedSection: string | null;
-    selectedControl: string | null;
     controlValues: {
         [controlId: string]: any,
     };

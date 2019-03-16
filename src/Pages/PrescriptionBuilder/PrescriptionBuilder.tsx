@@ -44,6 +44,7 @@ import {
     removeControlPrescriptionFormTemplate,
     removeSectionPrescriptionFormTemplate,
     setPrescriptionFormTemplate,
+    setSelectedControl,
 } from 'src/Redux/ActionCreators/prescriptionBuilderCreators';
 import { IAppState } from 'src/Redux/Reducers/rootReducer';
 import { generateUniqueId } from 'src/Utils/generateUniqueId';
@@ -60,7 +61,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
 > {
     public state: IPrescriptionBuilderState = {
         selectedSection: null,
-        selectedControl: null,
         controlValues: {},
         updatingPrescriptionTemplate: false,
         loadingPrescriptionTemplate: true,
@@ -81,6 +81,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
         const {
             editMode,
             prescriptionFormTemplate,
+            selectedControl,
         } = this.props.prescriptionBuilderState;
 
         const {
@@ -103,10 +104,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
             savePrescriptionTemplateContainer,
             circularProgressContainer,
         } = createPrescriptionBuilderClasses(this.props, this.state);
-
-        const {
-            selectedControl,
-        } = this.state;
 
         const {
             sections,
@@ -316,9 +313,9 @@ export class PrescriptionBuilderPresentation extends React.Component<
     }
 
     private selectSection = (sectionId: string) => () => {
+        this.props.setSelectedControl(null);
         this.setState({
             selectedSection: sectionId,
-            selectedControl: null,
         })
     }
 
@@ -789,7 +786,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
     private handlePrefixChange = (event: any) => {
         const newPrefix = event.target.value;
-        const selectedControlId = this.state.selectedControl;
+        const selectedControlId = this.props.prescriptionBuilderState.selectedControl;
 
         const prescriptionFormTemplateCopy = cloneDeep(this.props.prescriptionBuilderState.prescriptionFormTemplate);
         (prescriptionFormTemplateCopy.controls[selectedControlId!] as INumberTemplateControl).prefix = newPrefix;
@@ -798,7 +795,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
     private handleControlTextChange = (event: any) => {
         const newText = event.target.value;
-        const selectedControlId = this.state.selectedControl;
+        const selectedControlId = this.props.prescriptionBuilderState.selectedControl;
 
         const prescriptionFormTemplateCopy = cloneDeep(this.props.prescriptionBuilderState.prescriptionFormTemplate);
         (prescriptionFormTemplateCopy.controls[selectedControlId!] as INonEditableTextField).text = newText;
@@ -807,7 +804,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
     private handleSuffixChange = (event: any) => {
         const newSuffix = event.target.value;
-        const selectedControlId = this.state.selectedControl;
+        const selectedControlId = this.props.prescriptionBuilderState.selectedControl;
 
         const prescriptionFormTemplateCopy = cloneDeep(this.props.prescriptionBuilderState.prescriptionFormTemplate);
         (prescriptionFormTemplateCopy.controls[selectedControlId!] as INumberTemplateControl).suffix = newSuffix;
@@ -825,9 +822,8 @@ export class PrescriptionBuilderPresentation extends React.Component<
         }
 
         const sectionId = this.props.prescriptionBuilderState.prescriptionFormTemplate.controls[controlId].sectionId;
-
+        this.props.setSelectedControl(controlId);
         this.setState({
-            selectedControl: controlId,
             selectedSection: sectionId,
         })
     }
@@ -835,15 +831,15 @@ export class PrescriptionBuilderPresentation extends React.Component<
     private unselectControl = (event: any) => {
         event.stopPropagation();
         event.preventDefault();
+        this.props.setSelectedControl(null);
         this.setState({
-            selectedControl: null,
             selectedSection: null,
         })
     }
 
     private handleControlTitleChange = (event: any) => {
         const newTitle = event.target.value;
-        const selectedControlId = this.state.selectedControl;
+        const selectedControlId = this.props.prescriptionBuilderState.selectedControl;
 
         const prescriptionFormTemplateCopy = cloneDeep(this.props.prescriptionBuilderState.prescriptionFormTemplate);
         (prescriptionFormTemplateCopy.controls[selectedControlId!] as ITitleTemplateControl).title = newTitle;
@@ -852,7 +848,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
     private handleControlLabelChange = (event: any) => {
         const newLabel = event.target.value;
-        const selectedControlId = this.state.selectedControl;
+        const selectedControlId = this.props.prescriptionBuilderState.selectedControl;
 
         const prescriptionFormTemplateCopy = this.copyPrescriptionFormTemplate();
         (prescriptionFormTemplateCopy.controls[selectedControlId!] as IDropdownTemplateControl).label = newLabel;
@@ -861,7 +857,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
     private handleOptionTextChange = (optionId: string) => (event: any) => {
         const newOptionText = event.target.value;
-        const selectedControlId = this.state.selectedControl!;
+        const selectedControlId = this.props.prescriptionBuilderState.selectedControl!;
 
         const prescriptionFormTemplateCopy = this.copyPrescriptionFormTemplate();
         const currentOptions = (prescriptionFormTemplateCopy.controls[selectedControlId] as IDropdownTemplateControl).options;
@@ -881,7 +877,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
     }
 
     private deleteOption = (optionId: string) => () => {
-        const selectedControlId = this.state.selectedControl!;
+        const selectedControlId = this.props.prescriptionBuilderState.selectedControl!;
 
         const prescriptionFormTemplateCopy = this.copyPrescriptionFormTemplate();
         const currentOptions = (prescriptionFormTemplateCopy.controls[selectedControlId] as IDropdownTemplateControl).options;
@@ -898,7 +894,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
     }
 
     private handleAddOptionToDropdown = () => {
-        const selectedControlId = this.state.selectedControl!;
+        const selectedControlId = this.props.prescriptionBuilderState.selectedControl!;
 
         const prescriptionFormTemplateCopy = this.copyPrescriptionFormTemplate();
         const currentOptions = (prescriptionFormTemplateCopy.controls[selectedControlId] as IDropdownTemplateControl).options;
@@ -922,7 +918,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
         event.stopPropagation();
         event.preventDefault();
 
-        this.props.removeControl(this.state.selectedControl!);
+        this.props.removeControl();
     }
 
     private updatePrescriptionTemplate = async (): Promise<void> => {
@@ -981,13 +977,17 @@ const mapDispatchToProps = (dispatch: React.Dispatch<any>) => ({
         );
         dispatch(onDropExistingControlAction);
     },
-    removeControl: (controlId: string) => {
-        const removeControlAction = removeControlPrescriptionFormTemplate(controlId);
+    removeControl: () => {
+        const removeControlAction = removeControlPrescriptionFormTemplate();
         dispatch(removeControlAction);
     },
     removeSection: (sectionId: string) => {
         const removeSectionAction = removeSectionPrescriptionFormTemplate(sectionId);
         dispatch(removeSectionAction);
+    },
+    setSelectedControl: (controlId: string | null) => {
+        const setSelectedControlAction = setSelectedControl(controlId);
+        dispatch(setSelectedControlAction);
     }
 })
 

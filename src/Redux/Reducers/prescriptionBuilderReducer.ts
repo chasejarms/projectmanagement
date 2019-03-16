@@ -25,6 +25,7 @@ import {
     IRemoveControlPrescriptionFormTemplateAction,
     IRemoveSectionPrescriptionFormTemplateAction,
     ISetPrescriptionFormTemplateAction,
+    ISetSelectedControlPrescriptionFormTemplateAction,
 } from "../ActionCreators/prescriptionBuilderCreators";
 import {
     ON_DROP_EXISTING_SECTION_PRESCRIPTION_FORM_TEMPLATE,
@@ -33,6 +34,7 @@ import {
     REMOVE_SECTION_PRESCRIPTION_FORM_TEMPLATE,
     SET_EDIT_MODE,
     SET_PRESCRIPTION_FORM_TEMPLATE,
+    SET_SELECTED_CONTROL_PRESCRIPTION_FORM_TEMPLATE,
     SET_VIEW_MODE,
 } from "../Actions/prescriptionBuilderActions";
 import { ON_DROP_EXISTING_CONTROL_PRESCRIPTION_FORM_TEMPLATE, ON_DROP_NEW_CONTROL_PRESCRIPTION_FORM_TEMPLATE } from './../Actions/prescriptionBuilderActions';
@@ -40,6 +42,8 @@ import { ON_DROP_EXISTING_CONTROL_PRESCRIPTION_FORM_TEMPLATE, ON_DROP_NEW_CONTRO
 export interface IPrescriptionBuilderSliceOfState {
     editMode: boolean;
     prescriptionFormTemplate: IPrescriptionFormTemplate;
+    selectedSection: string | null;
+    selectedControl: string | null;
 }
 
 const initialState = {
@@ -49,6 +53,8 @@ const initialState = {
         sections: {},
         controls: {},
     },
+    selectedSection: null,
+    selectedControl: null,
 }
 
 export const prescriptionBuilderReducer = (state: IPrescriptionBuilderSliceOfState = initialState, action: IPrescriptionBuilderActions) => {
@@ -101,6 +107,12 @@ export const prescriptionBuilderReducer = (state: IPrescriptionBuilderSliceOfSta
                 state,
                 action as IRemoveSectionPrescriptionFormTemplateAction,
             );
+        case SET_SELECTED_CONTROL_PRESCRIPTION_FORM_TEMPLATE:
+            const { controlId } = action as ISetSelectedControlPrescriptionFormTemplateAction;
+            return {
+                ...state,
+                selectedControl: controlId,
+            }
         default:
             return state;
     }
@@ -392,23 +404,24 @@ const prescriptionFormTemplateFormExistingControl = (state: IPrescriptionBuilder
 }
 
 const prescriptionFormTemplateAfterRemovingControl = (state: IPrescriptionBuilderSliceOfState, action: IRemoveControlPrescriptionFormTemplateAction): IPrescriptionBuilderSliceOfState => {
+    const controlIdToRemove = state.selectedControl!;
     const prescriptionFormTemplateCopy = cloneDeep(state.prescriptionFormTemplate)
-    const control = prescriptionFormTemplateCopy.controls[action.controlId];
+    const control = prescriptionFormTemplateCopy.controls[controlIdToRemove];
     const sectionId = control.sectionId;
     const controlsWithoutSelectedSection = prescriptionFormTemplateCopy.sections[sectionId].controlOrder.filter((compareControlId) => {
-        return compareControlId !== action.controlId;
+        return compareControlId !== controlIdToRemove;
     });
 
     prescriptionFormTemplateCopy.sections[sectionId].controlOrder = controlsWithoutSelectedSection;
 
-    delete prescriptionFormTemplateCopy.controls[action.controlId];
+    delete prescriptionFormTemplateCopy.controls[controlIdToRemove];
 
     return {
         ...state,
         prescriptionFormTemplate: prescriptionFormTemplateCopy,
+        selectedControl: null,
+        selectedSection: null,
     }
-
-    // may need to set the selected section and control to null
 }
 
 const prescriptionFormTemplateAfterRemovingSection = (state: IPrescriptionBuilderSliceOfState, action: IRemoveSectionPrescriptionFormTemplateAction): IPrescriptionBuilderSliceOfState => {
@@ -428,7 +441,7 @@ const prescriptionFormTemplateAfterRemovingSection = (state: IPrescriptionBuilde
     return {
         ...state,
         prescriptionFormTemplate: prescriptionFormTemplateCopy,
+        selectedControl: null,
+        selectedSection: null,
     }
-
-    // may need to set the selected section and control to null
 }
