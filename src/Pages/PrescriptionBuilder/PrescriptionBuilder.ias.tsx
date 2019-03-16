@@ -2,15 +2,19 @@ import { WithTheme } from '@material-ui/core';
 import { css } from 'emotion';
 import { RouteComponentProps } from 'react-router';
 import { IPrescriptionFormTemplate } from 'src/Models/prescription/prescriptionFormTemplate';
+import { IPrescriptionBuilderSliceOfState } from 'src/Redux/Reducers/prescriptionBuilderReducer';
 
 // tslint:disable-next-line:no-empty-interface
-export interface IPrescriptionBuilderProps extends WithTheme, RouteComponentProps<{}> {}
+export interface IPrescriptionBuilderProps extends WithTheme, RouteComponentProps<{}> {
+    prescriptionBuilderState: IPrescriptionBuilderSliceOfState;
+    setEditMode: (companyId: string) => void;
+}
+
 // tslint:disable-next-line:no-empty-interface
 export interface IPrescriptionBuilderState {
     prescriptionFormTemplate: IPrescriptionFormTemplate;
     selectedSection: string | null;
     selectedControl: string | null;
-    editMode: boolean;
     controlValues: {
         [controlId: string]: any,
     };

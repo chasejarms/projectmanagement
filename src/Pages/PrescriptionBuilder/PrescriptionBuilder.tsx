@@ -22,6 +22,7 @@ import TrashIcon from '@material-ui/icons/Delete';
 import { cloneDeep } from 'lodash';
 import { DateFormatInput } from 'material-ui-next-pickers';
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { AsyncButton } from 'src/Components/AsyncButton/AsyncButton';
 import { DraggableExistingFormElement } from 'src/Components/DraggableExistingFormElement/DraggableExistingFormElement';
@@ -43,6 +44,8 @@ import { IUnitSelectionControlTemplate } from 'src/Models/prescription/controls/
 import { IPrescriptionSectionTemplate } from 'src/Models/prescription/sections/prescriptionSectionTemplate';
 import { IPrescriptionSectionTemplateType } from 'src/Models/prescription/sections/prescriptionSectionTemplateType';
 import { SectionOrElement } from 'src/Models/sectionOrElement';
+import { setEditMode } from 'src/Redux/ActionCreators/prescriptionBuilderCreators';
+import { IAppState } from 'src/Redux/Reducers/rootReducer';
 import { generateUniqueId } from 'src/Utils/generateUniqueId';
 import Api from '../../Api/api';
 import {
@@ -63,7 +66,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
         },
         selectedSection: null,
         selectedControl: null,
-        editMode: true,
         controlValues: {},
         updatingPrescriptionTemplate: false,
         loadingPrescriptionTemplate: true,
@@ -73,6 +75,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
     public async componentWillMount(): Promise<void> {
         const companyId = this.props.match.path.split('/')[2];
+        this.props.setEditMode(companyId);
         const prescriptionFormTemplate = await Api.prescriptionTemplateApi.getPrescriptionTemplate(companyId);
         this.setState({
             prescriptionFormTemplate,
@@ -81,6 +84,14 @@ export class PrescriptionBuilderPresentation extends React.Component<
     }
 
     public render() {
+        const companyId = this.props.match.path.split('/')[2];
+        const prescriptionBuilderState = this.props.prescriptionBuilderState[companyId];
+        if (!prescriptionBuilderState) {
+            return <div/>
+        }
+
+        const { editMode } = this.props.prescriptionBuilderState[companyId];
+
         const {
             prescriptionBuilderContainer,
             prescriptionFormInnerContainer,
@@ -152,7 +163,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     </Paper>
                 ) : (
                     <Paper className={prescriptionFormContainer}>
-                        {this.state.editMode ? (
+                        {editMode ? (
                             <div className={savePrescriptionTemplateContainer}>
                                 <AsyncButton
                                     color="secondary"
@@ -266,7 +277,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                             </div>
                                             {(currentSection.type === IPrescriptionSectionTemplateType.Duplicatable) ? (
                                                 <div className={duplicateSectionButtonContainer}>
-                                                    <Button color="secondary" disabled={this.state.editMode}>Duplicate</Button>
+                                                    <Button color="secondary" disabled={editMode}>Duplicate</Button>
                                                 </div>
                                             ) : undefined}
                                             <FormElementDropZone
@@ -576,7 +587,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
     // private toggleEditMode = () => {
     //     this.setState({
-    //         editMode: !this.state.editMode,
+    //         editMode: !editMode,
     //         controlValues: {},
     //         selectedControl: null,
     //         selectedSection: null,
@@ -591,6 +602,8 @@ export class PrescriptionBuilderPresentation extends React.Component<
     }
 
     private correctControlDisplay = (controlId: string) => {
+        const companyId = this.props.match.path.split('/')[2];
+        const { editMode } = this.props.prescriptionBuilderState[companyId];
         const control = this.state.prescriptionFormTemplate.controls[controlId];
         const {
             cityStateZipContainer,
@@ -607,7 +620,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
             return (
                 <div>
-                    <FormControl fullWidth={true} disabled={this.state.editMode}>
+                    <FormControl fullWidth={true} disabled={editMode}>
                         <InputLabel htmlFor={`${control.id}`}>{control.label}</InputLabel>
                         <Select
                             inputProps={{
@@ -628,39 +641,39 @@ export class PrescriptionBuilderPresentation extends React.Component<
         } else if (control.type === IPrescriptionControlTemplateType.DoctorInformation) {
             return (
                 <div>
-                    <FormControl fullWidth={true} disabled={this.state.editMode}>
+                    <FormControl fullWidth={true} disabled={editMode}>
                         <InputLabel>Doctor</InputLabel>
                         <Input
                             value={''}
                         />
                     </FormControl>
-                    <FormControl fullWidth={true} disabled={this.state.editMode}>
+                    <FormControl fullWidth={true} disabled={editMode}>
                         <InputLabel>Street</InputLabel>
                         <Input
                             value={''}
                         />
                     </FormControl>
                     <div className={cityStateZipContainer}>
-                        <FormControl disabled={this.state.editMode}>
+                        <FormControl disabled={editMode}>
                             <InputLabel>City</InputLabel>
                             <Input
                                 value={''}
                             />
                         </FormControl>
-                        <FormControl disabled={this.state.editMode}>
+                        <FormControl disabled={editMode}>
                             <InputLabel>State</InputLabel>
                             <Input
                                 value={''}
                             />
                         </FormControl>
-                        <FormControl disabled={this.state.editMode}>
+                        <FormControl disabled={editMode}>
                             <InputLabel>Zip</InputLabel>
                             <Input
                                 value={''}
                             />
                         </FormControl>
                     </div>
-                    <FormControl fullWidth={true} disabled={this.state.editMode}>
+                    <FormControl fullWidth={true} disabled={editMode}>
                         <InputLabel>Telephone</InputLabel>
                         <Input
                             value={''}
@@ -672,7 +685,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
             return (
                 <div>
                     <TextField
-                        disabled={this.state.editMode}
+                        disabled={editMode}
                         fullWidth={true}
                         rows={5}
                         multiline={true}
@@ -686,7 +699,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
             return (
                 <div>
                     <TextField
-                        disabled={this.state.editMode}
+                        disabled={editMode}
                         fullWidth={true}
                         label={control.label}
                         value={this.state.controlValues[control.id]}
@@ -710,7 +723,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                         label={text}
                                         onClick={this.handleCheckboxChange(control.id, id)}
                                         control={
-                                            <Checkbox value={id} checked={checked} disabled={this.state.editMode}/>
+                                            <Checkbox value={id} checked={checked} disabled={editMode}/>
                                         }
                                     />
                                 )
@@ -721,7 +734,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
             )
         } else if (control.type === IPrescriptionControlTemplateType.Number) {
             return (
-                <FormControl fullWidth={true} disabled={this.state.editMode}>
+                <FormControl fullWidth={true} disabled={editMode}>
                     <InputLabel htmlFor={`${control.id}-number`}>{control.label}</InputLabel>
                     <Input
                         type="number"
@@ -741,7 +754,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
             const value = this.state.controlValues[control.id] || [];
 
             return (
-                <FormControl fullWidth={true} disabled={this.state.editMode}>
+                <FormControl fullWidth={true} disabled={editMode}>
                     <InputLabel>Select Units</InputLabel>
                     <Select
                         multiple={true}
@@ -764,7 +777,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
         } else if (control.type === IPrescriptionControlTemplateType.Date) {
             return (
                 <DateFormatInput
-                    disabled={this.state.editMode}
+                    disabled={editMode}
                     fullWidth={true}
                     label={control.label}
                     name="date-input"
@@ -1003,7 +1016,9 @@ export class PrescriptionBuilderPresentation extends React.Component<
     }
 
     private handleCheckboxChange = (controlId: string, optionId: string) => (event: any) => {
-        if (this.state.editMode) {
+        const companyId = this.props.match.path.split('/')[2];
+        const { editMode } = this.props.prescriptionBuilderState[companyId];
+        if (editMode) {
             return;
         }
 
@@ -1087,10 +1102,13 @@ export class PrescriptionBuilderPresentation extends React.Component<
     }
 
     private selectControl = (controlId: string) => (event: any) => {
+        const companyId = this.props.match.path.split('/')[2];
+        const { editMode } = this.props.prescriptionBuilderState[companyId];
+
         event.stopPropagation();
         event.preventDefault();
 
-        if (!this.state.editMode) {
+        if (!editMode) {
             return;
         }
 
@@ -1264,5 +1282,17 @@ export class PrescriptionBuilderPresentation extends React.Component<
     }
 }
 
-const componentWithTheme = withTheme()(PrescriptionBuilderPresentation)
+const mapStateToProps = ({ prescriptionBuilderState }: IAppState) => ({
+    prescriptionBuilderState,
+});
+
+const mapDispatchToProps = (dispatch: React.Dispatch<any>) => ({
+    setEditMode: (companyId: string) => {
+        const setEditModeAction = setEditMode(companyId);
+        dispatch(setEditModeAction);
+    },
+})
+
+const connectedComponent = connect(mapStateToProps, mapDispatchToProps)(PrescriptionBuilderPresentation);
+const componentWithTheme = withTheme()(connectedComponent);
 export const PrescriptionBuilder = withRouter(componentWithTheme);
