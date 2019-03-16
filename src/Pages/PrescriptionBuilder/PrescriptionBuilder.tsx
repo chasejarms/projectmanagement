@@ -38,6 +38,7 @@ import { IPrescriptionSectionTemplateType } from 'src/Models/prescription/sectio
 import { SectionOrElement } from 'src/Models/sectionOrElement';
 import {
     addNewSectionToPrescriptionFormTemplate,
+    onDropExistingControlPrescriptionFormTemplate,
     onDropExistingSectionPrescriptionFormTemplate,
     onDropNewControlPrescriptionFormTemplate,
     setPrescriptionFormTemplate,
@@ -297,68 +298,10 @@ export class PrescriptionBuilderPresentation extends React.Component<
     private onDropControl = (sectionId: string, insertPosition: number) => (item: any) => {
         const isExistingControl = !!item.id;
         if (isExistingControl) {
-            this.onDropExistingControl(sectionId, insertPosition, item);
+            this.props.onDropExistingControl(sectionId, insertPosition, item);
         } else {
-            this.onDropNewControl(sectionId, insertPosition, item);
+            this.props.onDropNewControl(sectionId, insertPosition, item);
         }
-    }
-
-    private onDropExistingControl = (targetSectionId: string, insertPosition: number, item: any) => {
-        const controlId = item.id;
-        const prescriptionFormTemplateCopy = cloneDeep(this.props.prescriptionBuilderState.prescriptionFormTemplate);
-        const currentSectionIdForControl = prescriptionFormTemplateCopy.controls[controlId].sectionId;
-
-        const isSameSection = prescriptionFormTemplateCopy.sections[targetSectionId].controlOrder.some((compareControlId) => {
-            return compareControlId === controlId;
-        });
-
-        const controlOrderOfCurrentSection = prescriptionFormTemplateCopy.sections[currentSectionIdForControl].controlOrder;
-
-        if (isSameSection) {
-            const currentIndexOfControl = prescriptionFormTemplateCopy.sections[targetSectionId].controlOrder.findIndex((compareControlId) => {
-                return compareControlId === controlId;
-            });
-
-            // Insert the id at the new location
-
-            const before = prescriptionFormTemplateCopy.sections[targetSectionId].controlOrder.slice(0, insertPosition);
-            const after = prescriptionFormTemplateCopy.sections[targetSectionId].controlOrder.slice(insertPosition);
-            const controlOrderAfterAddedId = before.concat([controlId]).concat(after);
-
-            // Remove the id from the old location
-
-            const indexOfIdToRemove = insertPosition < currentIndexOfControl ? currentIndexOfControl + 1 : currentIndexOfControl;
-
-            const beforeItemToRemove = controlOrderAfterAddedId.slice(0, indexOfIdToRemove);
-            const afterItemToRemove = controlOrderAfterAddedId.slice(indexOfIdToRemove + 1);
-
-            const updatedControlOrder = beforeItemToRemove.concat(afterItemToRemove);
-
-            prescriptionFormTemplateCopy.sections[targetSectionId].controlOrder= updatedControlOrder;
-
-            this.props.setPrescriptionFormTemplate(prescriptionFormTemplateCopy);
-        } else {
-            const updatedControlOrderForCurrentSection = controlOrderOfCurrentSection.filter((compareControlId) => {
-                return compareControlId !== controlId;
-            });
-            prescriptionFormTemplateCopy.sections[currentSectionIdForControl].controlOrder = updatedControlOrderForCurrentSection;
-
-            const controlOrderOfTargetSection = prescriptionFormTemplateCopy.sections[targetSectionId].controlOrder;
-
-            const before = controlOrderOfTargetSection.slice(0, insertPosition);
-            const after = controlOrderOfTargetSection.slice(insertPosition);
-            const updatedControlOrder = before.concat([controlId]).concat(after);
-
-            prescriptionFormTemplateCopy.sections[targetSectionId].controlOrder = updatedControlOrder;
-
-            prescriptionFormTemplateCopy.controls[controlId].sectionId = targetSectionId;
-
-            this.props.setPrescriptionFormTemplate(prescriptionFormTemplateCopy);
-        }
-    }
-
-    private onDropNewControl = (sectionId: string, insertPosition: number, item: any) => {
-        this.props.onDropNewControl(sectionId, insertPosition, item);
     }
 
     private handleControlValueChange = (controlId: string) => (event: any) => {
@@ -1068,6 +1011,14 @@ const mapDispatchToProps = (dispatch: React.Dispatch<any>) => ({
         );
         dispatch(onDropNewControlAction);
     },
+    onDropExistingControl: (targetSectionId: string, insertPosition: number, item: any) => {
+        const onDropExistingControlAction = onDropExistingControlPrescriptionFormTemplate(
+            targetSectionId,
+            insertPosition,
+            item,
+        );
+        dispatch(onDropExistingControlAction);
+    }
 })
 
 const connectedComponent = connect(mapStateToProps, mapDispatchToProps)(PrescriptionBuilderPresentation);

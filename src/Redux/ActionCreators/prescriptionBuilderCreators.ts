@@ -1,6 +1,7 @@
 import { Action } from 'redux';
 import { IPrescriptionFormTemplate } from 'src/Models/prescription/prescriptionFormTemplate';
 import {
+    ON_DROP_EXISTING_CONTROL_PRESCRIPTION_FORM_TEMPLATE,
     ON_DROP_EXISTING_SECTION_PRESCRIPTION_FORM_TEMPLATE,
     ON_DROP_NEW_CONTROL_PRESCRIPTION_FORM_TEMPLATE,
     ON_DROP_NEW_SECTION_PRESCRIPTION_FORM_TEMPLATE,
@@ -33,12 +34,19 @@ export interface IOnDropNewControlPrescriptionFormTemplateAction extends Action<
     item: any;
 }
 
+export interface IOnDropExistingControlPrescriptionFormTemplateAction extends Action<typeof ON_DROP_EXISTING_CONTROL_PRESCRIPTION_FORM_TEMPLATE> {
+    targetSectionId: string;
+    insertPosition: number;
+    item: any;
+}
+
 export type IPrescriptionBuilderActions = ISetEditModeAction |
     ISetViewModeAction |
     ISetPrescriptionFormTemplateAction |
     IAddNewSectionPrescriptionFormTemplateAction |
     IOnDropExistingSectionPrescriptionFormTemplateAction |
-    IOnDropNewControlPrescriptionFormTemplateAction;
+    IOnDropNewControlPrescriptionFormTemplateAction |
+    IOnDropExistingControlPrescriptionFormTemplateAction;
 
 export const setEditMode = (): ISetEditModeAction => {
     return {
@@ -90,6 +98,19 @@ export const onDropNewControlPrescriptionFormTemplate = (
         type: ON_DROP_NEW_CONTROL_PRESCRIPTION_FORM_TEMPLATE,
         insertPosition,
         sectionId,
+        item,
+    }
+}
+
+export const onDropExistingControlPrescriptionFormTemplate = (
+    targetSectionId: string,
+    insertPosition: number,
+    item: any,
+) => {
+    return {
+        type: ON_DROP_EXISTING_CONTROL_PRESCRIPTION_FORM_TEMPLATE,
+        targetSectionId,
+        insertPosition,
         item,
     }
 }

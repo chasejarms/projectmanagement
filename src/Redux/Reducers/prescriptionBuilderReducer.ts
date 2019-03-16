@@ -18,6 +18,7 @@ import { IPrescriptionSectionTemplateType } from 'src/Models/prescription/sectio
 import { generateUniqueId } from 'src/Utils/generateUniqueId';
 import {
     IAddNewSectionPrescriptionFormTemplateAction,
+    IOnDropExistingControlPrescriptionFormTemplateAction,
     IOnDropExistingSectionPrescriptionFormTemplateAction,
     IOnDropNewControlPrescriptionFormTemplateAction,
     IPrescriptionBuilderActions,
@@ -30,7 +31,7 @@ import {
     SET_PRESCRIPTION_FORM_TEMPLATE,
     SET_VIEW_MODE,
 } from "../Actions/prescriptionBuilderActions";
-import { ON_DROP_NEW_CONTROL_PRESCRIPTION_FORM_TEMPLATE } from './../Actions/prescriptionBuilderActions';
+import { ON_DROP_EXISTING_CONTROL_PRESCRIPTION_FORM_TEMPLATE, ON_DROP_NEW_CONTROL_PRESCRIPTION_FORM_TEMPLATE } from './../Actions/prescriptionBuilderActions';
 
 export interface IPrescriptionBuilderSliceOfState {
     editMode: boolean;
@@ -80,6 +81,11 @@ export const prescriptionBuilderReducer = (state: IPrescriptionBuilderSliceOfSta
             return prescriptionFormTemplateFromNewControl(
                 state,
                 action as IOnDropNewControlPrescriptionFormTemplateAction,
+            );
+        case ON_DROP_EXISTING_CONTROL_PRESCRIPTION_FORM_TEMPLATE:
+            return prescriptionFormTemplateFormExistingControl(
+                state,
+                action as IOnDropExistingControlPrescriptionFormTemplateAction,
             );
         default:
             return state;
@@ -168,8 +174,6 @@ const prescriptionFromTemplateFromExistingSection = (state: IPrescriptionBuilder
 }
 
 const prescriptionFormTemplateFromNewControl = (state: IPrescriptionBuilderSliceOfState, action: IOnDropNewControlPrescriptionFormTemplateAction): IPrescriptionBuilderSliceOfState => {
-    // tslint:disable-next-line:no-console
-    console.log('action: ', action);
     const {
         item,
         sectionId,
@@ -304,5 +308,71 @@ const prescriptionFormTemplateFromNewControl = (state: IPrescriptionBuilderSlice
     return {
         ...state,
         prescriptionFormTemplate: prescriptionFormTemplateCopy,
+    }
+}
+
+const prescriptionFormTemplateFormExistingControl = (state: IPrescriptionBuilderSliceOfState, action: IOnDropExistingControlPrescriptionFormTemplateAction) => {
+    const {
+        item,
+        targetSectionId,
+        insertPosition,
+    } = action;
+
+    const controlId = item.id;
+    const prescriptionFormTemplateCopy = cloneDeep(state.prescriptionFormTemplate);
+    const currentSectionIdForControl = prescriptionFormTemplateCopy.controls[controlId].sectionId;
+
+    const isSameSection = prescriptionFormTemplateCopy.sections[targetSectionId].controlOrder.some((compareControlId) => {
+        return compareControlId === controlId;
+    });
+
+    const controlOrderOfCurrentSection = prescriptionFormTemplateCopy.sections[currentSectionIdForControl].controlOrder;
+
+    if (isSameSection) {
+        const currentIndexOfControl = prescriptionFormTemplateCopy.sections[targetSectionId].controlOrder.findIndex((compareControlId) => {
+            return compareControlId === controlId;
+        });
+
+        // Insert the id at the new location
+
+        const before = prescriptionFormTemplateCopy.sections[targetSectionId].controlOrder.slice(0, insertPosition);
+        const after = prescriptionFormTemplateCopy.sections[targetSectionId].controlOrder.slice(insertPosition);
+        const controlOrderAfterAddedId = before.concat([controlId]).concat(after);
+
+        // Remove the id from the old location
+
+        const indexOfIdToRemove = insertPosition < currentIndexOfControl ? currentIndexOfControl + 1 : currentIndexOfControl;
+
+        const beforeItemToRemove = controlOrderAfterAddedId.slice(0, indexOfIdToRemove);
+        const afterItemToRemove = controlOrderAfterAddedId.slice(indexOfIdToRemove + 1);
+
+        const updatedControlOrder = beforeItemToRemove.concat(afterItemToRemove);
+
+        prescriptionFormTemplateCopy.sections[targetSectionId].controlOrder= updatedControlOrder;
+
+        return {
+            ...state,
+            prescriptionFormTemplate: prescriptionFormTemplateCopy,
+        }
+    } else {
+        const updatedControlOrderForCurrentSection = controlOrderOfCurrentSection.filter((compareControlId) => {
+            return compareControlId !== controlId;
+        });
+        prescriptionFormTemplateCopy.sections[currentSectionIdForControl].controlOrder = updatedControlOrderForCurrentSection;
+
+        const controlOrderOfTargetSection = prescriptionFormTemplateCopy.sections[targetSectionId].controlOrder;
+
+        const before = controlOrderOfTargetSection.slice(0, insertPosition);
+        const after = controlOrderOfTargetSection.slice(insertPosition);
+        const updatedControlOrder = before.concat([controlId]).concat(after);
+
+        prescriptionFormTemplateCopy.sections[targetSectionId].controlOrder = updatedControlOrder;
+
+        prescriptionFormTemplateCopy.controls[controlId].sectionId = targetSectionId;
+
+        return {
+            ...state,
+            prescriptionFormTemplate: prescriptionFormTemplateCopy,
+        }
     }
 }
