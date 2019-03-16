@@ -1,6 +1,6 @@
 import { IPrescriptionFormTemplate } from 'src/Models/prescription/prescriptionFormTemplate';
-import { IPrescriptionBuilderActions } from "../ActionCreators/prescriptionBuilderCreators";
-import { SET_EDIT_MODE, SET_VIEW_MODE } from "../Actions/prescriptionBuilderActions";
+import { IPrescriptionBuilderActions, ISetPrescriptionFormTemplateAction } from "../ActionCreators/prescriptionBuilderCreators";
+import { SET_EDIT_MODE, SET_PRESCRIPTION_FORM_TEMPLATE, SET_VIEW_MODE } from "../Actions/prescriptionBuilderActions";
 
 export interface IPrescriptionBuilderSliceOfState {
     editMode: boolean;
@@ -9,6 +9,11 @@ export interface IPrescriptionBuilderSliceOfState {
 
 const initialState = {
     editMode: true,
+    prescriptionFormTemplate: {
+        sectionOrder: [],
+        sections: {},
+        controls: {},
+    },
 }
 
 export const prescriptionBuilderReducer = (state: IPrescriptionBuilderSliceOfState = initialState, action: IPrescriptionBuilderActions) => {
@@ -22,6 +27,14 @@ export const prescriptionBuilderReducer = (state: IPrescriptionBuilderSliceOfSta
             return {
                 ...state,
                 editMode: true,
+            }
+        case SET_PRESCRIPTION_FORM_TEMPLATE:
+            const {
+                prescriptionFormTemplate,
+            } = action as ISetPrescriptionFormTemplateAction;
+            return {
+                ...state,
+                prescriptionFormTemplate,
             }
         default:
             return state;

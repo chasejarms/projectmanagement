@@ -41,9 +41,11 @@ import { IPrescriptionControlTemplateType } from 'src/Models/prescription/contro
 import { ISingleLineTextControlTemplate } from 'src/Models/prescription/controls/singleLineTextControlTemplate';
 import { ITitleTemplateControl } from 'src/Models/prescription/controls/titleTemplateControl';
 import { IUnitSelectionControlTemplate } from 'src/Models/prescription/controls/unitSelectionControlTemplate';
+import { IPrescriptionFormTemplate } from 'src/Models/prescription/prescriptionFormTemplate';
 import { IPrescriptionSectionTemplate } from 'src/Models/prescription/sections/prescriptionSectionTemplate';
 import { IPrescriptionSectionTemplateType } from 'src/Models/prescription/sections/prescriptionSectionTemplateType';
 import { SectionOrElement } from 'src/Models/sectionOrElement';
+import { setPrescriptionFormTemplate } from 'src/Redux/ActionCreators/prescriptionBuilderCreators';
 import { IAppState } from 'src/Redux/Reducers/rootReducer';
 import { generateUniqueId } from 'src/Utils/generateUniqueId';
 import Api from '../../Api/api';
@@ -75,6 +77,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
     public async componentWillMount(): Promise<void> {
         const companyId = this.props.match.path.split('/')[2];
         const prescriptionFormTemplate = await Api.prescriptionTemplateApi.getPrescriptionTemplate(companyId);
+        this.props.setPrescriptionFormTemplate(prescriptionFormTemplate);
         this.setState({
             prescriptionFormTemplate,
             loadingPrescriptionTemplate: false,
@@ -1266,6 +1269,13 @@ const mapStateToProps = ({ prescriptionBuilderState }: IAppState) => ({
     prescriptionBuilderState,
 });
 
-const connectedComponent = connect(mapStateToProps)(PrescriptionBuilderPresentation);
+const mapDispatchToProps = (dispatch: React.Dispatch<any>) => ({
+    setPrescriptionFormTemplate: (prescriptionFormTemplate: IPrescriptionFormTemplate) => {
+        const setPrescriptionFormTemplateAction = setPrescriptionFormTemplate(prescriptionFormTemplate);
+        dispatch(setPrescriptionFormTemplateAction);
+    }
+})
+
+const connectedComponent = connect(mapStateToProps, mapDispatchToProps)(PrescriptionBuilderPresentation);
 const componentWithTheme = withTheme()(connectedComponent);
 export const PrescriptionBuilder = withRouter(componentWithTheme);

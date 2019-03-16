@@ -7,6 +7,7 @@ import { IPrescriptionBuilderSliceOfState } from 'src/Redux/Reducers/prescriptio
 // tslint:disable-next-line:no-empty-interface
 export interface IPrescriptionBuilderProps extends WithTheme, RouteComponentProps<{}> {
     prescriptionBuilderState: IPrescriptionBuilderSliceOfState;
+    setPrescriptionFormTemplate: (prescriptionFormTemplate: IPrescriptionFormTemplate) => void;
 }
 
 // tslint:disable-next-line:no-empty-interface
