@@ -35,8 +35,10 @@ import {
     SET_EDIT_MODE,
     SET_PRESCRIPTION_FORM_TEMPLATE,
     SET_SELECTED_CONTROL_PRESCRIPTION_FORM_TEMPLATE,
+    SET_SELECTED_SECTION_PRESCRIPTION_FORM_TEMPLATE,
     SET_VIEW_MODE,
 } from "../Actions/prescriptionBuilderActions";
+import { ISetSelectedSectionPrescriptionFormTemplateAction } from './../ActionCreators/prescriptionBuilderCreators';
 import { ON_DROP_EXISTING_CONTROL_PRESCRIPTION_FORM_TEMPLATE, ON_DROP_NEW_CONTROL_PRESCRIPTION_FORM_TEMPLATE } from './../Actions/prescriptionBuilderActions';
 
 export interface IPrescriptionBuilderSliceOfState {
@@ -112,6 +114,12 @@ export const prescriptionBuilderReducer = (state: IPrescriptionBuilderSliceOfSta
             return {
                 ...state,
                 selectedControl: controlId,
+            }
+        case SET_SELECTED_SECTION_PRESCRIPTION_FORM_TEMPLATE:
+            const { sectionId }  = action as ISetSelectedSectionPrescriptionFormTemplateAction;
+            return {
+                ...state,
+                selectedSection: sectionId,
             }
         default:
             return state;
@@ -427,15 +435,15 @@ const prescriptionFormTemplateAfterRemovingControl = (state: IPrescriptionBuilde
 const prescriptionFormTemplateAfterRemovingSection = (state: IPrescriptionBuilderSliceOfState, action: IRemoveSectionPrescriptionFormTemplateAction): IPrescriptionBuilderSliceOfState => {
     const prescriptionFormTemplateCopy = cloneDeep(state.prescriptionFormTemplate);
     const sectionsWithoutSelectedSection = prescriptionFormTemplateCopy.sectionOrder.filter((compareSectionId) => {
-        return compareSectionId !== action.sectionId;
+        return compareSectionId !== state.selectedSection;
     });
 
-    const controlsToDelete = prescriptionFormTemplateCopy.sections[action.sectionId].controlOrder;
+    const controlsToDelete = prescriptionFormTemplateCopy.sections[state.selectedSection!].controlOrder;
     controlsToDelete.forEach((controlIdToDelete) => {
         delete prescriptionFormTemplateCopy.controls[controlIdToDelete];
     });
 
-    delete prescriptionFormTemplateCopy.sections[action.sectionId];
+    delete prescriptionFormTemplateCopy.sections[state.selectedSection!];
     prescriptionFormTemplateCopy.sectionOrder = sectionsWithoutSelectedSection;
 
     return {

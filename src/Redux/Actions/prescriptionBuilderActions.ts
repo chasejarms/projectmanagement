@@ -9,5 +9,5 @@ export const ON_DROP_NEW_CONTROL_PRESCRIPTION_FORM_TEMPLATE = `${actionKey} on d
 export const ON_DROP_EXISTING_CONTROL_PRESCRIPTION_FORM_TEMPLATE = `${actionKey} on drop existing control`;
 export const REMOVE_CONTROL_PRESCRIPTION_FORM_TEMPLATE = `${actionKey} remove control`;
 export const REMOVE_SECTION_PRESCRIPTION_FORM_TEMPLATE = `${actionKey} remove section`;
-export const SET_SELECTED_SECTION_PRESCRIPTION_FORM_TEMPLATE = `${actionKey} set selected section`;
 export const SET_SELECTED_CONTROL_PRESCRIPTION_FORM_TEMPLATE = `${actionKey} set selected control`;
+export const SET_SELECTED_SECTION_PRESCRIPTION_FORM_TEMPLATE = `${actionKey} set selected section`;

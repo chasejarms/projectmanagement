@@ -10,6 +10,7 @@ import {
     SET_EDIT_MODE,
     SET_PRESCRIPTION_FORM_TEMPLATE,
     SET_SELECTED_CONTROL_PRESCRIPTION_FORM_TEMPLATE,
+    SET_SELECTED_SECTION_PRESCRIPTION_FORM_TEMPLATE,
     SET_VIEW_MODE,
 } from '../Actions/prescriptionBuilderActions';
 
@@ -45,12 +46,14 @@ export interface IOnDropExistingControlPrescriptionFormTemplateAction extends Ac
 
 export interface IRemoveControlPrescriptionFormTemplateAction extends Action<typeof REMOVE_CONTROL_PRESCRIPTION_FORM_TEMPLATE> {}
 
-export interface IRemoveSectionPrescriptionFormTemplateAction extends Action<typeof REMOVE_SECTION_PRESCRIPTION_FORM_TEMPLATE> {
-    sectionId: string;
-}
+export interface IRemoveSectionPrescriptionFormTemplateAction extends Action<typeof REMOVE_SECTION_PRESCRIPTION_FORM_TEMPLATE> {}
 
 export interface ISetSelectedControlPrescriptionFormTemplateAction extends Action<typeof SET_SELECTED_CONTROL_PRESCRIPTION_FORM_TEMPLATE> {
     controlId: string | null;
+}
+
+export interface ISetSelectedSectionPrescriptionFormTemplateAction extends Action<typeof SET_SELECTED_SECTION_PRESCRIPTION_FORM_TEMPLATE> {
+    sectionId: string | null;
 }
 
 export type IPrescriptionBuilderActions = ISetEditModeAction |
@@ -62,7 +65,8 @@ export type IPrescriptionBuilderActions = ISetEditModeAction |
     IOnDropExistingControlPrescriptionFormTemplateAction |
     IRemoveControlPrescriptionFormTemplateAction |
     IRemoveSectionPrescriptionFormTemplateAction |
-    ISetSelectedControlPrescriptionFormTemplateAction;
+    ISetSelectedControlPrescriptionFormTemplateAction |
+    ISetSelectedSectionPrescriptionFormTemplateAction;
 
 export const setEditMode = (): ISetEditModeAction => {
     return {
@@ -137,12 +141,9 @@ export const removeControlPrescriptionFormTemplate = (): IRemoveControlPrescript
     }
 }
 
-export const removeSectionPrescriptionFormTemplate = (
-    sectionId: string,
-): IRemoveSectionPrescriptionFormTemplateAction => {
+export const removeSectionPrescriptionFormTemplate = (): IRemoveSectionPrescriptionFormTemplateAction => {
     return {
         type: REMOVE_SECTION_PRESCRIPTION_FORM_TEMPLATE,
-        sectionId,
     }
 }
 
@@ -152,5 +153,14 @@ export const setSelectedControl = (
     return {
         type: SET_SELECTED_CONTROL_PRESCRIPTION_FORM_TEMPLATE,
         controlId,
+    }
+}
+
+export const setSelectedSection = (
+    sectionId: null | string,
+): ISetSelectedSectionPrescriptionFormTemplateAction => {
+    return {
+        type: SET_SELECTED_SECTION_PRESCRIPTION_FORM_TEMPLATE,
+        sectionId,
     }
 }

@@ -45,6 +45,7 @@ import {
     removeSectionPrescriptionFormTemplate,
     setPrescriptionFormTemplate,
     setSelectedControl,
+    setSelectedSection,
 } from 'src/Redux/ActionCreators/prescriptionBuilderCreators';
 import { IAppState } from 'src/Redux/Reducers/rootReducer';
 import { generateUniqueId } from 'src/Utils/generateUniqueId';
@@ -60,7 +61,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
     IPrescriptionBuilderState
 > {
     public state: IPrescriptionBuilderState = {
-        selectedSection: null,
         controlValues: {},
         updatingPrescriptionTemplate: false,
         loadingPrescriptionTemplate: true,
@@ -202,7 +202,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                                     </div>
                                                 ) : (
                                                     <div className={controlsContainer}>
-                                                        {this.state.selectedSection === sectionId ? (
+                                                        {this.props.prescriptionBuilderState.selectedSection === sectionId ? (
                                                             <div className={selectedControlContainerClass}>
                                                                 <div className={editControlContainer}>
                                                                     <div className={threeColumns}>
@@ -314,9 +314,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
     private selectSection = (sectionId: string) => () => {
         this.props.setSelectedControl(null);
-        this.setState({
-            selectedSection: sectionId,
-        })
+        this.props.setSelectedSection(sectionId);
     }
 
     private correctControlDisplay = (controlId: string) => {
@@ -823,18 +821,14 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
         const sectionId = this.props.prescriptionBuilderState.prescriptionFormTemplate.controls[controlId].sectionId;
         this.props.setSelectedControl(controlId);
-        this.setState({
-            selectedSection: sectionId,
-        })
+        this.props.setSelectedSection(sectionId);
     }
 
     private unselectControl = (event: any) => {
         event.stopPropagation();
         event.preventDefault();
         this.props.setSelectedControl(null);
-        this.setState({
-            selectedSection: null,
-        })
+        this.props.setSelectedSection(null);
     }
 
     private handleControlTitleChange = (event: any) => {
@@ -911,7 +905,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
         event.stopPropagation();
         event.preventDefault();
 
-        this.props.removeSection(this.state.selectedSection!);
+        this.props.removeSection();
     }
 
     private removeControl = (event: any): void => {
@@ -981,13 +975,17 @@ const mapDispatchToProps = (dispatch: React.Dispatch<any>) => ({
         const removeControlAction = removeControlPrescriptionFormTemplate();
         dispatch(removeControlAction);
     },
-    removeSection: (sectionId: string) => {
-        const removeSectionAction = removeSectionPrescriptionFormTemplate(sectionId);
+    removeSection: () => {
+        const removeSectionAction = removeSectionPrescriptionFormTemplate();
         dispatch(removeSectionAction);
     },
     setSelectedControl: (controlId: string | null) => {
         const setSelectedControlAction = setSelectedControl(controlId);
         dispatch(setSelectedControlAction);
+    },
+    setSelectedSection: (sectionId: string | null) => {
+        const setSelectedSectionAtion = setSelectedSection(sectionId);
+        dispatch(setSelectedSectionAtion);
     }
 })
 
