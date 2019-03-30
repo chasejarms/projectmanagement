@@ -28,6 +28,7 @@ import { AsyncButton } from 'src/Components/AsyncButton/AsyncButton';
 import { DraggableExistingFormElement } from 'src/Components/DraggableExistingFormElement/DraggableExistingFormElement';
 import { FormElementDropZone } from 'src/Components/FormElementDropZone/FormElementDropZone';
 import { PrescriptionBuilderDrawer } from 'src/Components/PrescriptionBuilderDrawer/PrescriptionBuilderDrawer';
+import { DropdownEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/DropdownEdit/DropdownEdit';
 import { TitleEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/TitleEdit/TitleEdit';
 import { IDropdownTemplateControl } from 'src/Models/prescription/controls/dropdownTemplateControl';
 import { INonEditableTextField } from 'src/Models/prescription/controls/nonEditableTextField';
@@ -321,27 +322,13 @@ export class PrescriptionBuilderPresentation extends React.Component<
         if (control.type === IPrescriptionControlTemplateType.Title) {
             return <TitleEdit control={control}/>
         } else if (control.type === IPrescriptionControlTemplateType.Dropdown) {
-            const value = this.props.prescriptionBuilderState.controlValues[control.id] || '';
-
             return (
-                <div>
-                    <FormControl fullWidth={true} disabled={editMode}>
-                        <InputLabel htmlFor={`${control.id}`}>{control.label}</InputLabel>
-                        <Select
-                            inputProps={{
-                                name: control.id,
-                                id: control.id,
-                            }}
-                            value={value}
-                            onChange={this.handleControlValueChange(control.id)}
-                        >
-                            <MenuItem value={''}>No Selection</MenuItem>
-                            {control.options.map(({ text, id }) => {
-                                return <MenuItem key={id} value={id}>{text}</MenuItem>
-                            })}
-                        </Select>
-                    </FormControl>
-                </div>
+                <DropdownEdit
+                    control={control}
+                    controlValue={this.props.prescriptionBuilderState.controlValues[control.id]}
+                    disabled={editMode}
+                    updateControlValueActionCreator={updateControlValue}
+                />
             )
         } else if (control.type === IPrescriptionControlTemplateType.DoctorInformation) {
             return (
