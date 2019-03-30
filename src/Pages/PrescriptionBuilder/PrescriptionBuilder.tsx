@@ -1,15 +1,11 @@
 import {
     Button,
-    Checkbox,
     CircularProgress,
     Divider,
     FormControl,
     Input,
     InputLabel,
-    ListItemText,
-    MenuItem,
     Paper,
-    Select,
     Snackbar,
     TextField,
     Typography,
@@ -305,10 +301,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
         }
     }
 
-    private handleControlValueChange = (controlId: string) => (event: any) => {
-        this.props.updateControlValue(controlId, event.target.value);
-    }
-
     private selectSection = (sectionId: string) => () => {
         this.props.setSelectedControl(null);
         this.props.setSelectedSection(sectionId);
@@ -375,30 +367,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
         } else if (control.type === IPrescriptionControlTemplateType.NonEditableText) {
             return (
                 <Typography variant="body1">{control.text}</Typography>
-            )
-        } else if (control.type === IPrescriptionControlTemplateType.UnitSelection) {
-            const value = this.props.prescriptionBuilderState.controlValues[control.id] || [];
-
-            return (
-                <FormControl fullWidth={true} disabled={editMode}>
-                    <InputLabel>Select Units</InputLabel>
-                    <Select
-                        multiple={true}
-                        onChange={this.handleControlValueChange(control.id)}
-                        value={value}
-                        native={false}
-                        // tslint:disable-next-line:jsx-no-lambda
-                        renderValue={selected => {
-                            if (selected) {
-                                return (selected as any[]).join(', ');
-                            } else {
-                                return '';
-                            }
-                        }}
-                    >
-                        {this.createUnits(control.id)}
-                    </Select>
-                </FormControl>
             )
         } else if (control.type === IPrescriptionControlTemplateType.Date) {
             return (
@@ -511,18 +479,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     <div/>
                     <div className={dragIconContainerClass}>
                         <DraggableExistingFormElement controlType={IPrescriptionControlTemplateType.NonEditableText} id={control.id}/>
-                    </div>
-                </div>
-            )
-        } else if (control.type === IPrescriptionControlTemplateType.DoctorInformation || control.type === IPrescriptionControlTemplateType.UnitSelection) {
-            return (
-                <div className={threeColumns}>
-                    <div>
-                        <Typography variant="body1">This field has no configurable options</Typography>
-                    </div>
-                    <div/>
-                    <div className={dragIconContainerClass}>
-                        <DraggableExistingFormElement controlType={IPrescriptionControlTemplateType.DoctorInformation} id={control.id}/>
                     </div>
                 </div>
             )
@@ -643,25 +599,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
     private handleDeadlineChange = (controlId: string) => (newDeadline: any) => {
         this.props.updateControlValue(controlId, newDeadline);
-    }
-
-    private createUnits = (controlId: string) => {
-        const units = [];
-        for (let i = 1; i <= 32; i++) {
-            units.push(i);
-        }
-
-        return units.map((unitNumber) => {
-            const valuesExists = !!this.props.prescriptionBuilderState.controlValues[controlId];
-            const checked = valuesExists && this.props.prescriptionBuilderState.controlValues[controlId].indexOf(unitNumber) > -1;
-
-            return (
-                <MenuItem key={unitNumber} value={unitNumber}>
-                    <Checkbox checked={checked}/>
-                    <ListItemText primary={unitNumber}/>
-                </MenuItem>
-            )
-        });
     }
 
     private handlePrefixChange = (event: any) => {

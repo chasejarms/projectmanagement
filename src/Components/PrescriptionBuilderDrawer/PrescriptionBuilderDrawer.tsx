@@ -61,7 +61,7 @@ class PrescriptionBuilderDrawerPresentation extends React.Component<
                             <DraggableFormElement controlType={IPrescriptionControlTemplateType.Number} disableDrag={shouldDisable}/>
                             <DraggableFormElement controlType={IPrescriptionControlTemplateType.SingleLineText} disableDrag={shouldDisable}/>
                             <DraggableFormElement controlType={IPrescriptionControlTemplateType.Title} disableDrag={shouldDisable}/>
-                            <DraggableFormElement controlType={IPrescriptionControlTemplateType.UnitSelection} disableDrag={shouldDisable}/>
+                            {/* <DraggableFormElement controlType={IPrescriptionControlTemplateType.UnitSelection} disableDrag={shouldDisable}/> */}
                         </div>
                     </div>
                     <div className={editModeButtonContainer}>
