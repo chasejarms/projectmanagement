@@ -31,6 +31,7 @@ import { PrescriptionBuilderDrawer } from 'src/Components/PrescriptionBuilderDra
 import { DoctorInformationEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/DoctorInformationEdit/DoctorInformation.ias';
 import { DropdownEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/DropdownEdit/DropdownEdit';
 import { MultilineTextEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/MultilineTextEdit/MultilineTextEdit';
+import { SingleLineTextEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/SingleLineTextEdit/SingleLineTextEdit';
 import { TitleEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/TitleEdit/TitleEdit';
 import { IDropdownTemplateControl } from 'src/Models/prescription/controls/dropdownTemplateControl';
 import { INonEditableTextField } from 'src/Models/prescription/controls/nonEditableTextField';
@@ -347,15 +348,12 @@ export class PrescriptionBuilderPresentation extends React.Component<
             )
         } else if (control.type === IPrescriptionControlTemplateType.SingleLineText) {
             return (
-                <div>
-                    <TextField
-                        disabled={editMode}
-                        fullWidth={true}
-                        label={control.label}
-                        value={this.props.prescriptionBuilderState.controlValues[control.id]}
-                        onChange={this.handleControlValueChange(control.id)}
-                    />
-                </div>
+                <SingleLineTextEdit
+                    control={control}
+                    controlValue={controlValue}
+                    disabled={editMode}
+                    updateControlValueActionCreator={updateControlValue}
+                />
             )
         } else if (control.type === IPrescriptionControlTemplateType.Checkbox) {
             return (
