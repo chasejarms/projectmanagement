@@ -4,8 +4,6 @@ import {
     CircularProgress,
     Divider,
     FormControl,
-    FormControlLabel,
-    FormGroup,
     Input,
     InputAdornment,
     InputLabel,
@@ -28,6 +26,7 @@ import { AsyncButton } from 'src/Components/AsyncButton/AsyncButton';
 import { DraggableExistingFormElement } from 'src/Components/DraggableExistingFormElement/DraggableExistingFormElement';
 import { FormElementDropZone } from 'src/Components/FormElementDropZone/FormElementDropZone';
 import { PrescriptionBuilderDrawer } from 'src/Components/PrescriptionBuilderDrawer/PrescriptionBuilderDrawer';
+import { CheckboxEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/CheckboxEdit/CheckboxEdit';
 import { DoctorInformationEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/DoctorInformationEdit/DoctorInformation.ias';
 import { DropdownEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/DropdownEdit/DropdownEdit';
 import { MultilineTextEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/MultilineTextEdit/MultilineTextEdit';
@@ -357,28 +356,12 @@ export class PrescriptionBuilderPresentation extends React.Component<
             )
         } else if (control.type === IPrescriptionControlTemplateType.Checkbox) {
             return (
-                <div>
-                    <FormControl>
-                        <FormGroup row={true}>
-                            {control.options.map(({ text, id }) => {
-                                const valueForControl = this.props.prescriptionBuilderState.controlValues[control.id];
-                                const valuesExistForControl = !!valueForControl;
-                                const checked = valuesExistForControl && !!valueForControl[id];
-
-                                return (
-                                    <FormControlLabel
-                                        key={id}
-                                        label={text}
-                                        onClick={this.handleCheckboxChange(control.id, id)}
-                                        control={
-                                            <Checkbox value={id} checked={checked} disabled={editMode}/>
-                                        }
-                                    />
-                                )
-                            })}
-                        </FormGroup>
-                    </FormControl>
-                </div>
+                <CheckboxEdit
+                    control={control}
+                    controlValue={controlValue}
+                    disabled={editMode}
+                    updateControlValueActionCreator={updateControlValue}
+                />
             )
         } else if (control.type === IPrescriptionControlTemplateType.Number) {
             return (
@@ -661,27 +644,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
 
         return <div>Editing this control: {controlId}</div>
-    }
-
-    private handleCheckboxChange = (controlId: string, optionId: string) => (event: any) => {
-        const { editMode } = this.props.prescriptionBuilderState;
-        if (editMode) {
-            return;
-        }
-
-        const controlValuesCopy = cloneDeep(this.props.prescriptionBuilderState.controlValues);
-        const valuesExists = !!controlValuesCopy[controlId];
-
-        if (valuesExists) {
-            const currentValue = !!controlValuesCopy[controlId][optionId];
-            controlValuesCopy[controlId][optionId] = !currentValue;
-        } else {
-            controlValuesCopy[controlId] = {
-                [optionId]: true,
-            }
-        }
-
-        this.props.updateControlValue(controlId, controlValuesCopy[controlId]);
     }
 
     private handleDeadlineChange = (controlId: string) => (newDeadline: any) => {
