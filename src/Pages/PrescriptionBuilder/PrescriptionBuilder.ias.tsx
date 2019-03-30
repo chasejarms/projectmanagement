@@ -183,13 +183,6 @@ export const createPrescriptionBuilderClasses = (
         height: '100%',
     });
 
-    const cityStateZipContainer = css({
-        width: '100%',
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr 1fr',
-        gridColumnGap: 16,
-    });
-
     const darkGrey = css({
         color: '#9e9e9e',
     });
@@ -294,7 +287,6 @@ export const createPrescriptionBuilderClasses = (
         trashIcon,
         addOptionButtonContainer,
         drawerSplitSections,
-        cityStateZipContainer,
         darkGrey,
         formElementDropZoneClass,
         noFieldsContainer,

@@ -28,6 +28,7 @@ import { AsyncButton } from 'src/Components/AsyncButton/AsyncButton';
 import { DraggableExistingFormElement } from 'src/Components/DraggableExistingFormElement/DraggableExistingFormElement';
 import { FormElementDropZone } from 'src/Components/FormElementDropZone/FormElementDropZone';
 import { PrescriptionBuilderDrawer } from 'src/Components/PrescriptionBuilderDrawer/PrescriptionBuilderDrawer';
+import { DoctorInformationEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/DoctorInformationEdit/DoctorInformation.ias';
 import { DropdownEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/DropdownEdit/DropdownEdit';
 import { TitleEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/TitleEdit/TitleEdit';
 import { IDropdownTemplateControl } from 'src/Models/prescription/controls/dropdownTemplateControl';
@@ -315,9 +316,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
     private correctControlDisplay = (controlId: string) => {
         const { editMode } = this.props.prescriptionBuilderState;
         const control = this.props.prescriptionBuilderState.prescriptionFormTemplate.controls[controlId];
-        const {
-            cityStateZipContainer,
-        } = createPrescriptionBuilderClasses(this.props, this.state);
 
         if (control.type === IPrescriptionControlTemplateType.Title) {
             return <TitleEdit control={control}/>
@@ -332,46 +330,9 @@ export class PrescriptionBuilderPresentation extends React.Component<
             )
         } else if (control.type === IPrescriptionControlTemplateType.DoctorInformation) {
             return (
-                <div>
-                    <FormControl fullWidth={true} disabled={editMode}>
-                        <InputLabel>Doctor</InputLabel>
-                        <Input
-                            value={''}
-                        />
-                    </FormControl>
-                    <FormControl fullWidth={true} disabled={editMode}>
-                        <InputLabel>Street</InputLabel>
-                        <Input
-                            value={''}
-                        />
-                    </FormControl>
-                    <div className={cityStateZipContainer}>
-                        <FormControl disabled={editMode}>
-                            <InputLabel>City</InputLabel>
-                            <Input
-                                value={''}
-                            />
-                        </FormControl>
-                        <FormControl disabled={editMode}>
-                            <InputLabel>State</InputLabel>
-                            <Input
-                                value={''}
-                            />
-                        </FormControl>
-                        <FormControl disabled={editMode}>
-                            <InputLabel>Zip</InputLabel>
-                            <Input
-                                value={''}
-                            />
-                        </FormControl>
-                    </div>
-                    <FormControl fullWidth={true} disabled={editMode}>
-                        <InputLabel>Telephone</InputLabel>
-                        <Input
-                            value={''}
-                        />
-                    </FormControl>
-                </div>
+                <DoctorInformationEdit
+                    disabled={editMode}
+                />
             )
         } else if (control.type === IPrescriptionControlTemplateType.MultilineText) {
             return (
