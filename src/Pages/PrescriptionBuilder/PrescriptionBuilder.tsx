@@ -13,7 +13,6 @@ import {
 } from '@material-ui/core';
 import TrashIcon from '@material-ui/icons/Delete';
 import { cloneDeep } from 'lodash';
-import { DateFormatInput } from 'material-ui-next-pickers';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
@@ -22,6 +21,7 @@ import { DraggableExistingFormElement } from 'src/Components/DraggableExistingFo
 import { FormElementDropZone } from 'src/Components/FormElementDropZone/FormElementDropZone';
 import { PrescriptionBuilderDrawer } from 'src/Components/PrescriptionBuilderDrawer/PrescriptionBuilderDrawer';
 import { CheckboxEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/CheckboxEdit/CheckboxEdit';
+import { DateEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/DateEdit/DateEdit';
 import { DoctorInformationEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/DoctorInformationEdit/DoctorInformation.ias';
 import { DropdownEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/DropdownEdit/DropdownEdit';
 import { MultilineTextEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/MultilineTextEdit/MultilineTextEdit';
@@ -370,14 +370,11 @@ export class PrescriptionBuilderPresentation extends React.Component<
             )
         } else if (control.type === IPrescriptionControlTemplateType.Date) {
             return (
-                <DateFormatInput
+                <DateEdit
+                    control={control}
+                    controlValue={controlValue}
                     disabled={editMode}
-                    fullWidth={true}
-                    label={control.label}
-                    name="date-input"
-                    value={this.props.prescriptionBuilderState.controlValues[control.id]}
-                    onChange={this.handleDeadlineChange(control.id)}
-                    min={new Date()}
+                    updateControlValueActionCreator={updateControlValue}
                 />
             )
         }
@@ -595,10 +592,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
 
         return <div>Editing this control: {controlId}</div>
-    }
-
-    private handleDeadlineChange = (controlId: string) => (newDeadline: any) => {
-        this.props.updateControlValue(controlId, newDeadline);
     }
 
     private handlePrefixChange = (event: any) => {
