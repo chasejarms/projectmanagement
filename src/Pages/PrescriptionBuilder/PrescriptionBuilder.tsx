@@ -5,7 +5,6 @@ import {
     Divider,
     FormControl,
     Input,
-    InputAdornment,
     InputLabel,
     ListItemText,
     MenuItem,
@@ -30,6 +29,7 @@ import { CheckboxEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditCo
 import { DoctorInformationEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/DoctorInformationEdit/DoctorInformation.ias';
 import { DropdownEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/DropdownEdit/DropdownEdit';
 import { MultilineTextEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/MultilineTextEdit/MultilineTextEdit';
+import { NumberEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/NumberEdit/NumberEdit';
 import { SingleLineTextEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/SingleLineTextEdit/SingleLineTextEdit';
 import { TitleEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/TitleEdit/TitleEdit';
 import { IDropdownTemplateControl } from 'src/Models/prescription/controls/dropdownTemplateControl';
@@ -365,17 +365,12 @@ export class PrescriptionBuilderPresentation extends React.Component<
             )
         } else if (control.type === IPrescriptionControlTemplateType.Number) {
             return (
-                <FormControl fullWidth={true} disabled={editMode}>
-                    <InputLabel htmlFor={`${control.id}-number`}>{control.label}</InputLabel>
-                    <Input
-                        type="number"
-                        id={`${control.id}-number`}
-                        value={this.props.prescriptionBuilderState.controlValues[control.id]}
-                        onChange={this.handleControlValueChange(control.id)}
-                        startAdornment={control.prefix ? <InputAdornment position="start">{control.prefix}</InputAdornment> : undefined}
-                        endAdornment={control.suffix ? <InputAdornment position="end">{control.suffix}</InputAdornment> : undefined}
-                    />
-                </FormControl>
+                <NumberEdit
+                    control={control}
+                    controlValue={controlValue}
+                    disabled={editMode}
+                    updateControlValueActionCreator={updateControlValue}
+                />
             )
         } else if (control.type === IPrescriptionControlTemplateType.NonEditableText) {
             return (
