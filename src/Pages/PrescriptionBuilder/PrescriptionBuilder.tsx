@@ -30,6 +30,7 @@ import { FormElementDropZone } from 'src/Components/FormElementDropZone/FormElem
 import { PrescriptionBuilderDrawer } from 'src/Components/PrescriptionBuilderDrawer/PrescriptionBuilderDrawer';
 import { DoctorInformationEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/DoctorInformationEdit/DoctorInformation.ias';
 import { DropdownEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/DropdownEdit/DropdownEdit';
+import { MultilineTextEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/MultilineTextEdit/MultilineTextEdit';
 import { TitleEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/TitleEdit/TitleEdit';
 import { IDropdownTemplateControl } from 'src/Models/prescription/controls/dropdownTemplateControl';
 import { INonEditableTextField } from 'src/Models/prescription/controls/nonEditableTextField';
@@ -316,6 +317,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
     private correctControlDisplay = (controlId: string) => {
         const { editMode } = this.props.prescriptionBuilderState;
         const control = this.props.prescriptionBuilderState.prescriptionFormTemplate.controls[controlId];
+        const controlValue = this.props.prescriptionBuilderState.controlValues[control.id]
 
         if (control.type === IPrescriptionControlTemplateType.Title) {
             return <TitleEdit control={control}/>
@@ -323,7 +325,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
             return (
                 <DropdownEdit
                     control={control}
-                    controlValue={this.props.prescriptionBuilderState.controlValues[control.id]}
+                    controlValue={controlValue}
                     disabled={editMode}
                     updateControlValueActionCreator={updateControlValue}
                 />
@@ -336,17 +338,12 @@ export class PrescriptionBuilderPresentation extends React.Component<
             )
         } else if (control.type === IPrescriptionControlTemplateType.MultilineText) {
             return (
-                <div>
-                    <TextField
-                        disabled={editMode}
-                        fullWidth={true}
-                        rows={5}
-                        multiline={true}
-                        label={control.label}
-                        value={this.props.prescriptionBuilderState.controlValues[control.id]}
-                        onChange={this.handleControlValueChange(control.id)}
-                    />
-                </div>
+                <MultilineTextEdit
+                    control={control}
+                    controlValue={controlValue}
+                    disabled={editMode}
+                    updateControlValueActionCreator={updateControlValue}
+                />
             )
         } else if (control.type === IPrescriptionControlTemplateType.SingleLineText) {
             return (
