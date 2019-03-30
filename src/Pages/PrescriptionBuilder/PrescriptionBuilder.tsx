@@ -28,6 +28,7 @@ import { AsyncButton } from 'src/Components/AsyncButton/AsyncButton';
 import { DraggableExistingFormElement } from 'src/Components/DraggableExistingFormElement/DraggableExistingFormElement';
 import { FormElementDropZone } from 'src/Components/FormElementDropZone/FormElementDropZone';
 import { PrescriptionBuilderDrawer } from 'src/Components/PrescriptionBuilderDrawer/PrescriptionBuilderDrawer';
+import { TitleEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/TitleEdit/TitleEdit';
 import { IDropdownTemplateControl } from 'src/Models/prescription/controls/dropdownTemplateControl';
 import { INonEditableTextField } from 'src/Models/prescription/controls/nonEditableTextField';
 import { INumberTemplateControl } from 'src/Models/prescription/controls/numberTemplateControl';
@@ -318,11 +319,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
         } = createPrescriptionBuilderClasses(this.props, this.state);
 
         if (control.type === IPrescriptionControlTemplateType.Title) {
-            return (
-                <div>
-                    <Typography variant="title">{control.title}</Typography>
-                </div>
-            )
+            return <TitleEdit control={control}/>
         } else if (control.type === IPrescriptionControlTemplateType.Dropdown) {
             const value = this.props.prescriptionBuilderState.controlValues[control.id] || '';
 
