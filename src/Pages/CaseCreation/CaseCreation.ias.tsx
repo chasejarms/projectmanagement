@@ -6,6 +6,7 @@ import { ICaseCreationSliceOfState } from 'src/Redux/Reducers/caseCreationReduce
 
 export interface ICaseCreationProps extends WithTheme, RouteComponentProps<{}> {
     caseCreationState: ICaseCreationSliceOfState;
+    clearCaseCreationState: () => void;
 };
 
 export interface ICaseCreationState {
@@ -59,11 +60,20 @@ export const createCaseCreationClasses = (
         border: '3px solid transparent',
     });
 
+    const circularProgressContainer = css({
+        display: 'flex',
+        height: '100%',
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    });
+
     return {
         caseCreationContainer,
         caseCreationFormContainer,
         sectionsContainer,
         sectionContainer,
         controlContainer,
+        circularProgressContainer,
     };
 }

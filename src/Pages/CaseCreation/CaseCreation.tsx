@@ -1,4 +1,5 @@
 import {
+    CircularProgress,
     Paper,
     Toolbar,
     Typography,
@@ -17,7 +18,7 @@ import { NumberEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComp
 import { SingleLineTextEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/SingleLineTextEdit/SingleLineTextEdit';
 import { TitleEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/TitleEdit/TitleEdit';
 import { IPrescriptionControlTemplateType } from 'src/Models/prescription/controls/prescriptionControlTemplateType';
-import { updateCaseCreationControlValue } from 'src/Redux/ActionCreators/caseCreationCreator';
+import { clearCaseCreationState, updateCaseCreationControlValue } from 'src/Redux/ActionCreators/caseCreationCreator';
 import { IAppState } from 'src/Redux/Reducers/rootReducer';
 import Api from '../../Api/api';
 import { createCaseCreationClasses, ICaseCreationProps, ICaseCreationState } from './CaseCreation.ias';
@@ -40,6 +41,10 @@ export class CaseCreationPresentation extends React.Component<
         })
     }
 
+    public componentWillUnmount(): void {
+        this.props.clearCaseCreationState();
+    }
+
     public render() {
         const {
             caseCreationContainer,
@@ -47,6 +52,7 @@ export class CaseCreationPresentation extends React.Component<
             sectionsContainer,
             sectionContainer,
             controlContainer,
+            circularProgressContainer,
         } = createCaseCreationClasses(this.props, this.state);
 
         return (
@@ -58,7 +64,13 @@ export class CaseCreationPresentation extends React.Component<
                         </Typography>
                     </Toolbar>
                     {this.state.loadingPrescriptionTemplate ? (
-                        <div>Loading</div>
+                        <div className={circularProgressContainer}>
+                            <CircularProgress
+                                color="primary"
+                                size={64}
+                                thickness={3}
+                            />
+                        </div>
                     ) : (
                         <div className={sectionsContainer}>
                             {this.state.prescriptionFormTemplate!.sectionOrder.map((sectionId, sectionIndex) => {
@@ -172,5 +184,13 @@ const mapStateToProps = ({ caseCreationState }: IAppState ) => ({
     caseCreationState,
 })
 
-const connectedComponent = connect(mapStateToProps)(CaseCreationPresentation);
+const mapDispatchToProps = (dispatch: React.Dispatch<any>) => ({
+    clearCaseCreationState: () => {
+        const clearCaseCreationAction = clearCaseCreationState();
+        dispatch(clearCaseCreationAction);
+    },
+});
+
+
+const connectedComponent = connect(mapStateToProps, mapDispatchToProps)(CaseCreationPresentation);
 export const CaseCreation = withRouter(withTheme()(connectedComponent as any) as any)

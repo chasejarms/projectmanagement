@@ -1,5 +1,5 @@
 import { cloneDeep } from "lodash";
-import { ICaseCreationActions } from "../ActionCreators/caseCreationCreator";
+import { ICaseCreationActions, IUpdateControlValueCaseCreationAction } from "../ActionCreators/caseCreationCreator";
 import { UPDATE_CONTROL_VALUE_CASE_CREATION } from "../Actions/caseCreationActions";
 
 export interface ICaseCreationSliceOfState {
@@ -18,18 +18,19 @@ export const caseCreationReducer = (
 ) => {
     switch (action.type) {
         case UPDATE_CONTROL_VALUE_CASE_CREATION:
+            const updateAction = action as IUpdateControlValueCaseCreationAction;
             return caseCreationTemplateAfterControlUpdate(
                 state,
-                action,
+                updateAction,
             );
         default:
-            return state;
+            return initialState;
     }
 }
 
 const caseCreationTemplateAfterControlUpdate = (
     state: ICaseCreationSliceOfState,
-    action: ICaseCreationActions,
+    action: IUpdateControlValueCaseCreationAction,
 ) => {
     const value = action.value;
     const controlValuesCopy = cloneDeep(state.controlValues);
