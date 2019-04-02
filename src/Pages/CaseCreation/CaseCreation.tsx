@@ -1,13 +1,12 @@
 import {
     CircularProgress,
     Paper,
-    Toolbar,
-    Typography,
     withTheme,
 } from '@material-ui/core';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
+import { AsyncButton } from 'src/Components/AsyncButton/AsyncButton';
 import { CheckboxEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/CheckboxEdit/CheckboxEdit';
 import { DateEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/DateEdit/DateEdit';
 import { DoctorInformationEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/DoctorInformationEdit/DoctorInformation.ias';
@@ -53,16 +52,23 @@ export class CaseCreationPresentation extends React.Component<
             sectionContainer,
             controlContainer,
             circularProgressContainer,
+            createCaseButtonContainer,
         } = createCaseCreationClasses(this.props, this.state);
 
         return (
             <div className={caseCreationContainer}>
                 <Paper className={caseCreationFormContainer}>
-                    <Toolbar>
-                        <Typography variant="title">
-                            Case Creation Form
-                        </Typography>
-                    </Toolbar>
+                    {!this.state.loadingPrescriptionTemplate ? (
+                        <div className={createCaseButtonContainer}>
+                            <AsyncButton
+                                color="secondary"
+                                disabled={false}
+                                asyncActionInProgress={false}
+                                onClick={this.createCase}>
+                                Create Case
+                            </AsyncButton>
+                        </div>
+                    ) : undefined}
                     {this.state.loadingPrescriptionTemplate ? (
                         <div className={circularProgressContainer}>
                             <CircularProgress
@@ -177,6 +183,10 @@ export class CaseCreationPresentation extends React.Component<
         }
 
         return <div/>
+    }
+
+    private createCase = () => {
+        //
     }
 }
 

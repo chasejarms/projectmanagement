@@ -68,6 +68,12 @@ export const createCaseCreationClasses = (
         alignItems: 'center',
     });
 
+    const createCaseButtonContainer = css({
+        display: 'flex',
+        justifyContent: 'flex-end',
+        marginBottom: 32,
+    });
+
     return {
         caseCreationContainer,
         caseCreationFormContainer,
@@ -75,5 +81,6 @@ export const createCaseCreationClasses = (
         sectionContainer,
         controlContainer,
         circularProgressContainer,
+        createCaseButtonContainer,
     };
 }
