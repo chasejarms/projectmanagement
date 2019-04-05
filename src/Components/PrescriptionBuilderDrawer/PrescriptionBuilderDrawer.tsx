@@ -28,6 +28,8 @@ class PrescriptionBuilderDrawerPresentation extends React.Component<
 
         const { editMode } = this.props.prescriptionBuilderState;
         const shouldDisable = this.props.disableEdits || !editMode;
+        const caseDeadlineAlreadyExists = this.controlAlreadyExists(IPrescriptionControlTemplateType.CaseDeadline);
+        const doctorInformationAlreadyExists = this.controlAlreadyExists(IPrescriptionControlTemplateType.DoctorInformation);
 
         return (
             <Drawer
@@ -55,13 +57,13 @@ class PrescriptionBuilderDrawerPresentation extends React.Component<
                             <DraggableFormElement controlType={IPrescriptionControlTemplateType.Checkbox} disableDrag={shouldDisable}/>
                             <DraggableFormElement controlType={IPrescriptionControlTemplateType.Date} disableDrag={shouldDisable}/>
                             <DraggableFormElement controlType={IPrescriptionControlTemplateType.NonEditableText} disableDrag={shouldDisable}/>
-                            <DraggableFormElement controlType={IPrescriptionControlTemplateType.DoctorInformation} disableDrag={shouldDisable}/>
+                            <DraggableFormElement controlType={IPrescriptionControlTemplateType.DoctorInformation} disableDrag={shouldDisable || doctorInformationAlreadyExists}/>
                             <DraggableFormElement controlType={IPrescriptionControlTemplateType.Dropdown} disableDrag={shouldDisable}/>
                             <DraggableFormElement controlType={IPrescriptionControlTemplateType.MultilineText} disableDrag={shouldDisable}/>
                             <DraggableFormElement controlType={IPrescriptionControlTemplateType.Number} disableDrag={shouldDisable}/>
                             <DraggableFormElement controlType={IPrescriptionControlTemplateType.SingleLineText} disableDrag={shouldDisable}/>
                             <DraggableFormElement controlType={IPrescriptionControlTemplateType.Title} disableDrag={shouldDisable}/>
-                            <DraggableFormElement controlType={IPrescriptionControlTemplateType.CaseDeadline} disableDrag={shouldDisable}/>
+                            <DraggableFormElement controlType={IPrescriptionControlTemplateType.CaseDeadline} disableDrag={shouldDisable || caseDeadlineAlreadyExists}/>
                             {/* <DraggableFormElement controlType={IPrescriptionControlTemplateType.UnitSelection} disableDrag={shouldDisable}/> */}
                         </div>
                     </div>
@@ -75,6 +77,16 @@ class PrescriptionBuilderDrawerPresentation extends React.Component<
                 </div>
             </Drawer>
         )
+    }
+
+    private controlAlreadyExists = (controlType: IPrescriptionControlTemplateType) => {
+        return this.props.prescriptionBuilderState.prescriptionFormTemplate.sectionOrder.some((sectionId) => {
+            const section = this.props.prescriptionBuilderState.prescriptionFormTemplate.sections[sectionId];
+            return section.controlOrder.some((controlId) => {
+                const control = this.props.prescriptionBuilderState.prescriptionFormTemplate.controls[controlId];
+                return control.type === controlType;
+            });
+        })
     }
 
     private toggleEditMode = () => {

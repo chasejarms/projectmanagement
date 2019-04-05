@@ -649,6 +649,16 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     </div>
                 </div>
             )
+        } else if (control.type === IPrescriptionControlTemplateType.DoctorInformation) {
+            return (
+                <div className={threeColumns}>
+                    <div>
+                        <Typography variant="body1">This element has no configurable options</Typography>
+                    </div>
+                    <div/>
+                    <div/>
+                </div>
+            )
         }
 
 
