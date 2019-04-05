@@ -245,7 +245,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                                                             <Divider/>
                                                                             <div className={fieldPaletteClass}>
                                                                                 <Button color="secondary" onClick={this.unselectControl}>Exit</Button>
-                                                                                <Button color="secondary" onClick={this.removeControl}>Delete Field</Button>
+                                                                                <Button color="secondary" onClick={this.removeControl}>Delete {this.correctFieldName(controlId)}</Button>
                                                                             </div>
                                                                         </div>
                                                                     ): (
@@ -283,6 +283,36 @@ export class PrescriptionBuilderPresentation extends React.Component<
                 <div className={drawerReplacement}/>
             </div>
         )
+    }
+
+    private correctFieldName = (controlId: string) => {
+        const control = this.props.prescriptionBuilderState.prescriptionFormTemplate.controls[controlId];
+        switch (control.type) {
+            case IPrescriptionControlTemplateType.Checkbox:
+                return 'Checkbox';
+            case IPrescriptionControlTemplateType.Date:
+                return 'Date'
+            case IPrescriptionControlTemplateType.DoctorInformation:
+                return 'Doctor Information';
+            case IPrescriptionControlTemplateType.Dropdown:
+                return 'Dropdown';
+            case IPrescriptionControlTemplateType.MultilineText:
+                return 'Notepad';
+            case IPrescriptionControlTemplateType.NonEditableText:
+                return 'Description';
+            case IPrescriptionControlTemplateType.Number:
+                return 'Number';
+            case IPrescriptionControlTemplateType.SingleLineText:
+                return 'Text';
+            case IPrescriptionControlTemplateType.Title:
+                return 'Title';
+            case IPrescriptionControlTemplateType.UnitSelection:
+                return 'Unit Selection';
+            case IPrescriptionControlTemplateType.CaseDeadline:
+                return 'Case Deadline';
+            default:
+                return '';
+        }
     }
 
     private onDropSection = (insertPosition: number) => (item: any) => {
