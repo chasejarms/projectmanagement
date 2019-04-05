@@ -30,6 +30,7 @@ import { NonEditableText } from 'src/Components/PrescriptionEdit/PrescriptionEdi
 import { NumberEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/NumberEdit/NumberEdit';
 import { SingleLineTextEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/SingleLineTextEdit/SingleLineTextEdit';
 import { TitleEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/TitleEdit/TitleEdit';
+import { ICaseDeadlineControl } from 'src/Models/prescription/controls/caseDeadlineControl';
 import { IDropdownTemplateControl } from 'src/Models/prescription/controls/dropdownTemplateControl';
 import { INonEditableTextField } from 'src/Models/prescription/controls/nonEditableTextField';
 import { INumberTemplateControl } from 'src/Models/prescription/controls/numberTemplateControl';
@@ -515,7 +516,16 @@ export class PrescriptionBuilderPresentation extends React.Component<
                             />
                         </FormControl>
                     </div>
-                    <div/>
+                    <div>
+                        <FormControl fullWidth={true}>
+                            <InputLabel>Autofill (days from current day)</InputLabel>
+                            <Input
+                                type='number'
+                                value={control.autofillDays}
+                                onChange={this.handleAutofillChange}
+                            />
+                        </FormControl>
+                    </div>
                     <div className={dragIconContainerClass}>
                         <DraggableExistingFormElement controlType={IPrescriptionControlTemplateType.Date} id={control.id}/>
                     </div>
@@ -729,6 +739,15 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
         const prescriptionFormTemplateCopy = this.copyPrescriptionFormTemplate();
         (prescriptionFormTemplateCopy.controls[selectedControlId!] as IDropdownTemplateControl).label = newLabel;
+        this.props.setPrescriptionFormTemplate(prescriptionFormTemplateCopy);
+    }
+
+    private handleAutofillChange = (event: any) => {
+        const newAutofillNumber = event.target.value;
+        const selectedControlId = this.props.prescriptionBuilderState.selectedControl;
+
+        const prescriptionFormTemplateCopy = this.copyPrescriptionFormTemplate();
+        (prescriptionFormTemplateCopy.controls[selectedControlId!] as ICaseDeadlineControl).autofillDays = newAutofillNumber;
         this.props.setPrescriptionFormTemplate(prescriptionFormTemplateCopy);
     }
 

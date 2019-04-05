@@ -4,4 +4,5 @@ import { IPrescriptionControlTemplateType } from "./prescriptionControlTemplateT
 export interface ICaseDeadlineControl extends IBasePrescriptionControlTemplate {
     type: IPrescriptionControlTemplateType.CaseDeadline,
     label: string,
+    autofillDays: number,
 }

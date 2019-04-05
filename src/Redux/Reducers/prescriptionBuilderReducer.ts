@@ -347,6 +347,7 @@ const prescriptionFormTemplateFromNewControl = (state: IPrescriptionBuilderSlice
             sectionId,
             type: IPrescriptionControlTemplateType.CaseDeadline,
             label: 'Case Deadline',
+            autofillDays: 0,
         }
 
         control = caseDeadlineControl;
