@@ -1,6 +1,5 @@
 import { IDateTemplateControl } from "src/Models/prescription/controls/dateControlTemplate";
 
-// tslint:disable-next-line:no-empty-interface
 export interface IDateEditPropsFromParent {
     control: IDateTemplateControl;
     controlValue: any;

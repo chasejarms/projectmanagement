@@ -90,6 +90,8 @@ export class DraggableFormElementPresentation extends React.Component<
                     return <TitleIcon/>;
                 case IPrescriptionControlTemplateType.UnitSelection:
                     return <UnitSelectionIcon/>;
+                case IPrescriptionControlTemplateType.CaseDeadline:
+                    return <DateIcon/>;
                 default:
                     throw new Error(invalidControlTypeError);
             }
@@ -130,6 +132,8 @@ export class DraggableFormElementPresentation extends React.Component<
                     return 'Title';
                 case IPrescriptionControlTemplateType.UnitSelection:
                     return 'Unit Selection';
+                case IPrescriptionControlTemplateType.CaseDeadline:
+                    return 'Case Deadline';
                 default:
                     throw new Error(invalidControlTypeError);
             }

@@ -1,3 +1,4 @@
+import { ICaseDeadlineControl } from './caseDeadlineControl';
 import { ICheckboxTemplateControl } from './checkboxTemplateControl';
 import { IDateTemplateControl } from './dateControlTemplate';
 import { IDoctorInformationTemplateControl } from './doctorInformationTemplateControl';
@@ -18,4 +19,5 @@ export type IPrescriptionControlTemplate = IDoctorInformationTemplateControl |
     INumberTemplateControl |
     INonEditableTextField |
     IUnitSelectionControlTemplate |
-    IDateTemplateControl;
+    IDateTemplateControl |
+    ICaseDeadlineControl;

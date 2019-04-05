@@ -20,6 +20,7 @@ import { AsyncButton } from 'src/Components/AsyncButton/AsyncButton';
 import { DraggableExistingFormElement } from 'src/Components/DraggableExistingFormElement/DraggableExistingFormElement';
 import { FormElementDropZone } from 'src/Components/FormElementDropZone/FormElementDropZone';
 import { PrescriptionBuilderDrawer } from 'src/Components/PrescriptionBuilderDrawer/PrescriptionBuilderDrawer';
+import { CaseDeadlineEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/CaseDeadlineEdit/CaseDeadlineEdit';
 import { CheckboxEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/CheckboxEdit/CheckboxEdit';
 import { DateEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/DateEdit/DateEdit';
 import { DoctorInformationEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/DoctorInformationEdit/DoctorInformation.ias';
@@ -380,6 +381,15 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     updateControlValueActionCreator={updateControlValue}
                 />
             )
+        } else if (control.type === IPrescriptionControlTemplateType.CaseDeadline) {
+            return (
+                <CaseDeadlineEdit
+                    control={control}
+                    controlValue={controlValue}
+                    disabled={editMode}
+                    updateControlValueActionCreator={updateControlValue}
+                />
+            )
         }
 
         return <div/>
@@ -446,6 +456,24 @@ export class PrescriptionBuilderPresentation extends React.Component<
                 </div>
             )
         } else if (control.type === IPrescriptionControlTemplateType.Date) {
+            return (
+                <div className={threeColumns}>
+                    <div>
+                        <FormControl fullWidth={true}>
+                            <InputLabel>Label</InputLabel>
+                            <Input
+                                value={control.label}
+                                onChange={this.handleControlLabelChange}
+                            />
+                        </FormControl>
+                    </div>
+                    <div/>
+                    <div className={dragIconContainerClass}>
+                        <DraggableExistingFormElement controlType={IPrescriptionControlTemplateType.Date} id={control.id}/>
+                    </div>
+                </div>
+            )
+        } else if (control.type === IPrescriptionControlTemplateType.CaseDeadline) {
             return (
                 <div className={threeColumns}>
                     <div>

@@ -40,6 +40,7 @@ import {
     SET_VIEW_MODE,
     UPDATE_CONTROL_VALUE_PRESCRIPTION_FORM_TEMPLATE,
 } from "../Actions/prescriptionBuilderActions";
+import { ICaseDeadlineControl } from './../../Models/prescription/controls/caseDeadlineControl';
 import { ISetSelectedSectionPrescriptionFormTemplateAction } from './../ActionCreators/prescriptionBuilderCreators';
 import { ON_DROP_EXISTING_CONTROL_PRESCRIPTION_FORM_TEMPLATE, ON_DROP_NEW_CONTROL_PRESCRIPTION_FORM_TEMPLATE } from './../Actions/prescriptionBuilderActions';
 
@@ -340,6 +341,15 @@ const prescriptionFormTemplateFromNewControl = (state: IPrescriptionBuilderSlice
         }
 
         control = dateControl;
+    } else if (type === IPrescriptionControlTemplateType.CaseDeadline) {
+        const caseDeadlineControl: ICaseDeadlineControl = {
+            id,
+            sectionId,
+            type: IPrescriptionControlTemplateType.CaseDeadline,
+            label: 'Case Deadline',
+        }
+
+        control = caseDeadlineControl;
     }
 
     prescriptionFormTemplateCopy.controls[id] = control!;
