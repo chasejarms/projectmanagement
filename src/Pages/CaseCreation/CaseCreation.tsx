@@ -9,7 +9,7 @@ import { withRouter } from 'react-router';
 import { AsyncButton } from 'src/Components/AsyncButton/AsyncButton';
 import { CheckboxEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/CheckboxEdit/CheckboxEdit';
 import { DateEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/DateEdit/DateEdit';
-import { DoctorInformationEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/DoctorInformationEdit/DoctorInformation.ias';
+import { DoctorInformationEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/DoctorInformationEdit/DoctorInformation';
 import { DropdownEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/DropdownEdit/DropdownEdit';
 import { MultilineTextEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/MultilineTextEdit/MultilineTextEdit';
 import { NonEditableText } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/NonEditableText/NonEditableText';
@@ -185,8 +185,9 @@ export class CaseCreationPresentation extends React.Component<
         return <div/>
     }
 
-    private createCase = () => {
-        //
+    private createCase = async() => {
+        // const companyId = this.props.match.path.split('/')[2];
+        // await Api.projectsApi.createProject(companyId, {} as any);
     }
 }
 

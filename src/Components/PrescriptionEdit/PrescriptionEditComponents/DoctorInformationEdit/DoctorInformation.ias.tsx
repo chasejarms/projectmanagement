@@ -1,58 +1,24 @@
-import { FormControl, Input, InputLabel } from '@material-ui/core';
-import * as React from 'react';
-import { createDoctorInformationEditClasses, IDoctorInformationEditProps, IDoctorInformationEditState } from './DoctorInformation';
+import { css } from 'emotion';
 
-export class DoctorInformationEdit extends React.Component<IDoctorInformationEditProps, IDoctorInformationEditState> {
-    public render() {
-        const {
-            disabled,
-        } = this.props;
+// tslint:disable-next-line:no-empty-interface
+export interface IDoctorInformationEditProps {
+    disabled: boolean;
+}
+// tslint:disable-next-line:no-empty-interface
+export interface IDoctorInformationEditState {}
 
-        const {
-            cityStateZipContainer,
-        } = createDoctorInformationEditClasses(this.props, this.state);
+export const createDoctorInformationEditClasses = (
+    props: IDoctorInformationEditProps,
+    state: IDoctorInformationEditState,
+) => {
+    const cityStateZipContainer = css({
+        width: '100%',
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr 1fr',
+        gridColumnGap: 16,
+    })
 
-        return (
-            <div>
-                <FormControl fullWidth={true} disabled={disabled}>
-                    <InputLabel>Doctor</InputLabel>
-                    <Input
-                        value={''}
-                    />
-                </FormControl>
-                <FormControl fullWidth={true} disabled={disabled}>
-                    <InputLabel>Street</InputLabel>
-                    <Input
-                        value={''}
-                    />
-                </FormControl>
-                <div className={cityStateZipContainer}>
-                    <FormControl disabled={disabled}>
-                        <InputLabel>City</InputLabel>
-                        <Input
-                            value={''}
-                        />
-                    </FormControl>
-                    <FormControl disabled={disabled}>
-                        <InputLabel>State</InputLabel>
-                        <Input
-                            value={''}
-                        />
-                    </FormControl>
-                    <FormControl disabled={disabled}>
-                        <InputLabel>Zip</InputLabel>
-                        <Input
-                            value={''}
-                        />
-                    </FormControl>
-                </div>
-                <FormControl fullWidth={true} disabled={disabled}>
-                    <InputLabel>Telephone</InputLabel>
-                    <Input
-                        value={''}
-                    />
-                </FormControl>
-            </div>
-        )
+    return {
+        cityStateZipContainer,
     }
 }
