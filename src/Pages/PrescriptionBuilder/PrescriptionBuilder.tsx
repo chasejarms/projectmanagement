@@ -8,6 +8,7 @@ import {
     Paper,
     Snackbar,
     TextField,
+    Tooltip,
     Typography,
     withTheme,
 } from '@material-ui/core';
@@ -114,6 +115,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
         } = prescriptionFormTemplate;
 
         const disableEdits = this.state.loadingPrescriptionTemplate || this.state.updatingPrescriptionTemplate;
+        const prescriptionTemplateIsInvalid = this.checkPrescriptionTemplateIsInvalid();
 
         return (
             <div className={prescriptionBuilderContainer}>
@@ -153,13 +155,23 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     <Paper className={prescriptionFormContainer}>
                         {editMode ? (
                             <div className={savePrescriptionTemplateContainer}>
-                                <AsyncButton
-                                    color="secondary"
-                                    disabled={this.state.updatingPrescriptionTemplate}
-                                    asyncActionInProgress={this.state.updatingPrescriptionTemplate}
-                                    onClick={this.updatePrescriptionTemplate}>
-                                    Save Prescription Template
-                                </AsyncButton>
+                                <Tooltip
+                                    title="Doctor Information and Case Deadline are required fields"
+                                    placement="left"
+                                    disableFocusListener={!prescriptionTemplateIsInvalid}
+                                    disableHoverListener={!prescriptionTemplateIsInvalid}
+                                    disableTouchListener={!prescriptionTemplateIsInvalid}
+                                >
+                                    <span>
+                                        <AsyncButton
+                                            color="secondary"
+                                            disabled={this.state.updatingPrescriptionTemplate || prescriptionTemplateIsInvalid}
+                                            asyncActionInProgress={this.state.updatingPrescriptionTemplate}
+                                            onClick={this.updatePrescriptionTemplate}>
+                                            Save Prescription Template
+                                        </AsyncButton>
+                                    </span>
+                                </Tooltip>
                             </div>
                         ) : undefined}
                         {sectionOrder.length === 0 ? (
@@ -284,6 +296,25 @@ export class PrescriptionBuilderPresentation extends React.Component<
                 <div className={drawerReplacement}/>
             </div>
         )
+    }
+
+    private checkPrescriptionTemplateIsInvalid = () => {
+        let doctorInformationFieldExists: boolean = false;
+        let caseDeadlineFieldExists: boolean = false;
+
+        this.props.prescriptionBuilderState.prescriptionFormTemplate.sectionOrder.forEach((sectionId) => {
+            const section = this.props.prescriptionBuilderState.prescriptionFormTemplate.sections[sectionId];
+            section.controlOrder.forEach((controlId) => {
+                const control = this.props.prescriptionBuilderState.prescriptionFormTemplate.controls[controlId];
+                if (control.type === IPrescriptionControlTemplateType.DoctorInformation) {
+                    doctorInformationFieldExists = true;
+                } else if (control.type === IPrescriptionControlTemplateType.CaseDeadline) {
+                    caseDeadlineFieldExists = true;
+                }
+            })
+        });
+
+        return !doctorInformationFieldExists || !caseDeadlineFieldExists;
     }
 
     private correctFieldName = (controlId: string) => {
