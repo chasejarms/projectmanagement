@@ -238,10 +238,10 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
 
 const mapStateToProps = ({
     userState,
-    mainUIState,
+    authenticatedUIState,
 }: IAppState) => ({
     userState,
-    hasMultipleCompanies: mainUIState.hasMultipleCompanies,
+    hasMultipleCompanies: authenticatedUIState.hasMultipleCompanies,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({

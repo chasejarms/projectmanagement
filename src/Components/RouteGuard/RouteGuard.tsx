@@ -3,7 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Redirect, Route, withRouter } from 'react-router';
 import { IUser } from 'src/Models/user';
-import { setHasMultipleCompanies } from 'src/Redux/ActionCreators/mainUIActionCreators';
+import { setHasMultipleCompanies } from 'src/Redux/ActionCreators/authenticatedUIActionCreators';
 import { setUserForCompany } from 'src/Redux/ActionCreators/userActionCreators';
 import { IAppState } from 'src/Redux/Reducers/rootReducer';
 import firebase, { db } from '../../firebase';
