@@ -389,7 +389,10 @@ export class PrescriptionBuilderPresentation extends React.Component<
         } else if (control.type === IPrescriptionControlTemplateType.DoctorInformation) {
             return (
                 <DoctorInformationEdit
+                    control={control}
+                    controlValue={controlValue}
                     disabled={editMode}
+                    updateControlValueActionCreator={updateControlValue}
                 />
             )
         } else if (control.type === IPrescriptionControlTemplateType.MultilineText) {

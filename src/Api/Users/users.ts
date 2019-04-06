@@ -1,4 +1,5 @@
 import * as firebase from 'firebase';
+import { IDoctorUser } from 'src/Models/doctorUser';
 import { IUserCreateRequest } from 'src/Models/requests/userCreateRequest';
 import { UserType } from 'src/Models/userTypes';
 import { db } from '../../firebase';
@@ -38,19 +39,19 @@ export class UsersApi implements IUsersApi {
         return updatedUser.data;
     }
 
-    public async searchDoctorUsers(companyId: string, searchString: string): Promise<IUser[]> {
+    public async searchDoctorUsers(companyId: string, searchString: string): Promise<IDoctorUser[]> {
         const updatedSearchString = searchString.toLowerCase();
         const userQuerySnapshot = await db.collection('users')
             .where('companyId', '==', companyId)
             .where('type', '==', UserType.Doctor)
             .where('nameSearchValues', 'array-contains', updatedSearchString)
             .orderBy('nameSearchValues', 'asc')
-            .limit(3)
+            .limit(5)
             .get();
 
         return userQuerySnapshot.docs.map((userDoc) => {
             return {
-                ...userDoc.data() as IUser,
+                ...userDoc.data() as IDoctorUser,
                 id: userDoc.id,
             }
         });

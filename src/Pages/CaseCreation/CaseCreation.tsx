@@ -126,7 +126,10 @@ export class CaseCreationPresentation extends React.Component<
         } else if (control.type === IPrescriptionControlTemplateType.DoctorInformation) {
             return (
                 <DoctorInformationEdit
+                    control={control}
+                    controlValue={controlValue}
                     disabled={false}
+                    updateControlValueActionCreator={updateCaseCreationControlValue}
                 />
             )
         } else if (control.type === IPrescriptionControlTemplateType.MultilineText) {
