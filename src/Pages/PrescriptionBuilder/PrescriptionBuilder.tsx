@@ -554,6 +554,9 @@ export class PrescriptionBuilderPresentation extends React.Component<
                         <FormControl fullWidth={true}>
                             <InputLabel>Autofill (days from current day)</InputLabel>
                             <Input
+                                inputProps={{
+                                    min: "0",
+                                }}
                                 type='number'
                                 value={control.autofillDays}
                                 onChange={this.handleAutofillChange}
@@ -778,6 +781,11 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
     private handleAutofillChange = (event: any) => {
         const newAutofillNumber = event.target.value;
+
+        if (newAutofillNumber < 0) {
+            return;
+        }
+
         const selectedControlId = this.props.prescriptionBuilderState.selectedControl;
 
         const prescriptionFormTemplateCopy = this.copyPrescriptionFormTemplate();

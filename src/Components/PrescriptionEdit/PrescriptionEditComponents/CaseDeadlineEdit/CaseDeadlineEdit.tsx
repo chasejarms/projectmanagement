@@ -1,9 +1,22 @@
+import { addDays } from 'date-fns';
 import { DateFormatInput } from 'material-ui-next-pickers';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { ICaseDeadlineProps, ICaseDeadlinePropsFromParent, ICaseDeadlineState } from './CaseDeadlineEdit.ias';
 
 export class CaseDeadlineEditPresentation extends React.Component<ICaseDeadlineProps, ICaseDeadlineState> {
+    constructor(props: ICaseDeadlineProps) {
+        super(props);
+    }
+
+    public componentDidUpdate() {
+        const noControlValueExists = this.props.controlValue === undefined || this.props.controlValue === null;
+        if (noControlValueExists && !this.props.disabled) {
+            const dateControlValue = addDays(new Date(), this.props.control.autofillDays);
+            this.props.updateControlValue(this.props.control.id, dateControlValue);
+        }
+    }
+
     public render() {
         const {
             disabled,
