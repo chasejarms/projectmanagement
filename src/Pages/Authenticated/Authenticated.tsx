@@ -13,6 +13,7 @@ import DescriptionIcon from '@material-ui/icons/Description';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import ListIcon from '@material-ui/icons/List';
 import PeopleIcon from '@material-ui/icons/People';
+import WorkIcon from '@material-ui/icons/Work';
 import * as React from 'react';
 import { connect, Dispatch } from 'react-redux';
 import { withRouter } from 'react-router';
@@ -112,6 +113,17 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                             </div>
                             <div>
                                 <Divider/>
+                                <Tooltip title="Company Selection" placement="right">
+                                    <ListItem
+                                        button={true}
+                                        className={iconContainer}
+                                        onClick={this.navigateToCompanySelection}
+                                    >
+                                        <ListItemIcon>
+                                            <WorkIcon className={iconStyling}/>
+                                        </ListItemIcon>
+                                    </ListItem>
+                                </Tooltip>
                                 <Tooltip title="User Settings" placement="right">
                                     <ListItem
                                         button={true}
@@ -201,6 +213,12 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
     private navigateToUserSettings = () => {
         const { companyName } = this.props.match.params as any;
         this.props.history.push(`/company/${companyName}/userSettings`);
+    }
+
+    private navigateToCompanySelection = () => {
+        const { companyName } = this.props.match.params as any;
+        const uid = this.props.userState[companyName].uid;
+        this.props.history.push(`/companySelection?uid=${uid}`);
     }
 
     private logout = async() => {
