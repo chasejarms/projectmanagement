@@ -10,6 +10,7 @@ export interface IRouteGuardPresentationProps extends RouteComponentProps<{}> {
   component: React.ComponentClass;
   userState: IUserSliceOfState;
   setUser: (companyId: string, user: IUser) => void;
+  setHasMultipleCompanies: (hasMultipleCompanies: boolean) => void;
   mustHaveRole: string[];
 }
 

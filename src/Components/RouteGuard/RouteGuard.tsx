@@ -3,6 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Redirect, Route, withRouter } from 'react-router';
 import { IUser } from 'src/Models/user';
+import { setHasMultipleCompanies } from 'src/Redux/ActionCreators/mainUIActionCreators';
 import { setUserForCompany } from 'src/Redux/ActionCreators/userActionCreators';
 import { IAppState } from 'src/Redux/Reducers/rootReducer';
 import firebase, { db } from '../../firebase';
@@ -119,6 +120,9 @@ class RouteGuardPresentation extends React.Component<IRouteGuardPresentationProp
         id: userDocumentSnapshot.id,
       });
 
+      const hasMultipleCompanies = companyUserJoinQuerySnapshot.docs.length > 1;
+      this.props.setHasMultipleCompanies(hasMultipleCompanies);
+
       const userData = userDocumentSnapshot.data()! as IUser;
       this.setViewRights(userData);
     });
@@ -157,7 +161,11 @@ const mapDispatchToProps = (dispatch: React.Dispatch<any>) => ({
   setUser: (companyId: string, user: IUser) => {
     const setCurrentUserAction = setUserForCompany(companyId, user);
     dispatch(setCurrentUserAction);
-  }
+  },
+  setHasMultipleCompanies: (hasMultipleCompanies: boolean) => {
+    const setHasMultipleCompaniesAction = setHasMultipleCompanies(hasMultipleCompanies);
+    dispatch(setHasMultipleCompaniesAction);
+  },
 });
 
 const connectedComponent = connect(mapStateToProps, mapDispatchToProps)(RouteGuardPresentation);

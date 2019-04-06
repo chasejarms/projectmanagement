@@ -6,6 +6,7 @@ import { IUserSliceOfState } from 'src/Redux/Reducers/userReducer';
 export interface IAuthenticatedProps extends RouteComponentProps<{}>, WithTheme {
     removeUserForCompany: (companyId: string) => void,
     userState: IUserSliceOfState;
+    hasMultipleCompanies: boolean;
 }
 // tslint:disable-next-line:no-empty-interface
 export interface IAuthenticatedState {}

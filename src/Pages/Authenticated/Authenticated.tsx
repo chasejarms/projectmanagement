@@ -113,17 +113,19 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                             </div>
                             <div>
                                 <Divider/>
-                                <Tooltip title="Company Selection" placement="right">
-                                    <ListItem
-                                        button={true}
-                                        className={iconContainer}
-                                        onClick={this.navigateToCompanySelection}
-                                    >
-                                        <ListItemIcon>
-                                            <WorkIcon className={iconStyling}/>
-                                        </ListItemIcon>
-                                    </ListItem>
-                                </Tooltip>
+                                {this.props.hasMultipleCompanies ? (
+                                    <Tooltip title="Company Selection" placement="right">
+                                        <ListItem
+                                            button={true}
+                                            className={iconContainer}
+                                            onClick={this.navigateToCompanySelection}
+                                        >
+                                            <ListItemIcon>
+                                                <WorkIcon className={iconStyling}/>
+                                            </ListItemIcon>
+                                        </ListItem>
+                                    </Tooltip>
+                                ) : undefined}
                                 <Tooltip title="User Settings" placement="right">
                                     <ListItem
                                         button={true}
@@ -234,8 +236,12 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
     }
 }
 
-const mapStateToProps = ({ userState }: IAppState) => ({
-    userState
+const mapStateToProps = ({
+    userState,
+    mainUIState,
+}: IAppState) => ({
+    userState,
+    hasMultipleCompanies: mainUIState.hasMultipleCompanies,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
