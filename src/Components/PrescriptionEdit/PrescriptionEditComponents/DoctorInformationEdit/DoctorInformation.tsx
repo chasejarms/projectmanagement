@@ -28,6 +28,7 @@ class DoctorInformationEditPresentation extends React.Component<IDoctorInformati
 
     constructor(props: IDoctorInformationEditProps) {
         super(props);
+        this.potentiallySetDoctorUser();
     }
 
     public render() {
@@ -41,19 +42,18 @@ class DoctorInformationEditPresentation extends React.Component<IDoctorInformati
             doctorInformationContainer,
         } = createDoctorInformationEditClasses(this.props, this.state);
 
-        // hide the doctor search form control if they are the doctor
-
         const companyId = this.props.location.pathname.split('/')[2];
         const userIsDoctor = this.props.userState[companyId].type === UserType.Doctor;
 
         const doctorExists = !!this.state.selectedDoctorInformation;
+        const controlHasValue = !!this.props.controlValue;
 
-        const doctorName = doctorExists ? this.state.selectedDoctorInformation!.fullName : '';
-        const street = doctorExists ? this.state.selectedDoctorInformation!.address.street : '';
-        const city = doctorExists ? this.state.selectedDoctorInformation!.address.city : '';
-        const state = doctorExists ? this.state.selectedDoctorInformation!.address.state : '';
-        const zip = doctorExists ? this.state.selectedDoctorInformation!.address.zip : '';
-        const telephone = doctorExists ? this.state.selectedDoctorInformation!.telephone : '';
+        const doctorName = doctorExists && controlHasValue ? this.state.selectedDoctorInformation!.fullName : '';
+        const street = doctorExists && controlHasValue ? this.state.selectedDoctorInformation!.address.street : '';
+        const city = doctorExists && controlHasValue ? this.state.selectedDoctorInformation!.address.city : '';
+        const state = doctorExists && controlHasValue ? this.state.selectedDoctorInformation!.address.state : '';
+        const zip = doctorExists && controlHasValue ? this.state.selectedDoctorInformation!.address.zip : '';
+        const telephone = doctorExists && controlHasValue ? this.state.selectedDoctorInformation!.telephone : '';
 
         return (
             <div className={doctorInformationContainer}>
@@ -159,16 +159,15 @@ class DoctorInformationEditPresentation extends React.Component<IDoctorInformati
         this.props.updateControlValue(control.id, doctor.id);
     }
 
-    // private potentiallySetDoctorUser = () => {
-    //     const companyId = this.props.location.pathname.split('/')[2];
-    //     const userIsDoctor = this.props.userState[companyId].type === UserType.Doctor;
+    private potentiallySetDoctorUser = () => {
+        const companyId = this.props.location.pathname.split('/')[2];
+        const userIsDoctor = this.props.userState[companyId].type === UserType.Doctor;
 
-    //     if (userIsDoctor && ) {
-    //         this.setState({
-
-    //         })
-    //     }
-    // }
+        if (userIsDoctor) {
+            const doctorUser = this.props.userState[companyId] as IDoctorUser;
+            this.selectDoctor(doctorUser);
+        }
+    }
 }
 
 const mapStateToProps = ({ userState }: IAppState) => ({
