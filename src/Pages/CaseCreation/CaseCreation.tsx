@@ -1,6 +1,7 @@
 import {
     CircularProgress,
     Paper,
+    Tooltip,
     withTheme,
 } from '@material-ui/core';
 import * as React from 'react';
@@ -55,18 +56,30 @@ export class CaseCreationPresentation extends React.Component<
             createCaseButtonContainer,
         } = createCaseCreationClasses(this.props, this.state);
 
+        const prescriptionTemplateIsInvalid = !this.state.loadingPrescriptionTemplate && this.checkPrescriptionTemplateIsInvalid();
+
         return (
             <div className={caseCreationContainer}>
                 <Paper className={caseCreationFormContainer}>
                     {!this.state.loadingPrescriptionTemplate ? (
                         <div className={createCaseButtonContainer}>
-                            <AsyncButton
-                                color="secondary"
-                                disabled={false}
-                                asyncActionInProgress={false}
-                                onClick={this.createCase}>
-                                Create Case
-                            </AsyncButton>
+                            <Tooltip
+                                title="Doctor Information and Case Deadline are required fields"
+                                placement="left"
+                                disableFocusListener={!prescriptionTemplateIsInvalid}
+                                disableHoverListener={!prescriptionTemplateIsInvalid}
+                                disableTouchListener={!prescriptionTemplateIsInvalid}
+                            >
+                                <span>
+                                    <AsyncButton
+                                        color="secondary"
+                                        disabled={prescriptionTemplateIsInvalid}
+                                        asyncActionInProgress={false}
+                                        onClick={this.createCase}>
+                                        Create Case
+                                    </AsyncButton>
+                                </span>
+                            </Tooltip>
                         </div>
                     ) : undefined}
                     {this.state.loadingPrescriptionTemplate ? (
@@ -106,6 +119,26 @@ export class CaseCreationPresentation extends React.Component<
                 </Paper>
             </div>
         )
+    }
+
+    private checkPrescriptionTemplateIsInvalid = () => {
+        let doctorInformationFieldExists: boolean = false;
+        let caseDeadlineFieldExists: boolean = false;
+
+        this.state.prescriptionFormTemplate!.sectionOrder.forEach((sectionId) => {
+            const section = this.state.prescriptionFormTemplate!.sections[sectionId];
+            section.controlOrder.forEach((controlId) => {
+                const control = this.state.prescriptionFormTemplate!.controls[controlId];
+                const controlValueExists = !!this.props.caseCreationState.controlValues[control.id]
+                if (control.type === IPrescriptionControlTemplateType.DoctorInformation) {
+                    doctorInformationFieldExists = controlValueExists;
+                } else if (control.type === IPrescriptionControlTemplateType.CaseDeadline) {
+                    caseDeadlineFieldExists = controlValueExists;
+                }
+            })
+        });
+
+        return !doctorInformationFieldExists || !caseDeadlineFieldExists;
     }
 
     private correctControlDisplay = (controlId: string) => {
