@@ -8,6 +8,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { AsyncButton } from 'src/Components/AsyncButton/AsyncButton';
+import { CaseDeadlineEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/CaseDeadlineEdit/CaseDeadlineEdit';
 import { CheckboxEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/CheckboxEdit/CheckboxEdit';
 import { DateEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/DateEdit/DateEdit';
 import { DoctorInformationEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/DoctorInformationEdit/DoctorInformation';
@@ -56,7 +57,7 @@ export class CaseCreationPresentation extends React.Component<
             createCaseButtonContainer,
         } = createCaseCreationClasses(this.props, this.state);
 
-        const prescriptionTemplateIsInvalid = !this.state.loadingPrescriptionTemplate && this.checkPrescriptionTemplateIsInvalid();
+        const prescriptionTemplateIsInvalid = this.checkPrescriptionTemplateIsInvalid();
 
         return (
             <div className={caseCreationContainer}>
@@ -122,8 +123,12 @@ export class CaseCreationPresentation extends React.Component<
     }
 
     private checkPrescriptionTemplateIsInvalid = () => {
-        let doctorInformationFieldExists: boolean = false;
-        let caseDeadlineFieldExists: boolean = false;
+        if (this.state.loadingPrescriptionTemplate) {
+            return true;
+        }
+
+        let doctorInformationHasValue: boolean = false;
+        let caseDeadlineHasValue: boolean = false;
 
         this.state.prescriptionFormTemplate!.sectionOrder.forEach((sectionId) => {
             const section = this.state.prescriptionFormTemplate!.sections[sectionId];
@@ -131,14 +136,14 @@ export class CaseCreationPresentation extends React.Component<
                 const control = this.state.prescriptionFormTemplate!.controls[controlId];
                 const controlValueExists = !!this.props.caseCreationState.controlValues[control.id]
                 if (control.type === IPrescriptionControlTemplateType.DoctorInformation) {
-                    doctorInformationFieldExists = controlValueExists;
+                    doctorInformationHasValue = controlValueExists;
                 } else if (control.type === IPrescriptionControlTemplateType.CaseDeadline) {
-                    caseDeadlineFieldExists = controlValueExists;
+                    caseDeadlineHasValue = controlValueExists;
                 }
             })
         });
 
-        return !doctorInformationFieldExists || !caseDeadlineFieldExists;
+        return !doctorInformationHasValue || !caseDeadlineHasValue;
     }
 
     private correctControlDisplay = (controlId: string) => {
@@ -210,6 +215,15 @@ export class CaseCreationPresentation extends React.Component<
         } else if (control.type === IPrescriptionControlTemplateType.Date) {
             return (
                 <DateEdit
+                    control={control}
+                    controlValue={controlValue}
+                    disabled={false}
+                    updateControlValueActionCreator={updateCaseCreationControlValue}
+                />
+            )
+        } else if (control.type === IPrescriptionControlTemplateType.CaseDeadline) {
+            return (
+                <CaseDeadlineEdit
                     control={control}
                     controlValue={controlValue}
                     disabled={false}
