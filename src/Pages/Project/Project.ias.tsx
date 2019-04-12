@@ -1,9 +1,10 @@
 import { Theme, WithTheme } from '@material-ui/core';
 import { css } from 'emotion';
 import { RouteComponentProps } from 'react-router';
-import { FormControlState } from 'src/Classes/formControlState';
-import { IAttachmentMetadata } from 'src/Models/attachmentMetadata';
 import { ICheckpoint } from 'src/Models/checkpoint';
+// import { FormControlState } from 'src/Classes/formControlState';
+// import { IAttachmentMetadata } from 'src/Models/attachmentMetadata';
+// import { ICheckpoint } from 'src/Models/checkpoint';
 import { IUserSliceOfState } from 'src/Redux/Reducers/userReducer';
 // import { ICase } from '../../Models/case';
 
@@ -14,24 +15,25 @@ export interface IProjectPresentationProps extends RouteComponentProps<{}>, With
 }
 
 export interface IProjectPresentationState {
-    caseName: FormControlState<string>;
-    caseDeadline: FormControlState<Date>;
-    notes: FormControlState<string>;
+    tabIndex: number;
     projectInformationIsLoading: boolean;
-    attachmentUrls: IAttachmentMetadata[];
-    checkpoints: ICheckpoint[] | null;
-    open: boolean;
-    caseId: string;
-    updateCaseInformationInProgress: boolean;
-    addAttachmentInProgress: boolean;
-    filePath: string;
-    dialogIsOpen: boolean;
-    dialogError: string;
-    srcUrls: string[];
-    indexOfHoveredItem: null | number;
     retrievingCheckpoints: boolean;
-    projectWasSuccessfullyUpdated: boolean;
-    snackbarIsOpen: boolean;
+    checkpoints: ICheckpoint[] | null;
+    // caseName: FormControlState<string>;
+    // caseDeadline: FormControlState<Date>;
+    // notes: FormControlState<string>;
+    // attachmentUrls: IAttachmentMetadata[];
+    // open: boolean;
+    // caseId: string;
+    // updateCaseInformationInProgress: boolean;
+    // addAttachmentInProgress: boolean;
+    // filePath: string;
+    // dialogIsOpen: boolean;
+    // dialogError: string;
+    // srcUrls: string[];
+    // indexOfHoveredItem: null | number;
+    // projectWasSuccessfullyUpdated: boolean;
+    // snackbarIsOpen: boolean;
 }
 
 export const createProjectPresentationClasses = (
@@ -60,7 +62,8 @@ export const createProjectPresentationClasses = (
 
     const projectContainer = css({
         height: '100vh',
-        overflowY: 'auto',
+        display: 'flex',
+        flexDirection: 'column',
     })
 
     const evenPaper = css({
@@ -75,7 +78,7 @@ export const createProjectPresentationClasses = (
         justifyContent: 'space-between',
     });
 
-    const secondPaper = css({
+    const caseProgressPaper = css({
         display: 'flex',
         flexDirection: 'column',
         flexGrow: 1,
@@ -168,35 +171,37 @@ export const createProjectPresentationClasses = (
 
     let imgContainer: string;
 
-    if (state.srcUrls.length > 0) {
-        imgContainer = css({
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr 1fr 1fr',
-            gridGap: 16,
-            gridRow: '1/1',
-            gridColumn: '1/1',
-            '&::before': {
-                content: '""',
-                width: 0,
-                paddingBottom: '100%',
-                gridRow: '1/1',
-                gridColumn: '1/1',
-                height: 0,
-            },
-            '& > *:first-child': {
-                gridRow: '1/1',
-                gridColumn: '1/1',
-            },
-            padding: 16,
-        });
-    } else {
-        imgContainer = css({
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: 240,
-        });
-    }
+    imgContainer = 'something';
+
+    // if (state.srcUrls.length > 0) {
+    //     imgContainer = css({
+    //         display: 'grid',
+    //         gridTemplateColumns: '1fr 1fr 1fr 1fr',
+    //         gridGap: 16,
+    //         gridRow: '1/1',
+    //         gridColumn: '1/1',
+    //         '&::before': {
+    //             content: '""',
+    //             width: 0,
+    //             paddingBottom: '100%',
+    //             gridRow: '1/1',
+    //             gridColumn: '1/1',
+    //             height: 0,
+    //         },
+    //         '& > *:first-child': {
+    //             gridRow: '1/1',
+    //             gridColumn: '1/1',
+    //         },
+    //         padding: 16,
+    //     });
+    // } else {
+    //     imgContainer = css({
+    //         display: 'flex',
+    //         justifyContent: 'center',
+    //         alignItems: 'center',
+    //         height: 240,
+    //     });
+    // }
 
     const cancelIconContainer = css({
         position: 'absolute',
@@ -284,6 +289,23 @@ export const createProjectPresentationClasses = (
         width: '100%',
     })
 
+    const contentContainer = css({
+        padding: 32,
+        flex: 1,
+        boxSizing: 'border-box',
+    });
+
+    const paper = css({
+        borderRadius: 5,
+    });
+
+    const tabsContainer = css({
+        flex: '0 0 auto',
+        paddingLeft: 32,
+        paddingRight: 32,
+        color: 'white',
+    });
+
     return {
         loadingCheckpointsContainer,
         downloadIcon,
@@ -294,7 +316,7 @@ export const createProjectPresentationClasses = (
         selectedTab,
         nonSelectedTab,
         evenPaper,
-        secondPaper,
+        caseProgressPaper,
         fieldSpacing,
         attachmentButtonsContainer,
         seeAttachmentsButton,
@@ -316,5 +338,8 @@ export const createProjectPresentationClasses = (
         img,
         cancelIcon,
         downloadIconContainer,
+        contentContainer,
+        paper,
+        tabsContainer,
     };
 }

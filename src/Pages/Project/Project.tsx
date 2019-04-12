@@ -1,13 +1,194 @@
-import { withTheme } from "@material-ui/core";
+import {
+    Checkbox,
+    Paper,
+    Tab,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableRow,
+    Tabs,
+    Toolbar,
+    Typography,
+    withTheme,
+} from "@material-ui/core";
+import DoneIcon from '@material-ui/icons/Done';
 import * as React from "react";
 import { connect } from 'react-redux';
 import { withRouter } from "react-router";
+import { ICheckpoint } from "src/Models/checkpoint";
+import { ShowNewInfoFromType } from "src/Models/showNewInfoFromTypes";
+import { UserType } from "src/Models/userTypes";
 import { IAppState } from "src/Redux/Reducers/rootReducer";
-import { IProjectPresentationProps, IProjectPresentationState } from "./Project.ias";
+import Api from '../../Api/api';
+import {
+    createProjectPresentationClasses,
+    IProjectPresentationProps,
+    IProjectPresentationState,
+} from "./Project.ias";
 
 class ProjectPresentation extends React.Component<IProjectPresentationProps, IProjectPresentationState> {
+    // tslint:disable-next-line:variable-name
+    public _isMounted: boolean = false;
+
+    public state: IProjectPresentationState = {
+        tabIndex: 1,
+        projectInformationIsLoading: true,
+        retrievingCheckpoints: true,
+        checkpoints: null,
+    };
+
     public render() {
-        return <div>This is the project page</div>
+        const {
+            tabIndex,
+        } = this.state;
+
+        const {
+            // projectContainer,
+            // evenPaper,
+            // secondPaper,
+            // fieldSpacing,
+            projectContainer,
+            workflowToolbar,
+            contentContainer,
+            caseProgressPaper,
+            tabsContainer,
+            // qrCodeButtonContainer,
+            // addAttachmentButton,
+            // addAttachmentInput,
+            // qrCodeButton,
+            // caseInformationToolbar,
+            // progressAndInformationContainer,
+            // attachmentsContainer,
+            // imgContainer,
+            // imagePaper,
+            // cancelIconContainer,
+            // iconContainer,
+            // documentIcon,
+            // documentFilePathContainer,
+            // documentFilePath,
+            // img,
+            // cancelIcon,
+            // attachmentToolbar,
+            // downloadIconContainer,
+            // downloadIcon,
+            // loadingCheckpointsContainer,
+        } = createProjectPresentationClasses(this.props, this.state, this.props.theme);
+
+        const companyId = this.props.location.pathname.split('/')[2];
+        const userIsDoctor = this.props.userState[companyId].type === UserType.Doctor;
+        const mappedCheckpoints = this.state.checkpoints ? (
+            this.state.checkpoints!.map((checkpoint: ICheckpoint, index: number) => {
+                return (
+                    <TableRow key={index}>
+                        <TableCell>{checkpoint.name}</TableCell>
+                        <TableCell>{checkpoint.estimatedCompletionTime}</TableCell>
+                        <TableCell>
+                            {userIsDoctor && checkpoint.complete ? (
+                                <DoneIcon/>
+                            ) : !userIsDoctor ? (
+                                <Checkbox
+                                    checked={checkpoint.complete}
+                                    onChange={this.handleCheckpointChange(checkpoint, index)}
+                                    color="primary"
+                                />
+                            ) : undefined}
+                        </TableCell>
+                    </TableRow>
+                )
+            }
+        )) : <div/>;
+
+        return (
+            <div className={projectContainer}>
+                <div className={tabsContainer}>
+                    <Tabs value={tabIndex} onChange={this.handleChange}>
+                        <Tab label="Prescription"/>
+                        <Tab label="Case Progress"/>
+                    </Tabs>
+                </div>
+                <div className={contentContainer}>
+                    {tabIndex === 0 && (
+                        <div>The prescription piece</div>
+                    )}
+                    {tabIndex === 1 && (
+                        <Paper className={caseProgressPaper}>
+                            <div>
+                                <Toolbar className={workflowToolbar}>
+                                    <Typography variant="title">
+                                        Case Progress
+                                    </Typography>
+                                    {/* <Tooltip title="Filter list">
+                                        <IconButton aria-label="Filter list">
+                                            <FilterListIcon />
+                                        </IconButton>
+                                    </Tooltip> */}
+                                </Toolbar>
+                                <Table>
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>Checkpoint Name</TableCell>
+                                            <TableCell>Estimated Completion Time</TableCell>
+                                            <TableCell>Complete</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    {this.state.checkpoints ? (
+                                        <TableBody>
+                                            {mappedCheckpoints}
+                                        </TableBody>
+                                    ) : undefined}
+                                </Table>
+                            </div>
+                        </Paper>
+                    )}
+                </div>
+            </div>
+        )
+    }
+
+    public componentWillMount = async(): Promise<void> => {
+        this._isMounted = true;
+        const caseId = this.props.match.params['projectId'];
+        const companyId = this.props.location.pathname.split('/')[2];
+
+        const project = await Api.projectsApi.getProject(caseId);
+
+        const showNewInfoFromDoctor = project.showNewInfoFrom === ShowNewInfoFromType.Doctor;
+        const showNewInfoFromLab = project.showNewInfoFrom === ShowNewInfoFromType.Lab;
+
+        const userIsDoctor = this.props.userState[companyId].type === UserType.Doctor;
+
+        const shouldMarkAsShown = (showNewInfoFromDoctor && !userIsDoctor) || (showNewInfoFromLab && userIsDoctor);
+
+        if (shouldMarkAsShown) {
+            Api.projectsApi.markProjectUpdatesAsSeen(companyId, caseId);
+        }
+
+        // this.createSrcUrls(project.attachmentUrls);
+
+        if (this._isMounted) {
+            this.setState({
+                projectInformationIsLoading: false,
+            });
+        }
+
+        const checkpoints = await Api.projectsApi.getProjectCheckpoints({
+            caseId,
+            companyId,
+        });
+
+        if (this._isMounted) {
+            this.setState({
+                checkpoints,
+                retrievingCheckpoints: false,
+            })
+        }
+    }
+
+    private handleChange = (event: any, tabIndex: number) => {
+        this.setState({
+            tabIndex,
+        })
     }
     // public state: IProjectPresentationState = {
     //     checkpoints: null,
@@ -49,56 +230,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
     //     super(props);
     // }
 
-    // public async componentWillMount(): Promise<void> {
-    //     this._isMounted = true;
-    //     const caseId = this.props.match.params['projectId'];
-    //     const companyId = this.props.location.pathname.split('/')[2];
-
-    //     const project = await Api.projectsApi.getProject(caseId);
-
-    //     const showNewInfoFromDoctor = project.showNewInfoFrom === ShowNewInfoFromType.Doctor;
-    //     const showNewInfoFromLab = project.showNewInfoFrom === ShowNewInfoFromType.Lab;
-
-    //     const userIsDoctor = this.props.userState[companyId].type === UserType.Doctor;
-
-    //     const shouldMarkAsShown = (showNewInfoFromDoctor && !userIsDoctor) || (showNewInfoFromLab && userIsDoctor);
-
-    //     if (shouldMarkAsShown) {
-    //         Api.projectsApi.markProjectUpdatesAsSeen(companyId, caseId);
-    //     }
-
-    //     const caseNameControl = this.state.caseName.setValue(project.name);
-    //     window['deadline'] = project.deadline;
-    //     const caseDeadlineAsDate = project.deadline.toDate();
-    //     const caseDeadlineControl = this.state.caseDeadline.setValue(caseDeadlineAsDate);
-    //     const notesControl = this.state.notes.setValue(project.notes);
-    //     // tslint:disable-next-line:no-console
-    //     console.log(project.attachmentUrls);
-    //     this.createSrcUrls(project.attachmentUrls);
-
-    //     if (this._isMounted) {
-    //         this.setState({
-    //             attachmentUrls: project.attachmentUrls,
-    //             caseName: caseNameControl,
-    //             caseDeadline: caseDeadlineControl,
-    //             notes: notesControl,
-    //             projectInformationIsLoading: false,
-    //             caseId: project.id,
-    //         });
-    //     }
-
-    //     const checkpoints = await Api.projectsApi.getProjectCheckpoints({
-    //         caseId,
-    //         companyId,
-    //     });
-
-    //     if (this._isMounted) {
-    //         this.setState({
-    //             checkpoints,
-    //             retrievingCheckpoints: false,
-    //         })
-    //     }
-    // }
+    
 
     // public componentWillUnmount(): void {
     //     this._isMounted = false;
@@ -362,27 +494,27 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
     //     })
     // }
 
-    // private handleCheckpointChange = (checkpoint: ICheckpoint, index: number) => async() => {
-    //     const checkpoints = this.state.checkpoints!.map((compareCheckpoint, compareIndex) => {
-    //         if (index === compareIndex) {
-    //             return {
-    //                 ...checkpoint,
-    //                 complete: !compareCheckpoint.complete,
-    //             }
-    //         } else {
-    //             return compareCheckpoint;
-    //         }
-    //     })
+    private handleCheckpointChange = (checkpoint: ICheckpoint, index: number) => async() => {
+        const checkpoints = this.state.checkpoints!.map((compareCheckpoint, compareIndex) => {
+            if (index === compareIndex) {
+                return {
+                    ...checkpoint,
+                    complete: !compareCheckpoint.complete,
+                }
+            } else {
+                return compareCheckpoint;
+            }
+        })
 
-    //     this.setState({
-    //         checkpoints,
-    //     })
+        this.setState({
+            checkpoints,
+        })
 
-    //     const companyId = this.props.location.pathname.split('/')[2];
-    //     const currentUserUid = this.props.userState[companyId].uid;
-    //     const completedBy = !checkpoint.complete ? currentUserUid : undefined;
-    //     await Api.projectsApi.updateCaseCheckpoint(checkpoint.id, !checkpoint.complete, completedBy)
-    // }
+        const companyId = this.props.location.pathname.split('/')[2];
+        const currentUserUid = this.props.userState[companyId].uid;
+        const completedBy = !checkpoint.complete ? currentUserUid : undefined;
+        await Api.projectsApi.updateCaseCheckpoint(checkpoint.id, !checkpoint.complete, completedBy)
+    }
 
     // private prettyPrintDate = (date: Date) => {
     //     const day = date.getDate();
