@@ -12,6 +12,7 @@ export interface ICaseCreationProps extends WithTheme, RouteComponentProps<{}> {
 export interface ICaseCreationState {
     loadingPrescriptionTemplate: boolean;
     prescriptionFormTemplate: IPrescriptionFormTemplate | null;
+    caseCreationInProgress: boolean;
 }
 
 export const createCaseCreationClasses = (

@@ -6,7 +6,6 @@ export interface ISlimCase {
     currentCheckpointName: string;
     currentCheckpointId: string;
     caseId: string;
-    name: string;
     deadline: Timestamp;
     doctor: string;
     doctorName: string;

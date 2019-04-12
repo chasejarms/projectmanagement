@@ -114,7 +114,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
             const prettyDeadline = this.makeDeadlinePretty(date);
             return (
                 <TableRow key={slimCase.caseId} onClick={this.navigateToProject(slimCase.caseId)} className={rowStyling}>
-                    <TableCell>{slimCase.name}</TableCell>
+                    <TableCell>{slimCase.doctorName}</TableCell>
                     <TableCell>{slimCase.currentCheckpointName}</TableCell>
                     <TableCell>{prettyDeadline}</TableCell>
                     {newInfoCell}
@@ -145,7 +145,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                         <Table>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell>Case Name</TableCell>
+                                    <TableCell>Doctor</TableCell>
                                     <TableCell>Current Checkpoint</TableCell>
                                     <TableCell>Case Deadline</TableCell>
                                     <TableCell/>

@@ -87,39 +87,39 @@ class DoctorInformationEditPresentation extends React.Component<IDoctorInformati
                         })}
                     </Paper>
                 </Popper>
-                <FormControl fullWidth={true} disabled={true}>
+                <FormControl fullWidth={true} disabled={true} required={true}>
                     <InputLabel>Doctor Name</InputLabel>
                     <Input
                         value={doctorName}
                     />
                 </FormControl>
-                <FormControl fullWidth={true} disabled={true}>
+                <FormControl fullWidth={true} disabled={true} required={true}>
                     <InputLabel>Street</InputLabel>
                     <Input
                         value={street}
                     />
                 </FormControl>
                 <div className={cityStateZipContainer}>
-                    <FormControl disabled={true}>
+                    <FormControl disabled={true} required={true}>
                         <InputLabel>City</InputLabel>
                         <Input
                             value={city}
                         />
                     </FormControl>
-                    <FormControl disabled={true}>
+                    <FormControl disabled={true} required={true}>
                         <InputLabel>State</InputLabel>
                         <Input
                             value={state}
                         />
                     </FormControl>
-                    <FormControl disabled={true}>
+                    <FormControl disabled={true} required={true}>
                         <InputLabel>Zip</InputLabel>
                         <Input
                             value={zip}
                         />
                     </FormControl>
                 </div>
-                <FormControl fullWidth={true} disabled={true}>
+                <FormControl fullWidth={true} disabled={true} required={true}>
                     <InputLabel>Telephone</InputLabel>
                     <Input
                         value={telephone}

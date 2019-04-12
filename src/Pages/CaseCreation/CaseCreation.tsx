@@ -21,6 +21,7 @@ import { TitleEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditCompo
 import { IPrescriptionControlTemplateType } from 'src/Models/prescription/controls/prescriptionControlTemplateType';
 import { clearCaseCreationState, updateCaseCreationControlValue } from 'src/Redux/ActionCreators/caseCreationCreator';
 import { IAppState } from 'src/Redux/Reducers/rootReducer';
+import { generateUniqueId } from 'src/Utils/generateUniqueId';
 import Api from '../../Api/api';
 import { createCaseCreationClasses, ICaseCreationProps, ICaseCreationState } from './CaseCreation.ias';
 
@@ -31,6 +32,7 @@ export class CaseCreationPresentation extends React.Component<
     public state: ICaseCreationState = {
         loadingPrescriptionTemplate: true,
         prescriptionFormTemplate: null,
+        caseCreationInProgress: false,
     }
 
     public async componentWillMount(): Promise<void> {
@@ -74,8 +76,8 @@ export class CaseCreationPresentation extends React.Component<
                                 <span>
                                     <AsyncButton
                                         color="secondary"
-                                        disabled={prescriptionTemplateIsInvalid}
-                                        asyncActionInProgress={false}
+                                        disabled={prescriptionTemplateIsInvalid || this.state.caseCreationInProgress}
+                                        asyncActionInProgress={this.state.caseCreationInProgress}
                                         onClick={this.createCase}>
                                         Create Case
                                     </AsyncButton>
@@ -236,8 +238,26 @@ export class CaseCreationPresentation extends React.Component<
     }
 
     private createCase = async() => {
-        // const companyId = this.props.match.path.split('/')[2];
-        // await Api.projectsApi.createProject(companyId, {} as any);
+        const companyId = this.props.match.path.split('/')[2];
+        const caseId = generateUniqueId();
+        const caseCreateRequest = {
+            id: caseId,
+            prescriptionFormTemplateId: this.state.prescriptionFormTemplate!.id!,
+            controlValues: this.props.caseCreationState.controlValues,
+        }
+
+        this.setState({
+            caseCreationInProgress: true,
+        })
+
+        await Api.projectsApi.createProject(companyId, caseCreateRequest);
+
+        this.setState({
+            caseCreationInProgress: false,
+        })
+
+        const postRoute = `/company/${companyId}/project/${caseId}`;
+        this.props.history.push(postRoute);
     }
 }
 

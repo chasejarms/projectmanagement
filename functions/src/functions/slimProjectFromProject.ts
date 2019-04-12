@@ -5,7 +5,6 @@ import * as admin from 'firebase-admin';
 interface ISlimCase {
     currentCheckpointName: string;
     caseId: string;
-    name: string;
     deadline: admin.firestore.Timestamp;
     doctor: string;
     doctorName: string;
@@ -56,7 +55,6 @@ export const slimCaseFromCaseChanges = (passedInAdmin: admin.app.App) => functio
     return await passedInAdmin.firestore().collection('slimCases').doc(context.params.caseId).set({
         currentCheckpointName,
         caseId: after.id,
-        name: after.data().name,
         deadline: after.data().deadline,
         doctor: after.data().doctor,
         doctorName,

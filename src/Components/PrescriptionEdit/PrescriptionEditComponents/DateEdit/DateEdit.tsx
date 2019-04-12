@@ -1,3 +1,4 @@
+import { firestore } from 'firebase';
 import { DateFormatInput } from 'material-ui-next-pickers';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -11,13 +12,19 @@ export class DateEditPresentation extends React.Component<IDateEditProps, IDateE
             controlValue,
         } = this.props;
 
+        let updatedControlValue = controlValue;
+
+        if (controlValue instanceof firestore.Timestamp) {
+            updatedControlValue = (controlValue as firestore.Timestamp).toDate();
+        }
+
         return (
             <DateFormatInput
                 disabled={disabled}
                 fullWidth={true}
                 label={control.label}
                 name="date-input"
-                value={controlValue}
+                value={updatedControlValue}
                 onChange={this.handleDeadlineChange(control.id)}
                 min={new Date()}
             />

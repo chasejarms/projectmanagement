@@ -1,5 +1,6 @@
-import { IPrescriptionControlTemplateType } from 'src/Models/prescription/controls/prescriptionControlTemplateType';
+
 import { IBasePrescriptionControlTemplate } from "./basePrescriptionControlTemplate";
+import { IPrescriptionControlTemplateType } from "./prescriptionControlTemplateType";
 
 export interface IDateTemplateControl extends IBasePrescriptionControlTemplate {
     type: IPrescriptionControlTemplateType.Date,

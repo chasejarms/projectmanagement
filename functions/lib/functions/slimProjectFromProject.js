@@ -36,7 +36,6 @@ exports.slimCaseFromCaseChanges = (passedInAdmin) => functions.firestore.documen
     return yield passedInAdmin.firestore().collection('slimCases').doc(context.params.caseId).set({
         currentCheckpointName,
         caseId: after.id,
-        name: after.data().name,
         deadline: after.data().deadline,
         doctor: after.data().doctor,
         doctorName,

@@ -37,8 +37,13 @@ export class ProjectsApi implements ICaseApi {
     public async createProject(companyId: string, projectCreateRequest: ICaseCreateRequest): Promise<ICase> {
         const createCaseCloudFunction = firebase.functions().httpsCallable('createCase');
         let createCaseResponse: firebase.functions.HttpsCallableResult;
+
+        const caseCreateRequestWithCompanyId = {
+            ...projectCreateRequest,
+            companyId,
+        }
         try {
-            createCaseResponse = await createCaseCloudFunction(projectCreateRequest);
+            createCaseResponse = await createCaseCloudFunction(caseCreateRequestWithCompanyId);
         } catch (error) {
             return Promise.reject(error.message);
         }

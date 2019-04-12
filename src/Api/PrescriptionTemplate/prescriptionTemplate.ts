@@ -9,6 +9,7 @@ export class PrescriptionTemplateApi implements IPrescriptionTemplateApi {
         const prescriptionTemplate = await db.collection('prescriptionTemplates').doc(prescriptionTemplateId).get();
         return {
             ...prescriptionTemplate.data() as IPrescriptionFormTemplate,
+            id: prescriptionTemplate.id,
         };
     };
     public async updatePrescriptionTemplate(companyId: string, prescriptionFormTemplate: IPrescriptionFormTemplate): Promise<IPrescriptionFormTemplate> {
@@ -17,6 +18,7 @@ export class PrescriptionTemplateApi implements IPrescriptionTemplateApi {
         const newPrescriptionTemplate = await db.collection('prescriptionTemplates').add(prescriptionFormTemplate);
         await db.collection('companyWorkflows').doc(companyWorkflowId).set({
             prescriptionTemplate: newPrescriptionTemplate.id,
+            id: newPrescriptionTemplate.id,
         }, { merge: true });
 
         return prescriptionFormTemplate;

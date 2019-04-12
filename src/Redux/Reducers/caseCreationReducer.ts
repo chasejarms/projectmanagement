@@ -1,3 +1,4 @@
+import { firestore } from 'firebase';
 import { cloneDeep } from "lodash";
 import { ICaseCreationActions, IUpdateControlValueCaseCreationAction } from "../ActionCreators/caseCreationCreator";
 import { UPDATE_CONTROL_VALUE_CASE_CREATION } from "../Actions/caseCreationActions";
@@ -32,8 +33,12 @@ const caseCreationTemplateAfterControlUpdate = (
     state: ICaseCreationSliceOfState,
     action: IUpdateControlValueCaseCreationAction,
 ) => {
-    const value = action.value;
+    let value = action.value;
     const controlValuesCopy = cloneDeep(state.controlValues);
+
+    if (value instanceof Date) {
+        value = firestore.Timestamp.fromDate((value as Date));
+    }
 
     controlValuesCopy[action.controlId] = value;
 

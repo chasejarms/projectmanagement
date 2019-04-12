@@ -1,4 +1,4 @@
-import { IUnitNumber } from "src/Models/unitNumber";
+import { IUnitNumber } from "../../unitNumber";
 import { IBasePrescriptionControlTemplate } from "./basePrescriptionControlTemplate";
 import { IPrescriptionControlTemplateType } from "./prescriptionControlTemplateType";
 

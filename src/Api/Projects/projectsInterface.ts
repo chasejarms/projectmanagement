@@ -1,17 +1,13 @@
-import { Timestamp } from '@google-cloud/firestore';
-import { IAttachmentMetadata } from 'src/Models/attachmentMetadata';
 import { ShowNewInfoFromType } from 'src/Models/showNewInfoFromTypes';
 import { IAugmentedCheckpoint } from './../../Models/augmentedCheckpoint';
 import { ICase } from './../../Models/case';
 
 export interface ICaseCreateRequest {
-    name: string;
-    deadline: Timestamp;
-    notes: string;
-    attachmentUrls: IAttachmentMetadata[];
-    doctor?: string;
-    companyId: string;
-    idForCase: string;
+    id: string;
+    prescriptionFormTemplateId: string;
+    controlValues: {
+        [sectionIdControlId: string]: any;
+    };
 }
 
 export interface ISlimCasesSearchRequest {

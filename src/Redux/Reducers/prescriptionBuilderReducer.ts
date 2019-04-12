@@ -1,3 +1,4 @@
+import { firestore } from 'firebase';
 import { cloneDeep } from 'lodash';
 import { ICheckboxTemplateControl } from 'src/Models/prescription/controls/checkboxTemplateControl';
 import { IDateTemplateControl } from 'src/Models/prescription/controls/dateControlTemplate';
@@ -478,8 +479,12 @@ const prescriptionFormTemplateAfterRemovingSection = (state: IPrescriptionBuilde
 }
 
 const prescriptionFormTemplateAfterControlUpdate = (state: IPrescriptionBuilderSliceOfState, action: IUpdateControlValuePrescriptionFormTemplateAction): IPrescriptionBuilderSliceOfState => {
-    const value = action.value;
+    let value = action.value;
     const controlValuesCopy = cloneDeep(state.controlValues);
+
+    if (value instanceof Date) {
+        value = firestore.Timestamp.fromDate(value as Date);
+    }
 
     controlValuesCopy[action.controlId] = value;
 

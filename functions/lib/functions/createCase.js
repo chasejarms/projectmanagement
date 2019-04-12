@@ -1,4 +1,5 @@
 "use strict";
+// import { IPrescriptionFormTemplate } from '../../../src/Models/prescription/prescriptionFormTemplate';
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -42,7 +43,7 @@ exports.createCaseLocal = (passedInAdmin) => functions.https.onCall((data, conte
             complete: false,
             completedDate: null,
             completedBy: null,
-            caseId: data.idForCase,
+            caseId: data.id,
             linkedWorkflowCheckpoint,
         };
         console.log('case checkpoint to add: ', caseCheckpointToAdd);
@@ -52,24 +53,41 @@ exports.createCaseLocal = (passedInAdmin) => functions.https.onCall((data, conte
     const createdCheckpointDocumentIds = createdCheckpointDocumentReferences.map((documentReference) => {
         return documentReference.id;
     });
-    const doctor = isAdminOrStaff ? data.doctor : companyUserDocumentSnapshot.id;
-    console.log('doctor: ', doctor);
+    const prescriptionTemplateId = companyWorkflowsQuerySnapshot.docs[0].data().prescriptionTemplate;
+    console.log('prescription template id: ', prescriptionTemplateId);
+    const prescriptionTemplateResponse = yield firestore.collection('prescriptionTemplates').doc(prescriptionTemplateId).get();
+    const prescriptionFormTemplate = prescriptionTemplateResponse.data();
+    let doctorId;
+    let caseDeadline;
+    prescriptionFormTemplate.sectionOrder.forEach((sectionId) => {
+        const section = prescriptionFormTemplate.sections[sectionId];
+        section.controlOrder.forEach((controlId) => {
+            const control = prescriptionFormTemplate.controls[controlId];
+            if (control.type === 'DoctorInformation') {
+                doctorId = data.controlValues[control.id];
+            }
+            else if (control.type === 'CaseDeadline') {
+                const caseDeadlineObject = data.controlValues[control.id];
+                caseDeadline = new admin.firestore.Timestamp(caseDeadlineObject.seconds, caseDeadlineObject.nanoseconds);
+                console.log('caseDeadline: ', caseDeadline);
+            }
+        });
+    });
     const nowInSeconds = Math.round(new Date().getTime() / 1000);
     console.log('nowInSeconds: ', nowInSeconds);
     const caseToCreate = {
+        prescriptionFormTemplateId: data.prescriptionFormTemplateId,
+        controlValues: data.controlValues,
         complete: false,
-        deadline: data.deadline,
-        doctor,
-        name: data.name,
-        notes: data.notes,
-        attachmentUrls: data.attachmentUrls,
+        deadline: caseDeadline,
+        doctor: doctorId,
         created: new admin.firestore.Timestamp(nowInSeconds, 0),
         caseCheckpoints: createdCheckpointDocumentIds,
         companyId: data.companyId,
         showNewInfoFrom: isAdminOrStaff ? showNewInfoFromTypes_1.ShowNewInfoFromType.Lab : showNewInfoFromTypes_1.ShowNewInfoFromType.Doctor,
         hasStarted: false,
     };
-    yield firestore.collection('cases').doc(data.idForCase).set(caseToCreate);
-    return data.idForCase;
+    yield firestore.collection('cases').doc(data.id).set(caseToCreate);
+    return data.id;
 }));
 //# sourceMappingURL=createCase.js.map
