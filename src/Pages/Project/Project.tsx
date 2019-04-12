@@ -1,5 +1,6 @@
 import {
     Checkbox,
+    CircularProgress,
     Paper,
     Tab,
     Table,
@@ -72,7 +73,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             // attachmentToolbar,
             // downloadIconContainer,
             // downloadIcon,
-            // loadingCheckpointsContainer,
+            loadingCheckpointsContainer,
         } = createProjectPresentationClasses(this.props, this.state, this.props.theme);
 
         const companyId = this.props.location.pathname.split('/')[2];
@@ -113,6 +114,15 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                     )}
                     {tabIndex === 1 && (
                         <Paper className={caseProgressPaper}>
+                            {this.state.retrievingCheckpoints ? (
+                                <div className={loadingCheckpointsContainer}>
+                                    <CircularProgress
+                                        color="primary"
+                                        size={64}
+                                        thickness={3}
+                                    />
+                                </div>
+                            ) : undefined}
                             <div>
                                 <Toolbar className={workflowToolbar}>
                                     <Typography variant="title">
