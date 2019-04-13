@@ -112,11 +112,8 @@ export class ProjectsApi implements ICaseApi {
     }
 
     public async updateCaseInformation(caseId: string, updateCaseInformationRequest: IUpdateCaseInformationRequest, showNewInfoFrom: ShowNewInfoFromType): Promise<void> {
-        const deadlineAsDate = new Date(updateCaseInformationRequest.deadline);
-        const deadlineAsTimestamp = new firebase.firestore.Timestamp(Math.round(deadlineAsDate.getTime() / 1000), 0);
         const caseInformation = {
-            ...updateCaseInformationRequest,
-            deadline: deadlineAsTimestamp,
+            controlValues: updateCaseInformationRequest.controlValues,
             showNewInfoFrom,
         }
         await firebase.firestore().collection('cases').doc(caseId)

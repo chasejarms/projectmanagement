@@ -23,9 +23,9 @@ export interface IGetCaseCheckpointsRequest {
 }
 
 export interface IUpdateCaseInformationRequest {
-    name: string;
-    deadline: string;
-    notes: string;
+    controlValues: {
+        [sectionIdControlId: string]: any;
+    }
 }
 
 export interface ICaseApi {

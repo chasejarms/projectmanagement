@@ -2,6 +2,7 @@ import {
     Checkbox,
     CircularProgress,
     Paper,
+    Snackbar,
     Tab,
     Table,
     TableBody,
@@ -10,6 +11,7 @@ import {
     TableRow,
     Tabs,
     Toolbar,
+    Tooltip,
     Typography,
     withTheme,
 } from "@material-ui/core";
@@ -17,6 +19,7 @@ import DoneIcon from '@material-ui/icons/Done';
 import * as React from "react";
 import { connect } from 'react-redux';
 import { withRouter } from "react-router";
+import { AsyncButton } from "src/Components/AsyncButton/AsyncButton";
 import { CaseDeadlineEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/CaseDeadlineEdit/CaseDeadlineEdit";
 import { CheckboxEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/CheckboxEdit/CheckboxEdit";
 import { DateEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/DateEdit/DateEdit";
@@ -53,6 +56,8 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         loadingPrescriptionTemplate: true,
         prescriptionFormTemplate: null,
         doctorUser: null,
+        updateCaseInformationInProgress: false,
+        snackbarIsOpen: false,
     };
 
     public render() {
@@ -89,6 +94,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             // attachmentToolbar,
             // downloadIconContainer,
             // downloadIcon,
+            createCaseButtonContainer,
             prescriptionPaper,
             loadingCheckpointsContainer,
             circularProgressContainer,
@@ -135,27 +141,27 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                 <div className={contentContainer}>
                     {tabIndex === 0 && (
                         <Paper className={prescriptionPaper}>
-                            {/* {!this.state.loadingPrescriptionTemplate ? (
+                            {!this.state.loadingPrescriptionTemplate ? (
                                 <div className={createCaseButtonContainer}>
                                     <Tooltip
                                         title="Doctor Information and Case Deadline are required fields"
                                         placement="left"
-                                        disableFocusListener={!prescriptionTemplateIsInvalid}
-                                        disableHoverListener={!prescriptionTemplateIsInvalid}
-                                        disableTouchListener={!prescriptionTemplateIsInvalid}
+                                        disableFocusListener={true}
+                                        disableHoverListener={true}
+                                        disableTouchListener={true}
                                     >
                                         <span>
                                             <AsyncButton
                                                 color="secondary"
-                                                disabled={prescriptionTemplateIsInvalid || this.state.caseCreationInProgress}
-                                                asyncActionInProgress={this.state.caseCreationInProgress}
-                                                onClick={this.createCase}>
-                                                Create Case
+                                                disabled={this.state.updateCaseInformationInProgress}
+                                                asyncActionInProgress={this.state.updateCaseInformationInProgress}
+                                                onClick={this.updateCase}>
+                                                Update Case
                                             </AsyncButton>
                                         </span>
                                     </Tooltip>
                                 </div>
-                            ) : undefined} */}
+                            ) : undefined}
                             {!dataIsReady ? (
                                 <div className={circularProgressContainer}>
                                     <CircularProgress
@@ -231,6 +237,22 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                             </div>
                         </Paper>
                     )}
+                    <Snackbar
+                        open={this.state.snackbarIsOpen}
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'center',
+                        }}
+                        autoHideDuration={5000}
+                        message={
+                            (
+                                <span>
+                                    Success! The case was updated.
+                                </span>
+                            )
+                        }
+                        onClose={this.handleSnackbarClose}
+                    />
                 </div>
             </div>
         )
@@ -298,6 +320,32 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         }
     }
 
+    private handleSnackbarClose = (): void => {
+        this.setState({
+            snackbarIsOpen: false,
+        })
+    }
+
+    private updateCase = async() => {
+        this.setState({
+            updateCaseInformationInProgress: true,
+        });
+
+        const caseId = this.props.match.params['projectId'];
+        const companyId = this.props.location.pathname.split('/')[2];
+        const userIsDoctor = this.props.userState[companyId].type === UserType.Doctor;
+        const showNewInfoFrom = userIsDoctor ? ShowNewInfoFromType.Doctor : ShowNewInfoFromType.Lab;
+
+        await Api.projectsApi.updateCaseInformation(caseId, {
+            controlValues: this.props.existingCaseState!.controlValues,
+        }, showNewInfoFrom);
+
+        this.setState({
+            updateCaseInformationInProgress: false,
+            snackbarIsOpen: true,
+        })
+    }
+
     private handleChange = (event: any, tabIndex: number) => {
         this.setState({
             tabIndex,
@@ -307,6 +355,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
     private correctControlDisplay = (controlId: string) => {
         const control = this.state.prescriptionFormTemplate!.controls[controlId];
         const controlValue = this.props.existingCaseState.controlValues[control.id]
+        const updatingCaseInformation = this.state.updateCaseInformationInProgress;
 
         if (control.type === IPrescriptionControlTemplateType.Title) {
             return <TitleEdit control={control}/>
@@ -315,7 +364,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                 <DropdownEdit
                     control={control}
                     controlValue={controlValue}
-                    disabled={false}
+                    disabled={updatingCaseInformation}
                     updateControlValueActionCreator={updateExistingCaseControlValue}
                 />
             )
@@ -335,7 +384,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                 <MultilineTextEdit
                     control={control}
                     controlValue={controlValue}
-                    disabled={false}
+                    disabled={updatingCaseInformation}
                     updateControlValueActionCreator={updateExistingCaseControlValue}
                 />
             )
@@ -344,7 +393,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                 <SingleLineTextEdit
                     control={control}
                     controlValue={controlValue}
-                    disabled={false}
+                    disabled={updatingCaseInformation}
                     updateControlValueActionCreator={updateExistingCaseControlValue}
                 />
             )
@@ -353,7 +402,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                 <CheckboxEdit
                     control={control}
                     controlValue={controlValue}
-                    disabled={false}
+                    disabled={updatingCaseInformation}
                     updateControlValueActionCreator={updateExistingCaseControlValue}
                 />
             )
@@ -362,7 +411,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                 <NumberEdit
                     control={control}
                     controlValue={controlValue}
-                    disabled={false}
+                    disabled={updatingCaseInformation}
                     updateControlValueActionCreator={updateExistingCaseControlValue}
                 />
             )
@@ -377,7 +426,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                 <DateEdit
                     control={control}
                     controlValue={controlValue}
-                    disabled={false}
+                    disabled={updatingCaseInformation}
                     updateControlValueActionCreator={updateExistingCaseControlValue}
                 />
             )

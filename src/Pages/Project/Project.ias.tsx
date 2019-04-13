@@ -26,6 +26,8 @@ export interface IProjectPresentationState {
     loadingPrescriptionTemplate: boolean;
     prescriptionFormTemplate: IPrescriptionFormTemplate | null;
     doctorUser: IDoctorUser | null;
+    updateCaseInformationInProgress: boolean;
+    snackbarIsOpen: boolean;
     // caseName: FormControlState<string>;
     // caseDeadline: FormControlState<Date>;
     // notes: FormControlState<string>;
@@ -354,6 +356,12 @@ export const createProjectPresentationClasses = (
         border: '3px solid transparent',
     });
 
+    const createCaseButtonContainer = css({
+        display: 'flex',
+        justifyContent: 'flex-end',
+        marginBottom: 32,
+    });
+
     return {
         loadingCheckpointsContainer,
         downloadIcon,
@@ -394,5 +402,6 @@ export const createProjectPresentationClasses = (
         sectionContainer,
         controlContainer,
         prescriptionPaper,
+        createCaseButtonContainer,
     };
 }
