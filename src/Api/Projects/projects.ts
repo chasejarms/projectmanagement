@@ -61,10 +61,28 @@ export class ProjectsApi implements ICaseApi {
             .get();
 
         const createdFromRequest = documentReference.data()!.created as firebase.firestore.Timestamp;
+        const mappedControlValues = Object.keys((documentReference.data() as ICase).controlValues).reduce((
+            alreadyMappedControlValues,
+            controlId,
+        ) => {
+            const controlValue = documentReference.data()!.controlValues[controlId];
+            const shouldBeTimestamp = typeof controlValue === 'object' && controlValue.seconds;
+            if (shouldBeTimestamp) {
+                alreadyMappedControlValues[controlId] = new firebase.firestore.Timestamp(
+                    controlValue.seconds,
+                    controlValue.nanoseconds,
+                )
+            } else {
+                alreadyMappedControlValues[controlId] = controlValue;
+            }
+
+            return alreadyMappedControlValues;
+        }, {});
 
 
         return {
             ...documentReference.data(),
+            controlValues: mappedControlValues,
             created: new firebase.firestore.Timestamp(createdFromRequest.seconds, createdFromRequest.nanoseconds),
             id: caseId,
         } as ICase;

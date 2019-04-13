@@ -17,9 +17,21 @@ import DoneIcon from '@material-ui/icons/Done';
 import * as React from "react";
 import { connect } from 'react-redux';
 import { withRouter } from "react-router";
+import { CaseDeadlineEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/CaseDeadlineEdit/CaseDeadlineEdit";
+import { CheckboxEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/CheckboxEdit/CheckboxEdit";
+import { DateEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/DateEdit/DateEdit";
+import { DoctorInformationEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/DoctorInformationEdit/DoctorInformation";
+import { DropdownEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/DropdownEdit/DropdownEdit";
+import { MultilineTextEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/MultilineTextEdit/MultilineTextEdit";
+import { NonEditableText } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/NonEditableText/NonEditableText";
+import { NumberEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/NumberEdit/NumberEdit";
+import { SingleLineTextEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/SingleLineTextEdit/SingleLineTextEdit";
+import { TitleEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/TitleEdit/TitleEdit";
 import { ICheckpoint } from "src/Models/checkpoint";
+import { IPrescriptionControlTemplateType } from "src/Models/prescription/controls/prescriptionControlTemplateType";
 import { ShowNewInfoFromType } from "src/Models/showNewInfoFromTypes";
 import { UserType } from "src/Models/userTypes";
+import { setCaseCreationControlValues, updateExistingCaseControlValue } from "src/Redux/ActionCreators/existingCaseActionCreators";
 import { IAppState } from "src/Redux/Reducers/rootReducer";
 import Api from '../../Api/api';
 import {
@@ -33,10 +45,12 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
     public _isMounted: boolean = false;
 
     public state: IProjectPresentationState = {
-        tabIndex: 1,
+        tabIndex: 0,
         projectInformationIsLoading: true,
         retrievingCheckpoints: true,
         checkpoints: null,
+        loadingPrescriptionTemplate: true,
+        prescriptionFormTemplate: null,
     };
 
     public render() {
@@ -73,7 +87,12 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             // attachmentToolbar,
             // downloadIconContainer,
             // downloadIcon,
+            prescriptionPaper,
             loadingCheckpointsContainer,
+            circularProgressContainer,
+            sectionsContainer,
+            controlContainer,
+            sectionContainer,
         } = createProjectPresentationClasses(this.props, this.state, this.props.theme);
 
         const companyId = this.props.location.pathname.split('/')[2];
@@ -100,6 +119,9 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             }
         )) : <div/>;
 
+        const controlValuesExist = Object.keys(this.props.existingCaseState.controlValues).length > 0;
+        const dataIsReady = !this.state.loadingPrescriptionTemplate && controlValuesExist;
+
         return (
             <div className={projectContainer}>
                 <div className={tabsContainer}>
@@ -110,7 +132,63 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                 </div>
                 <div className={contentContainer}>
                     {tabIndex === 0 && (
-                        <div>The prescription piece</div>
+                        <Paper className={prescriptionPaper}>
+                            {/* {!this.state.loadingPrescriptionTemplate ? (
+                                <div className={createCaseButtonContainer}>
+                                    <Tooltip
+                                        title="Doctor Information and Case Deadline are required fields"
+                                        placement="left"
+                                        disableFocusListener={!prescriptionTemplateIsInvalid}
+                                        disableHoverListener={!prescriptionTemplateIsInvalid}
+                                        disableTouchListener={!prescriptionTemplateIsInvalid}
+                                    >
+                                        <span>
+                                            <AsyncButton
+                                                color="secondary"
+                                                disabled={prescriptionTemplateIsInvalid || this.state.caseCreationInProgress}
+                                                asyncActionInProgress={this.state.caseCreationInProgress}
+                                                onClick={this.createCase}>
+                                                Create Case
+                                            </AsyncButton>
+                                        </span>
+                                    </Tooltip>
+                                </div>
+                            ) : undefined} */}
+                            {!dataIsReady ? (
+                                <div className={circularProgressContainer}>
+                                    <CircularProgress
+                                        color="primary"
+                                        size={64}
+                                        thickness={3}
+                                    />
+                                </div>
+                            ) : (
+                                <div className={sectionsContainer}>
+                                    {this.state.prescriptionFormTemplate!.sectionOrder.map((sectionId, sectionIndex) => {
+                                        const sections = this.state.prescriptionFormTemplate!.sections;
+                                        const currentSection = sections[sectionId];
+                                        const controlOrderForSection = currentSection.controlOrder;
+                                        const noControlForSection = controlOrderForSection.length === 0;
+
+                                        if (noControlForSection) {
+                                            return undefined;
+                                        }
+
+                                        return (
+                                            <div key={sectionId} className={sectionContainer}>
+                                                {controlOrderForSection.map((controlId) => {
+                                                    return (
+                                                        <div key={controlId} className={controlContainer}>
+                                                            {this.correctControlDisplay(controlId)}
+                                                        </div>
+                                                    )
+                                                })}
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            )}
+                        </Paper>
                     )}
                     {tabIndex === 1 && (
                         <Paper className={caseProgressPaper}>
@@ -182,6 +260,11 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             });
         }
 
+        const prescription = await Api.projectsApi.getProject(caseId);
+        const prescriptionFormTemplate = await Api.prescriptionTemplateApi.getPrescriptionTemplateById(
+            prescription.prescriptionFormTemplateId,
+        );
+
         const checkpoints = await Api.projectsApi.getProjectCheckpoints({
             caseId,
             companyId,
@@ -191,7 +274,11 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             this.setState({
                 checkpoints,
                 retrievingCheckpoints: false,
+                prescriptionFormTemplate,
+                loadingPrescriptionTemplate: false,
             })
+
+            this.props.setControlValues(prescription.controlValues);
         }
     }
 
@@ -199,6 +286,95 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         this.setState({
             tabIndex,
         })
+    }
+
+    private correctControlDisplay = (controlId: string) => {
+        const control = this.state.prescriptionFormTemplate!.controls[controlId];
+        const controlValue = this.props.existingCaseState.controlValues[control.id]
+
+        if (control.type === IPrescriptionControlTemplateType.Title) {
+            return <TitleEdit control={control}/>
+        } else if (control.type === IPrescriptionControlTemplateType.Dropdown) {
+            return (
+                <DropdownEdit
+                    control={control}
+                    controlValue={controlValue}
+                    disabled={false}
+                    updateControlValueActionCreator={updateExistingCaseControlValue}
+                />
+            )
+        } else if (control.type === IPrescriptionControlTemplateType.DoctorInformation) {
+            return (
+                <DoctorInformationEdit
+                    control={control}
+                    controlValue={controlValue}
+                    disabled={true}
+                    updateControlValueActionCreator={updateExistingCaseControlValue}
+                />
+            )
+        } else if (control.type === IPrescriptionControlTemplateType.MultilineText) {
+            return (
+                <MultilineTextEdit
+                    control={control}
+                    controlValue={controlValue}
+                    disabled={false}
+                    updateControlValueActionCreator={updateExistingCaseControlValue}
+                />
+            )
+        } else if (control.type === IPrescriptionControlTemplateType.SingleLineText) {
+            return (
+                <SingleLineTextEdit
+                    control={control}
+                    controlValue={controlValue}
+                    disabled={false}
+                    updateControlValueActionCreator={updateExistingCaseControlValue}
+                />
+            )
+        } else if (control.type === IPrescriptionControlTemplateType.Checkbox) {
+            return (
+                <CheckboxEdit
+                    control={control}
+                    controlValue={controlValue}
+                    disabled={false}
+                    updateControlValueActionCreator={updateExistingCaseControlValue}
+                />
+            )
+        } else if (control.type === IPrescriptionControlTemplateType.Number) {
+            return (
+                <NumberEdit
+                    control={control}
+                    controlValue={controlValue}
+                    disabled={false}
+                    updateControlValueActionCreator={updateExistingCaseControlValue}
+                />
+            )
+        } else if (control.type === IPrescriptionControlTemplateType.NonEditableText) {
+            return (
+                <NonEditableText
+                    control={control}
+                />
+            )
+        } else if (control.type === IPrescriptionControlTemplateType.Date) {
+            return (
+                <DateEdit
+                    control={control}
+                    controlValue={controlValue}
+                    disabled={false}
+                    updateControlValueActionCreator={updateExistingCaseControlValue}
+                />
+            )
+        } else if (control.type === IPrescriptionControlTemplateType.CaseDeadline) {
+            return (
+                <CaseDeadlineEdit
+                    control={control}
+                    controlValue={controlValue}
+                    disabled={true}
+                    updateControlValueActionCreator={updateExistingCaseControlValue}
+                />
+            )
+        }
+
+        return <div/>
     }
     // public state: IProjectPresentationState = {
     //     checkpoints: null,
@@ -781,10 +957,20 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
     // }
 }
 
-const mapStateToProps = ({ userState }: IAppState) => ({
-    userState
+const mapStateToProps = ({
+    userState,
+    existingCaseState,
+}: IAppState) => ({
+    userState,
+    existingCaseState,
 });
 
+const mapDispatchToProps = (dispatch: React.Dispatch<any>) => ({
+    setControlValues: (controlValue: any) => {
+        const setControlValueAction = setCaseCreationControlValues(controlValue);
+        dispatch(setControlValueAction);
+    },
+});
 
-const connectedComponent = connect(mapStateToProps)(ProjectPresentation as any);
+const connectedComponent = connect(mapStateToProps, mapDispatchToProps)(ProjectPresentation as any);
 export const Project = withRouter(withTheme()(connectedComponent as any) as any);

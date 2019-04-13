@@ -24,6 +24,17 @@ export class PrescriptionTemplateApi implements IPrescriptionTemplateApi {
         return prescriptionFormTemplate;
     }
 
+    public async getPrescriptionTemplateById(prescriptionTemplateId: string): Promise<IPrescriptionFormTemplate> {
+        const prescriptionFormTemplate = await db.collection('prescriptionTemplates')
+            .doc(prescriptionTemplateId)
+            .get();
+
+        return {
+            ...prescriptionFormTemplate.data() as IPrescriptionFormTemplate,
+            id: prescriptionFormTemplate.id,
+        };
+    }
+
     private getWorkflowDocumentSnapshotPromise = (companyId: string): Promise<firebase.firestore.QuerySnapshot> => {
         return db.collection('companyWorkflows')
             .where('companyId', '==', companyId)

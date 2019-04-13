@@ -2,6 +2,8 @@ import { Theme, WithTheme } from '@material-ui/core';
 import { css } from 'emotion';
 import { RouteComponentProps } from 'react-router';
 import { ICheckpoint } from 'src/Models/checkpoint';
+import { IPrescriptionFormTemplate } from 'src/Models/prescription/prescriptionFormTemplate';
+import { IExistingCaseSliceOfState } from 'src/Redux/Reducers/existingCaseReducer';
 // import { FormControlState } from 'src/Classes/formControlState';
 // import { IAttachmentMetadata } from 'src/Models/attachmentMetadata';
 // import { ICheckpoint } from 'src/Models/checkpoint';
@@ -11,7 +13,8 @@ import { IUserSliceOfState } from 'src/Redux/Reducers/userReducer';
 // tslint:disable-next-line:no-empty-interface
 export interface IProjectPresentationProps extends RouteComponentProps<{}>, WithTheme {
     userState: IUserSliceOfState;
-
+    existingCaseState: IExistingCaseSliceOfState;
+    setControlValues: (controlValues: any) => void;
 }
 
 export interface IProjectPresentationState {
@@ -19,6 +22,8 @@ export interface IProjectPresentationState {
     projectInformationIsLoading: boolean;
     retrievingCheckpoints: boolean;
     checkpoints: ICheckpoint[] | null;
+    loadingPrescriptionTemplate: boolean;
+    prescriptionFormTemplate: IPrescriptionFormTemplate | null;
     // caseName: FormControlState<string>;
     // caseDeadline: FormControlState<Date>;
     // notes: FormControlState<string>;
@@ -88,6 +93,13 @@ export const createProjectPresentationClasses = (
         overflowY: 'auto',
         position: 'relative',
     });
+
+    const prescriptionPaper = css({
+        height: '100%',
+        padding: 32,
+        overflowY: 'auto',
+        boxSizing: 'border-box',
+    })
 
     const tabs = css({
         flexBasis: 'auto',
@@ -293,6 +305,7 @@ export const createProjectPresentationClasses = (
         padding: 32,
         flex: 1,
         boxSizing: 'border-box',
+        overflowY: 'auto',
     });
 
     const paper = css({
@@ -304,6 +317,39 @@ export const createProjectPresentationClasses = (
         paddingLeft: 32,
         paddingRight: 32,
         color: 'white',
+    });
+
+    const circularProgressContainer = css({
+        display: 'flex',
+        height: '100%',
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    });
+
+    const sectionsContainer = css({
+        display: 'grid',
+    });
+
+    const sectionContainer = css({
+        border: '3px solid rgba(0,0,0,0.08)',
+        backgroundColor: '#f9f9f9',
+        borderRadius: 3,
+        '&:hover': {
+            cursor: 'pointer',
+        },
+        minHeight: 120,
+        boxSizing: 'border-box',
+        paddingTop: 32,
+        paddingBottom: 32,
+        paddingLeft: 16,
+        paddingRight: 16,
+        display: 'grid',
+        gridRowGap: 16,
+    });
+
+    const controlContainer = css({
+        border: '3px solid transparent',
     });
 
     return {
@@ -341,5 +387,10 @@ export const createProjectPresentationClasses = (
         contentContainer,
         paper,
         tabsContainer,
+        circularProgressContainer,
+        sectionsContainer,
+        sectionContainer,
+        controlContainer,
+        prescriptionPaper,
     };
 }

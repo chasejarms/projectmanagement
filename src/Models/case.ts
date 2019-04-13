@@ -4,7 +4,7 @@ import { ShowNewInfoFromType } from "./showNewInfoFromTypes";
 export interface ICase {
     id: string;
     complete: boolean;
-    prescriptionTemplateId: string;
+    prescriptionFormTemplateId: string;
     controlValues: {
         [sectionIdControlId: string]: any;
     };
