@@ -40,4 +40,5 @@ export interface ICaseApi {
     getNewCases(companyId: string): Promise<ICase[]>;
     updateCaseCheckpoint(checkpointId: string, complete: boolean, completedBy?: string): Promise<boolean>;
     markProjectUpdatesAsSeen(companyId: string, caseId: string): Promise<void>;
+    canCreateCases(companyId: string): Promise<boolean>;
 }

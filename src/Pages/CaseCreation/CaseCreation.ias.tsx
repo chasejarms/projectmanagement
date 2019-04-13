@@ -13,6 +13,7 @@ export interface ICaseCreationState {
     loadingPrescriptionTemplate: boolean;
     prescriptionFormTemplate: IPrescriptionFormTemplate | null;
     caseCreationInProgress: boolean;
+    canCreateCases: boolean;
 }
 
 export const createCaseCreationClasses = (
@@ -75,6 +76,14 @@ export const createCaseCreationClasses = (
         marginBottom: 32,
     });
 
+    const cannotCreateCaseContainer = css({
+        display: 'flex',
+        height: '100%',
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    })
+
     return {
         caseCreationContainer,
         caseCreationFormContainer,
@@ -83,5 +92,6 @@ export const createCaseCreationClasses = (
         controlContainer,
         circularProgressContainer,
         createCaseButtonContainer,
+        cannotCreateCaseContainer,
     };
 }

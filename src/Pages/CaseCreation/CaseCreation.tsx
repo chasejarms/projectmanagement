@@ -2,6 +2,7 @@ import {
     CircularProgress,
     Paper,
     Tooltip,
+    Typography,
     withTheme,
 } from '@material-ui/core';
 import * as React from 'react';
@@ -33,14 +34,30 @@ export class CaseCreationPresentation extends React.Component<
         loadingPrescriptionTemplate: true,
         prescriptionFormTemplate: null,
         caseCreationInProgress: false,
+        canCreateCases: false,
     }
 
     public async componentWillMount(): Promise<void> {
         const companyId = this.props.match.path.split('/')[2];
+        const canCreateCases = await Api.projectsApi.canCreateCases(companyId);
+
+        // tslint:disable-next-line:no-console
+        console.log(canCreateCases);
+
+        if (!canCreateCases) {
+            this.setState({
+                canCreateCases: false,
+                loadingPrescriptionTemplate: false,
+            })
+
+            return;
+        }
+
         const prescriptionFormTemplate = await Api.prescriptionTemplateApi.getPrescriptionTemplate(companyId);
         this.setState({
             loadingPrescriptionTemplate: false,
             prescriptionFormTemplate,
+            canCreateCases: true,
         })
     }
 
@@ -57,6 +74,7 @@ export class CaseCreationPresentation extends React.Component<
             controlContainer,
             circularProgressContainer,
             createCaseButtonContainer,
+            cannotCreateCaseContainer,
         } = createCaseCreationClasses(this.props, this.state);
 
         const prescriptionTemplateIsInvalid = this.checkPrescriptionTemplateIsInvalid();
@@ -64,7 +82,7 @@ export class CaseCreationPresentation extends React.Component<
         return (
             <div className={caseCreationContainer}>
                 <Paper className={caseCreationFormContainer}>
-                    {!this.state.loadingPrescriptionTemplate ? (
+                    {!this.state.loadingPrescriptionTemplate && this.state.canCreateCases ? (
                         <div className={createCaseButtonContainer}>
                             <Tooltip
                                 title="Doctor Information and Case Deadline are required fields"
@@ -93,7 +111,8 @@ export class CaseCreationPresentation extends React.Component<
                                 thickness={3}
                             />
                         </div>
-                    ) : (
+                    ) : undefined}
+                    {this.state.canCreateCases && !this.state.loadingPrescriptionTemplate ? (
                         <div className={sectionsContainer}>
                             {this.state.prescriptionFormTemplate!.sectionOrder.map((sectionId, sectionIndex) => {
                                 const sections = this.state.prescriptionFormTemplate!.sections;
@@ -118,14 +137,34 @@ export class CaseCreationPresentation extends React.Component<
                                 )
                             })}
                         </div>
-                    )}
+                    ) : undefined}
+                    {!this.state.canCreateCases && !this.state.loadingPrescriptionTemplate ? (
+                        <div className={cannotCreateCaseContainer}>
+                            <div>
+                                <Typography variant="headline">
+                                    Before creating any cases, make sure the following checklist is met:
+                                </Typography>
+                                <ul>
+                                    <li>
+                                        <Typography variant="subheading">At least one doctor has been added to the system.</Typography>
+                                    </li>
+                                    <li>
+                                        <Typography variant="subheading">At least one checkpoint is part of the company workflow.</Typography>
+                                    </li>
+                                    <li>
+                                        <Typography variant="subheading">The prescription template includes a case deadline field and a doctor information field.</Typography>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    ) : undefined}
                 </Paper>
             </div>
         )
     }
 
     private checkPrescriptionTemplateIsInvalid = () => {
-        if (this.state.loadingPrescriptionTemplate) {
+        if (this.state.loadingPrescriptionTemplate || !this.state.canCreateCases) {
             return true;
         }
 

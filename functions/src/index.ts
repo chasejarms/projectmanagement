@@ -1,3 +1,4 @@
+import { canCreateCasesLocal } from './functions/canCreateCases';
 import { markProjectAsStartedLocal } from './functions/markProjectAsStarted';
 import * as admin from 'firebase-admin';
 
@@ -34,3 +35,4 @@ export const getCaseCheckpoints = getCheckpointsLocal(app);
 export const linkFileToProject = linkFileToProjectLocal(app);
 export const createThumbnailFromImage = createThumbnailFromImageLocal(app);
 export const markProjectAsStarted = markProjectAsStartedLocal(app);
+export const canCreateCases = canCreateCasesLocal(app);

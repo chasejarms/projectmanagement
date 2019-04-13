@@ -152,4 +152,14 @@ export class ProjectsApi implements ICaseApi {
         }, { merge: true });
     }
 
+    public async canCreateCases(companyId: string): Promise<boolean> {
+        const canCreateCasesCloudFunction = firebase.functions().httpsCallable('canCreateCases');
+
+        const createCaseResponse = await canCreateCasesCloudFunction({
+            companyId,
+        });
+
+        return createCaseResponse.data;
+    }
+
 }
