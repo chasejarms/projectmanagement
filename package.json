@@ -14,7 +14,7 @@
     "firebase-functions": "^2.0.0",
     "lodash": "^4.17.10",
     "material-ui-next-pickers": "0.0.15",
-    "material-ui-pickers": "^2.2.1",
+    "material-ui-pickers": "^2.2.4",
     "qrcode.react": "^0.8.0",
     "react": "^16.4.2",
     "react-dnd": "^7.0.2",

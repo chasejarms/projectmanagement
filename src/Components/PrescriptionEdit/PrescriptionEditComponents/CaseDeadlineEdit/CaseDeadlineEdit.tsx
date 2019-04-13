@@ -1,6 +1,7 @@
+
 import { addDays } from 'date-fns';
 import { firestore } from 'firebase';
-import { DateFormatInput } from 'material-ui-next-pickers';
+import { DatePicker } from 'material-ui-pickers';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { ICaseDeadlineProps, ICaseDeadlinePropsFromParent, ICaseDeadlineState } from './CaseDeadlineEdit.ias';
@@ -25,24 +26,23 @@ export class CaseDeadlineEditPresentation extends React.Component<ICaseDeadlineP
             controlValue,
         } = this.props;
 
-        let updatedControlValue = controlValue;
+        let updatedControlValue = controlValue === undefined ? null : controlValue;
 
         if (controlValue instanceof firestore.Timestamp) {
             updatedControlValue = (controlValue as firestore.Timestamp).toDate();
         }
 
         return (
-            <DateFormatInput
+            <DatePicker
+                disabled={disabled}
+                fullWidth={true}
                 InputProps={{
                     required: true,
                 }}
-                disabled={disabled}
-                fullWidth={true}
-                label={control.label}
-                name="date-input"
                 value={updatedControlValue}
+                label={control.label}
+                disablePast={true}
                 onChange={this.handleDeadlineChange(control.id)}
-                min={new Date()}
             />
         )
     }

@@ -1,3 +1,5 @@
+import * as DateFnsUtils from '@date-io/date-fns';
+import { MuiPickersUtilsProvider } from 'material-ui-pickers';
 import * as React from 'react';
 import { DragDropContextProvider } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
@@ -14,7 +16,9 @@ class App extends React.Component {
       <Provider store={store}>
         <BrowserRouter>
           <DragDropContextProvider backend={HTML5Backend}>
-            <Main/>
+            <MuiPickersUtilsProvider utils={DateFnsUtils.default}>
+              <Main/>
+            </MuiPickersUtilsProvider>
           </DragDropContextProvider>
         </BrowserRouter>
       </Provider>
