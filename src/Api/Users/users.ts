@@ -56,4 +56,15 @@ export class UsersApi implements IUsersApi {
             }
         });
     }
+
+    public async getUser(userId: string): Promise<IUser> {
+        const userDocumentSnapshot = await db.collection('users')
+            .doc(userId)
+            .get();
+
+        return {
+            ...userDocumentSnapshot.data() as IUser,
+            id: userDocumentSnapshot.id,
+        }
+    }
 }

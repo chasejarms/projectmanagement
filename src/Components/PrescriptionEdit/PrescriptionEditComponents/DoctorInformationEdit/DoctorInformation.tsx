@@ -48,16 +48,19 @@ class DoctorInformationEditPresentation extends React.Component<IDoctorInformati
         const doctorExists = !!this.state.selectedDoctorInformation;
         const controlHasValue = !!this.props.controlValue;
 
-        const doctorName = doctorExists && controlHasValue ? this.state.selectedDoctorInformation!.fullName : '';
-        const street = doctorExists && controlHasValue ? this.state.selectedDoctorInformation!.address.street : '';
-        const city = doctorExists && controlHasValue ? this.state.selectedDoctorInformation!.address.city : '';
-        const state = doctorExists && controlHasValue ? this.state.selectedDoctorInformation!.address.state : '';
-        const zip = doctorExists && controlHasValue ? this.state.selectedDoctorInformation!.address.zip : '';
-        const telephone = doctorExists && controlHasValue ? this.state.selectedDoctorInformation!.telephone : '';
+        const passedInDoctorExists = !!this.props.existingDoctorInformation;
+        const passedInDoctor = this.props.existingDoctorInformation!;
+
+        const doctorName = passedInDoctorExists ? passedInDoctor.fullName : doctorExists && controlHasValue ? this.state.selectedDoctorInformation!.fullName : '';
+        const street = passedInDoctorExists ? passedInDoctor.address.street : doctorExists && controlHasValue ? this.state.selectedDoctorInformation!.address.street : '';
+        const city = passedInDoctorExists ? passedInDoctor.address.city : doctorExists && controlHasValue ? this.state.selectedDoctorInformation!.address.city : '';
+        const state = passedInDoctorExists ? passedInDoctor.address.state : doctorExists && controlHasValue ? this.state.selectedDoctorInformation!.address.state : '';
+        const zip = passedInDoctorExists ? passedInDoctor.address.zip : doctorExists && controlHasValue ? this.state.selectedDoctorInformation!.address.zip : '';
+        const telephone = passedInDoctorExists ? passedInDoctor.telephone : doctorExists && controlHasValue ? this.state.selectedDoctorInformation!.telephone : '';
 
         return (
             <div className={doctorInformationContainer}>
-                {userIsDoctor ? undefined : (
+                {userIsDoctor || this.props.hideSearch ? undefined : (
                     <TextField
                         placeholder='Search Doctors'
                         fullWidth={true}

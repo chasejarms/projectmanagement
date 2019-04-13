@@ -13,4 +13,5 @@ export interface IUsersApi {
     deleteUser(deleteUserRequest: IDeleteUserRequest): Promise<void>;
     updateUser(user: IUser): Promise<IUser>;
     searchDoctorUsers(companyId: string, searchString: string): Promise<IDoctorUser[]>;
+    getUser(userId: string): Promise<IUser>;
 }

@@ -10,6 +10,8 @@ export interface IDoctorInformationEditPropsFromParent {
     updateControlValueActionCreator: (controlId: string, value: any) => any;
     control: IDoctorInformationTemplateControl;
     controlValue: any;
+    existingDoctorInformation?: IDoctorUser;
+    hideSearch?: boolean;
 }
 
 export interface IDoctorInformationEditProps extends RouteComponentProps<{}>, IDoctorInformationEditPropsFromParent {

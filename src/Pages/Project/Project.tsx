@@ -28,6 +28,7 @@ import { NumberEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComp
 import { SingleLineTextEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/SingleLineTextEdit/SingleLineTextEdit";
 import { TitleEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/TitleEdit/TitleEdit";
 import { ICheckpoint } from "src/Models/checkpoint";
+import { IDoctorUser } from "src/Models/doctorUser";
 import { IPrescriptionControlTemplateType } from "src/Models/prescription/controls/prescriptionControlTemplateType";
 import { ShowNewInfoFromType } from "src/Models/showNewInfoFromTypes";
 import { UserType } from "src/Models/userTypes";
@@ -51,6 +52,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         checkpoints: null,
         loadingPrescriptionTemplate: true,
         prescriptionFormTemplate: null,
+        doctorUser: null,
     };
 
     public render() {
@@ -260,15 +262,28 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             });
         }
 
-        const prescription = await Api.projectsApi.getProject(caseId);
-        const prescriptionFormTemplate = await Api.prescriptionTemplateApi.getPrescriptionTemplateById(
-            prescription.prescriptionFormTemplateId,
-        );
+        const [
+            prescription,
+            checkpoints,
+        ] = await Promise.all([
+            Api.projectsApi.getProject(caseId),
+            Api.projectsApi.getProjectCheckpoints({
+                caseId,
+                companyId,
+            })
+        ]);
 
-        const checkpoints = await Api.projectsApi.getProjectCheckpoints({
-            caseId,
-            companyId,
-        });
+        const [
+            prescriptionFormTemplate,
+            user,
+        ] = await Promise.all([
+            Api.prescriptionTemplateApi.getPrescriptionTemplateById(
+                prescription.prescriptionFormTemplateId,
+            ),
+            Api.userApi.getUser((prescription as any).doctor),
+        ]);
+
+        const doctorUser = user as IDoctorUser;
 
         if (this._isMounted) {
             this.setState({
@@ -276,6 +291,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                 retrievingCheckpoints: false,
                 prescriptionFormTemplate,
                 loadingPrescriptionTemplate: false,
+                doctorUser ,
             })
 
             this.props.setControlValues(prescription.controlValues);
@@ -310,6 +326,8 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                     controlValue={controlValue}
                     disabled={true}
                     updateControlValueActionCreator={updateExistingCaseControlValue}
+                    existingDoctorInformation={this.state.doctorUser}
+                    hideSearch={true}
                 />
             )
         } else if (control.type === IPrescriptionControlTemplateType.MultilineText) {
