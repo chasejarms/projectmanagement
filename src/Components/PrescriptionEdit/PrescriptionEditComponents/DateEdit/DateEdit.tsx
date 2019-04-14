@@ -1,3 +1,4 @@
+import { FormControl, Input, InputLabel } from '@material-ui/core';
 import { firestore } from 'firebase';
 import { DatePicker } from 'material-ui-pickers';
 import * as React from 'react';
@@ -18,15 +19,33 @@ export class DateEditPresentation extends React.Component<IDateEditProps, IDateE
             updatedControlValue = (controlValue as firestore.Timestamp).toDate();
         }
 
+        /*
+            Providing two potential options (a form control and a date picker) because
+            the date picker swallows up the click event. This becomes an issue in the
+            prescription builder when we're trying to click on the disabled component
+            in order to toggle to the control configuration options.
+        */
+
         return (
-            <DatePicker
-                disabled={disabled}
-                fullWidth={true}
-                value={updatedControlValue}
-                label={control.label}
-                disablePast={true}
-                onChange={this.handleDeadlineChange(control.id)}
-            />
+            <div>
+                {disabled && !updatedControlValue ? (
+                    <FormControl fullWidth={true} disabled={true}>
+                        <InputLabel>{control.label}</InputLabel>
+                        <Input
+                            value={''}
+                        />
+                    </FormControl>
+                ) : (
+                    <DatePicker
+                        disabled={disabled}
+                        fullWidth={true}
+                        value={updatedControlValue}
+                        label={control.label}
+                        disablePast={true}
+                        onChange={this.handleDeadlineChange(control.id)}
+                    />
+                )}
+            </div>
         )
     }
 
