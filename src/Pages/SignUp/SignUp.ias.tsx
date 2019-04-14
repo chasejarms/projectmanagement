@@ -11,6 +11,8 @@ export interface ISignUpPresentationState {
     email: IFormControlState<string>;
     password: IFormControlState<string>;
     signUpActionInProgress: boolean;
+    dialogIsOpen: boolean;
+    signUpError: string;
 }
 export const createAuthenticationClasses = (
   props: ISignUpPresentationProps,

@@ -1,4 +1,10 @@
 import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
     FormControl,
     FormHelperText,
     Input,
@@ -47,6 +53,8 @@ export class SignUpPresentation extends React.Component<
             validators: [requiredValidator('A full name is required')],
         }).markAsInvalid(),
         signUpActionInProgress: false,
+        dialogIsOpen: false,
+        signUpError: '',
     };
 
     public render() {
@@ -136,8 +144,30 @@ export class SignUpPresentation extends React.Component<
                         </AsyncButton>
                     </div>
                 </div>
+                <Dialog
+                    open={this.state.dialogIsOpen}
+                    onClose={this.handleDialogClose}
+                >
+                    <DialogTitle>Error Signing Up</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            It looks like that user already exists in the system. To sign up with an existing user, click the 'Create a company with an existing user' link.
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.handleDialogClose} color="primary" autoFocus={true}>
+                            OK
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </div>
         );
+    }
+
+    private handleDialogClose = (): void => {
+        this.setState({
+            dialogIsOpen: false,
+        })
     }
 
     private signUp = async() => {
@@ -159,14 +189,11 @@ export class SignUpPresentation extends React.Component<
 
             this.redirectToCompanySelection(userCredential.user!.uid);
         } catch (error) {
-            const newEmailControl = this.state.email.createCopy()
-            .markAsInvalid()
-            .setError(error.message);
-
             this.setState({
-                email: newEmailControl,
                 signUpActionInProgress: false,
-            });
+                dialogIsOpen: true,
+                signUpError: error.message,
+            })
         }
     }
 

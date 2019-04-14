@@ -12,6 +12,7 @@ export interface ILoginPresentationState {
     passwordResetInProgress: boolean;
     snackbarIsOpen: boolean;
     passwordResetWasSent: boolean;
+    dialogIsOpen: boolean;
 }
 export const createAuthenticationClasses = (
   props: ILoginPresentationProps,

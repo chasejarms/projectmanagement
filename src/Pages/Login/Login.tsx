@@ -1,4 +1,10 @@
 import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
     FormControl,
     FormHelperText,
     Input,
@@ -40,6 +46,7 @@ export class LoginPresentation extends React.Component<
         passwordResetInProgress: false,
         snackbarIsOpen: false,
         passwordResetWasSent: false,
+        dialogIsOpen: false,
     };
 
     // tslint:disable-next-line:variable-name
@@ -133,8 +140,30 @@ export class LoginPresentation extends React.Component<
                     }
                     onClose={this.handleSnackbarClose}
                 />
+                <Dialog
+                    open={this.state.dialogIsOpen}
+                    onClose={this.handleDialogClose}
+                >
+                    <DialogTitle>Error Logging In</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            The username or password is invalid. Please try again or click on the reset password link if the problem persists.
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.handleDialogClose} color="primary" autoFocus={true}>
+                            OK
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </div>
         );
+    }
+
+    private handleDialogClose = (): void => {
+        this.setState({
+            dialogIsOpen: false,
+        })
     }
 
     private handleSnackbarClose = (): void => {
@@ -149,32 +178,29 @@ export class LoginPresentation extends React.Component<
                 loginActionInProgress: true,
             });
         }
+
+        let userCredential: firebase.auth.UserCredential;
+
         try {
-            const userCredential = await Api.authenticationApi.login(
+            userCredential = await Api.authenticationApi.login(
                 this.state.email.value,
                 this.state.password.value);
-
-            if (this._isMounted) {
-                this.setState({
-                    loginActionInProgress: false,
-                });
-            }
-
-            this.redirectToCompanySelection(userCredential.user!.uid);
         } catch (e) {
-            // tslint:disable-next-line:no-console
-            console.log(e);
-            const newEmailControl = this.state.email.createCopy()
-                .markAsInvalid()
-                .setError('The username or password is invalid');
+            this.setState({
+                dialogIsOpen: true,
+                loginActionInProgress: false,
+            })
 
-            if (this._isMounted) {
-                this.setState({
-                    email: newEmailControl,
-                    loginActionInProgress: false,
-                });
-            }
+            return;
         }
+
+        if (this._isMounted) {
+            this.setState({
+                loginActionInProgress: false,
+            });
+        };
+
+        this.redirectToCompanySelection(userCredential.user!.uid);
     }
 
     private redirectToCompanySelection(uid: string): void {
