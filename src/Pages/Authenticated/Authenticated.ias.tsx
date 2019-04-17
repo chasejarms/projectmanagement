@@ -73,6 +73,10 @@ export const createAuthenticatedClasses = (
         clipPath: 'polygon(100% 100%, 0% 100%, 0% 70%, 100% 10%, 100% 100%);',
         backgroundColor: props.theme.palette.primary.dark,
         zIndex: -1,
+    });
+
+    const listItemIcon = css({
+        margin: 0,
     })
 
     return {
@@ -84,5 +88,6 @@ export const createAuthenticatedClasses = (
         authenticatedContainer,
         pageBackgroundLayerTwo,
         pageBackgroundLayerThree,
+        listItemIcon,
     }
 }

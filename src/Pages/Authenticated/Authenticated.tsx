@@ -47,6 +47,7 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
             authenticatedContainer,
             pageBackgroundLayerTwo,
             pageBackgroundLayerThree,
+            listItemIcon,
         } = createAuthenticatedClasses(this.props, this.state);
 
         const companyId = this.props.location.pathname.split('/')[2];
@@ -68,7 +69,7 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                                         className={iconContainer}
                                         onClick={this.navigateToProjects}
                                     >
-                                        <ListItemIcon>
+                                        <ListItemIcon className={listItemIcon}>
                                             <AssignmentIcon className={iconStyling}/>
                                         </ListItemIcon>
                                     </ListItem>
@@ -81,7 +82,7 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                                                 className={iconContainer}
                                                 onClick={this.navigateToUsers}
                                             >
-                                                <ListItemIcon>
+                                                <ListItemIcon className={listItemIcon}>
                                                     <PeopleIcon className={iconStyling}/>
                                                 </ListItemIcon>
                                             </ListItem>
@@ -92,7 +93,7 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                                                 className={iconContainer}
                                                 onClick={this.navigateToWorkflow}
                                             >
-                                                <ListItemIcon>
+                                                <ListItemIcon className={listItemIcon}>
                                                     <ListIcon className={iconStyling}/>
                                                 </ListItemIcon>
                                             </ListItem>
@@ -103,7 +104,7 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                                                 className={iconContainer}
                                                 onClick={this.navigateToPrescriptionBuilder}
                                             >
-                                                <ListItemIcon>
+                                                <ListItemIcon className={listItemIcon}>
                                                     <DescriptionIcon className={iconStyling}/>
                                                 </ListItemIcon>
                                             </ListItem>
@@ -120,7 +121,7 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                                             className={iconContainer}
                                             onClick={this.navigateToCompanySelection}
                                         >
-                                            <ListItemIcon>
+                                            <ListItemIcon className={listItemIcon}>
                                                 <WorkIcon className={iconStyling}/>
                                             </ListItemIcon>
                                         </ListItem>
@@ -132,7 +133,7 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                                         className={iconContainer}
                                         onClick={this.navigateToUserSettings}
                                     >
-                                        <ListItemIcon>
+                                        <ListItemIcon className={listItemIcon}>
                                             <AccountBoxIcon className={iconStyling}/>
                                         </ListItemIcon>
                                     </ListItem>
@@ -143,7 +144,7 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                                         className={iconContainer}
                                         onClick={this.logout}
                                     >
-                                        <ListItemIcon>
+                                        <ListItemIcon className={listItemIcon}>
                                             <ExitToAppIcon className={iconStyling}/>
                                         </ListItemIcon>
                                     </ListItem>
