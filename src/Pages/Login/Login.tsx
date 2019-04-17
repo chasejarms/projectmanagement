@@ -9,7 +9,6 @@ import {
     FormHelperText,
     Input,
     InputLabel,
-    Snackbar,
     Typography,
 } from '@material-ui/core';
 import { withTheme } from '@material-ui/core/styles';
@@ -43,9 +42,6 @@ export class LoginPresentation extends React.Component<
             ],
         }).markAsInvalid(),
         loginActionInProgress: false,
-        passwordResetInProgress: false,
-        snackbarIsOpen: false,
-        passwordResetWasSent: false,
         dialogIsOpen: false,
     };
 
@@ -105,7 +101,7 @@ export class LoginPresentation extends React.Component<
                     </FormControl>
                 </div>
                 <div className={`${loginRow} ${linkContainer}`}>
-                    <Typography className={link} variant="caption" onClick={this.sendPasswordResetEmail}>Reset Password</Typography>
+                    <Typography className={link} variant="caption" onClick={this.navigateToResetPassword}>Reset Password</Typography>
                 </div>
                 <div className={`${loginRow} ${actionContainer}`}>
                     <div className={actionButton}>
@@ -120,26 +116,6 @@ export class LoginPresentation extends React.Component<
                         </AsyncButton>
                     </div>
                 </div>
-                <Snackbar
-                    open={this.state.snackbarIsOpen}
-                    anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'center',
-                    }}
-                    autoHideDuration={5000}
-                    message={
-                        (
-                            <span>
-                                {this.state.passwordResetWasSent ? (
-                                    'Success! Check your email to reset your password.'
-                                ): (
-                                    'Oops! It looks like there was an error.'
-                                )}
-                            </span>
-                        )
-                    }
-                    onClose={this.handleSnackbarClose}
-                />
                 <Dialog
                     open={this.state.dialogIsOpen}
                     onClose={this.handleDialogClose}
@@ -163,12 +139,6 @@ export class LoginPresentation extends React.Component<
     private handleDialogClose = (): void => {
         this.setState({
             dialogIsOpen: false,
-        })
-    }
-
-    private handleSnackbarClose = (): void => {
-        this.setState({
-            snackbarIsOpen: false,
         })
     }
 
@@ -207,6 +177,10 @@ export class LoginPresentation extends React.Component<
         this.props.history.push(`companySelection?uid=${uid}`);
     }
 
+    private navigateToResetPassword = (): void => {
+        this.props.history.push('reset-password');
+    }
+
     private handleFormControlChange = (event: any): void => {
         const formControl: FormControlState<string> = this.state[event.target.name];
         const controlToSetOnState = formControl.setValue(event.target.value);
@@ -226,46 +200,6 @@ export class LoginPresentation extends React.Component<
         } = this.state;
 
         return !email.invalid && !password.invalid;
-    }
-
-    private sendPasswordResetEmail = async(): Promise<void> => {
-        if (this.state.passwordResetInProgress) {
-            return;
-        }
-
-        if (this._isMounted) {
-            this.setState({
-                passwordResetInProgress: true,
-            })
-        }
-
-        const emailAddress = this.state.email.value;
-        try {
-            await firebase.auth().sendPasswordResetEmail(emailAddress);
-        } catch {
-            // tslint:disable-next-line:no-console
-            console.log('email was not sent');
-
-            if (this._isMounted) {
-                this.setState({
-                    passwordResetInProgress: false,
-                    passwordResetWasSent: false,
-                    snackbarIsOpen: true,
-                })
-            }
-            return;
-        }
-
-        if (this._isMounted) {
-            this.setState({
-                passwordResetInProgress: false,
-                passwordResetWasSent: true,
-                snackbarIsOpen: true,
-            })
-        }
-
-        // tslint:disable-next-line:no-console
-        console.log('email was sent');
     }
 }
 

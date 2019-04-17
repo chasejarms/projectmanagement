@@ -9,7 +9,6 @@ import {
     FormHelperText,
     Input,
     InputLabel,
-    Typography,
 } from '@material-ui/core';
 import { withTheme } from '@material-ui/core/styles';
 import * as React from 'react';
@@ -64,8 +63,6 @@ export class SignUpPresentation extends React.Component<
             textField,
             actionContainer,
             actionButton,
-            link,
-            linkContainer,
         } = createAuthenticationClasses(this.props, this.state);
 
         const {
@@ -128,9 +125,6 @@ export class SignUpPresentation extends React.Component<
                         <FormHelperText>{passwordError}</FormHelperText>
                     </FormControl>
                 </div>
-                <div className={`${signUpRow} ${linkContainer}`}>
-                    <Typography className={link} variant="caption">Create a company with an existing user</Typography>
-                </div>
                 <div className={`${signUpRow} ${actionContainer}`}>
                     <div className={actionButton}>
                         <AsyncButton
@@ -151,7 +145,7 @@ export class SignUpPresentation extends React.Component<
                     <DialogTitle>Error Signing Up</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
-                            It looks like that user already exists in the system. To sign up with an existing user, click the 'Create a company with an existing user' link.
+                            A user with that email already exists in the system.
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
