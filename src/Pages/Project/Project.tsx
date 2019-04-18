@@ -1,4 +1,5 @@
 import {
+    Button,
     Checkbox,
     CircularProgress,
     Paper,
@@ -30,6 +31,7 @@ import { NonEditableText } from "src/Components/PrescriptionEdit/PrescriptionEdi
 import { NumberEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/NumberEdit/NumberEdit";
 import { SingleLineTextEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/SingleLineTextEdit/SingleLineTextEdit";
 import { TitleEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/TitleEdit/TitleEdit";
+import { QRCodeDisplay } from "src/Components/QRCodeDisplay/QRCodeDisplay";
 import { ICheckpoint } from "src/Models/checkpoint";
 import { IDoctorUser } from "src/Models/doctorUser";
 import { IPrescriptionControlTemplateType } from "src/Models/prescription/controls/prescriptionControlTemplateType";
@@ -129,6 +131,8 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
 
         const controlValuesExist = Object.keys(this.props.existingCaseState.controlValues).length > 0;
         const dataIsReady = !this.state.loadingPrescriptionTemplate && controlValuesExist;
+        const showQRCodeDisplay = this.props.existingCaseState && this.state.prescriptionFormTemplate && this.state.doctorUser;
+        const caseId = this.props.match.params['projectId'];
 
         return (
             <div className={projectContainer}>
@@ -141,8 +145,19 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                 <div className={contentContainer}>
                     {tabIndex === 0 && (
                         <Paper className={prescriptionPaper}>
+                            {showQRCodeDisplay ? (
+                                <QRCodeDisplay
+                                    controlValues={this.props.existingCaseState.controlValues}
+                                    prescriptionFormTemplate={this.state.prescriptionFormTemplate!}
+                                    doctorUser={this.state.doctorUser!}
+                                    caseId={caseId}
+                                />
+                            ) : undefined}
                             {!this.state.loadingPrescriptionTemplate ? (
                                 <div className={createCaseButtonContainer}>
+                                    <Button onClick={this.showQrCodeDialog} color="secondary">
+                                        Print Case Information
+                                    </Button>
                                     <Tooltip
                                         title="Doctor Information and Case Deadline are required fields"
                                         placement="left"
@@ -214,11 +229,6 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                                     <Typography variant="title">
                                         Case Progress
                                     </Typography>
-                                    {/* <Tooltip title="Filter list">
-                                        <IconButton aria-label="Filter list">
-                                            <FilterListIcon />
-                                        </IconButton>
-                                    </Tooltip> */}
                                 </Toolbar>
                                 <Table>
                                     <TableHead>
@@ -963,9 +973,9 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
     //     }
     // }
 
-    // private showQrCodeDialog = (): void => {
-    //     window.print();
-    // }
+    private showQrCodeDialog = (): void => {
+        window.print();
+    }
 
     // private updateProject = async(): Promise<void> => {
     //     this.setState({

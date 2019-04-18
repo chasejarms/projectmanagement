@@ -1,23 +1,24 @@
 import { css } from 'emotion';
+import { IDoctorUser } from 'src/Models/doctorUser';
+import { IPrescriptionFormTemplate } from 'src/Models/prescription/prescriptionFormTemplate';
 
 // tslint:disable-next-line:no-empty-interface
 export interface IQRCodeDisplayState {}
 // tslint:disable-next-line:no-empty-interface
 export interface IQRCodeDisplayProps {
-    qrCodes: IQRCodeKeys[];
-}
-
-export interface IQRCodeKeys {
+    prescriptionFormTemplate: IPrescriptionFormTemplate;
+    controlValues: {
+        [controlId: string]: any,
+    };
+    doctorUser: IDoctorUser;
     caseId: string;
-    caseName: string;
-    caseDeadline: string;
 }
 
 export const createQRCodeDisplayClasses = (
     props: IQRCodeDisplayProps,
     state: IQRCodeDisplayState,
 ) => {
-    const qrCodesContainer = css({
+    const printableCaseInfoContainer = css({
         width: '100vw',
         height: '100vh',
         overflowY: 'auto',
@@ -31,20 +32,28 @@ export const createQRCodeDisplayClasses = (
     })
 
     const qrCodeContainer = css({
-        display: 'inline-grid',
-        gridRowGap: 8,
-        textAlign: 'center',
-        width: 128,
-        marginRight: 32,
+        float: 'right',
+        paddingLeft: 24,
+        paddingBottom: 24,
     })
 
     const individualQRCodeContainer = css({
         display: 'inline-block',
     });
 
+    const sectionContainer = css({
+        paddingBottom: 32,
+    });
+
+    const controlContainer = css({
+        paddingBottom: 16,
+    })
+
     return {
-        qrCodesContainer,
+        printableCaseInfoContainer,
         qrCodeContainer,
         individualQRCodeContainer,
+        sectionContainer,
+        controlContainer,
     };
 }

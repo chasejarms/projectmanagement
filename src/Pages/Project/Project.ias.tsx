@@ -358,7 +358,7 @@ export const createProjectPresentationClasses = (
 
     const createCaseButtonContainer = css({
         display: 'flex',
-        justifyContent: 'flex-end',
+        justifyContent: 'space-between',
         marginBottom: 32,
     });
 

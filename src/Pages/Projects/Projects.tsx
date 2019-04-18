@@ -20,7 +20,6 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { ISlimCasesSearchRequest } from 'src/Api/Projects/projectsInterface';
-import { QRCodeDisplay } from 'src/Components/QRCodeDisplay/QRCodeDisplay';
 import { ShowNewInfoFromType } from 'src/Models/showNewInfoFromTypes';
 import { ISlimCase } from 'src/Models/slimCase';
 import { UserType } from 'src/Models/userTypes';
@@ -31,7 +30,6 @@ import { createProjectsPresentationClasses, IProjectsPresentationProps, IProject
 export class ProjectsPresentation extends React.Component<IProjectsPresentationProps, IProjectsPresentationState> {
     public state: IProjectsPresentationState = {
         slimCases: [],
-        qrCodeKeys: null,
         loadingSlimCases: true,
         moreCasesExist: true,
         page: 0,
@@ -171,9 +169,6 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                         </Table>
                     </div>
                 </Paper>
-                {this.state.qrCodeKeys ? (
-                    <QRCodeDisplay qrCodes={this.state.qrCodeKeys}/>
-                ) : undefined}
             </div>
         )
     }

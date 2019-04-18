@@ -12,6 +12,7 @@ export interface IDoctorInformationEditPropsFromParent {
     controlValue: any;
     existingDoctorInformation?: IDoctorUser;
     hideSearch?: boolean;
+    enableNonTouchFields?: boolean;
 }
 
 export interface IDoctorInformationEditProps extends RouteComponentProps<{}>, IDoctorInformationEditPropsFromParent {

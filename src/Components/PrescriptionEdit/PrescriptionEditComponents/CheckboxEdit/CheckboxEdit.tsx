@@ -7,7 +7,7 @@ import {
 import { cloneDeep } from 'lodash';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { ICheckboxEditProps, ICheckboxEditPropsFromParent, ICheckboxEditState } from './CheckboxEdit.ias';
+import { createCheckboxEditClasses, ICheckboxEditProps, ICheckboxEditPropsFromParent, ICheckboxEditState } from './CheckboxEdit.ias';
 
 class CheckboxEditPresentation extends React.Component<ICheckboxEditProps, ICheckboxEditState> {
     public render() {
@@ -16,6 +16,10 @@ class CheckboxEditPresentation extends React.Component<ICheckboxEditProps, IChec
             controlValue,
             disabled,
         } = this.props;
+
+        const {
+            checkbox,
+        } = createCheckboxEditClasses(this.props, this.state);
 
         return (
             <div>
@@ -31,7 +35,7 @@ class CheckboxEditPresentation extends React.Component<ICheckboxEditProps, IChec
                                     label={text}
                                     onClick={this.handleCheckboxChange(control.id, id)}
                                     control={
-                                        <Checkbox value={id} checked={checked} disabled={disabled}/>
+                                        <Checkbox value={id} checked={checked} disabled={disabled} className={checkbox}/>
                                     }
                                 />
                             )

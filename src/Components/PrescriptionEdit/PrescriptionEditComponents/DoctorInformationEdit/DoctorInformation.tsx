@@ -90,39 +90,39 @@ class DoctorInformationEditPresentation extends React.Component<IDoctorInformati
                         })}
                     </Paper>
                 </Popper>
-                <FormControl fullWidth={true} disabled={true} required={true}>
+                <FormControl fullWidth={true} disabled={!this.props.enableNonTouchFields} required={true}>
                     <InputLabel>Doctor Name</InputLabel>
                     <Input
                         value={doctorName}
                     />
                 </FormControl>
-                <FormControl fullWidth={true} disabled={true} required={true}>
+                <FormControl fullWidth={true} disabled={!this.props.enableNonTouchFields} required={true}>
                     <InputLabel>Street</InputLabel>
                     <Input
                         value={street}
                     />
                 </FormControl>
                 <div className={cityStateZipContainer}>
-                    <FormControl disabled={true} required={true}>
+                    <FormControl disabled={!this.props.enableNonTouchFields} required={true}>
                         <InputLabel>City</InputLabel>
                         <Input
                             value={city}
                         />
                     </FormControl>
-                    <FormControl disabled={true} required={true}>
+                    <FormControl disabled={!this.props.enableNonTouchFields} required={true}>
                         <InputLabel>State</InputLabel>
                         <Input
                             value={state}
                         />
                     </FormControl>
-                    <FormControl disabled={true} required={true}>
+                    <FormControl disabled={!this.props.enableNonTouchFields} required={true}>
                         <InputLabel>Zip</InputLabel>
                         <Input
                             value={zip}
                         />
                     </FormControl>
                 </div>
-                <FormControl fullWidth={true} disabled={true} required={true}>
+                <FormControl fullWidth={true} disabled={!this.props.enableNonTouchFields} required={true}>
                     <InputLabel>Telephone</InputLabel>
                     <Input
                         value={telephone}
