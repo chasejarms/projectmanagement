@@ -135,7 +135,7 @@ export class ProjectsApi implements ICaseApi {
         });
     }
 
-    public async updateCaseCheckpoint(checkpointId: string, complete: boolean, completedBy?: string): Promise<boolean> {
+    public async updateCaseCheckpoint(checkpointId: string, complete: boolean, completedBy: string | null): Promise<boolean> {
         await firebase.firestore().collection('caseCheckpoints')
             .doc(checkpointId)
             .set({

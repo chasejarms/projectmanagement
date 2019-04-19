@@ -5,6 +5,7 @@ export interface IAugmentedCheckpoint {
     complete: boolean;
     completedDate: Timestamp | null;
     completedBy: string | null;
+    completedByName: string | null;
     linkedWorkflowCheckpoint: string;
     name: string;
     estimatedCompletionTime: string;

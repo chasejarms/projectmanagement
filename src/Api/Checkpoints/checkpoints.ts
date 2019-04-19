@@ -17,6 +17,7 @@ export class CheckpointsApi implements ICheckpointsApi {
                 ...workflowCheckpoint,
                 complete: false,
                 completedBy: null,
+                completedByName: null,
             }
         });
     }

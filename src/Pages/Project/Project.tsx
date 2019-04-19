@@ -124,6 +124,9 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                                 />
                             ) : undefined}
                         </TableCell>
+                        {!userIsDoctor ? (
+                            <TableCell>{checkpoint.completedByName}</TableCell>
+                        ) : undefined}
                     </TableRow>
                 )
             }
@@ -236,6 +239,9 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                                             <TableCell>Checkpoint Name</TableCell>
                                             <TableCell>Estimated Completion Time</TableCell>
                                             <TableCell>Complete</TableCell>
+                                            {!userIsDoctor ? (
+                                                <TableCell>Completed By</TableCell>
+                                            ) : undefined}
                                         </TableRow>
                                     </TableHead>
                                     {this.state.checkpoints ? (
@@ -273,21 +279,6 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         const caseId = this.props.match.params['projectId'];
         const companyId = this.props.location.pathname.split('/')[2];
 
-        const project = await Api.projectsApi.getProject(caseId);
-
-        const showNewInfoFromDoctor = project.showNewInfoFrom === ShowNewInfoFromType.Doctor;
-        const showNewInfoFromLab = project.showNewInfoFrom === ShowNewInfoFromType.Lab;
-
-        const userIsDoctor = this.props.userState[companyId].type === UserType.Doctor;
-
-        const shouldMarkAsShown = (showNewInfoFromDoctor && !userIsDoctor) || (showNewInfoFromLab && userIsDoctor);
-
-        if (shouldMarkAsShown) {
-            Api.projectsApi.markProjectUpdatesAsSeen(companyId, caseId);
-        }
-
-        // this.createSrcUrls(project.attachmentUrls);
-
         if (this._isMounted) {
             this.setState({
                 projectInformationIsLoading: false,
@@ -304,6 +295,17 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                 companyId,
             })
         ]);
+
+        const showNewInfoFromDoctor = prescription.showNewInfoFrom === ShowNewInfoFromType.Doctor;
+        const showNewInfoFromLab = prescription.showNewInfoFrom === ShowNewInfoFromType.Lab;
+
+        const userIsDoctor = this.props.userState[companyId].type === UserType.Doctor;
+
+        const shouldMarkAsShown = (showNewInfoFromDoctor && !userIsDoctor) || (showNewInfoFromLab && userIsDoctor);
+
+        if (shouldMarkAsShown) {
+            Api.projectsApi.markProjectUpdatesAsSeen(companyId, caseId);
+        }
 
         const [
             prescriptionFormTemplate,
@@ -323,7 +325,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                 retrievingCheckpoints: false,
                 prescriptionFormTemplate,
                 loadingPrescriptionTemplate: false,
-                doctorUser ,
+                doctorUser,
             })
 
             this.props.setControlValues(prescription.controlValues);
@@ -758,11 +760,17 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
     // }
 
     private handleCheckpointChange = (checkpoint: ICheckpoint, index: number) => async() => {
+        const companyId = this.props.location.pathname.split('/')[2];
+        const currentUser = this.props.userState[companyId];
+        const completedBy = !checkpoint.complete ? currentUser.uid : null;
+        const completedByName = !checkpoint.complete ? currentUser.fullName : null;
         const checkpoints = this.state.checkpoints!.map((compareCheckpoint, compareIndex) => {
             if (index === compareIndex) {
                 return {
                     ...checkpoint,
                     complete: !compareCheckpoint.complete,
+                    completedBy,
+                    completedByName,
                 }
             } else {
                 return compareCheckpoint;
@@ -773,9 +781,6 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             checkpoints,
         })
 
-        const companyId = this.props.location.pathname.split('/')[2];
-        const currentUserUid = this.props.userState[companyId].uid;
-        const completedBy = !checkpoint.complete ? currentUserUid : undefined;
         await Api.projectsApi.updateCaseCheckpoint(checkpoint.id, !checkpoint.complete, completedBy)
     }
 

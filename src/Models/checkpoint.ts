@@ -5,4 +5,5 @@ export interface ICheckpoint {
     visibleToDoctor: boolean;
     complete: boolean;
     completedBy: string | null;
+    completedByName: string | null;
 }

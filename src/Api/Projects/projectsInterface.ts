@@ -38,7 +38,7 @@ export interface ICaseApi {
     updateCaseInformation(caseId: string, updateCaseInformationRequest: IUpdateCaseInformationRequest, showNewInfoFrom: ShowNewInfoFromType): Promise<void>;
     removeFile(fileName: string): Promise<void>;
     getNewCases(companyId: string): Promise<ICase[]>;
-    updateCaseCheckpoint(checkpointId: string, complete: boolean, completedBy?: string): Promise<boolean>;
+    updateCaseCheckpoint(checkpointId: string, complete: boolean, completedBy: string | null): Promise<boolean>;
     markProjectUpdatesAsSeen(companyId: string, caseId: string): Promise<void>;
     canCreateCases(companyId: string): Promise<boolean>;
 }
