@@ -781,7 +781,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             checkpoints,
         })
 
-        await Api.projectsApi.updateCaseCheckpoint(checkpoint.id, !checkpoint.complete, completedBy)
+        await Api.projectsApi.updateCaseCheckpoint(checkpoint.id, !checkpoint.complete, completedBy, completedByName);
     }
 
     // private prettyPrintDate = (date: Date) => {
