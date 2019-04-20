@@ -100,9 +100,9 @@ export const createProjectPresentationClasses = (
 
     const prescriptionPaper = css({
         height: '100%',
-        padding: 32,
-        overflowY: 'auto',
         boxSizing: 'border-box',
+        display: 'flex',
+        flexDirection: 'column',
     })
 
     const tabs = css({
@@ -333,6 +333,9 @@ export const createProjectPresentationClasses = (
 
     const sectionsContainer = css({
         display: 'grid',
+        gridRowGap: 32,
+        overflowY: 'auto',
+        padding: 32,
     });
 
     const sectionContainer = css({
@@ -359,7 +362,9 @@ export const createProjectPresentationClasses = (
     const createCaseButtonContainer = css({
         display: 'flex',
         justifyContent: 'space-between',
-        marginBottom: 32,
+        padding: 8,
+        flex: '0 0 auto',
+        borderTop: '1px solid rgba(224, 224, 224, 1)',
     });
 
     return {

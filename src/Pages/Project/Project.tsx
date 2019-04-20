@@ -156,30 +156,6 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                                     caseId={caseId}
                                 />
                             ) : undefined}
-                            {!this.state.loadingPrescriptionTemplate ? (
-                                <div className={createCaseButtonContainer}>
-                                    <Button onClick={this.showQrCodeDialog} color="secondary">
-                                        Print Case Information
-                                    </Button>
-                                    <Tooltip
-                                        title="Doctor Information and Case Deadline are required fields"
-                                        placement="left"
-                                        disableFocusListener={true}
-                                        disableHoverListener={true}
-                                        disableTouchListener={true}
-                                    >
-                                        <span>
-                                            <AsyncButton
-                                                color="secondary"
-                                                disabled={this.state.updateCaseInformationInProgress}
-                                                asyncActionInProgress={this.state.updateCaseInformationInProgress}
-                                                onClick={this.updateCase}>
-                                                Update Case
-                                            </AsyncButton>
-                                        </span>
-                                    </Tooltip>
-                                </div>
-                            ) : undefined}
                             {!dataIsReady ? (
                                 <div className={circularProgressContainer}>
                                     <CircularProgress
@@ -214,6 +190,30 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                                     })}
                                 </div>
                             )}
+                            {!this.state.loadingPrescriptionTemplate ? (
+                                <div className={createCaseButtonContainer}>
+                                    <Button onClick={this.showQrCodeDialog} color="secondary">
+                                        Print Case Information
+                                    </Button>
+                                    <Tooltip
+                                        title="Doctor Information and Case Deadline are required fields"
+                                        placement="left"
+                                        disableFocusListener={true}
+                                        disableHoverListener={true}
+                                        disableTouchListener={true}
+                                    >
+                                        <span>
+                                            <AsyncButton
+                                                color="secondary"
+                                                disabled={this.state.updateCaseInformationInProgress}
+                                                asyncActionInProgress={this.state.updateCaseInformationInProgress}
+                                                onClick={this.updateCase}>
+                                                Update Case
+                                            </AsyncButton>
+                                        </span>
+                                    </Tooltip>
+                                </div>
+                            ) : undefined}
                         </Paper>
                     )}
                     {tabIndex === 1 && (
