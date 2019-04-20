@@ -153,27 +153,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     </Paper>
                 ) : (
                     <Paper className={prescriptionFormContainer}>
-                        {editMode ? (
-                            <div className={savePrescriptionTemplateContainer}>
-                                <Tooltip
-                                    title="Doctor Information and Case Deadline are required fields"
-                                    placement="left"
-                                    disableFocusListener={!prescriptionTemplateIsInvalid}
-                                    disableHoverListener={!prescriptionTemplateIsInvalid}
-                                    disableTouchListener={!prescriptionTemplateIsInvalid}
-                                >
-                                    <span>
-                                        <AsyncButton
-                                            color="secondary"
-                                            disabled={this.state.updatingPrescriptionTemplate || prescriptionTemplateIsInvalid}
-                                            asyncActionInProgress={this.state.updatingPrescriptionTemplate}
-                                            onClick={this.updatePrescriptionTemplate}>
-                                            Save Prescription Template
-                                        </AsyncButton>
-                                    </span>
-                                </Tooltip>
-                            </div>
-                        ) : undefined}
                         {sectionOrder.length === 0 ? (
                             <div>
                                 <FormElementDropZone
@@ -291,6 +270,27 @@ export class PrescriptionBuilderPresentation extends React.Component<
                             </div>
                             </div>
                         )}
+                        {editMode ? (
+                            <div className={savePrescriptionTemplateContainer}>
+                                <Tooltip
+                                    title="Doctor Information and Case Deadline are required fields"
+                                    placement="left"
+                                    disableFocusListener={!prescriptionTemplateIsInvalid}
+                                    disableHoverListener={!prescriptionTemplateIsInvalid}
+                                    disableTouchListener={!prescriptionTemplateIsInvalid}
+                                >
+                                    <span>
+                                        <AsyncButton
+                                            color="secondary"
+                                            disabled={this.state.updatingPrescriptionTemplate || prescriptionTemplateIsInvalid}
+                                            asyncActionInProgress={this.state.updatingPrescriptionTemplate}
+                                            onClick={this.updatePrescriptionTemplate}>
+                                            Save Prescription Template
+                                        </AsyncButton>
+                                    </span>
+                                </Tooltip>
+                            </div>
+                        ) : undefined}
                     </Paper>
                 )}
                 <div className={drawerReplacement}/>

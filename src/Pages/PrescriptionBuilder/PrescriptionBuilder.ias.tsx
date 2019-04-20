@@ -41,11 +41,11 @@ export const createPrescriptionBuilderClasses = (
     const prescriptionFormContainer = css({
         flexGrow: 1,
         margin: 32,
-        padding: 32,
         paddingTop: paddingFromSectionCount,
         paddingBottom: paddingFromSectionCount,
         boxSizing: 'border-box',
-        overflowY: 'auto',
+        display: 'flex',
+        flexDirection: 'column',
     })
 
     const drawerReplacement = css({
@@ -235,7 +235,10 @@ export const createPrescriptionBuilderClasses = (
     });
 
     const prescriptionFormInnerContainer = css({
-        position: 'relative',
+        paddingLeft: 32,
+        paddingRight: 32,
+        overflowY: 'auto',
+        flexGrow: 1,
     });
 
     const dragIconContainerClass = css({
@@ -243,15 +246,14 @@ export const createPrescriptionBuilderClasses = (
         justifyContent: 'flex-end',
     });
 
-    const topMarginPrescriptionTemplateContainer = props.prescriptionBuilderState.prescriptionFormTemplate.sectionOrder.length > 0 ? 0 : 32;
-    const bottomMarginPrescriptionTemplateContainer = props.prescriptionBuilderState.prescriptionFormTemplate.sectionOrder.length === 0 ? 0 : 32;
-
-
     const savePrescriptionTemplateContainer = css({
+        width: '100%',
         display: 'flex',
         justifyContent: 'flex-end',
-        marginBottom: topMarginPrescriptionTemplateContainer,
-        marginTop: bottomMarginPrescriptionTemplateContainer,
+        flex: '0 0 auto',
+        padding: 8,
+        boxSizing: 'border-box',
+        borderTop: '1px solid rgba(224, 224, 224, 1)',
     })
 
     const circularProgressContainer = css({
