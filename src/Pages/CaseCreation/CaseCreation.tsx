@@ -82,27 +82,6 @@ export class CaseCreationPresentation extends React.Component<
         return (
             <div className={caseCreationContainer}>
                 <Paper className={caseCreationFormContainer}>
-                    {!this.state.loadingPrescriptionTemplate && this.state.canCreateCases ? (
-                        <div className={createCaseButtonContainer}>
-                            <Tooltip
-                                title="Doctor Information and Case Deadline are required fields"
-                                placement="left"
-                                disableFocusListener={!prescriptionTemplateIsInvalid}
-                                disableHoverListener={!prescriptionTemplateIsInvalid}
-                                disableTouchListener={!prescriptionTemplateIsInvalid}
-                            >
-                                <span>
-                                    <AsyncButton
-                                        color="secondary"
-                                        disabled={prescriptionTemplateIsInvalid || this.state.caseCreationInProgress}
-                                        asyncActionInProgress={this.state.caseCreationInProgress}
-                                        onClick={this.createCase}>
-                                        Create Case
-                                    </AsyncButton>
-                                </span>
-                            </Tooltip>
-                        </div>
-                    ) : undefined}
                     {this.state.loadingPrescriptionTemplate ? (
                         <div className={circularProgressContainer}>
                             <CircularProgress
@@ -136,6 +115,27 @@ export class CaseCreationPresentation extends React.Component<
                                     </div>
                                 )
                             })}
+                        </div>
+                    ) : undefined}
+                    {!this.state.loadingPrescriptionTemplate && this.state.canCreateCases ? (
+                        <div className={createCaseButtonContainer}>
+                            <Tooltip
+                                title="Doctor Information and Case Deadline are required fields"
+                                placement="left"
+                                disableFocusListener={!prescriptionTemplateIsInvalid}
+                                disableHoverListener={!prescriptionTemplateIsInvalid}
+                                disableTouchListener={!prescriptionTemplateIsInvalid}
+                            >
+                                <span>
+                                    <AsyncButton
+                                        color="secondary"
+                                        disabled={prescriptionTemplateIsInvalid || this.state.caseCreationInProgress}
+                                        asyncActionInProgress={this.state.caseCreationInProgress}
+                                        onClick={this.createCase}>
+                                        Create Case
+                                    </AsyncButton>
+                                </span>
+                            </Tooltip>
                         </div>
                     ) : undefined}
                     {!this.state.canCreateCases && !this.state.loadingPrescriptionTemplate ? (

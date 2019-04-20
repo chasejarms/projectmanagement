@@ -23,22 +23,26 @@ export const createCaseCreationClasses = (
     const caseCreationContainer = css({
         height: '100vh',
         width: '100%',
-        flexDirection: 'row',
         display: 'flex',
+        flexDirection: 'column',
+        padding: 32,
+        boxSizing: 'border-box',
     });
 
     const caseCreationFormContainer = css({
         flexGrow: 1,
-        margin: 32,
-        padding: 32,
-        paddingTop: 32,
-        paddingBottom: 32,
         boxSizing: 'border-box',
-        overflowY: 'auto',
+        display: 'flex',
+        flexDirection: 'column',
     });
 
     const sectionsContainer = css({
         display: 'grid',
+        gridRowGap: 32,
+        flexGrow: 1,
+        overflowY: 'auto',
+        padding: 32,
+        boxSizing: 'border-box',
     });
 
     const sectionContainer = css({
@@ -73,7 +77,9 @@ export const createCaseCreationClasses = (
     const createCaseButtonContainer = css({
         display: 'flex',
         justifyContent: 'flex-end',
-        marginBottom: 32,
+        flex: '0 0 auto',
+        padding: 8,
+        borderTop: '1px solid rgba(224, 224, 224, 1)',
     });
 
     const cannotCreateCaseContainer = css({
