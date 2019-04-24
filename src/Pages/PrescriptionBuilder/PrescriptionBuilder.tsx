@@ -31,6 +31,7 @@ import { CheckboxEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditCo
 import { DateEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/DateEdit/DateEdit';
 import { DoctorInformationEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/DoctorInformationEdit/DoctorInformation';
 import { DropdownEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/DropdownEdit/DropdownEdit';
+import { FileEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/FileEdit/FileEdit';
 import { MultilineTextEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/MultilineTextEdit/MultilineTextEdit';
 import { NonEditableText } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/NonEditableText/NonEditableText';
 import { NumberEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/NumberEdit/NumberEdit';
@@ -235,7 +236,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                             ) : undefined}
                                             <div
                                                 className={`${sectionContainer} ${noControlForSection ? noControlForSectionClass : ''}`}
-                                                onClick={this.selectSection(sectionId)}
                                             >
                                                 {noControlForSection ? (
                                                     <div className={noFieldsContainer}>
@@ -505,13 +505,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
         }
     }
 
-    private selectSection = (sectionId: string) => () => {
-        if (!this.state.uploadingCompanyLogoURL) {
-            this.props.setSelectedControl(null);
-            this.props.setSelectedSection(sectionId);
-        }
-    }
-
     private correctControlDisplay = (controlId: string) => {
         const { editMode } = this.props.prescriptionBuilderState;
         const control = this.props.prescriptionBuilderState.prescriptionFormTemplate.controls[controlId];
@@ -592,6 +585,15 @@ export class PrescriptionBuilderPresentation extends React.Component<
         } else if (control.type === IPrescriptionControlTemplateType.CaseDeadline) {
             return (
                 <CaseDeadlineEdit
+                    control={control}
+                    controlValue={controlValue}
+                    disabled={disabled}
+                    updateControlValueActionCreator={updateControlValue}
+                />
+            )
+        } else if (control.type === IPrescriptionControlTemplateType.File) {
+            return (
+                <FileEdit
                     control={control}
                     controlValue={controlValue}
                     disabled={disabled}
@@ -885,12 +887,12 @@ export class PrescriptionBuilderPresentation extends React.Component<
     private selectControl = (controlId: string) => (event: any) => {
         const { editMode } = this.props.prescriptionBuilderState;
 
-        event.stopPropagation();
-        event.preventDefault();
-
         if (!editMode || this.state.uploadingCompanyLogoURL) {
             return;
         }
+
+        event.stopPropagation();
+        // event.preventDefault();
 
         const sectionId = this.props.prescriptionBuilderState.prescriptionFormTemplate.controls[controlId].sectionId;
         this.props.setSelectedControl(controlId);
