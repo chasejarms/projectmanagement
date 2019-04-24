@@ -165,6 +165,9 @@ export const createProjectPresentationClasses = (
     const addAttachmentButton = css({
         position: 'relative',
         overflow: 'hidden',
+        '&:hover': {
+            cursor: 'pointer',
+        }
     });
 
     const addAttachmentInput = css({

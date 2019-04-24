@@ -14,6 +14,7 @@ import {
     SET_VIEW_MODE,
     UPDATE_CONTROL_VALUE_PRESCRIPTION_FORM_TEMPLATE,
 } from '../Actions/prescriptionBuilderActions';
+import { SET_COMPANY_LOGO_URL } from './../Actions/prescriptionBuilderActions';
 
 export interface ISetEditModeAction extends Action<typeof SET_EDIT_MODE> {}
 
@@ -62,6 +63,10 @@ export interface IUpdateControlValuePrescriptionFormTemplateAction extends Actio
     value: any;
 }
 
+export interface ISetCompanyLogoUrlPrescriptionFormTemplateAction extends Action<typeof SET_COMPANY_LOGO_URL> {
+    companyLogoURL: string | null;
+}
+
 export type IPrescriptionBuilderActions = ISetEditModeAction |
     ISetViewModeAction |
     ISetPrescriptionFormTemplateAction |
@@ -73,7 +78,8 @@ export type IPrescriptionBuilderActions = ISetEditModeAction |
     IRemoveSectionPrescriptionFormTemplateAction |
     ISetSelectedControlPrescriptionFormTemplateAction |
     ISetSelectedSectionPrescriptionFormTemplateAction |
-    IUpdateControlValuePrescriptionFormTemplateAction;
+    IUpdateControlValuePrescriptionFormTemplateAction |
+    ISetCompanyLogoUrlPrescriptionFormTemplateAction;
 
 export const setEditMode = (): ISetEditModeAction => {
     return {
@@ -180,5 +186,14 @@ export const updateControlValue = (
         type: UPDATE_CONTROL_VALUE_PRESCRIPTION_FORM_TEMPLATE,
         controlId,
         value,
+    }
+}
+
+export const setCompanyLogoUrl = (
+    companyLogoURL: string | null,
+): ISetCompanyLogoUrlPrescriptionFormTemplateAction => {
+    return {
+        type: SET_COMPANY_LOGO_URL,
+        companyLogoURL,
     }
 }

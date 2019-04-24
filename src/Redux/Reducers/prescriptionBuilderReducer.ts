@@ -42,8 +42,8 @@ import {
     UPDATE_CONTROL_VALUE_PRESCRIPTION_FORM_TEMPLATE,
 } from "../Actions/prescriptionBuilderActions";
 import { ICaseDeadlineControl } from './../../Models/prescription/controls/caseDeadlineControl';
-import { ISetSelectedSectionPrescriptionFormTemplateAction } from './../ActionCreators/prescriptionBuilderCreators';
-import { ON_DROP_EXISTING_CONTROL_PRESCRIPTION_FORM_TEMPLATE, ON_DROP_NEW_CONTROL_PRESCRIPTION_FORM_TEMPLATE } from './../Actions/prescriptionBuilderActions';
+import { ISetCompanyLogoUrlPrescriptionFormTemplateAction, ISetSelectedSectionPrescriptionFormTemplateAction } from './../ActionCreators/prescriptionBuilderCreators';
+import { ON_DROP_EXISTING_CONTROL_PRESCRIPTION_FORM_TEMPLATE, ON_DROP_NEW_CONTROL_PRESCRIPTION_FORM_TEMPLATE, SET_COMPANY_LOGO_URL } from './../Actions/prescriptionBuilderActions';
 
 export interface IPrescriptionBuilderSliceOfState {
     editMode: boolean;
@@ -61,6 +61,7 @@ const initialState = {
         sectionOrder: [],
         sections: {},
         controls: {},
+        companyLogoURL: null,
     },
     selectedSection: null,
     selectedControl: null,
@@ -134,6 +135,11 @@ export const prescriptionBuilderReducer = (state: IPrescriptionBuilderSliceOfSta
             return prescriptionFormTemplateAfterControlUpdate(
                 state,
                 action as IUpdateControlValuePrescriptionFormTemplateAction
+            );
+        case SET_COMPANY_LOGO_URL:
+            return setStateAfterCompanyUrlChange(
+                state,
+                action as ISetCompanyLogoUrlPrescriptionFormTemplateAction,
             );
         default:
             return state;
@@ -491,5 +497,15 @@ const prescriptionFormTemplateAfterControlUpdate = (state: IPrescriptionBuilderS
     return {
         ...state,
         controlValues: controlValuesCopy,
+    }
+}
+
+const setStateAfterCompanyUrlChange = (state: IPrescriptionBuilderSliceOfState, action: ISetCompanyLogoUrlPrescriptionFormTemplateAction): IPrescriptionBuilderSliceOfState => {
+    const prescriptionFormTemplateCopy = cloneDeep(state.prescriptionFormTemplate);
+    prescriptionFormTemplateCopy.companyLogoURL = action.companyLogoURL;
+
+    return {
+        ...state,
+        prescriptionFormTemplate: prescriptionFormTemplateCopy,
     }
 }

@@ -69,6 +69,7 @@ class PrescriptionBuilderDrawerPresentation extends React.Component<
                     </div>
                     <div className={editModeButtonContainer}>
                         <Button
+                            disabled={this.props.disableEdits}
                             onClick={this.toggleEditMode}
                             color="secondary">
                             {editMode ? 'Switch To View Mode' : 'Switch To Edit Mode'}

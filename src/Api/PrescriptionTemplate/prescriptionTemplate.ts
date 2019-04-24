@@ -1,5 +1,7 @@
+import * as firebase from 'firebase';
 import { db } from 'src/firebase';
 import { IPrescriptionFormTemplate } from 'src/Models/prescription/prescriptionFormTemplate';
+import { generateUniqueId } from 'src/Utils/generateUniqueId';
 import { IPrescriptionTemplateApi } from './prescriptionTemplateInterface';
 
 export class PrescriptionTemplateApi implements IPrescriptionTemplateApi {
@@ -33,6 +35,22 @@ export class PrescriptionTemplateApi implements IPrescriptionTemplateApi {
             ...prescriptionFormTemplate.data() as IPrescriptionFormTemplate,
             id: prescriptionFormTemplate.id,
         };
+    }
+
+    public async updateCompanyLogo(companyId: string, prescriptionTemplateId: string, file: File): Promise<string> {
+        const storageRef = firebase.storage().ref();
+        const uniqueIdentifier = generateUniqueId();
+        const updatedStorageRef = storageRef.child(`${companyId}/companyLogos/${uniqueIdentifier}/${file.name}`);
+        const uploadTaskSnapshot: firebase.storage.UploadTaskSnapshot = await updatedStorageRef.put(file);
+
+        const companyLogoURL = uploadTaskSnapshot.metadata.fullPath;
+        await db.collection('prescriptionTemplates')
+            .doc(prescriptionTemplateId)
+            .set({
+                companyLogoURL,
+            }, { merge: true });
+
+        return companyLogoURL;
     }
 
     private getWorkflowDocumentSnapshotPromise = (companyId: string): Promise<firebase.firestore.QuerySnapshot> => {

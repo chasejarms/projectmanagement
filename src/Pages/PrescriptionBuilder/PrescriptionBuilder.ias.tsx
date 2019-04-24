@@ -16,13 +16,18 @@ export interface IPrescriptionBuilderProps extends WithTheme, RouteComponentProp
     setSelectedControl: (controlId: string | null) => void;
     setSelectedSection: (sectionId: string | null) => void;
     updateControlValue: (controlId: string, value: any) => void;
+    setCompanyLogoURL: (companyURL: string) => void;
 }
 
 export interface IPrescriptionBuilderState {
     updatingPrescriptionTemplate: boolean;
     loadingPrescriptionTemplate: boolean;
+    uploadingCompanyLogoURL: boolean;
     snackbarIsOpen: boolean;
     updatingPrescriptionTemplateSuccess: boolean;
+    dialogIsOpen: boolean;
+    dialogError: string;
+    companyLogoDownloadURL?: string;
 }
 
 export const createPrescriptionBuilderClasses = (
@@ -264,7 +269,37 @@ export const createPrescriptionBuilderClasses = (
         alignItems: 'center',
     });
 
+    const logoAndImageContainer = css({
+        marginTop: 32,
+    });
+
+    const addAttachmentInput = css({
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        paddingTop: 100,
+    });
+
+    const addLogoButton = css({
+        position: 'relative',
+        overflow: 'hidden',
+    });
+
+    let companyLogoImage: string = '';
+
+    if (!!state.companyLogoDownloadURL) {
+        companyLogoImage = css({
+            maxWidth: 400,
+            maxHeight: 200,
+            backgroundImage: `url(${state.companyLogoDownloadURL})`,
+            backgroundSize: 'contain',
+            backgroundRepeat: 'no-repeat',
+            height: 100,
+        })
+    }
+
     return {
+        logoAndImageContainer,
         prescriptionBuilderContainer,
         prescriptionFormContainer,
         drawerReplacement,
@@ -302,5 +337,8 @@ export const createPrescriptionBuilderClasses = (
         dragIconContainerClass,
         savePrescriptionTemplateContainer,
         circularProgressContainer,
+        addAttachmentInput,
+        addLogoButton,
+        companyLogoImage,
     };
 }

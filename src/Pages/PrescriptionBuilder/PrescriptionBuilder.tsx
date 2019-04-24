@@ -1,6 +1,10 @@
 import {
     Button,
     CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
     Divider,
     FormControl,
     Input,
@@ -13,6 +17,7 @@ import {
     withTheme,
 } from '@material-ui/core';
 import TrashIcon from '@material-ui/icons/Delete';
+import * as firebase from 'firebase';
 import { cloneDeep } from 'lodash';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -47,6 +52,7 @@ import {
     onDropNewControlPrescriptionFormTemplate,
     removeControlPrescriptionFormTemplate,
     removeSectionPrescriptionFormTemplate,
+    setCompanyLogoUrl,
     setPrescriptionFormTemplate,
     setSelectedControl,
     setSelectedSection,
@@ -70,6 +76,9 @@ export class PrescriptionBuilderPresentation extends React.Component<
         loadingPrescriptionTemplate: true,
         snackbarIsOpen: false,
         updatingPrescriptionTemplateSuccess: false,
+        dialogIsOpen: false,
+        dialogError: '',
+        uploadingCompanyLogoURL: false,
     }
 
     public async componentWillMount(): Promise<void> {
@@ -79,6 +88,10 @@ export class PrescriptionBuilderPresentation extends React.Component<
         this.setState({
             loadingPrescriptionTemplate: false,
         })
+
+        if (!!prescriptionFormTemplate.companyLogoURL) {
+            await this.createCompanyLogoDownloadURL(prescriptionFormTemplate.companyLogoURL);
+        }
     }
 
     public render() {
@@ -107,6 +120,10 @@ export class PrescriptionBuilderPresentation extends React.Component<
             dragIconContainerClass,
             savePrescriptionTemplateContainer,
             circularProgressContainer,
+            logoAndImageContainer,
+            addAttachmentInput,
+            addLogoButton,
+            companyLogoImage,
         } = createPrescriptionBuilderClasses(this.props, this.state);
 
         const {
@@ -114,7 +131,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
             sectionOrder,
         } = prescriptionFormTemplate;
 
-        const disableEdits = this.state.loadingPrescriptionTemplate || this.state.updatingPrescriptionTemplate;
+        const disableEdits = this.state.loadingPrescriptionTemplate || this.state.updatingPrescriptionTemplate || this.state.uploadingCompanyLogoURL;
         const prescriptionTemplateIsInvalid = this.checkPrescriptionTemplateIsInvalid();
 
         return (
@@ -174,11 +191,31 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                     return (
                                         <div key={sectionId}>
                                             {sectionIndex === 0 ? (
-                                                <FormElementDropZone
-                                                    heightInPixels={32}
-                                                    onDrop={this.onDropSection(sectionIndex)}
-                                                    allowSectionOrElement={SectionOrElement.Section}
-                                                />
+                                                <div className={logoAndImageContainer}>
+                                                    {!this.state.companyLogoDownloadURL ? (
+                                                        <AsyncButton
+                                                            disabled={this.state.uploadingCompanyLogoURL || this.state.updatingPrescriptionTemplate}
+                                                            asyncActionInProgress={this.state.uploadingCompanyLogoURL}
+                                                            color="secondary"
+                                                            className={addLogoButton}
+                                                        >
+                                                            <input
+                                                                type="file"
+                                                                className={addAttachmentInput}
+                                                                accept={".jpg,.jpeg,.png"}
+                                                                onChange={this.handleLogoSelection}
+                                                            />
+                                                            Add Company Logo
+                                                        </AsyncButton>
+                                                    ) : (
+                                                        <div className={companyLogoImage}/>
+                                                    )}
+                                                    <FormElementDropZone
+                                                        heightInPixels={32}
+                                                        onDrop={this.onDropSection(sectionIndex)}
+                                                        allowSectionOrElement={SectionOrElement.Section}
+                                                    />
+                                                </div>
                                             ) : undefined}
                                             <div
                                                 className={`${sectionContainer} ${noControlForSection ? noControlForSectionClass : ''}`}
@@ -282,7 +319,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                     <span>
                                         <AsyncButton
                                             color="secondary"
-                                            disabled={this.state.updatingPrescriptionTemplate || prescriptionTemplateIsInvalid}
+                                            disabled={this.state.updatingPrescriptionTemplate || prescriptionTemplateIsInvalid || this.state.uploadingCompanyLogoURL}
                                             asyncActionInProgress={this.state.updatingPrescriptionTemplate}
                                             onClick={this.updatePrescriptionTemplate}>
                                             Save Prescription Template
@@ -293,9 +330,85 @@ export class PrescriptionBuilderPresentation extends React.Component<
                         ) : undefined}
                     </Paper>
                 )}
+                <Dialog open={this.state.dialogIsOpen}>
+                    <DialogTitle>Error Uploading Company Logo</DialogTitle>
+                    <DialogContent>{this.state.dialogError}</DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.closeDialog}>
+                            Close
+                        </Button>
+                    </DialogActions>
+                </Dialog>
                 <div className={drawerReplacement}/>
             </div>
         )
+    }
+
+    private createCompanyLogoDownloadURL = async(companyLogoURL: string) => {
+        const storageRef = firebase.storage().ref();
+        const companyLogoDownloadURL = await storageRef.child(companyLogoURL).getDownloadURL();
+
+        this.setState({
+            companyLogoDownloadURL,
+        });
+    }
+
+    private closeDialog = () => {
+        this.setState({
+            dialogIsOpen: false,
+        })
+    }
+
+    private handleLogoSelection = async(event: any): Promise<void> => {
+        if (event.target.files.length < 1) {
+            return;
+        }
+
+        const file = event.target.files[0] as File;
+        const companyId = this.props.match.path.split('/')[2];
+
+        const fileIsLargerThan1MB = file.size > (1000000);
+        if (fileIsLargerThan1MB) {
+            this.setState({
+                dialogIsOpen: true,
+                dialogError: 'The maximum logo size is 1MB.'
+            });
+            return;
+        }
+
+        const fileIsNotImage = !file.type.includes('image/jpg') &&
+            !file.type.includes('image/jpeg') &&
+            !file.type.includes('image/png');
+
+        if (fileIsNotImage) {
+            this.setState({
+                dialogIsOpen: true,
+                dialogError: 'Only .jpg, .jpeg, and .png files are allowed.',
+            });
+            return;
+        }
+
+        this.props.setSelectedControl(null);
+        this.props.setSelectedSection(null);
+
+        this.setState({
+            uploadingCompanyLogoURL: true,
+        });
+
+        const prescriptionTemplateId = this.props.prescriptionBuilderState.prescriptionFormTemplate.id!;
+        const companyLogoURL = await Api.prescriptionTemplateApi.updateCompanyLogo(
+            companyId,
+            prescriptionTemplateId,
+            file,
+        );
+
+        this.props.setCompanyLogoURL(companyLogoURL);
+
+        await this.createCompanyLogoDownloadURL(companyLogoURL);
+
+        this.setState({
+            uploadingCompanyLogoURL: false,
+        })
     }
 
     private checkPrescriptionTemplateIsInvalid = () => {
@@ -366,14 +479,17 @@ export class PrescriptionBuilderPresentation extends React.Component<
     }
 
     private selectSection = (sectionId: string) => () => {
-        this.props.setSelectedControl(null);
-        this.props.setSelectedSection(sectionId);
+        if (!this.state.uploadingCompanyLogoURL) {
+            this.props.setSelectedControl(null);
+            this.props.setSelectedSection(sectionId);
+        }
     }
 
     private correctControlDisplay = (controlId: string) => {
         const { editMode } = this.props.prescriptionBuilderState;
         const control = this.props.prescriptionBuilderState.prescriptionFormTemplate.controls[controlId];
         const controlValue = this.props.prescriptionBuilderState.controlValues[control.id]
+        const disabled = editMode || this.state.uploadingCompanyLogoURL;
 
         if (control.type === IPrescriptionControlTemplateType.Title) {
             return <TitleEdit control={control}/>
@@ -382,7 +498,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                 <DropdownEdit
                     control={control}
                     controlValue={controlValue}
-                    disabled={editMode}
+                    disabled={disabled}
                     updateControlValueActionCreator={updateControlValue}
                 />
             )
@@ -391,7 +507,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                 <DoctorInformationEdit
                     control={control}
                     controlValue={controlValue}
-                    disabled={editMode}
+                    disabled={disabled}
                     updateControlValueActionCreator={updateControlValue}
                 />
             )
@@ -400,7 +516,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                 <MultilineTextEdit
                     control={control}
                     controlValue={controlValue}
-                    disabled={editMode}
+                    disabled={disabled}
                     updateControlValueActionCreator={updateControlValue}
                 />
             )
@@ -409,7 +525,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                 <SingleLineTextEdit
                     control={control}
                     controlValue={controlValue}
-                    disabled={editMode}
+                    disabled={disabled}
                     updateControlValueActionCreator={updateControlValue}
                 />
             )
@@ -418,7 +534,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                 <CheckboxEdit
                     control={control}
                     controlValue={controlValue}
-                    disabled={editMode}
+                    disabled={disabled}
                     updateControlValueActionCreator={updateControlValue}
                 />
             )
@@ -427,7 +543,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                 <NumberEdit
                     control={control}
                     controlValue={controlValue}
-                    disabled={editMode}
+                    disabled={disabled}
                     updateControlValueActionCreator={updateControlValue}
                 />
             )
@@ -442,7 +558,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                 <DateEdit
                     control={control}
                     controlValue={controlValue}
-                    disabled={editMode}
+                    disabled={disabled}
                     updateControlValueActionCreator={updateControlValue}
                 />
             )
@@ -451,7 +567,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                 <CaseDeadlineEdit
                     control={control}
                     controlValue={controlValue}
-                    disabled={editMode}
+                    disabled={disabled}
                     updateControlValueActionCreator={updateControlValue}
                 />
             )
@@ -745,7 +861,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
         event.stopPropagation();
         event.preventDefault();
 
-        if (!editMode) {
+        if (!editMode || this.state.uploadingCompanyLogoURL) {
             return;
         }
 
@@ -934,6 +1050,10 @@ const mapDispatchToProps = (dispatch: React.Dispatch<any>) => ({
     updateControlValue: (controlId: string, value: any) => {
         const updateControlValueAction = updateControlValue(controlId, value);
         dispatch(updateControlValueAction);
+    },
+    setCompanyLogoURL: (companyURL: string) => {
+        const setCompanyLogoURLAction = setCompanyLogoUrl(companyURL);
+        dispatch(setCompanyLogoURLAction);
     }
 })
 
