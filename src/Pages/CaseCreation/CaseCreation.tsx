@@ -5,6 +5,7 @@ import {
     Typography,
     withTheme,
 } from '@material-ui/core';
+import * as firebase from 'firebase';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
@@ -54,6 +55,11 @@ export class CaseCreationPresentation extends React.Component<
         }
 
         const prescriptionFormTemplate = await Api.prescriptionTemplateApi.getPrescriptionTemplate(companyId);
+
+        if (prescriptionFormTemplate.companyLogoURL) {
+            await this.createCompanyLogoDownloadURL(prescriptionFormTemplate.companyLogoURL);
+        }
+
         this.setState({
             loadingPrescriptionTemplate: false,
             prescriptionFormTemplate,
@@ -75,6 +81,7 @@ export class CaseCreationPresentation extends React.Component<
             circularProgressContainer,
             createCaseButtonContainer,
             cannotCreateCaseContainer,
+            companyLogoImage,
         } = createCaseCreationClasses(this.props, this.state);
 
         const prescriptionTemplateIsInvalid = this.checkPrescriptionTemplateIsInvalid();
@@ -93,6 +100,11 @@ export class CaseCreationPresentation extends React.Component<
                     ) : undefined}
                     {this.state.canCreateCases && !this.state.loadingPrescriptionTemplate ? (
                         <div className={sectionsContainer}>
+                            {this.state.companyLogoDownloadURL ? (
+                                <div>
+                                    <img src={this.state.companyLogoDownloadURL} className={companyLogoImage}/>
+                                </div>
+                            ) : undefined}
                             {this.state.prescriptionFormTemplate!.sectionOrder.map((sectionId, sectionIndex) => {
                                 const sections = this.state.prescriptionFormTemplate!.sections;
                                 const currentSection = sections[sectionId];
@@ -161,6 +173,15 @@ export class CaseCreationPresentation extends React.Component<
                 </Paper>
             </div>
         )
+    }
+
+    private createCompanyLogoDownloadURL = async(companyLogoURL: string) => {
+        const storageRef = firebase.storage().ref();
+        const companyLogoDownloadURL = await storageRef.child(companyLogoURL).getDownloadURL();
+
+        this.setState({
+            companyLogoDownloadURL,
+        });
     }
 
     private checkPrescriptionTemplateIsInvalid = () => {

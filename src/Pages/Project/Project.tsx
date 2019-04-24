@@ -17,6 +17,7 @@ import {
     withTheme,
 } from "@material-ui/core";
 import DoneIcon from '@material-ui/icons/Done';
+import * as firebase from 'firebase';
 import * as React from "react";
 import { connect } from 'react-redux';
 import { withRouter } from "react-router";
@@ -103,6 +104,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             sectionsContainer,
             controlContainer,
             sectionContainer,
+            companyLogoImage,
         } = createProjectPresentationClasses(this.props, this.state, this.props.theme);
 
         const companyId = this.props.location.pathname.split('/')[2];
@@ -166,6 +168,11 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                                 </div>
                             ) : (
                                 <div className={sectionsContainer}>
+                                        {this.state.companyLogoDownloadURL ? (
+                                            <div>
+                                                <img src={this.state.companyLogoDownloadURL} className={companyLogoImage}/>
+                                            </div>
+                                        ) : undefined}
                                     {this.state.prescriptionFormTemplate!.sectionOrder.map((sectionId, sectionIndex) => {
                                         const sections = this.state.prescriptionFormTemplate!.sections;
                                         const currentSection = sections[sectionId];
@@ -317,7 +324,14 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             Api.userApi.getUser((prescription as any).doctor),
         ]);
 
+        // tslint:disable-next-line:no-console
+        console.log('prescriptionFormTemplate: ', prescriptionFormTemplate);
+
         const doctorUser = user as IDoctorUser;
+
+        if (prescriptionFormTemplate.companyLogoURL) {
+            await this.createCompanyLogoDownloadURL(prescriptionFormTemplate.companyLogoURL);
+        }
 
         if (this._isMounted) {
             this.setState({
@@ -330,6 +344,15 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
 
             this.props.setControlValues(prescription.controlValues);
         }
+    }
+
+    private createCompanyLogoDownloadURL = async(companyLogoURL: string) => {
+        const storageRef = firebase.storage().ref();
+        const companyLogoDownloadURL = await storageRef.child(companyLogoURL).getDownloadURL();
+
+        this.setState({
+            companyLogoDownloadURL,
+        });
     }
 
     private handleSnackbarClose = (): void => {

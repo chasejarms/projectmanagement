@@ -28,6 +28,7 @@ export interface IProjectPresentationState {
     doctorUser: IDoctorUser | null;
     updateCaseInformationInProgress: boolean;
     snackbarIsOpen: boolean;
+    companyLogoDownloadURL?: string;
     // caseName: FormControlState<string>;
     // caseDeadline: FormControlState<Date>;
     // notes: FormControlState<string>;
@@ -370,6 +371,18 @@ export const createProjectPresentationClasses = (
         borderTop: '1px solid rgba(224, 224, 224, 1)',
     });
 
+    let companyLogoImage: string = '';
+
+    if (!!state.companyLogoDownloadURL) {
+        companyLogoImage = css({
+            maxWidth: 400,
+            maxHeight: 100,
+            display: 'block',
+            width: 'auto',
+            height: 'auto',
+        });
+    }
+
     return {
         loadingCheckpointsContainer,
         downloadIcon,
@@ -411,5 +424,6 @@ export const createProjectPresentationClasses = (
         controlContainer,
         prescriptionPaper,
         createCaseButtonContainer,
+        companyLogoImage,
     };
 }

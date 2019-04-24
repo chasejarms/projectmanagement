@@ -14,12 +14,25 @@ export interface ICaseCreationState {
     prescriptionFormTemplate: IPrescriptionFormTemplate | null;
     caseCreationInProgress: boolean;
     canCreateCases: boolean;
+    companyLogoDownloadURL?: string;
 }
 
 export const createCaseCreationClasses = (
     props: ICaseCreationProps,
     state: ICaseCreationState,
 ) => {
+    let companyLogoImage: string = '';
+
+    if (!!state.companyLogoDownloadURL) {
+        companyLogoImage = css({
+            maxWidth: 400,
+            maxHeight: 100,
+            display: 'block',
+            width: 'auto',
+            height: 'auto',
+        });
+    }
+
     const caseCreationContainer = css({
         height: '100vh',
         width: '100%',
@@ -99,5 +112,6 @@ export const createCaseCreationClasses = (
         circularProgressContainer,
         createCaseButtonContainer,
         cannotCreateCaseContainer,
+        companyLogoImage,
     };
 }

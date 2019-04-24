@@ -217,9 +217,11 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                                         <div className={companyLogoImageContainer}>
                                                             <div className={companyLogoImageInnerContainer}>
                                                                 <img src={this.state.companyLogoDownloadURL} className={companyLogoImage}/>
-                                                                <div className={removeLogoContainer} onClick={this.removeLogo}>
-                                                                    <TrashIcon className={removeLogoIcon}/>
-                                                                </div>
+                                                                {editMode ? (
+                                                                    <div className={removeLogoContainer} onClick={this.removeLogo}>
+                                                                        <TrashIcon className={removeLogoIcon}/>
+                                                                    </div>
+                                                                ) : undefined}
                                                             </div>
                                                             <div className={takeUpRemainingSpaceFlex}/>
                                                         </div>
