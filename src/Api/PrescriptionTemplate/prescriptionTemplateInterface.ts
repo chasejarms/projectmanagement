@@ -8,4 +8,5 @@ export interface IPrescriptionTemplateApi {
      * Return the full path to the company logo
      */
     updateCompanyLogo(companyId: string, prescriptionTemplateId: string, file: File): Promise<string>;
+    removeCompanyLogo(prescriptionTemplateId: string): Promise<boolean>;
 }

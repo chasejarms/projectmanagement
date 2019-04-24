@@ -16,7 +16,7 @@ export interface IPrescriptionBuilderProps extends WithTheme, RouteComponentProp
     setSelectedControl: (controlId: string | null) => void;
     setSelectedSection: (sectionId: string | null) => void;
     updateControlValue: (controlId: string, value: any) => void;
-    setCompanyLogoURL: (companyURL: string) => void;
+    setCompanyLogoURL: (companyURL: string | null) => void;
 }
 
 export interface IPrescriptionBuilderState {
@@ -290,13 +290,43 @@ export const createPrescriptionBuilderClasses = (
     if (!!state.companyLogoDownloadURL) {
         companyLogoImage = css({
             maxWidth: 400,
-            maxHeight: 200,
-            backgroundImage: `url(${state.companyLogoDownloadURL})`,
-            backgroundSize: 'contain',
-            backgroundRepeat: 'no-repeat',
-            height: 100,
-        })
+            maxHeight: 100,
+            display: 'block',
+            width: 'auto',
+            height: 'auto',
+            position: 'relative',
+        });
     }
+
+    const removeLogoContainer = css({
+        position: 'absolute',
+        top: 0,
+        right: 0,
+    });
+
+    const removeLogoIcon = css({
+        display: 'none',
+        cursor: 'pointer',
+    });
+
+    const companyLogoImageContainer = css({
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'row',
+    });
+
+    const takeUpRemainingSpaceFlex = css({
+        flexGrow: 1,
+    })
+
+    const companyLogoImageInnerContainer = css({
+        position: 'relative',
+        '&:hover': {
+            [`.${removeLogoIcon}`]: {
+                display: 'block',
+            }
+        }
+    });
 
     return {
         logoAndImageContainer,
@@ -340,5 +370,10 @@ export const createPrescriptionBuilderClasses = (
         addAttachmentInput,
         addLogoButton,
         companyLogoImage,
+        removeLogoContainer,
+        companyLogoImageContainer,
+        takeUpRemainingSpaceFlex,
+        companyLogoImageInnerContainer,
+        removeLogoIcon,
     };
 }

@@ -53,6 +53,20 @@ export class PrescriptionTemplateApi implements IPrescriptionTemplateApi {
         return companyLogoURL;
     }
 
+    public async removeCompanyLogo(prescriptionTemplateId: string): Promise<boolean> {
+        /*
+            Of note here is that we do not remove the image from storage as that image may be referenced
+            on older prescription template versions and should continue to exist.
+        */
+        await db.collection('prescriptionTemplates')
+            .doc(prescriptionTemplateId)
+            .set({
+                companyLogoURL: null,
+            }, { merge: true });
+
+        return true;
+    }
+
     private getWorkflowDocumentSnapshotPromise = (companyId: string): Promise<firebase.firestore.QuerySnapshot> => {
         return db.collection('companyWorkflows')
             .where('companyId', '==', companyId)

@@ -85,13 +85,14 @@ export class PrescriptionBuilderPresentation extends React.Component<
         const companyId = this.props.match.path.split('/')[2];
         const prescriptionFormTemplate = await Api.prescriptionTemplateApi.getPrescriptionTemplate(companyId);
         this.props.setPrescriptionFormTemplate(prescriptionFormTemplate);
-        this.setState({
-            loadingPrescriptionTemplate: false,
-        })
 
         if (!!prescriptionFormTemplate.companyLogoURL) {
             await this.createCompanyLogoDownloadURL(prescriptionFormTemplate.companyLogoURL);
         }
+
+        this.setState({
+            loadingPrescriptionTemplate: false,
+        })
     }
 
     public render() {
@@ -124,6 +125,11 @@ export class PrescriptionBuilderPresentation extends React.Component<
             addAttachmentInput,
             addLogoButton,
             companyLogoImage,
+            removeLogoContainer,
+            companyLogoImageContainer,
+            takeUpRemainingSpaceFlex,
+            companyLogoImageInnerContainer,
+            removeLogoIcon,
         } = createPrescriptionBuilderClasses(this.props, this.state);
 
         const {
@@ -208,7 +214,15 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                                             Add Company Logo
                                                         </AsyncButton>
                                                     ) : (
-                                                        <div className={companyLogoImage}/>
+                                                        <div className={companyLogoImageContainer}>
+                                                            <div className={companyLogoImageInnerContainer}>
+                                                                <img src={this.state.companyLogoDownloadURL} className={companyLogoImage}/>
+                                                                <div className={removeLogoContainer} onClick={this.removeLogo}>
+                                                                    <TrashIcon className={removeLogoIcon}/>
+                                                                </div>
+                                                            </div>
+                                                            <div className={takeUpRemainingSpaceFlex}/>
+                                                        </div>
                                                     )}
                                                     <FormElementDropZone
                                                         heightInPixels={32}
@@ -409,6 +423,17 @@ export class PrescriptionBuilderPresentation extends React.Component<
         this.setState({
             uploadingCompanyLogoURL: false,
         })
+    }
+
+    private removeLogo = async(): Promise<void> => {
+        const prescriptionTemplateId = this.props.prescriptionBuilderState.prescriptionFormTemplate.id!;
+
+        this.props.setCompanyLogoURL(null);
+        this.setState({
+            companyLogoDownloadURL: undefined,
+        })
+
+        await Api.prescriptionTemplateApi.removeCompanyLogo(prescriptionTemplateId);
     }
 
     private checkPrescriptionTemplateIsInvalid = () => {
