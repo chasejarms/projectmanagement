@@ -3,6 +3,7 @@ import { ICheckboxTemplateControl } from './checkboxTemplateControl';
 import { IDateTemplateControl } from './dateControlTemplate';
 import { IDoctorInformationTemplateControl } from './doctorInformationTemplateControl';
 import { IDropdownTemplateControl } from './dropdownTemplateControl';
+import { IFileControl } from './fileControl';
 import { IMultilineTextControl } from './multilineTextControlTemplate';
 import { INonEditableTextField } from './nonEditableTextField';
 import { INumberTemplateControl } from './numberTemplateControl';
@@ -20,4 +21,5 @@ export type IPrescriptionControlTemplate = IDoctorInformationTemplateControl |
     INonEditableTextField |
     IUnitSelectionControlTemplate |
     IDateTemplateControl |
-    ICaseDeadlineControl;
+    ICaseDeadlineControl |
+    IFileControl;

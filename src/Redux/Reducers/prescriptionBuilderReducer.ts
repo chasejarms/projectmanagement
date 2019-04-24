@@ -42,6 +42,7 @@ import {
     UPDATE_CONTROL_VALUE_PRESCRIPTION_FORM_TEMPLATE,
 } from "../Actions/prescriptionBuilderActions";
 import { ICaseDeadlineControl } from './../../Models/prescription/controls/caseDeadlineControl';
+import { IFileControl } from './../../Models/prescription/controls/fileControl';
 import { ISetCompanyLogoUrlPrescriptionFormTemplateAction, ISetSelectedSectionPrescriptionFormTemplateAction } from './../ActionCreators/prescriptionBuilderCreators';
 import { ON_DROP_EXISTING_CONTROL_PRESCRIPTION_FORM_TEMPLATE, ON_DROP_NEW_CONTROL_PRESCRIPTION_FORM_TEMPLATE, SET_COMPANY_LOGO_URL } from './../Actions/prescriptionBuilderActions';
 
@@ -358,6 +359,15 @@ const prescriptionFormTemplateFromNewControl = (state: IPrescriptionBuilderSlice
         }
 
         control = caseDeadlineControl;
+    } else if (type === IPrescriptionControlTemplateType.File) {
+        const fileControl: IFileControl = {
+            id,
+            sectionId,
+            type: IPrescriptionControlTemplateType.File,
+            label: 'Attach File Label',
+        }
+
+        control = fileControl;
     }
 
     prescriptionFormTemplateCopy.controls[id] = control!;

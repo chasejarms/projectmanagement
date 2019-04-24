@@ -1,6 +1,7 @@
 import { Typography } from '@material-ui/core';
 import UnitSelectionIcon from '@material-ui/icons/Apps';
 import DropdownIcon from '@material-ui/icons/ArrowDropDown';
+import AttachFileIcon from '@material-ui/icons/AttachFile';
 import DateIcon from '@material-ui/icons/CalendarToday';
 import CheckboxIcon from '@material-ui/icons/CheckBox';
 import DescriptionIcon from '@material-ui/icons/Description';
@@ -92,6 +93,8 @@ export class DraggableFormElementPresentation extends React.Component<
                     return <UnitSelectionIcon/>;
                 case IPrescriptionControlTemplateType.CaseDeadline:
                     return <DateIcon/>;
+                case IPrescriptionControlTemplateType.File:
+                    return <AttachFileIcon/>;
                 default:
                     throw new Error(invalidControlTypeError);
             }
@@ -134,6 +137,8 @@ export class DraggableFormElementPresentation extends React.Component<
                     return 'Unit Selection';
                 case IPrescriptionControlTemplateType.CaseDeadline:
                     return 'Case Deadline';
+                case IPrescriptionControlTemplateType.File:
+                    return 'File Upload';
                 default:
                     throw new Error(invalidControlTypeError);
             }

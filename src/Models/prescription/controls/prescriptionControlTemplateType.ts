@@ -10,4 +10,5 @@ export enum IPrescriptionControlTemplateType {
     Title = 'Title',
     UnitSelection = 'UnitSelection',
     CaseDeadline = 'CaseDeadline',
+    File = 'File',
 }
