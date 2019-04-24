@@ -68,10 +68,10 @@ export const createCaseCreationClasses = (
 
     const circularProgressContainer = css({
         display: 'flex',
-        height: '100%',
         width: '100%',
         justifyContent: 'center',
         alignItems: 'center',
+        flexGrow: 1,
     });
 
     const createCaseButtonContainer = css({
