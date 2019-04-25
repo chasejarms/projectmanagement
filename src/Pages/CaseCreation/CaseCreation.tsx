@@ -15,6 +15,7 @@ import { CheckboxEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditCo
 import { DateEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/DateEdit/DateEdit';
 import { DoctorInformationEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/DoctorInformationEdit/DoctorInformation';
 import { DropdownEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/DropdownEdit/DropdownEdit';
+import { FileEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/FileEdit/FileEdit';
 import { MultilineTextEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/MultilineTextEdit/MultilineTextEdit';
 import { NonEditableText } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/NonEditableText/NonEditableText';
 import { NumberEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/NumberEdit/NumberEdit';
@@ -291,6 +292,16 @@ export class CaseCreationPresentation extends React.Component<
                     controlValue={controlValue}
                     disabled={false}
                     updateControlValueActionCreator={updateCaseCreationControlValue}
+                />
+            )
+        } else if (control.type === IPrescriptionControlTemplateType.File) {
+            return (
+                <FileEdit
+                    control={control}
+                    controlValue={controlValue}
+                    disabled={false}
+                    updateControlValueActionCreator={updateCaseCreationControlValue}
+                    caseId={this.state.caseId}
                 />
             )
         }

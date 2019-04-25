@@ -27,6 +27,7 @@ import { CheckboxEdit } from "src/Components/PrescriptionEdit/PrescriptionEditCo
 import { DateEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/DateEdit/DateEdit";
 import { DoctorInformationEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/DoctorInformationEdit/DoctorInformation";
 import { DropdownEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/DropdownEdit/DropdownEdit";
+import { FileEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/FileEdit/FileEdit";
 import { MultilineTextEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/MultilineTextEdit/MultilineTextEdit";
 import { NonEditableText } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/NonEditableText/NonEditableText";
 import { NumberEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/NumberEdit/NumberEdit";
@@ -391,6 +392,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         const control = this.state.prescriptionFormTemplate!.controls[controlId];
         const controlValue = this.props.existingCaseState.controlValues[control.id]
         const updatingCaseInformation = this.state.updateCaseInformationInProgress;
+        const caseId = this.props.match.params['projectId'];
 
         if (control.type === IPrescriptionControlTemplateType.Title) {
             return <TitleEdit control={control}/>
@@ -472,6 +474,16 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                     controlValue={controlValue}
                     disabled={true}
                     updateControlValueActionCreator={updateExistingCaseControlValue}
+                />
+            )
+        } else if (control.type === IPrescriptionControlTemplateType.File) {
+            return (
+                <FileEdit
+                    control={control}
+                    controlValue={controlValue}
+                    disabled={false}
+                    updateControlValueActionCreator={updateExistingCaseControlValue}
+                    caseId={caseId}
                 />
             )
         }

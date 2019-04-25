@@ -34,6 +34,13 @@ export class FileEditPresentation extends React.Component<
         indexOfHoveredItem: null,
     }
 
+    public componentWillMount(): void {
+        const controlValueExists = !!this.props.controlValue;
+        if (controlValueExists) {
+            this.createSrcUrls();
+        }
+    }
+
     public componentDidUpdate(): void {
         const controlValueExists = !!this.props.controlValue;
         if (controlValueExists && this.props.controlValue.length !== this.state.srcURLs.length) {
@@ -88,6 +95,7 @@ export class FileEditPresentation extends React.Component<
                     <div className={imagesContainer}>
                         {controlValue.map((_: any, index: number) => {
                             const srcURL = this.state.srcURLs[index];
+                            const srcURLExists = !!srcURL;
                             const originalImagePathArray = (controlValue[index] as IAttachmentMetadata).path.split('/')
                             const originalImagePath = originalImagePathArray[originalImagePathArray.length - 1];
                             return (
@@ -110,14 +118,14 @@ export class FileEditPresentation extends React.Component<
                                     ) : (
                                         <img src={srcURL} className={attachedImg} key={index}/>
                                     )}
-                                    {this.state.indexOfHoveredItem === index ? (
+                                    {this.state.indexOfHoveredItem === index && srcURLExists ? (
                                         <div className={downloadIconContainer} onClick={this.downloadImage(index)}>
                                             <Tooltip title="Download File" placement="left">
                                                 <DownloadIcon className={downloadIcon} color="secondary"/>
                                             </Tooltip>
                                         </div>
                                     ): undefined}
-                                    {this.state.indexOfHoveredItem === index ? (
+                                    {this.state.indexOfHoveredItem === index && srcURLExists ? (
                                         <div className={cancelIconContainer} onClick={this.removeImage(index)}>
                                             <Tooltip title="Delete File" placement="right">
                                                 <CancelIcon className={cancelIcon} color="secondary"/>
