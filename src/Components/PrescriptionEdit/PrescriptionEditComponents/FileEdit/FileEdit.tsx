@@ -4,7 +4,10 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
+    Paper,
+    Typography,
 } from '@material-ui/core';
+import DocumentIcon from '@material-ui/icons/InsertDriveFile';
 import * as firebase from 'firebase';
 import { cloneDeep } from 'lodash';
 import * as React from 'react';
@@ -23,6 +26,7 @@ export class FileEditPresentation extends React.Component<
         dialogError: '',
         dialogIsOpen: false,
         srcURLs: [],
+        uploadingFilesInProgress: false,
     }
 
     public componentDidUpdate(): void {
@@ -36,46 +40,69 @@ export class FileEditPresentation extends React.Component<
         const {
             disabled,
             control,
-            // controlValue,
+            controlValue,
         } = this.props;
+
+        const {
+            uploadingFilesInProgress,
+        } = this.state;
 
         const {
             addAttachmentInput,
             addAttachmentButton,
+            imagesContainer,
+            iconContainer,
+            documentFilePathContainer,
+            documentFilePath,
+            attachedImg,
         } = createFileEditClasses(this.props, this.state);
 
         return (
             <div>
                 <AsyncButton
-                    disabled={disabled}
-                    asyncActionInProgress={false}
+                    disabled={disabled || uploadingFilesInProgress}
+                    asyncActionInProgress={uploadingFilesInProgress}
                     color="secondary"
                     className={addAttachmentButton}
                 >
                     <input
                         type="file"
                         className={addAttachmentInput}
-                        accept={".jpg,.jpeg,.png"}
                         onChange={this.handleAddFiles}
                         multiple={true}
                     />
                     {control.label}
                 </AsyncButton>
-                {this.props.controlValue ? (
-                    <div>
-                        {this.props.controlValue.map((_: any, index: number) => {
+                {controlValue ? (
+                    <div className={imagesContainer}>
+                        {controlValue.map((_: any, index: number) => {
                             const srcURL = this.state.srcURLs[index];
                             if (!srcURL) {
                                 return (
-                                    <div key={index}>
-                                        loading an item
-                                    </div>
+                                    <Paper key={index}>
+                                        <div>
+                                            loading an item
+                                        </div>
+                                    </Paper>
+                                )
+                            } else if (srcURL.startsWith('contentType:')) {
+                                const originalImagePathArray = (controlValue[index] as IAttachmentMetadata).path.split('/')
+                                const originalImagePath = originalImagePathArray[originalImagePathArray.length - 1];
+                                return (
+                                    <Paper key={index}>
+                                        <div className={iconContainer}>
+                                            <DocumentIcon/>
+                                            <div className={documentFilePathContainer}>
+                                                <Typography className={documentFilePath}>{originalImagePath}</Typography>
+                                            </div>
+                                        </div>
+                                    </Paper>
                                 )
                             } else {
                                 return (
-                                    <div key={index}>
-                                        <img src={srcURL}/>
-                                    </div>
+                                    <Paper key={index}>
+                                        <img src={srcURL} className={attachedImg} key={index}/>
+                                    </Paper>
                                 )
                             }
                         })}
@@ -131,6 +158,10 @@ export class FileEditPresentation extends React.Component<
             return;
         }
 
+        this.setState({
+            uploadingFilesInProgress: true,
+        })
+
         const uploadFilePromises: Array<Promise<firebase.storage.UploadTaskSnapshot>>= [];
         for (let i = 0; i < files.length; i++) {
             const file = files.item(i)!;
@@ -145,6 +176,10 @@ export class FileEditPresentation extends React.Component<
         const newMetadataWithExistingMetadata = clonedExistingMetadataArray.concat(attachmentMetadataArray);
 
         this.props.updateControlValue(control.id, newMetadataWithExistingMetadata);
+
+        this.setState({
+            uploadingFilesInProgress: false,
+        })
     }
 
     private convertToAttachmentMetadata = (uploadDocumentSnapshots: firebase.storage.UploadTaskSnapshot[]): IAttachmentMetadata[] => {
