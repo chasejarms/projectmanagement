@@ -97,7 +97,15 @@ export const createFileEditClasses = (
 
     const attachedImg = css({
         width: '100%',
-    })
+    });
+
+    const circularProgressContainer = css({
+        display: 'flex',
+        height: '100%',
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    });
 
     return {
         addAttachmentButton,
@@ -107,5 +115,6 @@ export const createFileEditClasses = (
         documentFilePathContainer,
         documentFilePath,
         attachedImg,
+        circularProgressContainer,
     };
 }

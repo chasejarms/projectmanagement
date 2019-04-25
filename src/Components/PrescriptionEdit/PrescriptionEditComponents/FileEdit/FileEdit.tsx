@@ -1,5 +1,6 @@
 import {
     Button,
+    CircularProgress,
     Dialog,
     DialogActions,
     DialogContent,
@@ -55,6 +56,7 @@ export class FileEditPresentation extends React.Component<
             documentFilePathContainer,
             documentFilePath,
             attachedImg,
+            circularProgressContainer,
         } = createFileEditClasses(this.props, this.state);
 
         return (
@@ -80,8 +82,12 @@ export class FileEditPresentation extends React.Component<
                             if (!srcURL) {
                                 return (
                                     <Paper key={index}>
-                                        <div>
-                                            loading an item
+                                        <div className={circularProgressContainer}>
+                                            <CircularProgress
+                                                color="secondary"
+                                                size={64}
+                                                thickness={3}
+                                            />
                                         </div>
                                     </Paper>
                                 )
