@@ -46,6 +46,12 @@ export class FileEditPresentation extends React.Component<
         if (controlValueExists && this.props.controlValue.length !== this.state.srcURLs.length) {
             this.createSrcUrls();
         }
+
+        if (!this.props.controlValue && this.state.srcURLs.length > 0) {
+            this.setState({
+                srcURLs: [],
+            })
+        }
     }
 
     public render() {
