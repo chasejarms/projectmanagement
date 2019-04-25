@@ -36,6 +36,7 @@ export class CaseCreationPresentation extends React.Component<
         prescriptionFormTemplate: null,
         caseCreationInProgress: false,
         canCreateCases: false,
+        caseId: generateUniqueId(),
     }
 
     public async componentWillMount(): Promise<void> {
@@ -299,9 +300,8 @@ export class CaseCreationPresentation extends React.Component<
 
     private createCase = async() => {
         const companyId = this.props.match.path.split('/')[2];
-        const caseId = generateUniqueId();
         const caseCreateRequest = {
-            id: caseId,
+            id: this.state.caseId,
             prescriptionFormTemplateId: this.state.prescriptionFormTemplate!.id!,
             controlValues: this.props.caseCreationState.controlValues,
         }
@@ -316,7 +316,7 @@ export class CaseCreationPresentation extends React.Component<
             caseCreationInProgress: false,
         })
 
-        const postRoute = `/company/${companyId}/project/${caseId}`;
+        const postRoute = `/company/${companyId}/project/${this.state.caseId}`;
         this.props.history.push(postRoute);
     }
 }

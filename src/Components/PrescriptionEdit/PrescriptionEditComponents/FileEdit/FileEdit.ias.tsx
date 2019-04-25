@@ -1,4 +1,5 @@
 import { css } from 'emotion';
+import { RouteComponentProps } from 'react-router';
 import { IFileControl } from "src/Models/prescription/controls/fileControl";
 
 export interface IFileEditPropsFromParent {
@@ -6,13 +7,18 @@ export interface IFileEditPropsFromParent {
     controlValue: any;
     disabled: boolean;
     updateControlValueActionCreator: (controlId: string, value: any) => any;
+    caseId: string;
 }
 
-export interface IFileEditProps extends IFileEditPropsFromParent {
+export interface IFileEditProps extends IFileEditPropsFromParent, RouteComponentProps<any> {
     updateControlValue: (controlId: string, value: any) => void;
 }
 // tslint:disable-next-line:no-empty-interface
-export interface IFileEditState {}
+export interface IFileEditState {
+    dialogIsOpen: boolean;
+    dialogError: string;
+    srcURLs: string[];
+}
 
 export const createFileEditClasses = (
     props: IFileEditProps,

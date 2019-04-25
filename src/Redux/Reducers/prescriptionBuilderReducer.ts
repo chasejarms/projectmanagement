@@ -364,7 +364,7 @@ const prescriptionFormTemplateFromNewControl = (state: IPrescriptionBuilderSlice
             id,
             sectionId,
             type: IPrescriptionControlTemplateType.File,
-            label: 'Attach File Label',
+            label: 'Add File(s)',
         }
 
         control = fileControl;

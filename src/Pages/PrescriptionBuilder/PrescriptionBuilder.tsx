@@ -211,6 +211,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                                                                 className={addAttachmentInput}
                                                                 accept={".jpg,.jpeg,.png"}
                                                                 onChange={this.handleLogoSelection}
+                                                                multiple={false}
                                                             />
                                                             Add Company Logo
                                                         </AsyncButton>
@@ -377,6 +378,10 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
     private handleLogoSelection = async(event: any): Promise<void> => {
         if (event.target.files.length < 1) {
+            return;
+        }
+
+        if (event.target.files.length > 1) {
             return;
         }
 
@@ -598,6 +603,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     controlValue={controlValue}
                     disabled={disabled}
                     updateControlValueActionCreator={updateControlValue}
+                    caseId={'5'}
                 />
             )
         }

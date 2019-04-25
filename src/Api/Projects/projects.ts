@@ -2,6 +2,7 @@ import * as firebase from 'firebase';
 import { db } from 'src/firebase';
 import { IAugmentedCheckpoint } from 'src/Models/augmentedCheckpoint';
 import { UserType } from 'src/Models/userTypes';
+import { generateUniqueId } from 'src/Utils/generateUniqueId';
 import { ShowNewInfoFromType } from './../../../functions/src/models/showNewInfoFromTypes';
 import { ICase } from './../../Models/case';
 // import { ISlimCase } from './../../Models/slimCase';
@@ -90,7 +91,8 @@ export class ProjectsApi implements ICaseApi {
 
     public async uploadFile(companyId: string, caseId: string, file: File): Promise<firebase.storage.UploadTaskSnapshot> {
         const storageRef = firebase.storage().ref();
-        const updatedStorageRef = storageRef.child(`${companyId}/caseFiles/${caseId}/${file.name}`);
+        const uniqueFolderId = generateUniqueId();
+        const updatedStorageRef = storageRef.child(`${companyId}/caseFiles/${caseId}/${uniqueFolderId}/${file.name}`);
         const uploadTaskSnapshot: firebase.storage.UploadTaskSnapshot = await updatedStorageRef.put(file);
 
         return uploadTaskSnapshot;
