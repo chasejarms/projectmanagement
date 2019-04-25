@@ -854,7 +854,27 @@ export class PrescriptionBuilderPresentation extends React.Component<
                         <Typography variant="body1">This element has no configurable options</Typography>
                     </div>
                     <div/>
+                    <div className={dragIconContainerClass}>
+                        <DraggableExistingFormElement controlType={control.type} id={control.id}/>
+                    </div>
+                </div>
+            )
+        } else if (control.type === IPrescriptionControlTemplateType.File) {
+            return (
+                <div className={threeColumns}>
+                    <div>
+                        <FormControl fullWidth={true}>
+                            <InputLabel>Button Text</InputLabel>
+                            <Input
+                                value={control.label}
+                                onChange={this.handleControlLabelChange}
+                            />
+                        </FormControl>
+                    </div>
                     <div/>
+                    <div className={dragIconContainerClass}>
+                        <DraggableExistingFormElement controlType={IPrescriptionControlTemplateType.File} id={control.id}/>
+                    </div>
                 </div>
             )
         }
