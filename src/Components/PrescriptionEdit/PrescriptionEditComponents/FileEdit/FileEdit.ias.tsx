@@ -19,6 +19,7 @@ export interface IFileEditState {
     dialogError: string,
     srcURLs: string[],
     uploadingFilesInProgress: boolean,
+    indexOfHoveredItem: number | null,
 }
 
 export const createFileEditClasses = (
@@ -107,6 +108,38 @@ export const createFileEditClasses = (
         alignItems: 'center',
     });
 
+    const cancelIconContainer = css({
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        padding: 8,
+        '&:hover': {
+            cursor: 'pointer',
+        }
+    });
+
+    const downloadIconContainer = css({
+        position: 'absolute',
+        top: 0,
+        right: 53,
+        padding: 8,
+        '&:hover': {
+            cursor: 'pointer',
+        }
+    });
+
+    const cancelIcon = css({
+        fontSize: 32,
+    });
+
+    const downloadIcon = css({
+        fontSize: 32,
+    });
+
+    const attachmentPaper = css({
+        position: 'relative',
+    });
+
     return {
         addAttachmentButton,
         addAttachmentInput,
@@ -116,5 +149,10 @@ export const createFileEditClasses = (
         documentFilePath,
         attachedImg,
         circularProgressContainer,
+        cancelIconContainer,
+        downloadIconContainer,
+        cancelIcon,
+        downloadIcon,
+        attachmentPaper,
     };
 }

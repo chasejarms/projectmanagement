@@ -6,8 +6,11 @@ import {
     DialogContent,
     DialogTitle,
     Paper,
+    Tooltip,
     Typography,
 } from '@material-ui/core';
+import CancelIcon from '@material-ui/icons/Cancel';
+import DownloadIcon from '@material-ui/icons/CloudDownload';
 import DocumentIcon from '@material-ui/icons/InsertDriveFile';
 import * as firebase from 'firebase';
 import { cloneDeep } from 'lodash';
@@ -28,6 +31,7 @@ export class FileEditPresentation extends React.Component<
         dialogIsOpen: false,
         srcURLs: [],
         uploadingFilesInProgress: false,
+        indexOfHoveredItem: null,
     }
 
     public componentDidUpdate(): void {
@@ -57,6 +61,11 @@ export class FileEditPresentation extends React.Component<
             documentFilePath,
             attachedImg,
             circularProgressContainer,
+            downloadIconContainer,
+            cancelIconContainer,
+            downloadIcon,
+            cancelIcon,
+            attachmentPaper,
         } = createFileEditClasses(this.props, this.state);
 
         return (
@@ -75,42 +84,48 @@ export class FileEditPresentation extends React.Component<
                     />
                     {control.label}
                 </AsyncButton>
-                {controlValue ? (
+                {controlValue && controlValue.length ? (
                     <div className={imagesContainer}>
                         {controlValue.map((_: any, index: number) => {
                             const srcURL = this.state.srcURLs[index];
-                            if (!srcURL) {
-                                return (
-                                    <Paper key={index}>
-                                        <div className={circularProgressContainer}>
+                            const originalImagePathArray = (controlValue[index] as IAttachmentMetadata).path.split('/')
+                            const originalImagePath = originalImagePathArray[originalImagePathArray.length - 1];
+                            return (
+                                <Paper key={index} onMouseEnter={this.setHoverItem(index)} onMouseLeave={this.removeHoverItem} className={attachmentPaper}>
+                                    {!srcURL ? (
+                                         <div className={circularProgressContainer}>
                                             <CircularProgress
                                                 color="secondary"
                                                 size={64}
                                                 thickness={3}
                                             />
                                         </div>
-                                    </Paper>
-                                )
-                            } else if (srcURL.startsWith('contentType:')) {
-                                const originalImagePathArray = (controlValue[index] as IAttachmentMetadata).path.split('/')
-                                const originalImagePath = originalImagePathArray[originalImagePathArray.length - 1];
-                                return (
-                                    <Paper key={index}>
+                                    ) : srcURL.startsWith('contentType:') ? (
                                         <div className={iconContainer}>
                                             <DocumentIcon/>
                                             <div className={documentFilePathContainer}>
                                                 <Typography className={documentFilePath}>{originalImagePath}</Typography>
                                             </div>
                                         </div>
-                                    </Paper>
-                                )
-                            } else {
-                                return (
-                                    <Paper key={index}>
+                                    ) : (
                                         <img src={srcURL} className={attachedImg} key={index}/>
-                                    </Paper>
-                                )
-                            }
+                                    )}
+                                    {this.state.indexOfHoveredItem === index ? (
+                                        <div className={downloadIconContainer} onClick={this.downloadImage(index)}>
+                                            <Tooltip title="Download File" placement="left">
+                                                <DownloadIcon className={downloadIcon} color="secondary"/>
+                                            </Tooltip>
+                                        </div>
+                                    ): undefined}
+                                    {this.state.indexOfHoveredItem === index ? (
+                                        <div className={cancelIconContainer} onClick={this.removeImage(index)}>
+                                            <Tooltip title="Delete File" placement="right">
+                                                <CancelIcon className={cancelIcon} color="secondary"/>
+                                            </Tooltip>
+                                        </div>
+                                    ) : undefined}
+                                </Paper>
+                            )
                         })}
                     </div>
                 ) : undefined}
@@ -125,6 +140,62 @@ export class FileEditPresentation extends React.Component<
                 </Dialog>
             </div>
         )
+    }
+
+    private downloadImage = (index: number) => async() => {
+        const path = (this.props.controlValue[index] as IAttachmentMetadata).path;
+        const storage = firebase.storage();
+
+        const downloadUrl = await storage.ref(path).getDownloadURL() as string;
+
+        // tslint:disable-next-line:no-console
+        console.log('getting download url');
+
+
+        const xhr = new XMLHttpRequest();
+        xhr.responseType = 'blob';
+        xhr.onload = (event) => {
+            const a = document.createElement('a');
+            a.href = window.URL.createObjectURL(xhr.response);
+            const fileNameSplit = path.split('/');
+            const originalFileName = fileNameSplit[fileNameSplit.length - 1];
+            a.download = originalFileName;
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+        };
+        // tslint:disable-next-line:no-console
+        console.log('downloadUrl: ', downloadUrl);
+        xhr.open('GET', downloadUrl);
+        xhr.send();
+    }
+
+    private removeImage = (index: number) => async() => {
+        const srcURLs = this.state.srcURLs.filter((val, compareIndex) => compareIndex !== index);
+        this.setState({
+            srcURLs,
+        });
+
+        const pathToRemove = (this.props.controlValue as IAttachmentMetadata[])[index].path;
+        const updatedAttachmentMetadata = (this.props.controlValue as IAttachmentMetadata[]).filter((attachmentMetadata, compareIndex) => {
+            return compareIndex !== index;
+        });
+
+        this.props.updateControlValue(this.props.control.id, updatedAttachmentMetadata);
+
+        await Api.projectsApi.removeFile(pathToRemove);
+    }
+
+    private setHoverItem = (index: number) => () => {
+        this.setState({
+            indexOfHoveredItem: index,
+        })
+    }
+
+    private removeHoverItem = () => {
+        this.setState({
+            indexOfHoveredItem: null,
+        })
     }
 
     private closeDialog = () => {
