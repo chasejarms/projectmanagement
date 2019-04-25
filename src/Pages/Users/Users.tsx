@@ -64,6 +64,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
         addingOrUpdatingUser: false,
         isUpdate: false,
         idOfUserBeingUpdated: '',
+        uidOfUserBeingUpdated: '',
         deletingUser: false,
         street: new FormControlState({
             value: '',
@@ -559,6 +560,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                 open: true,
                 isUpdate: false,
                 idOfUserBeingUpdated: '',
+                uidOfUserBeingUpdated: '',
             });
         }
     }
@@ -587,6 +589,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                     ).markAsBrandNew(),
                     userRole: user.type,
                     idOfUserBeingUpdated: user.id,
+                    uidOfUserBeingUpdated: user.uid,
                     street: this.state.street.setValue(
                         streetValue,
                     ).markAsBrandNew(),
@@ -718,6 +721,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
         await Api.userApi.deleteUser({
             companyId,
             id: this.state.idOfUserBeingUpdated,
+            uidOfUserToDelete: this.state.uidOfUserBeingUpdated,
         })
 
         const usersWithoutDeletedUser = this.state.users.filter((user) => {

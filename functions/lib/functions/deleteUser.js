@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const functions = require("firebase-functions");
 const userTypes_1 = require("../models/userTypes");
-exports.deleteUserLocal = (passedInAdmin) => functions.https.onCall((deleteUserRequest, context) => __awaiter(this, void 0, void 0, function* () {
+exports.deleteUserLocal = (auth, passedInAdmin) => functions.https.onCall((deleteUserRequest, context) => __awaiter(this, void 0, void 0, function* () {
     const firestore = passedInAdmin.firestore();
     const uid = context.auth.uid;
     console.log('uid is: ', uid);
@@ -21,13 +21,13 @@ exports.deleteUserLocal = (passedInAdmin) => functions.https.onCall((deleteUserR
     const userWeAreTryingToDeletePromise = firestore.collection('users')
         .doc(deleteUserRequest.id)
         .get();
-    const companyDocumentPromise = firestore.collection('companies')
-        .doc(deleteUserRequest.companyId)
+    const usersAcrossAllCompaniesPromise = firestore.collection('users')
+        .where('uid', '==', deleteUserRequest.uidOfUserToDelete)
         .get();
-    const [userQuerySnapshot, userWeAreTryingToDeleteSnapshot,] = yield Promise.all([
+    const [userQuerySnapshot, userWeAreTryingToDeleteSnapshot, usersAcrossAllCompaniesSnapshot,] = yield Promise.all([
         userQueryPromise,
         userWeAreTryingToDeletePromise,
-        companyDocumentPromise,
+        usersAcrossAllCompaniesPromise,
     ]);
     const isAdmin = userQuerySnapshot.docs[0].data().type === userTypes_1.UserType.Admin;
     if (!isAdmin) {
@@ -46,6 +46,19 @@ exports.deleteUserLocal = (passedInAdmin) => functions.https.onCall((deleteUserR
             throw new functions.https.HttpsError('invalid-argument', 'You cannot change the last Admin user.');
         }
     }
-    yield firestore.collection('users').doc(deleteUserRequest.id).delete();
+    const shouldDeleteAuthenticatedUser = usersAcrossAllCompaniesSnapshot.docs.every((userCompanySnapshot) => {
+        const companyUserData = userCompanySnapshot.data();
+        const { isActive, companyId, } = companyUserData;
+        if (companyId === deleteUserRequest.companyId || !isActive) {
+            return true;
+        }
+        return false;
+    });
+    if (shouldDeleteAuthenticatedUser) {
+        yield auth.deleteUser(deleteUserRequest.uidOfUserToDelete);
+    }
+    yield firestore.collection('users').doc(deleteUserRequest.id).set({
+        isActive: false,
+    }, { merge: true });
 }));
 //# sourceMappingURL=deleteUser.js.map

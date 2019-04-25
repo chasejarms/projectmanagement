@@ -5,6 +5,7 @@ import { IUser } from '../../Models/user';
 export interface IDeleteUserRequest {
     companyId: string;
     id: string;
+    uidOfUserToDelete: string;
 }
 
 export interface IUsersApi {

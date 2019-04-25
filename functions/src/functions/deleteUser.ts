@@ -4,10 +4,11 @@ import { UserType } from '../models/userTypes';
 
 export interface IDeleteUserRequest {
     id: string;
-    companyId: string
+    companyId: string;
+    uidOfUserToDelete: string;
 }
 
-export const deleteUserLocal = (passedInAdmin: admin.app.App) => functions.https.onCall(async(deleteUserRequest: IDeleteUserRequest, context) => {
+export const deleteUserLocal = (auth: admin.auth.Auth, passedInAdmin: admin.app.App) => functions.https.onCall(async(deleteUserRequest: IDeleteUserRequest, context) => {
     const firestore = passedInAdmin.firestore();
     const uid = context.auth.uid;
     console.log('uid is: ', uid);
@@ -21,17 +22,18 @@ export const deleteUserLocal = (passedInAdmin: admin.app.App) => functions.https
         .doc(deleteUserRequest.id)
         .get()
 
-    const companyDocumentPromise = firestore.collection('companies')
-        .doc(deleteUserRequest.companyId)
+    const usersAcrossAllCompaniesPromise = firestore.collection('users')
+        .where('uid', '==', deleteUserRequest.uidOfUserToDelete)
         .get();
 
     const [
         userQuerySnapshot,
         userWeAreTryingToDeleteSnapshot,
+        usersAcrossAllCompaniesSnapshot,
     ] = await Promise.all([
         userQueryPromise,
         userWeAreTryingToDeletePromise,
-        companyDocumentPromise,
+        usersAcrossAllCompaniesPromise,
     ])
 
     const isAdmin = userQuerySnapshot.docs[0].data().type === UserType.Admin;
@@ -56,5 +58,25 @@ export const deleteUserLocal = (passedInAdmin: admin.app.App) => functions.https
         }
     }
 
-    await firestore.collection('users').doc(deleteUserRequest.id).delete();
+    const shouldDeleteAuthenticatedUser = usersAcrossAllCompaniesSnapshot.docs.every((userCompanySnapshot) => {
+        const companyUserData = userCompanySnapshot.data();
+        const {
+            isActive,
+            companyId,
+        } = companyUserData;
+
+        if (companyId === deleteUserRequest.companyId || !isActive) {
+            return true;
+        }
+
+        return false;
+    })
+
+    if (shouldDeleteAuthenticatedUser) {
+        await auth.deleteUser(deleteUserRequest.uidOfUserToDelete);
+    }
+
+    await firestore.collection('users').doc(deleteUserRequest.id).set({
+        isActive: false,
+    }, { merge: true });
 })

@@ -10,6 +10,7 @@ export class UsersApi implements IUsersApi {
     public async getUsers(companyId: string): Promise<IUser[]> {
         const usersQuerySnapshot = await db.collection('users')
             .where('companyId', '==', companyId)
+            .where('isActive', '==', true)
             .orderBy('fullName', 'asc')
             .get();
 
@@ -45,6 +46,7 @@ export class UsersApi implements IUsersApi {
             .where('companyId', '==', companyId)
             .where('type', '==', UserType.Doctor)
             .where('nameSearchValues', 'array-contains', updatedSearchString)
+            .where('isActive', '==', true)
             .orderBy('nameSearchValues', 'asc')
             .limit(5)
             .get();

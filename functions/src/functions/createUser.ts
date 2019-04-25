@@ -48,7 +48,7 @@ export const createUserLocal = (auth: admin.auth.Auth, firestore: FirebaseFirest
         throw new functions.https.HttpsError('permission-denied', 'You are not an admin user');
     }
 
-    if (!userWeAreTryingToCreateSnapshot.empty) {
+    if (!userWeAreTryingToCreateSnapshot.empty && userWeAreTryingToCreateSnapshot.docs[0].data().isActive) {
         throw new functions.https.HttpsError('already-exists', 'That user already exists');
     }
 
@@ -87,27 +87,61 @@ export const createUserLocal = (auth: admin.auth.Auth, firestore: FirebaseFirest
         }
     }
 
-    const userToCreate = {
-        companyId: data.companyId,
-        email: data.email,
-        fullName: data.fullName,
-        type: data.type,
-        uid: userRecord.uid,
-    }
+    const userIsInactiveOnCompany = !userWeAreTryingToCreateSnapshot.empty && !userWeAreTryingToCreateSnapshot.docs[0].data().isActive;
+    let companyUserId: string;
 
-    if (data.scanCheckpoints && data.type !== UserType.Doctor) {
-        (userToCreate as any).scanCheckpoints = data.scanCheckpoints;
-    }
+    if (userIsInactiveOnCompany) {
+        const userToUpdate = {
+            fullName: data.fullName,
+            type: data.type,
+            uid: userRecord.uid,
+            isActive: true,
+        }
 
-    if (data.telephone && data.type === UserType.Doctor) {
-        (userToCreate as any).telephone = data.telephone;
-    }
+        if (data.scanCheckpoints && data.type !== UserType.Doctor) {
+            (userToUpdate as any).scanCheckpoints = data.scanCheckpoints;
+        }
 
-    if (data.address && data.type === UserType.Doctor) {
-        (userToCreate as any).address = data.address;
-    }
+        if (data.telephone && data.type === UserType.Doctor) {
+            (userToUpdate as any).telephone = data.telephone;
+        }
 
-    const createdUserDocumentSnapshot = await firestore.collection('users').add(userToCreate);
+        if (data.address && data.type === UserType.Doctor) {
+            (userToUpdate as any).address = data.address;
+        }
+
+        companyUserId = userWeAreTryingToCreateSnapshot.docs[0].id;
+        await firestore.collection('users')
+            .doc(companyUserId)
+            .set(userToUpdate, {
+                merge: true,
+            })
+    } else {
+        const userToCreate = {
+            companyId: data.companyId,
+            email: data.email,
+            fullName: data.fullName,
+            type: data.type,
+            uid: userRecord.uid,
+            isActive: true,
+        }
+
+        if (data.scanCheckpoints && data.type !== UserType.Doctor) {
+            (userToCreate as any).scanCheckpoints = data.scanCheckpoints;
+        }
+
+        if (data.telephone && data.type === UserType.Doctor) {
+            (userToCreate as any).telephone = data.telephone;
+        }
+
+        if (data.address && data.type === UserType.Doctor) {
+            (userToCreate as any).address = data.address;
+        }
+
+        const createdUserDocumentSnapshot = await firestore.collection('users').add(userToCreate);
+
+        companyUserId = createdUserDocumentSnapshot.id;
+    }
 
     await firestore.collection('companyUserJoin')
         .doc(`${data.companyId}_${userRecord.uid}`)
@@ -115,11 +149,15 @@ export const createUserLocal = (auth: admin.auth.Auth, firestore: FirebaseFirest
             companyId: data.companyId,
             companyName: companyDocumentSnapshot.data().companyName,
             firebaseAuthenticationUid: userRecord.uid,
-            userId: createdUserDocumentSnapshot.id,
+            userId: companyUserId,
         });
 
+    const fullyUpdatedUserSnapshot = await firestore.collection('users')
+        .doc(companyUserId)
+        .get();
+
     return {
-        ...userToCreate,
-        id: createdUserDocumentSnapshot.id,
+        ...fullyUpdatedUserSnapshot.data(),
+        id: companyUserId,
     };
 })

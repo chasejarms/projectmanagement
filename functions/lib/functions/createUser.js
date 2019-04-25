@@ -34,7 +34,7 @@ exports.createUserLocal = (auth, firestore) => functions.https.onCall((data, con
     if (!isAdmin) {
         throw new functions.https.HttpsError('permission-denied', 'You are not an admin user');
     }
-    if (!userWeAreTryingToCreateSnapshot.empty) {
+    if (!userWeAreTryingToCreateSnapshot.empty && userWeAreTryingToCreateSnapshot.docs[0].data().isActive) {
         throw new functions.https.HttpsError('already-exists', 'That user already exists');
     }
     let userRecord;
@@ -71,31 +71,63 @@ exports.createUserLocal = (auth, firestore) => functions.https.onCall((data, con
             console.log('The send grid email did not work. Here is the email: ', e);
         }
     }
-    const userToCreate = {
-        companyId: data.companyId,
-        email: data.email,
-        fullName: data.fullName,
-        type: data.type,
-        uid: userRecord.uid,
-    };
-    if (data.scanCheckpoints && data.type !== userTypes_1.UserType.Doctor) {
-        userToCreate.scanCheckpoints = data.scanCheckpoints;
+    const userIsInactiveOnCompany = !userWeAreTryingToCreateSnapshot.empty && !userWeAreTryingToCreateSnapshot.docs[0].data().isActive;
+    let companyUserId;
+    if (userIsInactiveOnCompany) {
+        const userToUpdate = {
+            fullName: data.fullName,
+            type: data.type,
+            uid: userRecord.uid,
+            isActive: true,
+        };
+        if (data.scanCheckpoints && data.type !== userTypes_1.UserType.Doctor) {
+            userToUpdate.scanCheckpoints = data.scanCheckpoints;
+        }
+        if (data.telephone && data.type === userTypes_1.UserType.Doctor) {
+            userToUpdate.telephone = data.telephone;
+        }
+        if (data.address && data.type === userTypes_1.UserType.Doctor) {
+            userToUpdate.address = data.address;
+        }
+        companyUserId = userWeAreTryingToCreateSnapshot.docs[0].id;
+        yield firestore.collection('users')
+            .doc(companyUserId)
+            .set(userToUpdate, {
+            merge: true,
+        });
     }
-    if (data.telephone && data.type === userTypes_1.UserType.Doctor) {
-        userToCreate.telephone = data.telephone;
+    else {
+        const userToCreate = {
+            companyId: data.companyId,
+            email: data.email,
+            fullName: data.fullName,
+            type: data.type,
+            uid: userRecord.uid,
+            isActive: true,
+        };
+        if (data.scanCheckpoints && data.type !== userTypes_1.UserType.Doctor) {
+            userToCreate.scanCheckpoints = data.scanCheckpoints;
+        }
+        if (data.telephone && data.type === userTypes_1.UserType.Doctor) {
+            userToCreate.telephone = data.telephone;
+        }
+        if (data.address && data.type === userTypes_1.UserType.Doctor) {
+            userToCreate.address = data.address;
+        }
+        const createdUserDocumentSnapshot = yield firestore.collection('users').add(userToCreate);
+        companyUserId = createdUserDocumentSnapshot.id;
     }
-    if (data.address && data.type === userTypes_1.UserType.Doctor) {
-        userToCreate.address = data.address;
-    }
-    const createdUserDocumentSnapshot = yield firestore.collection('users').add(userToCreate);
     yield firestore.collection('companyUserJoin')
         .doc(`${data.companyId}_${userRecord.uid}`)
         .set({
         companyId: data.companyId,
         companyName: companyDocumentSnapshot.data().companyName,
         firebaseAuthenticationUid: userRecord.uid,
-        userId: createdUserDocumentSnapshot.id,
+        userId: companyUserId,
     });
-    return Object.assign({}, userToCreate, { id: createdUserDocumentSnapshot.id });
+    const fullyUpdatedUserSnapshot = yield firestore.collection('users')
+        .doc(companyUserId)
+        .get();
+    return Object.assign({}, fullyUpdatedUserSnapshot.data(), { id: companyUserId });
 }));
 //# sourceMappingURL=createUser.js.map

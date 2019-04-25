@@ -26,6 +26,7 @@ export const canCreateCasesLocal = (passedInAdmin: admin.app.App) => functions.h
     const doctorUsersPromise = firestore.collection('users')
         .where('companyId', '==', data.companyId)
         .where('type', '==', UserType.Doctor)
+        .where('isActive', '==', true)
         .limit(1)
         .get();
 

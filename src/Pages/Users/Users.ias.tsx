@@ -22,6 +22,7 @@ export interface IUsersPresentationState {
     deletingUser: boolean;
     isUpdate: boolean;
     idOfUserBeingUpdated: string;
+    uidOfUserBeingUpdated: string;
     street: FormControlState<string>;
     state: FormControlState<IUnitedStatesState | ''>;
     city: FormControlState<string>;
