@@ -8,10 +8,12 @@ import {
     FormControlLabel,
     FormLabel,
     IconButton,
+    InputLabel,
     ListItem,
     MenuItem,
     Radio,
     RadioGroup,
+    Select,
     TableFooter,
     TextField,
     Toolbar,
@@ -25,6 +27,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import AddIcon from '@material-ui/icons/Add';
+import ClearIcon from '@material-ui/icons/Clear';
 import DoneIcon from '@material-ui/icons/Done';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
@@ -79,6 +82,8 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         doctorSearchValue: '',
         potentialDoctors: [],
         selectedDoctorInformation: null,
+        selectedFilterCheckpoints: new Set([]),
+        workflowCheckpoints: [],
     }
 
     // tslint:disable-next-line:variable-name
@@ -95,31 +100,41 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         const userType = this.props.userState[companyId].type;
         const userId = this.props.userState[companyId].id;
 
-        Api.projectsApi.getSlimCases(slimCasesSearchRequest, userType, userId).then((slimCaseDocumentSnapshots) => {
-            const slimCases: ISlimCase[] = [];
-            slimCaseDocumentSnapshots.forEach((document) => {
-                const data = document.data();
-                const createdFromRequest = data!.created as firebase.firestore.Timestamp;
-                const deadlineFromRequest = data!.deadline as firebase.firestore.Timestamp;
+        const getWorkflowCheckpointsPromise = Api.workflowApi.getWorkflow(companyId);
+        const getSlimCasesPromise = Api.projectsApi.getSlimCases(slimCasesSearchRequest, userType, userId);
 
-                slimCases.push({
-                    caseId: document.id,
-                    document,
-                    ...document.data() as any,
-                    created: new firebase.firestore.Timestamp(createdFromRequest.seconds, createdFromRequest.nanoseconds),
-                    deadline: new firebase.firestore.Timestamp(deadlineFromRequest.seconds, deadlineFromRequest.nanoseconds),
-                })
-            });
-            const moreCasesExist = slimCases.length === 5;
-            if (this._isMounted) {
-                this.setState({
-                    slimCases,
-                    loadingSlimCases: false,
-                    moreCasesExist,
-                    startingSlimCases: [slimCases[0]],
-                })
-            }
+        const [
+            workflowCheckpoints,
+            slimCaseDocumentSnapshots,
+        ] = await Promise.all([
+            getWorkflowCheckpointsPromise,
+            getSlimCasesPromise,
+        ]);
+
+        const slimCases: ISlimCase[] = [];
+        slimCaseDocumentSnapshots.forEach((document) => {
+            const data = document.data();
+            const createdFromRequest = data!.created as firebase.firestore.Timestamp;
+            const deadlineFromRequest = data!.deadline as firebase.firestore.Timestamp;
+
+            slimCases.push({
+                caseId: document.id,
+                document,
+                ...document.data() as any,
+                created: new firebase.firestore.Timestamp(createdFromRequest.seconds, createdFromRequest.nanoseconds),
+                deadline: new firebase.firestore.Timestamp(deadlineFromRequest.seconds, deadlineFromRequest.nanoseconds),
+            })
         });
+        const moreCasesExist = slimCases.length === 5;
+        if (this._isMounted) {
+            this.setState({
+                slimCases,
+                loadingSlimCases: false,
+                moreCasesExist,
+                startingSlimCases: [slimCases[0]],
+                workflowCheckpoints,
+            })
+        }
     }
 
     public componentWillUnmount(): void {
@@ -143,6 +158,11 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
             doctorSearchContainer,
             doctorContainer,
             selectedDoctorContainer,
+            checkpointsContainer,
+            checkpointOptionsAndSelectedOptionsContainer,
+            selectedCheckpointsContainer,
+            allSelectedCheckpointsContainer,
+            selectedCheckpointContainer,
         } = createProjectsPresentationClasses(this.props, this.state);
 
         const companyId = this.props.match.path.split('/')[2];
@@ -170,7 +190,39 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                     {newInfoCell}
                 </TableRow>
             )
+        });
+
+        const checkpointItems = this.state.workflowCheckpoints.filter((workflowCheckpoint) => {
+            return !this.state.selectedFilterCheckpoints.has(workflowCheckpoint.id);
+        }).map((workflowCheckpoint, index) => {
+            return (
+                <MenuItem
+                    value={workflowCheckpoint.id}
+                    key={index}
+                >
+                    {workflowCheckpoint.name}
+                </MenuItem>
+            )
+        });
+
+        const workflowIdToNameDictionary = this.state.workflowCheckpoints.reduce((acc, workflowCheckpoint) => {
+            acc[workflowCheckpoint.id] = workflowCheckpoint.name;
+            return acc;
+        }, {});
+
+        const selectedFilterCheckpointsArr: string[] = [];
+        this.state.selectedFilterCheckpoints.forEach((checkpoint) => {
+            selectedFilterCheckpointsArr.push(checkpoint);
         })
+
+        const selectedCheckpointItems = selectedFilterCheckpointsArr.map((selectedFilterCheckpointId, index) => {
+            return (
+                <div key={index} className={selectedCheckpointsContainer}>
+                    <Typography>{workflowIdToNameDictionary[selectedFilterCheckpointId]}</Typography>
+                    <ClearIcon onClick={this.removeCheckpointItem(selectedFilterCheckpointId)}/>
+                </div>
+            )
+        });
 
         const {
             completionStatus,
@@ -304,13 +356,32 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                                         ) : undefined}
                                     </div>
                                 )}
-                                <FormControl fullWidth={true}>
-                                    <FormLabel>Checkpoints</FormLabel>
-                                    <RadioGroup className={rowRadioGroup} value={checkpointFlag} onChange={this.handleDialogFilterChange('checkpointFlag')}>
-                                        <FormControlLabel value={CheckpointFlag.All} control={<Radio/>} label="All"/>
-                                        <FormControlLabel value={CheckpointFlag.Specific} control={<Radio/>} label="Specific Checkpoints"/>
-                                    </RadioGroup>
-                                </FormControl>
+                                {userIsDoctor ? undefined : (
+                                    <div className={checkpointsContainer}>
+                                        <FormControl>
+                                            <FormLabel>Checkpoints</FormLabel>
+                                            <RadioGroup className={rowRadioGroup} value={checkpointFlag} onChange={this.handleDialogFilterChange('checkpointFlag')}>
+                                                <FormControlLabel value={CheckpointFlag.All} control={<Radio/>} label="All"/>
+                                                <FormControlLabel value={CheckpointFlag.Specific} control={<Radio/>} label="Specific Checkpoints"/>
+                                            </RadioGroup>
+                                        </FormControl>
+                                        {checkpointFlag === CheckpointFlag.Specific ? (
+                                            <div className={checkpointOptionsAndSelectedOptionsContainer}>
+                                                <div className={selectedCheckpointContainer}>
+                                                    <FormControl fullWidth={true} disabled={checkpointItems.length === 0}>
+                                                        <InputLabel>Selected Checkpoints</InputLabel>
+                                                        <Select value={""} onChange={this.handleSelectFilterCheckpoint}>
+                                                            {checkpointItems}
+                                                        </Select>
+                                                    </FormControl>
+                                                </div>
+                                                <div className={allSelectedCheckpointsContainer}>
+                                                    {selectedCheckpointItems}
+                                                </div>
+                                            </div>
+                                        ) : undefined}
+                                    </div>
+                                )}
                                 <FormControl fullWidth={true}>
                                     <FormLabel>Notifications</FormLabel>
                                     <RadioGroup className={rowRadioGroup} value={notificationFlag} onChange={this.handleDialogFilterChange('notificationFlag')}>
@@ -332,6 +403,26 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                 </Paper>
             </div>
         )
+    }
+
+    private removeCheckpointItem = (workflowCheckpointId: string) => () => {
+        const clonedSet = new Set(this.state.selectedFilterCheckpoints);
+        clonedSet.delete(workflowCheckpointId);
+        if (this._isMounted) {
+            this.setState({
+                selectedFilterCheckpoints: clonedSet,
+            })
+        }
+    }
+
+    private handleSelectFilterCheckpoint = (event: any) => {
+        const clonedSet = new Set(this.state.selectedFilterCheckpoints);
+        clonedSet.add(event.target.value);
+        if (this._isMounted) {
+            this.setState({
+                selectedFilterCheckpoints: clonedSet,
+            });
+        }
     }
 
     private handleDoctorSearch = async(event: any) => {

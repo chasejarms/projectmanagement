@@ -4,6 +4,7 @@ import { IDoctorUser } from 'src/Models/doctorUser';
 import { IUserSliceOfState } from 'src/Redux/Reducers/userReducer';
 import { ICaseFilter } from '../../Models/caseFilter/caseFilter';
 import { ISlimCase } from '../../Models/slimCase';
+import { IWorkflowCheckpoint } from '../../Models/workflow';
 
 export interface IProjectsPresentationProps extends RouteComponentProps<{}> {
     userState: IUserSliceOfState;
@@ -24,6 +25,8 @@ export interface IProjectsPresentationState {
     doctorSearchValue: string;
     potentialDoctors: IDoctorUser[];
     selectedDoctorInformation: IDoctorUser | null;
+    selectedFilterCheckpoints: Set<string>;
+    workflowCheckpoints: IWorkflowCheckpoint[];
 }
 
 export const createProjectsPresentationClasses = (
@@ -130,6 +133,33 @@ export const createProjectsPresentationClasses = (
         marginTop: 30,
     });
 
+    const checkpointsContainer = css({
+        display: 'flex',
+        justifyContent: 'start',
+    });
+
+    const checkpointOptionsAndSelectedOptionsContainer = css({
+        display: 'grid',
+        gridTemplateColumns: '300px 300px',
+        gridGap: 16,
+    });
+
+    const selectedCheckpointsContainer = css({
+        display: 'flex',
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+        height: 32,
+        paddingLeft: 8,
+    });
+
+    const selectedCheckpointContainer = css({
+        marginTop: 5,
+    });
+
+    const allSelectedCheckpointsContainer = css({
+        marginTop: 28,
+    });
+
     return {
         rowStyling,
         projectsContainer,
@@ -149,5 +179,10 @@ export const createProjectsPresentationClasses = (
         doctorSearchContainer,
         doctorContainer,
         selectedDoctorContainer,
+        checkpointsContainer,
+        checkpointOptionsAndSelectedOptionsContainer,
+        selectedCheckpointsContainer,
+        selectedCheckpointContainer,
+        allSelectedCheckpointsContainer,
     };
 }
