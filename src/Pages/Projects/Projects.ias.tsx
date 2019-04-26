@@ -1,5 +1,6 @@
 import { css } from 'emotion';
 import { RouteComponentProps } from "react-router";
+import { IDoctorUser } from 'src/Models/doctorUser';
 import { IUserSliceOfState } from 'src/Redux/Reducers/userReducer';
 import { ICaseFilter } from '../../Models/caseFilter/caseFilter';
 import { ISlimCase } from '../../Models/slimCase';
@@ -20,6 +21,9 @@ export interface IProjectsPresentationState {
     showFilterCasesDialog: boolean;
     selectedFilter: ICaseFilter;
     dialogDisplayFilter: ICaseFilter;
+    doctorSearchValue: string;
+    potentialDoctors: IDoctorUser[];
+    selectedDoctorInformation: IDoctorUser | null;
 }
 
 export const createProjectsPresentationClasses = (
@@ -108,6 +112,24 @@ export const createProjectsPresentationClasses = (
         gridRowGap: 8,
     });
 
+    const doctorSearchContainer = css({
+        marginTop: 22,
+        width: 400,
+        display: 'grid',
+        gridGap: 16,
+        marginLeft: 16,
+    });
+
+    const doctorContainer = css({
+        display: 'flex',
+        justifyContent: 'start',
+    });
+
+    const selectedDoctorContainer = css({
+        marginLeft: 16,
+        marginTop: 30,
+    });
+
     return {
         rowStyling,
         projectsContainer,
@@ -124,5 +146,8 @@ export const createProjectsPresentationClasses = (
         filterCasesDialogActionButtons,
         rowRadioGroup,
         dialogContent,
+        doctorSearchContainer,
+        doctorContainer,
+        selectedDoctorContainer,
     };
 }

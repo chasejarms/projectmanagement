@@ -8,9 +8,12 @@ import {
     FormControlLabel,
     FormLabel,
     IconButton,
+    ListItem,
+    MenuItem,
     Radio,
     RadioGroup,
     TableFooter,
+    TextField,
     Toolbar,
     Tooltip,
     Typography,
@@ -37,6 +40,7 @@ import { AsyncButton } from 'src/Components/AsyncButton/AsyncButton';
 import { ICaseFilter } from 'src/Models/caseFilter/caseFilter';
 import { DoctorFlag } from 'src/Models/caseFilter/doctorFlag';
 import { NotificationFlag } from 'src/Models/caseFilter/notificationFlag';
+import { IDoctorUser } from 'src/Models/doctorUser';
 import { ShowNewInfoFromType } from 'src/Models/showNewInfoFromTypes';
 import { ISlimCase } from 'src/Models/slimCase';
 import { UserType } from 'src/Models/userTypes';
@@ -48,6 +52,7 @@ import { StartedStatus } from '../../Models/caseFilter/startedStatus';
 import { createProjectsPresentationClasses, IProjectsPresentationProps, IProjectsPresentationState } from './Projects.ias';
 
 export class ProjectsPresentation extends React.Component<IProjectsPresentationProps, IProjectsPresentationState> {
+    public searchInputNode: any;
     public state: IProjectsPresentationState = {
         slimCases: [],
         loadingSlimCases: true,
@@ -70,7 +75,10 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
             doctorFlag: DoctorFlag.All,
             checkpointFlag: CheckpointFlag.All,
             notificationFlag: NotificationFlag.All,
-        }
+        },
+        doctorSearchValue: '',
+        potentialDoctors: [],
+        selectedDoctorInformation: null,
     }
 
     // tslint:disable-next-line:variable-name
@@ -132,6 +140,9 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
             filterCasesDialogActionButtons,
             rowRadioGroup,
             dialogContent,
+            doctorSearchContainer,
+            doctorContainer,
+            selectedDoctorContainer,
         } = createProjectsPresentationClasses(this.props, this.state);
 
         const companyId = this.props.match.path.split('/')[2];
@@ -248,13 +259,51 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                                         <FormControlLabel value={StartedStatus.NotStarted} control={<Radio/>} label="Unstarted Cases"/>
                                     </RadioGroup>
                                 </FormControl>
-                                <FormControl fullWidth={true}>
-                                    <FormLabel>Doctors</FormLabel>
-                                    <RadioGroup className={rowRadioGroup} value={doctorFlag} onChange={this.handleDialogFilterChange('doctorFlag')}>
-                                        <FormControlLabel value={DoctorFlag.All} control={<Radio/>} label="All"/>
-                                        <FormControlLabel value={DoctorFlag.Specific} control={<Radio/>} label="Specific Doctor"/>
-                                    </RadioGroup>
-                                </FormControl>
+                                {userIsDoctor ? undefined : (
+                                    <div className={doctorContainer}>
+                                        <FormControl>
+                                            <FormLabel>Doctors</FormLabel>
+                                            <RadioGroup className={rowRadioGroup} value={doctorFlag} onChange={this.handleDialogFilterChange('doctorFlag')}>
+                                                <FormControlLabel value={DoctorFlag.All} control={<Radio/>} label="All"/>
+                                                <FormControlLabel value={DoctorFlag.Specific} control={<Radio/>} label="Specific Doctor"/>
+                                            </RadioGroup>
+                                        </FormControl>
+                                        {doctorFlag === DoctorFlag.Specific ? (
+                                            <div className={doctorSearchContainer}>
+                                                <TextField
+                                                    fullWidth={true}
+                                                    placeholder="Search Doctors"
+                                                    value={this.state.doctorSearchValue}
+                                                    InputProps={{
+                                                        inputRef: (node) => {
+                                                            this.searchInputNode = node;
+                                                        },
+                                                    }}
+                                                    onChange={this.handleDoctorSearch}
+                                                />
+                                                <div>
+                                                    {this.state.potentialDoctors.length === 0 && this.state.doctorSearchValue !== '' ? (
+                                                        <ListItem>
+                                                            No doctors match the specified search.
+                                                        </ListItem>
+                                                    ) : undefined}
+                                                    {this.state.potentialDoctors.map((potentialDoctor) => {
+                                                        return (
+                                                            <MenuItem key={potentialDoctor.id} onClick={this.selectDoctor(potentialDoctor)}>
+                                                                {potentialDoctor.fullName} ({potentialDoctor.email})
+                                                            </MenuItem>
+                                                        )
+                                                    })}
+                                                </div>
+                                            </div>
+                                        ) : undefined}
+                                        {doctorFlag === DoctorFlag.Specific && !!this.state.selectedDoctorInformation ? (
+                                            <div className={selectedDoctorContainer}>
+                                                <Typography variant="body1">Selected Doctor: {this.state.selectedDoctorInformation.fullName}</Typography>
+                                            </div>
+                                        ) : undefined}
+                                    </div>
+                                )}
                                 <FormControl fullWidth={true}>
                                     <FormLabel>Checkpoints</FormLabel>
                                     <RadioGroup className={rowRadioGroup} value={checkpointFlag} onChange={this.handleDialogFilterChange('checkpointFlag')}>
@@ -283,6 +332,29 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                 </Paper>
             </div>
         )
+    }
+
+    private handleDoctorSearch = async(event: any) => {
+        const doctorSearchName = event.target.value;
+        this.setState({
+            doctorSearchValue: doctorSearchName,
+        })
+
+        const companyId = this.props.location.pathname.split('/')[2];
+
+        const potentialDoctors = await Api.userApi.searchDoctorUsers(companyId, doctorSearchName);
+
+        this.setState({
+            potentialDoctors,
+        })
+    }
+
+    private selectDoctor = (doctor: IDoctorUser) => () => {
+        this.setState({
+            selectedDoctorInformation: doctor,
+            doctorSearchValue: '',
+            potentialDoctors: [],
+        })
     }
 
     private handleDialogFilterChange = (keyName: keyof ICaseFilter) => (event: any) => {
