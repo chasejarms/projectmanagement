@@ -1,6 +1,7 @@
 import { css } from 'emotion';
 import { RouteComponentProps } from "react-router";
 import { IUserSliceOfState } from 'src/Redux/Reducers/userReducer';
+import { ICaseFilter } from '../../Models/caseFilter/caseFilter';
 import { ISlimCase } from '../../Models/slimCase';
 
 export interface IProjectsPresentationProps extends RouteComponentProps<{}> {
@@ -17,6 +18,8 @@ export interface IProjectsPresentationState {
     startingSlimCases: ISlimCase[];
     retrievingQRCodes: boolean;
     showFilterCasesDialog: boolean;
+    selectedFilter: ICaseFilter;
+    dialogDisplayFilter: ICaseFilter;
 }
 
 export const createProjectsPresentationClasses = (

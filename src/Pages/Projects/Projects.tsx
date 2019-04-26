@@ -28,16 +28,23 @@ import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import * as firebase from 'firebase';
+import { cloneDeep } from 'lodash';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { ISlimCasesSearchRequest } from 'src/Api/Projects/projectsInterface';
 import { AsyncButton } from 'src/Components/AsyncButton/AsyncButton';
+import { ICaseFilter } from 'src/Models/caseFilter/caseFilter';
+import { DoctorFlag } from 'src/Models/caseFilter/doctorFlag';
+import { NotificationFlag } from 'src/Models/caseFilter/notificationFlag';
 import { ShowNewInfoFromType } from 'src/Models/showNewInfoFromTypes';
 import { ISlimCase } from 'src/Models/slimCase';
 import { UserType } from 'src/Models/userTypes';
 import { IAppState } from 'src/Redux/Reducers/rootReducer';
 import Api from '../../Api/api';
+import { CheckpointFlag } from '../../Models/caseFilter/checkpointFlag';
+import { CompletionStatus } from '../../Models/caseFilter/completionStatus';
+import { StartedStatus } from '../../Models/caseFilter/startedStatus';
 import { createProjectsPresentationClasses, IProjectsPresentationProps, IProjectsPresentationState } from './Projects.ias';
 
 export class ProjectsPresentation extends React.Component<IProjectsPresentationProps, IProjectsPresentationState> {
@@ -50,6 +57,20 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         startingSlimCases: [],
         retrievingQRCodes: false,
         showFilterCasesDialog: false,
+        selectedFilter: {
+            completionStatus: CompletionStatus.All,
+            startedStatus: StartedStatus.All,
+            doctorFlag: DoctorFlag.All,
+            checkpointFlag: CheckpointFlag.All,
+            notificationFlag: NotificationFlag.All,
+        },
+        dialogDisplayFilter: {
+            completionStatus: CompletionStatus.All,
+            startedStatus: StartedStatus.All,
+            doctorFlag: DoctorFlag.All,
+            checkpointFlag: CheckpointFlag.All,
+            notificationFlag: NotificationFlag.All,
+        }
     }
 
     // tslint:disable-next-line:variable-name
@@ -140,6 +161,16 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
             )
         })
 
+        const {
+            completionStatus,
+            startedStatus,
+            doctorFlag,
+            // doctorId,
+            checkpointFlag,
+            // checkpointsIds,
+            notificationFlag,
+        } = this.state.dialogDisplayFilter;
+
         return (
             <div className={projectsContainer}>
                 <Paper className={projectsPaper}>
@@ -203,39 +234,39 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                             <DialogContent className={dialogContent}>
                                 <FormControl fullWidth={true}>
                                     <FormLabel>Case Completion Status</FormLabel>
-                                    <RadioGroup className={rowRadioGroup}>
-                                        <FormControlLabel control={<Radio/>} label="All"/>
-                                        <FormControlLabel control={<Radio/>} label="Complete Cases"/>
-                                        <FormControlLabel control={<Radio/>} label="Incomplete Cases"/>
+                                    <RadioGroup className={rowRadioGroup} value={completionStatus} onChange={this.handleDialogFilterChange('completionStatus')}>
+                                        <FormControlLabel value={CompletionStatus.All} control={<Radio/>} label="All"/>
+                                        <FormControlLabel value={CompletionStatus.Complete} control={<Radio/>} label="Complete Cases"/>
+                                        <FormControlLabel value={CompletionStatus.Incomplete} control={<Radio/>} label="Incomplete Cases"/>
                                     </RadioGroup>
                                 </FormControl>
                                 <FormControl fullWidth={true}>
                                     <FormLabel>Case Started Status</FormLabel>
-                                    <RadioGroup className={rowRadioGroup}>
-                                        <FormControlLabel control={<Radio/>} label="All"/>
-                                        <FormControlLabel control={<Radio/>} label="Started Cases"/>
-                                        <FormControlLabel control={<Radio/>} label="Unstarted Cases"/>
+                                    <RadioGroup className={rowRadioGroup} value={startedStatus} onChange={this.handleDialogFilterChange('startedStatus')}>
+                                        <FormControlLabel value={StartedStatus.All} control={<Radio/>} label="All"/>
+                                        <FormControlLabel value={StartedStatus.Started} control={<Radio/>} label="Started Cases"/>
+                                        <FormControlLabel value={StartedStatus.NotStarted} control={<Radio/>} label="Unstarted Cases"/>
                                     </RadioGroup>
                                 </FormControl>
                                 <FormControl fullWidth={true}>
                                     <FormLabel>Doctors</FormLabel>
-                                    <RadioGroup className={rowRadioGroup}>
-                                        <FormControlLabel control={<Radio/>} label="All"/>
-                                        <FormControlLabel control={<Radio/>} label="Specific Doctor"/>
+                                    <RadioGroup className={rowRadioGroup} value={doctorFlag} onChange={this.handleDialogFilterChange('doctorFlag')}>
+                                        <FormControlLabel value={DoctorFlag.All} control={<Radio/>} label="All"/>
+                                        <FormControlLabel value={DoctorFlag.Specific} control={<Radio/>} label="Specific Doctor"/>
                                     </RadioGroup>
                                 </FormControl>
                                 <FormControl fullWidth={true}>
                                     <FormLabel>Checkpoints</FormLabel>
-                                    <RadioGroup className={rowRadioGroup}>
-                                        <FormControlLabel control={<Radio/>} label="All"/>
-                                        <FormControlLabel control={<Radio/>} label="Specific Checkpoints"/>
+                                    <RadioGroup className={rowRadioGroup} value={checkpointFlag} onChange={this.handleDialogFilterChange('checkpointFlag')}>
+                                        <FormControlLabel value={CheckpointFlag.All} control={<Radio/>} label="All"/>
+                                        <FormControlLabel value={CheckpointFlag.Specific} control={<Radio/>} label="Specific Checkpoints"/>
                                     </RadioGroup>
                                 </FormControl>
                                 <FormControl fullWidth={true}>
                                     <FormLabel>Notifications</FormLabel>
-                                    <RadioGroup className={rowRadioGroup}>
-                                        <FormControlLabel control={<Radio/>} label="All"/>
-                                        <FormControlLabel control={<Radio/>} label="Cases With Notifications"/>
+                                    <RadioGroup className={rowRadioGroup} value={notificationFlag} onChange={this.handleDialogFilterChange('notificationFlag')}>
+                                        <FormControlLabel value={NotificationFlag.All} control={<Radio/>} label="All"/>
+                                        <FormControlLabel value={NotificationFlag.HasNotification} control={<Radio/>} label="Cases With Notifications"/>
                                     </RadioGroup>
                                 </FormControl>
                             </DialogContent>
@@ -254,10 +285,24 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         )
     }
 
+    private handleDialogFilterChange = (keyName: keyof ICaseFilter) => (event: any) => {
+        const eventValue = event.target.value;
+
+        const caseFilterCopy = cloneDeep(this.state.dialogDisplayFilter);
+        caseFilterCopy[keyName] = eventValue;
+
+        this.setState({
+            dialogDisplayFilter: caseFilterCopy,
+        })
+    }
+
     private openFilterCasesDialog = () => {
+        const selectedFilterClone = cloneDeep(this.state.selectedFilter);
+
         this.setState({
             showFilterCasesDialog: true,
-        })
+            dialogDisplayFilter: selectedFilterClone,
+        });
     }
 
     private closeFilterCasesDialog = () => {
