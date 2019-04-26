@@ -42,6 +42,7 @@ exports.slimCaseFromCaseChanges = (passedInAdmin) => functions.firestore.documen
         created: after.data().created,
         companyId: after.data().companyId,
         showNewInfoFrom: after.data().showNewInfoFrom,
+        complete: after.data().complete,
     });
 }));
 //# sourceMappingURL=slimProjectFromProject.js.map

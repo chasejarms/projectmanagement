@@ -12,4 +12,5 @@ export interface ISlimCase {
     created: Timestamp;
     showNewInfoFrom: ShowNewInfoFromType.Doctor | ShowNewInfoFromType.Lab | null;
     document: FirebaseFirestore.QueryDocumentSnapshot;
+    complete: boolean;
 }

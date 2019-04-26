@@ -15,6 +15,7 @@ import { getCheckpointsLocal } from './functions/getCheckpointsForCase';
 import { linkFileToProjectLocal } from './functions/linkFileToProject';
 import { createThumbnailFromImageLocal } from './functions/createThumbnailFromImage';
 import { createUserLocal } from './functions/createUser';
+import { markProjectAsCompleteLocal } from './functions/markProjectAsComplete';
 
 const app = admin.initializeApp({
     credential: admin.credential.applicationDefault(),
@@ -36,3 +37,4 @@ export const linkFileToProject = linkFileToProjectLocal(app);
 export const createThumbnailFromImage = createThumbnailFromImageLocal(app);
 export const markProjectAsStarted = markProjectAsStartedLocal(app);
 export const canCreateCases = canCreateCasesLocal(app);
+export const markProjectAsComplete = markProjectAsCompleteLocal(app);

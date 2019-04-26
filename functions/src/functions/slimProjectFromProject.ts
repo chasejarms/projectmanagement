@@ -11,6 +11,7 @@ interface ISlimCase {
     created: admin.firestore.Timestamp;
     companyId: string;
     showNewInfoFrom: ShowNewInfoFromType.Doctor | ShowNewInfoFromType.Lab | null;
+    complete: boolean;
 }
 
 export const slimCaseFromCaseChanges = (passedInAdmin: admin.app.App) => functions.firestore.document('cases/{caseId}').onWrite(async(change, context) => {
@@ -61,5 +62,6 @@ export const slimCaseFromCaseChanges = (passedInAdmin: admin.app.App) => functio
         created: after.data().created,
         companyId: after.data().companyId,
         showNewInfoFrom: after.data().showNewInfoFrom,
+        complete: after.data().complete,
     } as ISlimCase)
 });

@@ -14,6 +14,7 @@ const getCheckpointsForCase_1 = require("./functions/getCheckpointsForCase");
 const linkFileToProject_1 = require("./functions/linkFileToProject");
 const createThumbnailFromImage_1 = require("./functions/createThumbnailFromImage");
 const createUser_1 = require("./functions/createUser");
+const markProjectAsComplete_1 = require("./functions/markProjectAsComplete");
 const app = admin.initializeApp({
     credential: admin.credential.applicationDefault(),
     databaseURL: 'https://project-management-develop.firebaseio.com',
@@ -33,4 +34,5 @@ exports.linkFileToProject = linkFileToProject_1.linkFileToProjectLocal(app);
 exports.createThumbnailFromImage = createThumbnailFromImage_1.createThumbnailFromImageLocal(app);
 exports.markProjectAsStarted = markProjectAsStarted_1.markProjectAsStartedLocal(app);
 exports.canCreateCases = canCreateCases_1.canCreateCasesLocal(app);
+exports.markProjectAsComplete = markProjectAsComplete_1.markProjectAsCompleteLocal(app);
 //# sourceMappingURL=index.js.map

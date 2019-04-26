@@ -12,6 +12,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import AddIcon from '@material-ui/icons/Add';
+import DoneIcon from '@material-ui/icons/Done';
 import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import NotificationsIcon from '@material-ui/icons/Notifications';
@@ -115,6 +116,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                     <TableCell>{slimCase.doctorName}</TableCell>
                     <TableCell>{slimCase.currentCheckpointName}</TableCell>
                     <TableCell>{prettyDeadline}</TableCell>
+                    <TableCell>{slimCase.complete ? <DoneIcon/> : undefined}</TableCell>
                     {newInfoCell}
                 </TableRow>
             )
@@ -146,6 +148,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                                     <TableCell>Doctor</TableCell>
                                     <TableCell>Current Checkpoint</TableCell>
                                     <TableCell>Case Deadline</TableCell>
+                                    <TableCell>Complete</TableCell>
                                     <TableCell/>
                                 </TableRow>
                             </TableHead>

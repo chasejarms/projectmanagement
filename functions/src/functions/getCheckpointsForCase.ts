@@ -1,6 +1,7 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { UserType } from '../models/userTypes';
+import { IFunctionsCaseCheckpoint } from '../models/caseCheckpoint';
 
 interface IAugmentedCheckpoint {
     id: string;
@@ -11,14 +12,6 @@ interface IAugmentedCheckpoint {
     name: string;
     estimatedCompletionTime: string;
     visibleToDoctor: boolean;
-}
-
-interface ICaseCheckpoint {
-    id: string;
-    complete: boolean;
-    completedDate: admin.firestore.Timestamp | null;
-    completedBy: string | null;
-    linkedWorkflowCheckpoint: string;
 }
 
 interface IWorkflowCheckpoint {
@@ -95,7 +88,7 @@ export const getCheckpointsLocal = (passedInAdmin: admin.app.App) => functions.h
 
     console.log('workflowCheckpointDataDictionary: ', workflowCheckpointDataDictionary);
 
-    const unfilteredCheckpoints: IAugmentedCheckpoint[] = caseCheckpointDataWithId.map((caseCheckpoint: ICaseCheckpoint) => {
+    const unfilteredCheckpoints: IAugmentedCheckpoint[] = caseCheckpointDataWithId.map((caseCheckpoint: IFunctionsCaseCheckpoint) => {
         const associatedWorkflowCheckpoint = workflowCheckpointDataDictionary[caseCheckpoint.linkedWorkflowCheckpoint];
         return {
             ...caseCheckpoint,
