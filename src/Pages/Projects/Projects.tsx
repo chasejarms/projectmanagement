@@ -1,5 +1,15 @@
 import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    FormControl,
+    FormControlLabel,
+    FormLabel,
     IconButton,
+    Radio,
+    RadioGroup,
     TableFooter,
     Toolbar,
     Tooltip,
@@ -13,6 +23,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import AddIcon from '@material-ui/icons/Add';
 import DoneIcon from '@material-ui/icons/Done';
+import FilterListIcon from '@material-ui/icons/FilterList';
 import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import NotificationsIcon from '@material-ui/icons/Notifications';
@@ -21,6 +32,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { ISlimCasesSearchRequest } from 'src/Api/Projects/projectsInterface';
+import { AsyncButton } from 'src/Components/AsyncButton/AsyncButton';
 import { ShowNewInfoFromType } from 'src/Models/showNewInfoFromTypes';
 import { ISlimCase } from 'src/Models/slimCase';
 import { UserType } from 'src/Models/userTypes';
@@ -37,6 +49,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         limit: 20,
         startingSlimCases: [],
         retrievingQRCodes: false,
+        showFilterCasesDialog: false,
     }
 
     // tslint:disable-next-line:variable-name
@@ -93,6 +106,11 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
             tableBody,
             arrowContainer,
             tableContainer,
+            nameAndFilterIconContainer,
+            gridNameContainer,
+            filterCasesDialogActionButtons,
+            rowRadioGroup,
+            dialogContent,
         } = createProjectsPresentationClasses(this.props, this.state);
 
         const companyId = this.props.match.path.split('/')[2];
@@ -114,9 +132,9 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
             return (
                 <TableRow key={slimCase.caseId} onClick={this.navigateToProject(slimCase.caseId)} className={rowStyling}>
                     <TableCell>{slimCase.doctorName}</TableCell>
-                    <TableCell>{slimCase.currentCheckpointName}</TableCell>
                     <TableCell>{prettyDeadline}</TableCell>
                     <TableCell>{slimCase.complete ? <DoneIcon/> : undefined}</TableCell>
+                    <TableCell>{slimCase.currentCheckpointName}</TableCell>
                     {newInfoCell}
                 </TableRow>
             )
@@ -126,9 +144,19 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
             <div className={projectsContainer}>
                 <Paper className={projectsPaper}>
                     <Toolbar className={projectsToolbarContainer}>
-                        <Typography variant="title">
-                            Cases
-                        </Typography>
+                        <div className={nameAndFilterIconContainer}>
+                            <Typography variant="title" className={gridNameContainer}>
+                                Cases
+                            </Typography>
+                            <Tooltip title="Filter Cases" placement="right" disableFocusListener={true}>
+                                <IconButton
+                                    aria-label="Filter Cases"
+                                    onClick={this.openFilterCasesDialog}
+                                >
+                                    <FilterListIcon/>
+                                </IconButton>
+                            </Tooltip>
+                        </div>
                         <div>
                             <Tooltip title="New Case" placement="left" disableFocusListener={true}>
                                 <IconButton
@@ -146,9 +174,9 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                             <TableHead>
                                 <TableRow>
                                     <TableCell>Doctor</TableCell>
-                                    <TableCell>Current Checkpoint</TableCell>
                                     <TableCell>Case Deadline</TableCell>
                                     <TableCell>Complete</TableCell>
+                                    <TableCell>Current Checkpoint</TableCell>
                                     <TableCell/>
                                 </TableRow>
                             </TableHead>
@@ -170,10 +198,72 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                                 </TableRow>
                             </TableFooter>
                         </Table>
+                        <Dialog open={this.state.showFilterCasesDialog} maxWidth={"lg"} fullWidth={true}>
+                            <DialogTitle>Filters</DialogTitle>
+                            <DialogContent className={dialogContent}>
+                                <FormControl fullWidth={true}>
+                                    <FormLabel>Case Completion Status</FormLabel>
+                                    <RadioGroup className={rowRadioGroup}>
+                                        <FormControlLabel control={<Radio/>} label="All"/>
+                                        <FormControlLabel control={<Radio/>} label="Complete Cases"/>
+                                        <FormControlLabel control={<Radio/>} label="Incomplete Cases"/>
+                                    </RadioGroup>
+                                </FormControl>
+                                <FormControl fullWidth={true}>
+                                    <FormLabel>Case Started Status</FormLabel>
+                                    <RadioGroup className={rowRadioGroup}>
+                                        <FormControlLabel control={<Radio/>} label="All"/>
+                                        <FormControlLabel control={<Radio/>} label="Started Cases"/>
+                                        <FormControlLabel control={<Radio/>} label="Unstarted Cases"/>
+                                    </RadioGroup>
+                                </FormControl>
+                                <FormControl fullWidth={true}>
+                                    <FormLabel>Doctors</FormLabel>
+                                    <RadioGroup className={rowRadioGroup}>
+                                        <FormControlLabel control={<Radio/>} label="All"/>
+                                        <FormControlLabel control={<Radio/>} label="Specific Doctor"/>
+                                    </RadioGroup>
+                                </FormControl>
+                                <FormControl fullWidth={true}>
+                                    <FormLabel>Checkpoints</FormLabel>
+                                    <RadioGroup className={rowRadioGroup}>
+                                        <FormControlLabel control={<Radio/>} label="All"/>
+                                        <FormControlLabel control={<Radio/>} label="Specific Checkpoints"/>
+                                    </RadioGroup>
+                                </FormControl>
+                                <FormControl fullWidth={true}>
+                                    <FormLabel>Notifications</FormLabel>
+                                    <RadioGroup className={rowRadioGroup}>
+                                        <FormControlLabel control={<Radio/>} label="All"/>
+                                        <FormControlLabel control={<Radio/>} label="Cases With Notifications"/>
+                                    </RadioGroup>
+                                </FormControl>
+                            </DialogContent>
+                            <DialogActions className={filterCasesDialogActionButtons}>
+                                <Button onClick={this.closeFilterCasesDialog}>
+                                    Close
+                                </Button>
+                                <AsyncButton disabled={false} asyncActionInProgress={false} color="secondary">
+                                    Apply Filters
+                                </AsyncButton>
+                            </DialogActions>
+                        </Dialog>
                     </div>
                 </Paper>
             </div>
         )
+    }
+
+    private openFilterCasesDialog = () => {
+        this.setState({
+            showFilterCasesDialog: true,
+        })
+    }
+
+    private closeFilterCasesDialog = () => {
+        this.setState({
+            showFilterCasesDialog: false,
+        })
     }
 
     private loadPreviousCases = () => {

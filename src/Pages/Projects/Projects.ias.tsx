@@ -16,6 +16,7 @@ export interface IProjectsPresentationState {
     limit: number;
     startingSlimCases: ISlimCase[];
     retrievingQRCodes: boolean;
+    showFilterCasesDialog: boolean;
 }
 
 export const createProjectsPresentationClasses = (
@@ -79,6 +80,31 @@ export const createProjectsPresentationClasses = (
         justifyContent: 'flex-end',
     });
 
+    const nameAndFilterIconContainer = css({
+        display: 'grid',
+        gridTemplateColumns: 'auto auto',
+        gridGap: 16,
+    });
+
+    const gridNameContainer = css({
+        marginTop: 12,
+    });
+
+    const filterCasesDialogActionButtons = css({
+        display: 'flex',
+        justifyContent: 'space-between',
+    });
+
+    const rowRadioGroup = css({
+        display: 'flex',
+        flexDirection: 'row',
+    });
+
+    const dialogContent = css({
+        display: 'grid',
+        gridRowGap: 8,
+    });
+
     return {
         rowStyling,
         projectsContainer,
@@ -90,5 +116,10 @@ export const createProjectsPresentationClasses = (
         tableContainer,
         hiddenDiv,
         arrowContainer,
+        nameAndFilterIconContainer,
+        gridNameContainer,
+        filterCasesDialogActionButtons,
+        rowRadioGroup,
+        dialogContent,
     };
 }
