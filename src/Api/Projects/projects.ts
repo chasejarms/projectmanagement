@@ -1,6 +1,6 @@
 import * as firebase from 'firebase';
 import { db } from 'src/firebase';
-import { IAugmentedCheckpoint } from 'src/Models/augmentedCheckpoint';
+import { ICaseCheckpoint } from 'src/Models/caseCheckpoint';
 import { CompletionStatus } from 'src/Models/caseFilter/completionStatus';
 import { DoctorFlag } from 'src/Models/caseFilter/doctorFlag';
 import { NotificationFlag } from 'src/Models/caseFilter/notificationFlag';
@@ -9,7 +9,7 @@ import { ShowNewInfoFromType } from 'src/Models/showNewInfoFromTypes';
 import { UserType } from 'src/Models/userTypes';
 import { generateUniqueId } from 'src/Utils/generateUniqueId';
 import { ICase } from './../../Models/case';
-import { ICaseApi, ICaseCreateRequest, ICasesSearchRequest, IGetCaseCheckpointsRequest, IUpdateCaseInformationRequest } from './projectsInterface';
+import { ICaseApi, ICaseCreateRequest, ICasesSearchRequest, IUpdateCaseInformationRequest } from './projectsInterface';
 
 export class ProjectsApi implements ICaseApi {
     public async searchCases(slimCasesSearchRequest: ICasesSearchRequest, userType: string, userId: string): Promise<FirebaseFirestore.QueryDocumentSnapshot[]> {
@@ -130,12 +130,6 @@ export class ProjectsApi implements ICaseApi {
         await storageRef.delete();
     }
 
-    public async getProjectCheckpoints(getCaseCheckpointsRequest: IGetCaseCheckpointsRequest): Promise<IAugmentedCheckpoint[]> {
-        const getCaseCheckpointsCloudFunction = firebase.functions().httpsCallable('getCaseCheckpoints');
-        const getCaseCheckpointsResponse = await getCaseCheckpointsCloudFunction(getCaseCheckpointsRequest);
-        return getCaseCheckpointsResponse.data;
-    }
-
     public updateProject(companyId: string, project: ICase): ICase {
         throw new Error("Method not implemented");
     }
@@ -164,14 +158,10 @@ export class ProjectsApi implements ICaseApi {
         });
     }
 
-    public async updateCaseCheckpoint(checkpointId: string, complete: boolean, completedBy: string | null, completedByName: string | null): Promise<boolean> {
-        await firebase.firestore().collection('caseCheckpoints')
-            .doc(checkpointId)
-            .set({
-                complete,
-                completedBy,
-                completedByName,
-            }, { merge: true })
+    public async updateCaseCheckpoints(caseId: string, caseCheckpoints: ICaseCheckpoint[]) {
+        await firebase.firestore().collection('cases').doc(caseId).set({
+            caseCheckpoints,
+        }, { merge: true });
 
         return true;
     }

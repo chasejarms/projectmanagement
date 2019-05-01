@@ -32,6 +32,7 @@ exports.signUpLocal = (passedInAdmin) => functions.https.onCall((data, context) 
             scanCheckpoints: [],
             mustResetPassword: false,
             uid: firebaseAuthenticationUser.uid,
+            isActive: true,
         });
         const prescriptionTemplateDocumentReference = yield firebase.collection('prescriptionTemplates').add({
             sectionOrder: [],

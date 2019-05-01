@@ -119,7 +119,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
             const deadlineFromRequest = data!.deadline as firebase.firestore.Timestamp;
 
             cases.push({
-                caseId: document.id,
+                id: document.id,
                 document,
                 ...document.data() as any,
                 created: new firebase.firestore.Timestamp(createdFromRequest.seconds, createdFromRequest.nanoseconds),
@@ -434,7 +434,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
             const deadlineFromRequest = data!.deadline as firebase.firestore.Timestamp;
 
             cases.push({
-                caseId: document.id,
+                id: document.id,
                 document,
                 ...document.data() as any,
                 created: new firebase.firestore.Timestamp(createdFromRequest.seconds, createdFromRequest.nanoseconds),
@@ -548,7 +548,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                 const deadlineFromRequest = data!.deadline as firebase.firestore.Timestamp;
 
                 cases.push({
-                    caseId: document.id,
+                    id: document.id,
                     document,
                     ...document.data() as any,
                     created: new firebase.firestore.Timestamp(createdFromRequest.seconds, createdFromRequest.nanoseconds),
@@ -591,7 +591,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                 const deadlineFromRequest = data!.deadline as firebase.firestore.Timestamp;
 
                 cases.push({
-                    caseId: document.id,
+                    id: document.id,
                     document,
                     ...document.data() as any,
                     created: new firebase.firestore.Timestamp(createdFromRequest.seconds, createdFromRequest.nanoseconds),

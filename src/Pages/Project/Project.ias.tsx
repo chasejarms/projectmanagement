@@ -1,7 +1,7 @@
 import { Theme, WithTheme } from '@material-ui/core';
 import { css } from 'emotion';
 import { RouteComponentProps } from 'react-router';
-import { ICheckpoint } from 'src/Models/checkpoint';
+import { ICaseCheckpoint } from 'src/Models/caseCheckpoint';
 import { IDoctorUser } from 'src/Models/doctorUser';
 import { IPrescriptionFormTemplate } from 'src/Models/prescription/prescriptionFormTemplate';
 import { IExistingCaseSliceOfState } from 'src/Redux/Reducers/existingCaseReducer';
@@ -22,7 +22,7 @@ export interface IProjectPresentationState {
     tabIndex: number;
     projectInformationIsLoading: boolean;
     retrievingCheckpoints: boolean;
-    checkpoints: ICheckpoint[] | null;
+    checkpoints: ICaseCheckpoint[] | null;
     loadingPrescriptionTemplate: boolean;
     prescriptionFormTemplate: IPrescriptionFormTemplate | null;
     doctorUser: IDoctorUser | null;

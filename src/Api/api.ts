@@ -1,7 +1,5 @@
 import { AuthenticationApi } from './Authentication/authentication'
 import { IAuthenticationApi } from './Authentication/authenticationInterface';
-import { CheckpointsApi } from './Checkpoints/checkpoints';
-import { ICheckpointsApi } from './Checkpoints/checkpointsInterface';
 import { CompanySelectionApi } from './CompanySelection/companySelection';
 import { ICompanySelectionApi } from './CompanySelection/companySelectionInterface';
 import { PrescriptionTemplateApi } from './PrescriptionTemplate/prescriptionTemplate';
@@ -18,7 +16,6 @@ export interface IApi {
     authenticationApi: IAuthenticationApi;
     workflowApi: IWorkflowApi;
     projectsApi: ICaseApi;
-    checkpointsApi: ICheckpointsApi;
     companySelectionApi: ICompanySelectionApi;
     prescriptionTemplateApi: IPrescriptionTemplateApi;
 }
@@ -28,7 +25,6 @@ const api: IApi = {
     authenticationApi: new AuthenticationApi(),
     workflowApi: new WorkflowApi(),
     projectsApi: new ProjectsApi(),
-    checkpointsApi: new CheckpointsApi(),
     companySelectionApi: new CompanySelectionApi(),
     prescriptionTemplateApi: new PrescriptionTemplateApi(),
 }

@@ -1,4 +1,5 @@
 import { Timestamp } from "@google-cloud/firestore";
+import { ICaseCheckpoint } from "./caseCheckpoint";
 import { ShowNewInfoFromType } from "./showNewInfoFromTypes";
 
 export interface ICase {
@@ -9,7 +10,7 @@ export interface ICase {
         [sectionIdControlId: string]: any;
     };
     created: Timestamp;
-    caseCheckpoints: string[];
+    caseCheckpoints: ICaseCheckpoint[];
     showNewInfoFrom: ShowNewInfoFromType.Doctor | ShowNewInfoFromType.Lab | null;
     hasStarted: boolean;
     doctor: string;

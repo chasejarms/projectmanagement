@@ -37,21 +37,14 @@ exports.createCaseLocal = (passedInAdmin) => functions.https.onCall((data, conte
     const companyWorkflowsQuerySnapshot = yield firestore.collection('companyWorkflows')
         .where('companyId', '==', data.companyId)
         .get();
-    const workflowCheckpoints = companyWorkflowsQuerySnapshot.docs[0].data().workflowCheckpoints;
-    const checkpointCreationPromises = workflowCheckpoints.map((linkedWorkflowCheckpoint) => {
-        const caseCheckpointToAdd = {
-            complete: false,
-            completedDate: null,
-            completedBy: null,
-            caseId: data.id,
-            linkedWorkflowCheckpoint,
-        };
-        console.log('case checkpoint to add: ', caseCheckpointToAdd);
-        return firestore.collection('caseCheckpoints').add(caseCheckpointToAdd);
+    const workflowCheckpointIds = companyWorkflowsQuerySnapshot.docs[0].data().workflowCheckpoints;
+    const workflowCheckpointPromises = workflowCheckpointIds.map((workflowCheckpointId) => {
+        return firestore.collection('workflowCheckpoints').doc(workflowCheckpointId).get();
     });
-    const createdCheckpointDocumentReferences = yield Promise.all(checkpointCreationPromises);
-    const createdCheckpointDocumentIds = createdCheckpointDocumentReferences.map((documentReference) => {
-        return documentReference.id;
+    const workflowCheckpointsSnapshots = yield Promise.all(workflowCheckpointPromises);
+    const caseCheckpoints = workflowCheckpointsSnapshots.map((workflowCheckpointSnapshot) => {
+        const workflowCheckpoint = workflowCheckpointSnapshot.data();
+        return Object.assign({}, workflowCheckpoint, { complete: false, completedDate: null, completedBy: null, completedByName: null, caseId: data.id, linkedWorkflowCheckpoint: workflowCheckpointSnapshot.id });
     });
     const prescriptionTemplateId = companyWorkflowsQuerySnapshot.docs[0].data().prescriptionTemplate;
     console.log('prescription template id: ', prescriptionTemplateId);
@@ -73,6 +66,16 @@ exports.createCaseLocal = (passedInAdmin) => functions.https.onCall((data, conte
             }
         });
     });
+    const doctorSnapshot = yield firestore.collection('users').doc(doctorId).get();
+    const doctorName = doctorSnapshot.data().fullName;
+    const earliestDoctorCheckpoint = caseCheckpoints.find((caseCheckpoint) => {
+        return caseCheckpoint.visibleToDoctor;
+    });
+    const firstCheckpoint = caseCheckpoints[0];
+    const currentDoctorCheckpoint = earliestDoctorCheckpoint ? earliestDoctorCheckpoint.linkedWorkflowCheckpoint : '';
+    const currentDoctorCheckpointName = earliestDoctorCheckpoint ? earliestDoctorCheckpoint.name : '';
+    const currentLabCheckpointName = firstCheckpoint.name;
+    const currentLabCheckpoint = firstCheckpoint.linkedWorkflowCheckpoint;
     const nowInSeconds = Math.round(new Date().getTime() / 1000);
     console.log('nowInSeconds: ', nowInSeconds);
     const caseToCreate = {
@@ -82,10 +85,15 @@ exports.createCaseLocal = (passedInAdmin) => functions.https.onCall((data, conte
         deadline: caseDeadline,
         doctor: doctorId,
         created: new admin.firestore.Timestamp(nowInSeconds, 0),
-        caseCheckpoints: createdCheckpointDocumentIds,
+        caseCheckpoints,
         companyId: data.companyId,
         showNewInfoFrom: isAdminOrStaff ? showNewInfoFromTypes_1.ShowNewInfoFromType.Lab : showNewInfoFromTypes_1.ShowNewInfoFromType.Doctor,
         hasStarted: false,
+        currentDoctorCheckpoint,
+        currentDoctorCheckpointName,
+        currentLabCheckpointName,
+        currentLabCheckpoint,
+        doctorName,
     };
     yield firestore.collection('cases').doc(data.id).set(caseToCreate);
     return data.id;

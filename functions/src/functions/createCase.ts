@@ -4,6 +4,7 @@ import { ShowNewInfoFromType } from '../models/showNewInfoFromTypes';
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { UserType } from '../models/userTypes';
+import { IFunctionsCaseCheckpoint } from '../models/caseCheckpoint';
 // import { IPrescriptionControlTemplateType } from '../../../src/Models/prescription/controls/prescriptionControlTemplateType';
 
 // interface IAttachmentMetadata {
@@ -29,21 +30,22 @@ interface IProjectCreateData {
 
 interface ICase {
     complete: boolean;
-    deadline: admin.firestore.Timestamp;
-    doctor: string;
-    // name: string;
-    // notes: string;
-    // attachmentUrls: IAttachmentMetadata[];
-    created: admin.firestore.Timestamp;
-    caseCheckpoints: string[];
-    companyId: string;
-    showNewInfoFrom: ShowNewInfoFromType.Doctor | ShowNewInfoFromType.Lab | null;
-    hasStarted: boolean;
-    // the stuff after this line has been added
     prescriptionFormTemplateId: string;
     controlValues: {
         [sectionIdControlId: string]: any;
     };
+    created: admin.firestore.Timestamp;
+    caseCheckpoints: IFunctionsCaseCheckpoint[];
+    showNewInfoFrom: ShowNewInfoFromType.Doctor | ShowNewInfoFromType.Lab | null;
+    hasStarted: boolean;
+    doctor: string;
+    companyId: string;
+    deadline: admin.firestore.Timestamp;
+    currentDoctorCheckpointName: string;
+    currentLabCheckpointName: string;
+    doctorName: string;
+    currentDoctorCheckpoint: string;
+    currentLabCheckpoint: string;
 }
 
 export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https.onCall(async(data: IProjectCreateData, context) => {
@@ -79,22 +81,25 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
         .where('companyId', '==', data.companyId)
         .get();
 
-    const workflowCheckpoints: string[] = companyWorkflowsQuerySnapshot.docs[0].data().workflowCheckpoints;
-    const checkpointCreationPromises = workflowCheckpoints.map((linkedWorkflowCheckpoint) => {
-        const caseCheckpointToAdd = {
+    const workflowCheckpointIds: string[] = companyWorkflowsQuerySnapshot.docs[0].data().workflowCheckpoints;
+    const workflowCheckpointPromises = workflowCheckpointIds.map((workflowCheckpointId) => {
+        return firestore.collection('workflowCheckpoints').doc(workflowCheckpointId).get();
+    });
+
+    const workflowCheckpointsSnapshots = await Promise.all(workflowCheckpointPromises);
+    const caseCheckpoints: IFunctionsCaseCheckpoint[] = workflowCheckpointsSnapshots.map((workflowCheckpointSnapshot) => {
+        const workflowCheckpoint = workflowCheckpointSnapshot.data();
+
+        return {
+            ...workflowCheckpoint as any,
             complete: false,
             completedDate: null,
             completedBy: null,
+            completedByName: null,
             caseId: data.id,
-            linkedWorkflowCheckpoint,
+            linkedWorkflowCheckpoint: workflowCheckpointSnapshot.id,
         }
-        console.log('case checkpoint to add: ', caseCheckpointToAdd);
-        return firestore.collection('caseCheckpoints').add(caseCheckpointToAdd);
-    });
-    const createdCheckpointDocumentReferences = await Promise.all(checkpointCreationPromises);
-    const createdCheckpointDocumentIds = createdCheckpointDocumentReferences.map((documentReference) => {
-        return documentReference.id;
-    });
+    })
 
     const prescriptionTemplateId = companyWorkflowsQuerySnapshot.docs[0].data().prescriptionTemplate;
 
@@ -121,6 +126,21 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
         })
     });
 
+    const doctorSnapshot = await firestore.collection('users').doc(doctorId).get();
+    const doctorName = doctorSnapshot.data().fullName;
+
+    const earliestDoctorCheckpoint = caseCheckpoints.find((caseCheckpoint) => {
+        return caseCheckpoint.visibleToDoctor;
+    });
+
+    const firstCheckpoint = caseCheckpoints[0];
+
+    const currentDoctorCheckpoint = earliestDoctorCheckpoint ? earliestDoctorCheckpoint.linkedWorkflowCheckpoint : '';
+    const currentDoctorCheckpointName = earliestDoctorCheckpoint ? earliestDoctorCheckpoint.name : '';
+
+    const currentLabCheckpointName = firstCheckpoint.name;
+    const currentLabCheckpoint = firstCheckpoint.linkedWorkflowCheckpoint;
+
     const nowInSeconds = Math.round(new Date().getTime() / 1000);
     console.log('nowInSeconds: ', nowInSeconds);
     const caseToCreate: ICase = {
@@ -130,10 +150,15 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
         deadline: caseDeadline,
         doctor: doctorId,
         created: new admin.firestore.Timestamp(nowInSeconds, 0),
-        caseCheckpoints: createdCheckpointDocumentIds,
+        caseCheckpoints,
         companyId: data.companyId,
         showNewInfoFrom: isAdminOrStaff ? ShowNewInfoFromType.Lab : ShowNewInfoFromType.Doctor,
         hasStarted: false,
+        currentDoctorCheckpoint,
+        currentDoctorCheckpointName,
+        currentLabCheckpointName,
+        currentLabCheckpoint,
+        doctorName,
     };
 
     await firestore.collection('cases').doc(data.id).set(caseToCreate);
