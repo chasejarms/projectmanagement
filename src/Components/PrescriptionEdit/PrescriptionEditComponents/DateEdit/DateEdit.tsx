@@ -41,7 +41,7 @@ export class DateEditPresentation extends React.Component<IDateEditProps, IDateE
                         fullWidth={true}
                         value={updatedControlValue}
                         label={control.label}
-                        disablePast={!disabled}
+                        disablePast={false}
                         onChange={this.handleDeadlineChange(control.id)}
                     />
                 )}

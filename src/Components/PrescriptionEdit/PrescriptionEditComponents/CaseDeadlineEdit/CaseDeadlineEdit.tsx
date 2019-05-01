@@ -58,7 +58,7 @@ export class CaseDeadlineEditPresentation extends React.Component<ICaseDeadlineP
                         }}
                         value={updatedControlValue}
                         label={control.label}
-                        disablePast={true}
+                        disablePast={!disabled}
                         onChange={this.handleDeadlineChange(control.id)}
                     />
                 )}
