@@ -1,9 +1,13 @@
 import * as firebase from 'firebase';
 import { db } from 'src/firebase';
 import { IAugmentedCheckpoint } from 'src/Models/augmentedCheckpoint';
+import { CompletionStatus } from 'src/Models/caseFilter/completionStatus';
+import { DoctorFlag } from 'src/Models/caseFilter/doctorFlag';
+import { NotificationFlag } from 'src/Models/caseFilter/notificationFlag';
+import { StartedStatus } from 'src/Models/caseFilter/startedStatus';
+import { ShowNewInfoFromType } from 'src/Models/showNewInfoFromTypes';
 import { UserType } from 'src/Models/userTypes';
 import { generateUniqueId } from 'src/Utils/generateUniqueId';
-import { ShowNewInfoFromType } from './../../../functions/src/models/showNewInfoFromTypes';
 import { ICase } from './../../Models/case';
 // import { ISlimCase } from './../../Models/slimCase';
 import { ICaseApi, ICaseCreateRequest, IGetCaseCheckpointsRequest, ISlimCasesSearchRequest, IUpdateCaseInformationRequest } from './projectsInterface';
@@ -25,6 +29,30 @@ export class ProjectsApi implements ICaseApi {
         if (slimCasesSearchRequest.startAt) {
             query = query.startAt(slimCasesSearchRequest.startAt);
         }
+
+        if (slimCasesSearchRequest.completionStatus === CompletionStatus.Complete) {
+            query = query.where('complete', '==', true);
+        } else if (slimCasesSearchRequest.completionStatus === CompletionStatus.Incomplete) {
+            query = query.where('complete', '==', false);
+        }
+
+        if (slimCasesSearchRequest.startedStatus === StartedStatus.Started) {
+            query = query.where('hasStarted', '==', true);
+        } else if (slimCasesSearchRequest.startedStatus === StartedStatus.NotStarted) {
+            query = query.where('hasStarted', '==', false);
+        }
+
+        if (slimCasesSearchRequest.notificationFlag === NotificationFlag.HasNotification) {
+            const correctShowNewInfoFromType = userType === UserType.Doctor ? ShowNewInfoFromType.Lab : ShowNewInfoFromType.Doctor;
+            query = query.where('showNewInfoFrom', '==', correctShowNewInfoFromType);
+        }
+
+        const queryForSpecificDoctor = slimCasesSearchRequest.doctorFlag === DoctorFlag.Specific;
+        if (queryForSpecificDoctor && slimCasesSearchRequest.doctorId) {
+            query = query.where('doctor', '==', slimCasesSearchRequest.doctorId);
+        }
+
+        // handle the checkpoints here
 
         const slimCases = await query.limit(slimCasesSearchRequest.limit).get();
         const slimCasesList: FirebaseFirestore.QueryDocumentSnapshot[] = [];

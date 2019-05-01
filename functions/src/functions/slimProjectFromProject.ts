@@ -12,6 +12,7 @@ interface ISlimCase {
     companyId: string;
     showNewInfoFrom: ShowNewInfoFromType.Doctor | ShowNewInfoFromType.Lab | null;
     complete: boolean;
+    hasStarted: boolean;
 }
 
 export const slimCaseFromCaseChanges = (passedInAdmin: admin.app.App) => functions.firestore.document('cases/{caseId}').onWrite(async(change, context) => {
@@ -63,5 +64,6 @@ export const slimCaseFromCaseChanges = (passedInAdmin: admin.app.App) => functio
         companyId: after.data().companyId,
         showNewInfoFrom: after.data().showNewInfoFrom,
         complete: after.data().complete,
+        hasStarted: after.data().hasStarted,
     } as ISlimCase)
 });

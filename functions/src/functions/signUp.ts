@@ -28,6 +28,7 @@ export const signUpLocal = (passedInAdmin: admin.app.App) => functions.https.onC
             scanCheckpoints: [],
             mustResetPassword: false,
             uid: firebaseAuthenticationUser.uid,
+            isActive: true,
         })
 
         const prescriptionTemplateDocumentReference = await firebase.collection('prescriptionTemplates').add({

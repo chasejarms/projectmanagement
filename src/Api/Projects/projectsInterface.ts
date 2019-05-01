@@ -1,3 +1,4 @@
+import { ICaseFilter } from 'src/Models/caseFilter/caseFilter';
 import { ShowNewInfoFromType } from 'src/Models/showNewInfoFromTypes';
 import { IAugmentedCheckpoint } from './../../Models/augmentedCheckpoint';
 import { ICase } from './../../Models/case';
@@ -10,7 +11,7 @@ export interface ICaseCreateRequest {
     };
 }
 
-export interface ISlimCasesSearchRequest {
+export interface ISlimCasesSearchRequest extends ICaseFilter {
     companyId: string;
     limit: number;
     startAfter?: FirebaseFirestore.DocumentSnapshot,

@@ -12,4 +12,7 @@ export interface ICase {
     caseCheckpoints: string[];
     showNewInfoFrom: ShowNewInfoFromType.Doctor | ShowNewInfoFromType.Lab | null;
     hasStarted: boolean;
+    doctor: string;
+    companyId: string;
+    deadline: Timestamp;
 }
