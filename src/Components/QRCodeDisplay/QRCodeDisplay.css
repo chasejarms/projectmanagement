@@ -4,6 +4,9 @@
 
 @media print {
     .qr-code-display {
+        visibility: visible;
         display: block;
+        position: absolute !important;
+        height: auto !important;
     }
 }
