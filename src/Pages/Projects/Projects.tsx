@@ -38,14 +38,14 @@ import { cloneDeep } from 'lodash';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import { ISlimCasesSearchRequest } from 'src/Api/Projects/projectsInterface';
+import { ICasesSearchRequest } from 'src/Api/Projects/projectsInterface';
 import { AsyncButton } from 'src/Components/AsyncButton/AsyncButton';
+import { IAugmentedCase } from 'src/Models/case';
 import { ICaseFilter } from 'src/Models/caseFilter/caseFilter';
 import { DoctorFlag } from 'src/Models/caseFilter/doctorFlag';
 import { NotificationFlag } from 'src/Models/caseFilter/notificationFlag';
 import { IDoctorUser } from 'src/Models/doctorUser';
 import { ShowNewInfoFromType } from 'src/Models/showNewInfoFromTypes';
-import { ISlimCase } from 'src/Models/slimCase';
 import { UserType } from 'src/Models/userTypes';
 import { IAppState } from 'src/Redux/Reducers/rootReducer';
 import Api from '../../Api/api';
@@ -57,12 +57,12 @@ import { createProjectsPresentationClasses, IProjectsPresentationProps, IProject
 export class ProjectsPresentation extends React.Component<IProjectsPresentationProps, IProjectsPresentationState> {
     public searchInputNode: any;
     public state: IProjectsPresentationState = {
-        slimCases: [],
-        loadingSlimCases: true,
+        cases: [],
+        loadingCases: true,
         moreCasesExist: true,
         page: 0,
         limit: 20,
-        startingSlimCases: [],
+        startingCases: [],
         retrievingQRCodes: false,
         showFilterCasesDialog: false,
         selectedFilter: {
@@ -92,7 +92,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
     public async componentWillMount(): Promise<void> {
         this._isMounted = true;
         const companyId = this.props.match.path.split('/')[2];
-        const slimCasesSearchRequest: ISlimCasesSearchRequest = {
+        const casesSearchRequest: ICasesSearchRequest = {
             companyId,
             limit: this.state.limit,
             ...this.state.selectedFilter,
@@ -102,23 +102,23 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         const userId = this.props.userState[companyId].id;
 
         const getWorkflowCheckpointsPromise = Api.workflowApi.getWorkflow(companyId);
-        const getSlimCasesPromise = Api.projectsApi.getSlimCases(slimCasesSearchRequest, userType, userId);
+        const getSlimCasesPromise = Api.projectsApi.searchCases(casesSearchRequest, userType, userId);
 
         const [
             workflowCheckpoints,
-            slimCaseDocumentSnapshots,
+            caseDocumentSnapshots,
         ] = await Promise.all([
             getWorkflowCheckpointsPromise,
             getSlimCasesPromise,
         ]);
 
-        const slimCases: ISlimCase[] = [];
-        slimCaseDocumentSnapshots.forEach((document) => {
+        const cases: IAugmentedCase[] = [];
+        caseDocumentSnapshots.forEach((document) => {
             const data = document.data();
             const createdFromRequest = data!.created as firebase.firestore.Timestamp;
             const deadlineFromRequest = data!.deadline as firebase.firestore.Timestamp;
 
-            slimCases.push({
+            cases.push({
                 caseId: document.id,
                 document,
                 ...document.data() as any,
@@ -126,13 +126,13 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                 deadline: new firebase.firestore.Timestamp(deadlineFromRequest.seconds, deadlineFromRequest.nanoseconds),
             })
         });
-        const moreCasesExist = slimCases.length === 5;
+        const moreCasesExist = cases.length === 5;
         if (this._isMounted) {
             this.setState({
-                slimCases,
-                loadingSlimCases: false,
+                cases,
+                loadingCases: false,
                 moreCasesExist,
-                startingSlimCases: [slimCases[0]],
+                startingCases: [cases[0]],
                 workflowCheckpoints,
             })
         }
@@ -169,9 +169,9 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         const companyId = this.props.match.path.split('/')[2];
         const userIsDoctor = this.props.userState[companyId].type === UserType.Doctor;
 
-        const mappedProjects = this.state.slimCases.map(slimCase => {
-            const newInfoFromDoctor = slimCase.showNewInfoFrom === ShowNewInfoFromType.Doctor;
-            const newInfoFromLab = slimCase.showNewInfoFrom === ShowNewInfoFromType.Lab;
+        const mappedProjects = this.state.cases.map(caseObject => {
+            const newInfoFromDoctor = caseObject.showNewInfoFrom === ShowNewInfoFromType.Doctor;
+            const newInfoFromLab = caseObject.showNewInfoFrom === ShowNewInfoFromType.Lab;
 
             const shouldShowNotification = (userIsDoctor && newInfoFromLab) || (!userIsDoctor && newInfoFromDoctor);
             const newInfoCell = shouldShowNotification ? (
@@ -180,15 +180,16 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                 </TableCell>
             ) : <TableCell/>;
 
-            const date = slimCase.deadline.toDate();
+            const date = caseObject.deadline.toDate();
             const prettyDeadline = this.makeDeadlinePretty(date);
+            const currentCheckpointName = userIsDoctor ? caseObject.currentDoctorCheckpointName : caseObject.currentLabCheckpointName;
             return (
-                <TableRow key={slimCase.caseId} onClick={this.navigateToProject(slimCase.caseId)} className={rowStyling}>
-                    <TableCell>{slimCase.doctorName}</TableCell>
+                <TableRow key={caseObject.id} onClick={this.navigateToProject(caseObject.id)} className={rowStyling}>
+                    <TableCell>{caseObject.doctorName}</TableCell>
                     <TableCell>{prettyDeadline}</TableCell>
-                    <TableCell>{slimCase.complete ? <DoneIcon/> : undefined}</TableCell>
-                    <TableCell>{slimCase.hasStarted ? <DoneIcon/> : undefined}</TableCell>
-                    <TableCell>{slimCase.currentCheckpointName}</TableCell>
+                    <TableCell>{caseObject.complete ? <DoneIcon/> : undefined}</TableCell>
+                    <TableCell>{caseObject.hasStarted ? <DoneIcon/> : undefined}</TableCell>
+                    <TableCell>{currentCheckpointName}</TableCell>
                     {newInfoCell}
                 </TableRow>
             )
@@ -397,7 +398,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                                 <Button onClick={this.closeFilterCasesDialog}>
                                     Close
                                 </Button>
-                                <AsyncButton disabled={this.state.loadingSlimCases} asyncActionInProgress={this.state.loadingSlimCases} color="secondary" onClick={this.applyCaseFilters}>
+                                <AsyncButton disabled={this.state.loadingCases} asyncActionInProgress={this.state.loadingCases} color="secondary" onClick={this.applyCaseFilters}>
                                     Apply Filters
                                 </AsyncButton>
                             </DialogActions>
@@ -412,11 +413,11 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         const clonedDialogDisplayFilter = cloneDeep(this.state.dialogDisplayFilter);
 
         this.setState({
-            loadingSlimCases: true,
+            loadingCases: true,
         });
 
         const companyId = this.props.match.path.split('/')[2];
-        const slimCasesSearchRequest: ISlimCasesSearchRequest = {
+        const casesSearchRequest: ICasesSearchRequest = {
             companyId,
             limit: this.state.limit,
             ...this.state.dialogDisplayFilter,
@@ -424,15 +425,15 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         const userType = this.props.userState[companyId].type;
         const userId = this.props.userState[companyId].uid;
 
-        const slimCaseDocumentSnapshots = await Api.projectsApi.getSlimCases(slimCasesSearchRequest, userType, userId);
+        const caseDocumentSnapshots = await Api.projectsApi.searchCases(casesSearchRequest, userType, userId);
 
-        const slimCases: ISlimCase[] = [];
-        slimCaseDocumentSnapshots.forEach((document) => {
+        const cases: IAugmentedCase[] = [];
+        caseDocumentSnapshots.forEach((document) => {
             const data = document.data();
             const createdFromRequest = data!.created as firebase.firestore.Timestamp;
             const deadlineFromRequest = data!.deadline as firebase.firestore.Timestamp;
 
-            slimCases.push({
+            cases.push({
                 caseId: document.id,
                 document,
                 ...document.data() as any,
@@ -440,14 +441,14 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                 deadline: new firebase.firestore.Timestamp(deadlineFromRequest.seconds, deadlineFromRequest.nanoseconds),
             })
         });
-        const moreCasesExist = slimCases.length === 5;
+        const moreCasesExist = cases.length === 5;
 
         if (this._isMounted) {
             this.setState({
-                loadingSlimCases: false,
+                loadingCases: false,
                 moreCasesExist,
                 page: 0,
-                slimCases,
+                cases,
                 selectedFilter: clonedDialogDisplayFilter,
                 showFilterCasesDialog: false,
             });
@@ -529,24 +530,24 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         }
 
         const companyId = this.props.match.path.split('/')[2];
-        const slimCasesSearchRequest: ISlimCasesSearchRequest = {
+        const casesSearchRequest: ICasesSearchRequest = {
             companyId,
             limit: this.state.limit,
-            startAt: this.state.startingSlimCases[this.state.page - 1].document,
+            startAt: this.state.startingCases[this.state.page - 1].document,
             ...this.state.selectedFilter,
         }
 
         const userType = this.props.userState[companyId].type;
         const userId = this.props.userState[companyId].uid;
 
-        Api.projectsApi.getSlimCases(slimCasesSearchRequest, userType, userId).then((slimCaseDocumentSnapshots) => {
-            const slimCases: ISlimCase[] = [];
-            slimCaseDocumentSnapshots.forEach((document) => {
+        Api.projectsApi.searchCases(casesSearchRequest, userType, userId).then((caseDocumentSnapshots) => {
+            const cases: IAugmentedCase[] = [];
+            caseDocumentSnapshots.forEach((document) => {
                 const data = document.data();
                 const createdFromRequest = data!.created as firebase.firestore.Timestamp;
                 const deadlineFromRequest = data!.deadline as firebase.firestore.Timestamp;
 
-                slimCases.push({
+                cases.push({
                     caseId: document.id,
                     document,
                     ...document.data() as any,
@@ -554,11 +555,11 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                     deadline: new firebase.firestore.Timestamp(deadlineFromRequest.seconds, deadlineFromRequest.nanoseconds),
                 })
             });
-            const moreCasesExist = slimCases.length === 5;
+            const moreCasesExist = cases.length === 5;
             if (this._isMounted) {
                 this.setState({
-                    slimCases,
-                    loadingSlimCases: false,
+                    cases,
+                    loadingCases: false,
                     moreCasesExist,
                     page: this.state.page - 1,
                 })
@@ -572,24 +573,24 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         }
 
         const companyId = this.props.match.path.split('/')[2];
-        const slimCasesSearchRequest: ISlimCasesSearchRequest = {
+        const casesSearchRequest: ICasesSearchRequest = {
             companyId,
             limit: this.state.limit,
-            startAfter: this.state.slimCases[this.state.slimCases.length - 1].document,
+            startAfter: this.state.cases[this.state.cases.length - 1].document,
             ...this.state.selectedFilter,
         }
 
         const userType = this.props.userState[companyId].type;
         const userId = this.props.userState[companyId].uid;
 
-        Api.projectsApi.getSlimCases(slimCasesSearchRequest, userType, userId).then((slimCaseDocumentSnapshots) => {
-            const slimCases: ISlimCase[] = [];
-            slimCaseDocumentSnapshots.forEach((document) => {
+        Api.projectsApi.searchCases(casesSearchRequest, userType, userId).then((caseDocumentSnapshots) => {
+            const cases: IAugmentedCase[] = [];
+            caseDocumentSnapshots.forEach((document) => {
                 const data = document.data();
                 const createdFromRequest = data!.created as firebase.firestore.Timestamp;
                 const deadlineFromRequest = data!.deadline as firebase.firestore.Timestamp;
 
-                slimCases.push({
+                cases.push({
                     caseId: document.id,
                     document,
                     ...document.data() as any,
@@ -597,23 +598,23 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                     deadline: new firebase.firestore.Timestamp(deadlineFromRequest.seconds, deadlineFromRequest.nanoseconds),
                 })
             });
-            const moreCasesExist = slimCases.length === 5;
-            const startingSlimCases = this.state.startingSlimCases;
-            startingSlimCases[this.state.page + 1] = slimCases[0];
+            const moreCasesExist = cases.length === 5;
+            const startingCases = this.state.startingCases;
+            startingCases[this.state.page + 1] = cases[0];
             if (this._isMounted) {
                 this.setState({
-                    slimCases,
-                    loadingSlimCases: false,
+                    cases,
+                    loadingCases: false,
                     moreCasesExist,
                     page: this.state.page + 1,
-                    startingSlimCases,
+                    startingCases,
                 })
             }
         });
     }
 
     private noMoreCasesAvailable = () => {
-        return this.state.slimCases.length !== this.state.limit;
+        return this.state.cases.length !== this.state.limit;
     }
 
     private makeDeadlinePretty = (date: Date): string => {

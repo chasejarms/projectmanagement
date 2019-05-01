@@ -5,9 +5,6 @@ import * as admin from 'firebase-admin';
 import { signUpLocal } from './functions/signUp';
 import { getCasesLocal } from './functions/getCases';
 import { createCaseLocal } from './functions/createCase';
-import {
-    slimCaseFromCaseChanges
-} from './functions/slimProjectFromProject';
 import { updateUserLocal } from './functions/updateUser';
 import { deleteUserLocal } from './functions/deleteUser';
 import { onCreateOrUpdateUserLocal } from './functions/onUserWrite';
@@ -28,7 +25,6 @@ export const createUser = createUserLocal(auth, firestore);
 export const signUp = signUpLocal(app);
 export const getCases = getCasesLocal(app);
 export const createCase = createCaseLocal(app);
-export const slimCaseFromCase = slimCaseFromCaseChanges(app);
 export const updateUser = updateUserLocal(app);
 export const deleteUser = deleteUserLocal(auth, app);
 export const onCreateOrUpdateUser = onCreateOrUpdateUserLocal(app);

@@ -11,7 +11,7 @@ export interface ICaseCreateRequest {
     };
 }
 
-export interface ISlimCasesSearchRequest extends ICaseFilter {
+export interface ICasesSearchRequest extends ICaseFilter {
     companyId: string;
     limit: number;
     startAfter?: FirebaseFirestore.DocumentSnapshot,
@@ -30,7 +30,7 @@ export interface IUpdateCaseInformationRequest {
 }
 
 export interface ICaseApi {
-    getSlimCases(slimCaseSearchRequest: ISlimCasesSearchRequest, userType: string, userId: string): Promise<FirebaseFirestore.QueryDocumentSnapshot[]>;
+    searchCases(searchRequest: ICasesSearchRequest, userType: string, userId: string): Promise<FirebaseFirestore.QueryDocumentSnapshot[]>;
     createProject(companyId: string, projectCreateRequest: ICaseCreateRequest): Promise<ICase>;
     getProject(projectId: string): Promise<ICase>;
     getProjectCheckpoints(getCaseRequest: IGetCaseCheckpointsRequest): Promise<IAugmentedCheckpoint[]>;

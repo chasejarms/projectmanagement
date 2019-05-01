@@ -9,12 +9,11 @@ import { ShowNewInfoFromType } from 'src/Models/showNewInfoFromTypes';
 import { UserType } from 'src/Models/userTypes';
 import { generateUniqueId } from 'src/Utils/generateUniqueId';
 import { ICase } from './../../Models/case';
-// import { ISlimCase } from './../../Models/slimCase';
-import { ICaseApi, ICaseCreateRequest, IGetCaseCheckpointsRequest, ISlimCasesSearchRequest, IUpdateCaseInformationRequest } from './projectsInterface';
+import { ICaseApi, ICaseCreateRequest, ICasesSearchRequest, IGetCaseCheckpointsRequest, IUpdateCaseInformationRequest } from './projectsInterface';
 
 export class ProjectsApi implements ICaseApi {
-    public async getSlimCases(slimCasesSearchRequest: ISlimCasesSearchRequest, userType: string, userId: string): Promise<FirebaseFirestore.QueryDocumentSnapshot[]> {
-        let query: any = db.collection('slimCases')
+    public async searchCases(slimCasesSearchRequest: ICasesSearchRequest, userType: string, userId: string): Promise<FirebaseFirestore.QueryDocumentSnapshot[]> {
+        let query: any = db.collection('cases')
             .where('companyId', '==', slimCasesSearchRequest.companyId)
             .orderBy('deadline', 'asc')
 

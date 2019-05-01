@@ -1,9 +1,9 @@
 import { css } from 'emotion';
 import { RouteComponentProps } from "react-router";
+import { IAugmentedCase } from 'src/Models/case';
 import { IDoctorUser } from 'src/Models/doctorUser';
 import { IUserSliceOfState } from 'src/Redux/Reducers/userReducer';
 import { ICaseFilter } from '../../Models/caseFilter/caseFilter';
-import { ISlimCase } from '../../Models/slimCase';
 import { IWorkflowCheckpoint } from '../../Models/workflow';
 
 export interface IProjectsPresentationProps extends RouteComponentProps<{}> {
@@ -12,12 +12,12 @@ export interface IProjectsPresentationProps extends RouteComponentProps<{}> {
 
 // tslint:disable-next-line:no-empty-interface
 export interface IProjectsPresentationState {
-    slimCases: ISlimCase[];
-    loadingSlimCases: boolean;
+    cases: IAugmentedCase[];
+    loadingCases: boolean;
     moreCasesExist: boolean;
     page: number;
     limit: number;
-    startingSlimCases: ISlimCase[];
+    startingCases: IAugmentedCase[];
     retrievingQRCodes: boolean;
     showFilterCasesDialog: boolean;
     selectedFilter: ICaseFilter;
