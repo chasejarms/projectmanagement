@@ -42,7 +42,7 @@ export const createQRCodeDisplayClasses = (
     });
 
     const sectionContainer = css({
-        paddingBottom: 32,
+        paddingTop: 32,
     });
 
     const controlContainer = css({

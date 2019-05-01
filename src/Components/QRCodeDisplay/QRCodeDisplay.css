@@ -2,11 +2,48 @@
     display: none;
 }
 
+/*
+    Using important a lot in this file because we need to override the material defaults for the
+    styles. Using important makes it so we don't have to create complex selectors to trump the
+    built in material specificity.
+*/
+
 @media print {
     .qr-code-display {
-        visibility: visible;
         display: block;
         position: absolute !important;
         height: auto !important;
+
+        width: 100%;
+        margin: 0;
+        float: none;
+    }
+
+    .section-container-qr-code-display {
+        page-break-inside: avoid;
+    }
+
+    .authenticated-navigation-drawer-container {
+        display: none !important;
+    }
+
+    @page {
+        margin: 0;
+    }
+
+    h1 {
+        font-size: 24pt !important;
+    }
+
+    h2, h3, h4 {
+        font-size: 14pt !important;
+    }
+
+    label, input {
+        font-size: 12pt !important;
+    }
+
+    #Header, #Footer {
+        display: none !important;
     }
 }

@@ -56,7 +56,8 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
 
         return (
             <div className={authenticatedContainer}>
-                <div className={drawerContainer}>
+                {/** Do not remove the authenticated-navigation-drawer-container class. It is used by the qr code display component css */}
+                <div className={`${drawerContainer} authenticated-navigation-drawer-container`}>
                     <Drawer
                         variant="permanent"
                         open={true}

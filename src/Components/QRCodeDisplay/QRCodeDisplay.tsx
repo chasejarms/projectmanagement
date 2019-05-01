@@ -49,8 +49,9 @@ export class QRCodeDisplay extends React.Component<IQRCodeDisplayProps, IQRCodeD
                             return undefined;
                         }
 
+                        const sectionContainerClasses = `${sectionIndex !== 0 ? sectionContainer : ''} section-container-qr-code-display`
                         return (
-                            <div key={sectionId} className={sectionContainer}>
+                            <div key={sectionId} className={sectionContainerClasses}>
                                 {controlOrderForSection.map((controlId) => {
                                     return (
                                         <div key={controlId} className={controlContainer}>
