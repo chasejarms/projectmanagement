@@ -17,13 +17,25 @@
         width: 100%;
         margin: 0;
         float: none;
+
+        column-count: 2 !important;
+        -webkit-column-count: 2 !important;
+        -moz-column-count: 2 !important;
+
+        column-gap: 64px;
+        -webkit-column-gap: 64px;
+        -moz-column-gap: 64px;
+
+        column-rule: 1px solid rgba(224, 224, 224, 1);
+        -webkit-column-rule: 1px solid rgba(224, 224, 224, 1);
+        -moz-column-rule: 1px solid rgba(224, 224, 224, 1);
     }
 
     .section-container-qr-code-display {
         page-break-inside: avoid;
     }
 
-    .authenticated-navigation-drawer-container {
+    .authenticated-navigation-drawer-container, .hide-on-print {
         display: none !important;
     }
 
@@ -41,9 +53,5 @@
 
     label, input {
         font-size: 12pt !important;
-    }
-
-    #Header, #Footer {
-        display: none !important;
     }
 }

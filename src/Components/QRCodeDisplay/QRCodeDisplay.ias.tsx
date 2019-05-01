@@ -32,9 +32,11 @@ export const createQRCodeDisplayClasses = (
     })
 
     const qrCodeContainer = css({
-        float: 'right',
-        paddingLeft: 24,
-        paddingBottom: 24,
+        position: 'absolute',
+        marginTop: 8,
+        marginRight: 8,
+        top: 0,
+        right: 0,
     })
 
     const individualQRCodeContainer = css({

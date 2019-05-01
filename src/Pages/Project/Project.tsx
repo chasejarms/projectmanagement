@@ -145,7 +145,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                                     />
                                 </div>
                             ) : (
-                                <div className={sectionsContainer}>
+                                <div className={`${sectionsContainer} hide-on-print`}>
                                         {this.state.companyLogoDownloadURL ? (
                                             <div>
                                                 <img src={this.state.companyLogoDownloadURL} className={companyLogoImage}/>
@@ -176,7 +176,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                                 </div>
                             )}
                             {!this.state.loadingPrescriptionTemplate ? (
-                                <div className={createCaseButtonContainer}>
+                                <div className={`${createCaseButtonContainer} hide-on-print`}>
                                     <Button onClick={this.showQrCodeDialog} color="secondary">
                                         Print Case Information
                                     </Button>
@@ -202,7 +202,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                         </Paper>
                     )}
                     {tabIndex === 1 && (
-                        <Paper className={caseProgressPaper}>
+                        <Paper className={`${caseProgressPaper} hide-on-print`}>
                             {this.state.retrievingCheckpoints ? (
                                 <div className={loadingCheckpointsContainer}>
                                     <CircularProgress
