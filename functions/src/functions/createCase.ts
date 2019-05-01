@@ -1,25 +1,10 @@
-// import { IPrescriptionFormTemplate } from '../../../src/Models/prescription/prescriptionFormTemplate';
-
 import { ShowNewInfoFromType } from '../models/showNewInfoFromTypes';
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { UserType } from '../models/userTypes';
 import { IFunctionsCaseCheckpoint } from '../models/caseCheckpoint';
-// import { IPrescriptionControlTemplateType } from '../../../src/Models/prescription/controls/prescriptionControlTemplateType';
-
-// interface IAttachmentMetadata {
-//     path: string;
-//     contentType: string;
-// }
 
 interface IProjectCreateData {
-    // name: string;
-    // deadline: admin.firestore.Timestamp;
-    // notes: string;
-    // attachmentUrls: IAttachmentMetadata[];
-    // doctor?: string;
-    // companyId: string;
-    // idForCase: string;
     id: string;
     prescriptionFormTemplateId: string;
     controlValues: {

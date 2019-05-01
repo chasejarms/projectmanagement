@@ -1,5 +1,4 @@
 import { canCreateCasesLocal } from './functions/canCreateCases';
-import { markProjectAsStartedLocal } from './functions/markProjectAsStarted';
 import * as admin from 'firebase-admin';
 
 import { signUpLocal } from './functions/signUp';
@@ -10,7 +9,7 @@ import { onCreateOrUpdateUserLocal } from './functions/onUserWrite';
 import { linkFileToProjectLocal } from './functions/linkFileToProject';
 import { createThumbnailFromImageLocal } from './functions/createThumbnailFromImage';
 import { createUserLocal } from './functions/createUser';
-import { markProjectAsCompleteLocal } from './functions/markProjectAsComplete';
+import { onCaseUpdateLocal } from './functions/onCaseUpdate';
 
 const app = admin.initializeApp({
     credential: admin.credential.applicationDefault(),
@@ -27,6 +26,5 @@ export const deleteUser = deleteUserLocal(auth, app);
 export const onCreateOrUpdateUser = onCreateOrUpdateUserLocal(app);
 export const linkFileToProject = linkFileToProjectLocal(app);
 export const createThumbnailFromImage = createThumbnailFromImageLocal(app);
-export const markProjectAsStarted = markProjectAsStartedLocal(app);
 export const canCreateCases = canCreateCasesLocal(app);
-export const markProjectAsComplete = markProjectAsCompleteLocal(app);
+export const onCaseUpdate = onCaseUpdateLocal(app);

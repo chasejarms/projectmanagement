@@ -1,0 +1,56 @@
+import * as admin from 'firebase-admin';
+import * as functions from 'firebase-functions';
+import { isEqual } from 'lodash';
+import { IFunctionsCaseCheckpoint } from '../models/caseCheckpoint';
+
+export const onCaseUpdateLocal = (passedInAdmin: admin.app.App) => functions.firestore
+    .document('cases/{caseId}')
+    .onUpdate(async(documentSnapshot, context) => {
+
+        const caseId = context.params['caseId'];
+        const beforeCaseCheckpoints = documentSnapshot.before.data().caseCheckpoints as IFunctionsCaseCheckpoint[];
+        const afterCaseCheckpoints = documentSnapshot.after.data().caseCheckpoints as IFunctionsCaseCheckpoint[];
+
+        const noCheckpointsHaveChanged = isEqual(beforeCaseCheckpoints, afterCaseCheckpoints);
+
+        if (noCheckpointsHaveChanged) {
+            return;
+        }
+
+        const earliestDoctorCheckpoint = afterCaseCheckpoints.find((caseCheckpoint) => {
+            return caseCheckpoint.visibleToDoctor && !caseCheckpoint.complete;
+        });
+
+        const earliestLabCheckpoint = afterCaseCheckpoints.find((caseCheckpoint) => {
+            return !caseCheckpoint.complete;
+        });
+
+        const currentDoctorCheckpoint = earliestDoctorCheckpoint ? earliestDoctorCheckpoint.linkedWorkflowCheckpoint : '';
+        const currentDoctorCheckpointName = earliestDoctorCheckpoint ? earliestDoctorCheckpoint.name : '';
+
+        const currentLabCheckpointName = earliestLabCheckpoint ? earliestLabCheckpoint.name : '';
+        const currentLabCheckpoint = earliestLabCheckpoint ? earliestLabCheckpoint.linkedWorkflowCheckpoint : '';
+
+        console.log('after case checkpoints: ', afterCaseCheckpoints);
+
+        const complete = afterCaseCheckpoints.every((caseCheckpoint) => {
+            return caseCheckpoint.complete;
+        });
+
+        console.log('complete: ', complete);
+
+        const hasStarted = afterCaseCheckpoints.some((caseCheckpoint) => {
+            return caseCheckpoint.complete;
+        });
+
+        const firestore = passedInAdmin.firestore();
+
+        await firestore.collection('cases').doc(caseId).set({
+            currentDoctorCheckpoint,
+            currentDoctorCheckpointName,
+            currentLabCheckpoint,
+            currentLabCheckpointName,
+            complete,
+            hasStarted,
+        }, { merge: true });
+    })
