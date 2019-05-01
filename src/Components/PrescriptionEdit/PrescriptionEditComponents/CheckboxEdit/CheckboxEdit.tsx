@@ -3,6 +3,7 @@ import {
     FormControl,
     FormControlLabel,
     FormGroup,
+    FormLabel,
 } from '@material-ui/core';
 import { cloneDeep } from 'lodash';
 import * as React from 'react';
@@ -24,6 +25,7 @@ class CheckboxEditPresentation extends React.Component<ICheckboxEditProps, IChec
         return (
             <div>
                 <FormControl>
+                    <FormLabel>{control.label}</FormLabel>
                     <FormGroup row={true}>
                         {control.options.map(({ text, id }) => {
                             const valuesExistForControl = !!controlValue;

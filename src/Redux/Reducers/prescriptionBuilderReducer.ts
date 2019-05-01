@@ -308,6 +308,7 @@ const prescriptionFormTemplateFromNewControl = (state: IPrescriptionBuilderSlice
             type: IPrescriptionControlTemplateType.Checkbox,
             options,
             sectionId,
+            label: 'Checkbox Label',
         }
 
         control = checkboxControl;

@@ -642,6 +642,15 @@ export class PrescriptionBuilderPresentation extends React.Component<
         } else if (control.type === IPrescriptionControlTemplateType.Checkbox) {
             return (
                 <div className={threeColumns}>
+                    <div>
+                        <FormControl fullWidth={true}>
+                            <InputLabel>Label</InputLabel>
+                            <Input
+                                value={control.label}
+                                onChange={this.handleControlLabelChange}
+                            />
+                        </FormControl>
+                    </div>
                     <div className={optionsContainer}>
                         {
                             control.options.map((option, optionIndex) => {
@@ -665,7 +674,6 @@ export class PrescriptionBuilderPresentation extends React.Component<
                             <Button onClick={this.handleAddOptionToDropdown} color="secondary">Add Option</Button>
                         </div>
                     </div>
-                    <div/>
                     <div className={dragIconContainerClass}>
                         <DraggableExistingFormElement controlType={IPrescriptionControlTemplateType.Checkbox} id={control.id}/>
                     </div>
