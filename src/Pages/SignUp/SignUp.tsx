@@ -56,6 +56,17 @@ export class SignUpPresentation extends React.Component<
         signUpError: '',
     };
 
+    // tslint:disable-next-line:variable-name
+    private _isMounted: boolean;
+
+    public componentWillMount(): void {
+        this._isMounted = true;
+    }
+
+    public componentWillUnmount(): void {
+        this._isMounted = false;
+    }
+
     public render() {
         const {
             signUpContainer,
@@ -159,15 +170,20 @@ export class SignUpPresentation extends React.Component<
     }
 
     private handleDialogClose = (): void => {
-        this.setState({
-            dialogIsOpen: false,
-        })
+        if (this._isMounted) {
+            this.setState({
+                dialogIsOpen: false,
+            })
+        }
     }
 
     private signUp = async() => {
-        this.setState({
-            signUpActionInProgress: true,
-        });
+        if (this._isMounted) {
+            this.setState({
+                signUpActionInProgress: true,
+            });
+        }
+
         try {
             await Api.authenticationApi.signUp(
                 this.state.companyName.value,
@@ -183,11 +199,13 @@ export class SignUpPresentation extends React.Component<
 
             this.redirectToCompanySelection(userCredential.user!.uid);
         } catch (error) {
-            this.setState({
-                signUpActionInProgress: false,
-                dialogIsOpen: true,
-                signUpError: error.message,
-            })
+            if (this._isMounted) {
+                this.setState({
+                    signUpActionInProgress: false,
+                    dialogIsOpen: true,
+                    signUpError: error.message,
+                })
+            }
         }
     }
 
@@ -200,9 +218,11 @@ export class SignUpPresentation extends React.Component<
         const controlToSetOnState = formControl.setValue(event.target.value);
         const name: 'fullName' | 'companyName' | 'email' | 'password' = event.target.name;
 
-        this.setState({
-            [name]: controlToSetOnState,
-        } as any);
+        if (this._isMounted) {
+            this.setState({
+                [name]: controlToSetOnState,
+            } as any);
+        }
     }
 
     private allControlsAreValid(): boolean {

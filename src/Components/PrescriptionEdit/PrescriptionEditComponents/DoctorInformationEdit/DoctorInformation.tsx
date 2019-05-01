@@ -26,9 +26,20 @@ class DoctorInformationEditPresentation extends React.Component<IDoctorInformati
         popperIsOpen: false,
     }
 
+    // tslint:disable-next-line:variable-name
+    private _isMounted: boolean;
+
     constructor(props: IDoctorInformationEditProps) {
         super(props);
         this.potentiallySetDoctorUser();
+    }
+
+    public componentWillMount(): void {
+        this._isMounted = true;
+    }
+
+    public componentWillUnmount(): void {
+        this._isMounted = false;
     }
 
     public render() {
@@ -134,26 +145,32 @@ class DoctorInformationEditPresentation extends React.Component<IDoctorInformati
 
     private handleDoctorSearch = async(event: any) => {
         const doctorSearchName = event.target.value;
-        this.setState({
-            doctorSearchValue: doctorSearchName,
-        })
+        if (this._isMounted) {
+            this.setState({
+                doctorSearchValue: doctorSearchName,
+            })
+        }
 
         const companyId = this.props.location.pathname.split('/')[2];
 
         const potentialDoctors = await Api.userApi.searchDoctorUsers(companyId, doctorSearchName);
 
-        this.setState({
-            potentialDoctors,
-            popperIsOpen: true,
-        })
+        if (this._isMounted) {
+            this.setState({
+                potentialDoctors,
+                popperIsOpen: true,
+            })
+        }
     }
 
     private selectDoctor = (doctor: IDoctorUser) => () => {
-        this.setState({
-            selectedDoctorInformation: doctor,
-            popperIsOpen: false,
-            doctorSearchValue: '',
-        })
+        if (this._isMounted) {
+            this.setState({
+                selectedDoctorInformation: doctor,
+                popperIsOpen: false,
+                doctorSearchValue: '',
+            })
+        }
 
         const {
             control,

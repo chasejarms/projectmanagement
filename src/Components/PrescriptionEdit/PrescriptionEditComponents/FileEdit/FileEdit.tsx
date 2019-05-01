@@ -34,11 +34,19 @@ export class FileEditPresentation extends React.Component<
         indexOfHoveredItem: null,
     }
 
+    // tslint:disable-next-line:variable-name
+    private _isMounted: boolean;
+
     public componentWillMount(): void {
+        this._isMounted = true;
         const controlValueExists = !!this.props.controlValue;
         if (controlValueExists) {
             this.createSrcUrls();
         }
+    }
+
+    public componentWillUnmount(): void {
+        this._isMounted = false;
     }
 
     public componentDidUpdate(): void {
@@ -48,9 +56,11 @@ export class FileEditPresentation extends React.Component<
         }
 
         if (!this.props.controlValue && this.state.srcURLs.length > 0) {
-            this.setState({
-                srcURLs: [],
-            })
+            if (this._isMounted) {
+                this.setState({
+                    srcURLs: [],
+                })
+            }
         }
     }
 
@@ -186,9 +196,11 @@ export class FileEditPresentation extends React.Component<
 
     private removeImage = (index: number) => async() => {
         const srcURLs = this.state.srcURLs.filter((val, compareIndex) => compareIndex !== index);
-        this.setState({
-            srcURLs,
-        });
+        if (this._isMounted) {
+            this.setState({
+                srcURLs,
+            });
+        }
 
         const pathToRemove = (this.props.controlValue as IAttachmentMetadata[])[index].path;
         const updatedAttachmentMetadata = (this.props.controlValue as IAttachmentMetadata[]).filter((attachmentMetadata, compareIndex) => {
@@ -201,21 +213,27 @@ export class FileEditPresentation extends React.Component<
     }
 
     private setHoverItem = (index: number) => () => {
-        this.setState({
-            indexOfHoveredItem: index,
-        })
+        if (this._isMounted) {
+            this.setState({
+                indexOfHoveredItem: index,
+            })
+        }
     }
 
     private removeHoverItem = () => {
-        this.setState({
-            indexOfHoveredItem: null,
-        })
+        if (this._isMounted) {
+            this.setState({
+                indexOfHoveredItem: null,
+            })
+        }
     }
 
     private closeDialog = () => {
-        this.setState({
-            dialogIsOpen: false,
-        })
+        if (this._isMounted) {
+            this.setState({
+                dialogIsOpen: false,
+            })
+        }
     }
 
     private handleAddFiles = async(event: any): Promise<void> => {
@@ -242,16 +260,20 @@ export class FileEditPresentation extends React.Component<
         }
 
         if (fileIsLargerThan10MB) {
-            this.setState({
-                dialogIsOpen: true,
-                dialogError: 'The maximum file size for each file is 10 MB'
-            });
-            return;
+            if (this._isMounted) {
+                this.setState({
+                    dialogIsOpen: true,
+                    dialogError: 'The maximum file size for each file is 10 MB'
+                });
+                return;
+            }
         }
 
-        this.setState({
-            uploadingFilesInProgress: true,
-        })
+        if (this._isMounted) {
+            this.setState({
+                uploadingFilesInProgress: true,
+            })
+        }
 
         const uploadFilePromises: Array<Promise<firebase.storage.UploadTaskSnapshot>>= [];
         for (let i = 0; i < files.length; i++) {
@@ -268,9 +290,11 @@ export class FileEditPresentation extends React.Component<
 
         this.props.updateControlValue(control.id, newMetadataWithExistingMetadata);
 
-        this.setState({
-            uploadingFilesInProgress: false,
-        })
+        if (this._isMounted) {
+            this.setState({
+                uploadingFilesInProgress: false,
+            })
+        }
     }
 
     private convertToAttachmentMetadata = (uploadDocumentSnapshots: firebase.storage.UploadTaskSnapshot[]): IAttachmentMetadata[] => {
@@ -317,9 +341,11 @@ export class FileEditPresentation extends React.Component<
         });
 
         const downloadURLs = await Promise.all(downloadURLPromises);
-        this.setState({
-            srcURLs: downloadURLs,
-        })
+        if (this._isMounted) {
+            this.setState({
+                srcURLs: downloadURLs,
+            })
+        }
     }
 }
 

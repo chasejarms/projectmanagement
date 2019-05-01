@@ -323,21 +323,27 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         const storageRef = firebase.storage().ref();
         const companyLogoDownloadURL = await storageRef.child(companyLogoURL).getDownloadURL();
 
-        this.setState({
-            companyLogoDownloadURL,
-        });
+        if (this._isMounted) {
+            this.setState({
+                companyLogoDownloadURL,
+            });
+        }
     }
 
     private handleSnackbarClose = (): void => {
-        this.setState({
-            snackbarIsOpen: false,
-        })
+        if (this._isMounted) {
+            this.setState({
+                snackbarIsOpen: false,
+            })
+        }
     }
 
     private updateCase = async() => {
-        this.setState({
-            updateCaseInformationInProgress: true,
-        });
+        if (this._isMounted) {
+            this.setState({
+                updateCaseInformationInProgress: true,
+            });
+        }
 
         const caseId = this.props.match.params['projectId'];
         const companyId = this.props.location.pathname.split('/')[2];
@@ -348,16 +354,20 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             controlValues: this.props.existingCaseState!.controlValues,
         }, showNewInfoFrom);
 
-        this.setState({
-            updateCaseInformationInProgress: false,
-            snackbarIsOpen: true,
-        })
+        if (this._isMounted) {
+            this.setState({
+                updateCaseInformationInProgress: false,
+                snackbarIsOpen: true,
+            })
+        }
     }
 
     private handleChange = (event: any, tabIndex: number) => {
-        this.setState({
-            tabIndex,
-        })
+        if (this._isMounted) {
+            this.setState({
+                tabIndex,
+            })
+        }
     }
 
     private correctControlDisplay = (controlId: string) => {
@@ -482,9 +492,11 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             }
         })
 
-        this.setState({
-            checkpoints,
-        })
+        if (this._isMounted) {
+            this.setState({
+                checkpoints,
+            })
+        }
 
         const caseId = this.props.match.params['projectId'];
         await Api.projectsApi.updateCaseCheckpoints(caseId, checkpoints);

@@ -395,9 +395,11 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
     private applyCaseFilters = async() => {
         const clonedDialogDisplayFilter = cloneDeep(this.state.dialogDisplayFilter);
 
-        this.setState({
-            loadingCases: true,
-        });
+        if (this._isMounted) {
+            this.setState({
+                loadingCases: true,
+            });
+        }
 
         const companyId = this.props.match.path.split('/')[2];
         const casesSearchRequest: ICasesSearchRequest = {
@@ -452,29 +454,35 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
 
     private handleDoctorSearch = async(event: any) => {
         const doctorSearchName = event.target.value;
-        this.setState({
-            doctorSearchValue: doctorSearchName,
-        })
+        if (this._isMounted) {
+            this.setState({
+                doctorSearchValue: doctorSearchName,
+            })
+        }
 
         const companyId = this.props.location.pathname.split('/')[2];
 
         const potentialDoctors = await Api.userApi.searchDoctorUsers(companyId, doctorSearchName);
 
-        this.setState({
-            potentialDoctors,
-        })
+        if (this._isMounted) {
+            this.setState({
+                potentialDoctors,
+            })
+        }
     }
 
     private selectDoctor = (doctor: IDoctorUser) => () => {
         const dialogDisplayFilterClone = cloneDeep(this.state.dialogDisplayFilter);
         dialogDisplayFilterClone.doctorId = doctor.id;
 
-        this.setState({
-            selectedDoctorInformation: doctor,
-            dialogDisplayFilter: dialogDisplayFilterClone,
-            doctorSearchValue: '',
-            potentialDoctors: [],
-        })
+        if (this._isMounted) {
+            this.setState({
+                selectedDoctorInformation: doctor,
+                dialogDisplayFilter: dialogDisplayFilterClone,
+                doctorSearchValue: '',
+                potentialDoctors: [],
+            })
+        }
     }
 
     private handleDialogFilterChange = (keyName: keyof ICaseFilter) => (event: any) => {
@@ -483,24 +491,30 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         const caseFilterCopy = cloneDeep(this.state.dialogDisplayFilter);
         caseFilterCopy[keyName] = eventValue;
 
-        this.setState({
-            dialogDisplayFilter: caseFilterCopy,
-        })
+        if (this._isMounted) {
+            this.setState({
+                dialogDisplayFilter: caseFilterCopy,
+            })
+        }
     }
 
     private openFilterCasesDialog = () => {
         const selectedFilterClone = cloneDeep(this.state.selectedFilter);
 
-        this.setState({
-            showFilterCasesDialog: true,
-            dialogDisplayFilter: selectedFilterClone,
-        });
+        if (this._isMounted) {
+            this.setState({
+                showFilterCasesDialog: true,
+                dialogDisplayFilter: selectedFilterClone,
+            });
+        }
     }
 
     private closeFilterCasesDialog = () => {
-        this.setState({
-            showFilterCasesDialog: false,
-        })
+        if (this._isMounted) {
+            this.setState({
+                showFilterCasesDialog: false,
+            })
+        }
     }
 
     private loadPreviousCases = () => {

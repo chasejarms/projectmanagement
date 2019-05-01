@@ -82,7 +82,11 @@ export class PrescriptionBuilderPresentation extends React.Component<
         uploadingCompanyLogoURL: false,
     }
 
+    // tslint:disable-next-line:variable-name
+    private _isMounted: boolean;
+
     public async componentWillMount(): Promise<void> {
+        this._isMounted = true;
         const companyId = this.props.match.path.split('/')[2];
         const prescriptionFormTemplate = await Api.prescriptionTemplateApi.getPrescriptionTemplate(companyId);
         this.props.setPrescriptionFormTemplate(prescriptionFormTemplate);
@@ -91,9 +95,15 @@ export class PrescriptionBuilderPresentation extends React.Component<
             await this.createCompanyLogoDownloadURL(prescriptionFormTemplate.companyLogoURL);
         }
 
-        this.setState({
-            loadingPrescriptionTemplate: false,
-        })
+        if (this._isMounted) {
+            this.setState({
+                loadingPrescriptionTemplate: false,
+            })
+        }
+    }
+
+    public componentWillUnmount(): void {
+        this._isMounted = false;
     }
 
     public render() {
@@ -365,15 +375,19 @@ export class PrescriptionBuilderPresentation extends React.Component<
         const storageRef = firebase.storage().ref();
         const companyLogoDownloadURL = await storageRef.child(companyLogoURL).getDownloadURL();
 
-        this.setState({
-            companyLogoDownloadURL,
-        });
+        if (this._isMounted) {
+            this.setState({
+                companyLogoDownloadURL,
+            });
+        }
     }
 
     private closeDialog = () => {
-        this.setState({
-            dialogIsOpen: false,
-        })
+        if (this._isMounted) {
+            this.setState({
+                dialogIsOpen: false,
+            })
+        }
     }
 
     private handleLogoSelection = async(event: any): Promise<void> => {
@@ -390,11 +404,13 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
         const fileIsLargerThan1MB = file.size > (1000000);
         if (fileIsLargerThan1MB) {
-            this.setState({
-                dialogIsOpen: true,
-                dialogError: 'The maximum logo size is 1MB.'
-            });
-            return;
+            if (this._isMounted) {
+                this.setState({
+                    dialogIsOpen: true,
+                    dialogError: 'The maximum logo size is 1MB.'
+                });
+                return;
+            }
         }
 
         const fileIsNotImage = !file.type.includes('image/jpg') &&
@@ -402,19 +418,23 @@ export class PrescriptionBuilderPresentation extends React.Component<
             !file.type.includes('image/png');
 
         if (fileIsNotImage) {
-            this.setState({
-                dialogIsOpen: true,
-                dialogError: 'Only .jpg, .jpeg, and .png files are allowed.',
-            });
-            return;
+            if (this._isMounted) {
+                this.setState({
+                    dialogIsOpen: true,
+                    dialogError: 'Only .jpg, .jpeg, and .png files are allowed.',
+                });
+                return;
+            }
         }
 
         this.props.setSelectedControl(null);
         this.props.setSelectedSection(null);
 
-        this.setState({
-            uploadingCompanyLogoURL: true,
-        });
+        if (this._isMounted) {
+            this.setState({
+                uploadingCompanyLogoURL: true,
+            });
+        }
 
         const prescriptionTemplateId = this.props.prescriptionBuilderState.prescriptionFormTemplate.id!;
         const companyLogoURL = await Api.prescriptionTemplateApi.updateCompanyLogo(
@@ -427,18 +447,22 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
         await this.createCompanyLogoDownloadURL(companyLogoURL);
 
-        this.setState({
-            uploadingCompanyLogoURL: false,
-        })
+        if (this._isMounted) {
+            this.setState({
+                uploadingCompanyLogoURL: false,
+            })
+        }
     }
 
     private removeLogo = async(): Promise<void> => {
         const prescriptionTemplateId = this.props.prescriptionBuilderState.prescriptionFormTemplate.id!;
 
         this.props.setCompanyLogoURL(null);
-        this.setState({
-            companyLogoDownloadURL: undefined,
-        })
+        if (this._isMounted) {
+            this.setState({
+                companyLogoDownloadURL: undefined,
+            })
+        }
 
         await Api.prescriptionTemplateApi.removeCompanyLogo(prescriptionTemplateId);
     }
@@ -1040,24 +1064,30 @@ export class PrescriptionBuilderPresentation extends React.Component<
 
     private updatePrescriptionTemplate = async (): Promise<void> => {
         const prescriptionTemplate = this.props.prescriptionBuilderState.prescriptionFormTemplate;
-        this.setState({
-            updatingPrescriptionTemplate: true,
-        })
+        if (this._isMounted) {
+            this.setState({
+                updatingPrescriptionTemplate: true,
+            })
+        }
 
         const companyId = this.props.match.path.split('/')[2];
         await Api.prescriptionTemplateApi.updatePrescriptionTemplate(companyId, prescriptionTemplate);
 
-        this.setState({
-            snackbarIsOpen: true,
-            updatingPrescriptionTemplateSuccess: true,
-            updatingPrescriptionTemplate: false,
-        })
+        if (this._isMounted) {
+            this.setState({
+                snackbarIsOpen: true,
+                updatingPrescriptionTemplateSuccess: true,
+                updatingPrescriptionTemplate: false,
+            })
+        }
     }
 
     private handleSnackbarClose = async(): Promise<void> => {
-        this.setState({
-            snackbarIsOpen: false,
-        })
+        if (this._isMounted) {
+            this.setState({
+                snackbarIsOpen: false,
+            })
+        }
     }
 }
 

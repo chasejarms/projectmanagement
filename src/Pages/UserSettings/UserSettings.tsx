@@ -51,15 +51,29 @@ export class UserSettingsPresentation extends React.Component<
         updatingUserPasswordIsSuccess: false,
     }
 
+    // tslint:disable-next-line:variable-name
+    private _isMounted: boolean;
+
+    public componentWillMount(): void {
+        this._isMounted = true;
+    }
+
+    public componentWillUnmount(): void {
+        this._isMounted = false;
+    }
+
     public componentDidMount(): void {
         const secondPassword = this.state.secondPassword.setValue(this.state.secondPassword.value);
         secondPassword.validators.push(this.samePasswordForConfirmDialog)
         secondPassword.markAsInvalid()
             .markAsUntouched()
             .markAsPristine();
-        this.setState({
-            secondPassword,
-        })
+        
+        if (this._isMounted) {
+            this.setState({
+                secondPassword,
+            })
+        }
     }
 
     public render() {
@@ -180,33 +194,41 @@ export class UserSettingsPresentation extends React.Component<
     }
 
     private handleSnackbarClose = (): void => {
-        this.setState({
-            snackbarIsOpen: false,
-        })
+        if (this._isMounted) {
+            this.setState({
+                snackbarIsOpen: false,
+            })
+        }
     }
 
     private resetUserPassword = async(): Promise<void> => {
         const user = firebase.auth().currentUser!;
         try {
-            this.setState({
-                updatingUserPassword: true,
-            })
+            if (this._isMounted) {
+                this.setState({
+                    updatingUserPassword: true,
+                })
+            }
             await user.updatePassword(this.state.firstPassword.value)
         } catch {
-            this.setState({
-                updatingUserPassword: false,
-                updatingUserPasswordIsSuccess: false,
-                snackbarIsOpen: true,
-            })
+            if (this._isMounted) {
+                this.setState({
+                    updatingUserPassword: false,
+                    updatingUserPasswordIsSuccess: false,
+                    snackbarIsOpen: true,
+                })   
+            }
             this.resetResetPasswordControls();
             return;
         }
 
-        this.setState({
-            updatingUserPassword: false,
-            snackbarIsOpen: true,
-            updatingUserPasswordIsSuccess: true,
-        })
+        if (this._isMounted) {
+            this.setState({
+                updatingUserPassword: false,
+                snackbarIsOpen: true,
+                updatingUserPasswordIsSuccess: true,
+            })
+        }
         this.resetResetPasswordControls();
     }
 
@@ -214,20 +236,24 @@ export class UserSettingsPresentation extends React.Component<
         const value = event.target.value;
         const firstPasswordFormControlState = this.state.firstPassword.setValue(value);
         const secondPassword = this.state.secondPassword.setValue(this.state.secondPassword.value);
-        this.setState({
-            firstPassword: firstPasswordFormControlState,
-            secondPassword,
-        })
+        if (this._isMounted) {
+            this.setState({
+                firstPassword: firstPasswordFormControlState,
+                secondPassword,
+            })
+        }
     }
 
     private handleSecondPasswordChange = (event: any): void => {
         const value = event.target.value;
         const firstPassword = this.state.firstPassword.setValue(this.state.firstPassword.value);
         const secondPasswordFormControlState = this.state.secondPassword.setValue(value);
-        this.setState({
-            firstPassword,
-            secondPassword: secondPasswordFormControlState,
-        })
+        if (this._isMounted) {
+            this.setState({
+                firstPassword,
+                secondPassword: secondPasswordFormControlState,
+            })
+        }
     }
 
     private someControlsAreInvalid = (): boolean => {
@@ -245,10 +271,12 @@ export class UserSettingsPresentation extends React.Component<
             .markAsTouched()
             .markAsPristine();
 
-        this.setState({
-            firstPassword,
-            secondPassword,
-        })
+        if (this._isMounted) {
+            this.setState({
+                firstPassword,
+                secondPassword,
+            })
+        }
     }
 
     private samePasswordForConfirmDialog = (value: any): string | null => {

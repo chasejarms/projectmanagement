@@ -31,7 +31,6 @@ import { requiredValidator } from 'src/Validators/required.validator';
 import Api from '../../Api/api';
 import { AsyncButton } from '../../Components/AsyncButton/AsyncButton';
 import { IWorkflowCheckpoint, IWorkflowCheckpointCreateRequest } from '../../Models/workflow';
-import { handleChange } from '../../Utils/handleChange';
 import { createWorkflowPresentationClasses, IWorkflowPresentationProps, IWorkflowPresentationState } from './Workflow.ias';
 
 export class WorkflowPresentation extends React.Component<IWorkflowPresentationProps, IWorkflowPresentationState> {
@@ -56,8 +55,6 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
 
     // tslint:disable-next-line:variable-name
     public _isMounted: boolean;
-
-    public handleChange = handleChange(this);
 
     constructor(props: IWorkflowPresentationProps) {
         super(props);

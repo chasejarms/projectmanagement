@@ -37,7 +37,6 @@ import { FormControlState } from '../../Classes/formControlState';
 import { AsyncButton } from '../../Components/AsyncButton/AsyncButton';
 import { IUser } from '../../Models/user';
 import { IAppState } from '../../Redux/Reducers/rootReducer';
-import { handleChange } from '../../Utils/handleChange';
 import { requiredValidator } from '../../Validators/required.validator';
 import { createUsersPresentationClasses, IUsersPresentationProps, IUsersPresentationState } from './Users.ias';
 
@@ -101,7 +100,13 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
     // tslint:disable-next-line:variable-name
     public _isMounted: boolean;
 
-    public handleChange = handleChange(this);
+    public handleChange = (event: any) => {
+        if (this._isMounted) {
+            this.setState({
+                [event.target.name]: event.target.value
+            } as any);
+        }
+    }
 
     public async componentWillMount(): Promise<void> {
         this._isMounted = true;

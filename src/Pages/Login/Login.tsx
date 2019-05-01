@@ -137,9 +137,11 @@ export class LoginPresentation extends React.Component<
     }
 
     private handleDialogClose = (): void => {
-        this.setState({
-            dialogIsOpen: false,
-        })
+        if (this._isMounted) {
+            this.setState({
+                dialogIsOpen: false,
+            })
+        }
     }
 
     private login = async() => {
@@ -156,10 +158,12 @@ export class LoginPresentation extends React.Component<
                 this.state.email.value,
                 this.state.password.value);
         } catch (e) {
-            this.setState({
-                dialogIsOpen: true,
-                loginActionInProgress: false,
-            })
+            if (this._isMounted) {
+                this.setState({
+                    dialogIsOpen: true,
+                    loginActionInProgress: false,
+                })
+            }
 
             return;
         }

@@ -40,7 +40,11 @@ export class CaseCreationPresentation extends React.Component<
         caseId: generateUniqueId(),
     }
 
+    // tslint:disable-next-line:variable-name
+    private _isMounted: boolean;
+
     public async componentWillMount(): Promise<void> {
+        this._isMounted = true;
         const companyId = this.props.match.path.split('/')[2];
         const canCreateCases = await Api.projectsApi.canCreateCases(companyId);
 
@@ -48,10 +52,12 @@ export class CaseCreationPresentation extends React.Component<
         console.log(canCreateCases);
 
         if (!canCreateCases) {
-            this.setState({
-                canCreateCases: false,
-                loadingPrescriptionTemplate: false,
-            })
+            if (this._isMounted) {
+                this.setState({
+                    canCreateCases: false,
+                    loadingPrescriptionTemplate: false,
+                })
+            }
 
             return;
         }
@@ -62,14 +68,17 @@ export class CaseCreationPresentation extends React.Component<
             await this.createCompanyLogoDownloadURL(prescriptionFormTemplate.companyLogoURL);
         }
 
-        this.setState({
-            loadingPrescriptionTemplate: false,
-            prescriptionFormTemplate,
-            canCreateCases: true,
-        })
+        if (this._isMounted) {
+            this.setState({
+                loadingPrescriptionTemplate: false,
+                prescriptionFormTemplate,
+                canCreateCases: true,
+            })
+        }
     }
 
     public componentWillUnmount(): void {
+        this._isMounted = false;
         this.props.clearCaseCreationState();
     }
 
@@ -181,9 +190,11 @@ export class CaseCreationPresentation extends React.Component<
         const storageRef = firebase.storage().ref();
         const companyLogoDownloadURL = await storageRef.child(companyLogoURL).getDownloadURL();
 
-        this.setState({
-            companyLogoDownloadURL,
-        });
+        if (this._isMounted) {
+            this.setState({
+                companyLogoDownloadURL,
+            });
+        }
     }
 
     private checkPrescriptionTemplateIsInvalid = () => {
@@ -317,15 +328,19 @@ export class CaseCreationPresentation extends React.Component<
             controlValues: this.props.caseCreationState.controlValues,
         }
 
-        this.setState({
-            caseCreationInProgress: true,
-        })
+        if (this._isMounted) {
+            this.setState({
+                caseCreationInProgress: true,
+            })
+        }
 
         await Api.projectsApi.createProject(companyId, caseCreateRequest);
 
-        this.setState({
-            caseCreationInProgress: false,
-        })
+        if (this._isMounted) {
+            this.setState({
+                caseCreationInProgress: false,
+            })
+        }
 
         const postRoute = `/company/${companyId}/project/${this.state.caseId}`;
         this.props.history.push(postRoute);
