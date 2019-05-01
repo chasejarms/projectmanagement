@@ -27,7 +27,6 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import AddIcon from '@material-ui/icons/Add';
-import ClearIcon from '@material-ui/icons/Clear';
 import DoneIcon from '@material-ui/icons/Done';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
@@ -82,7 +81,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         doctorSearchValue: '',
         potentialDoctors: [],
         selectedDoctorInformation: null,
-        selectedFilterCheckpoints: new Set([]),
+        selectedFilterCheckpoint: '',
         workflowCheckpoints: [],
     }
 
@@ -161,7 +160,6 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
             selectedDoctorContainer,
             checkpointsContainer,
             checkpointOptionsAndSelectedOptionsContainer,
-            selectedCheckpointsContainer,
             allSelectedCheckpointsContainer,
             selectedCheckpointContainer,
         } = createProjectsPresentationClasses(this.props, this.state);
@@ -196,7 +194,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         });
 
         const checkpointItems = this.state.workflowCheckpoints.filter((workflowCheckpoint) => {
-            return !this.state.selectedFilterCheckpoints.has(workflowCheckpoint.id);
+            return this.state.selectedFilterCheckpoint !== workflowCheckpoint.id;
         }).map((workflowCheckpoint, index) => {
             return (
                 <MenuItem
@@ -208,23 +206,8 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
             )
         });
 
-        const workflowIdToNameDictionary = this.state.workflowCheckpoints.reduce((acc, workflowCheckpoint) => {
-            acc[workflowCheckpoint.id] = workflowCheckpoint.name;
-            return acc;
-        }, {});
-
-        const selectedFilterCheckpointsArr: string[] = [];
-        this.state.selectedFilterCheckpoints.forEach((checkpoint) => {
-            selectedFilterCheckpointsArr.push(checkpoint);
-        })
-
-        const selectedCheckpointItems = selectedFilterCheckpointsArr.map((selectedFilterCheckpointId, index) => {
-            return (
-                <div key={index} className={selectedCheckpointsContainer}>
-                    <Typography>{workflowIdToNameDictionary[selectedFilterCheckpointId]}</Typography>
-                    <ClearIcon onClick={this.removeCheckpointItem(selectedFilterCheckpointId)}/>
-                </div>
-            )
+        const selectedCheckpoint = this.state.workflowCheckpoints.find((workflowCheckpoint) => {
+            return workflowCheckpoint.id === this.state.selectedFilterCheckpoint;
         });
 
         const {
@@ -380,7 +363,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                                                     </FormControl>
                                                 </div>
                                                 <div className={allSelectedCheckpointsContainer}>
-                                                    {selectedCheckpointItems}
+                                                    <Typography variant="body1">Selected Checkpoint: {selectedCheckpoint ? selectedCheckpoint!.name : ''}</Typography>
                                                 </div>
                                             </div>
                                         ) : undefined}
@@ -455,22 +438,14 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         }
     }
 
-    private removeCheckpointItem = (workflowCheckpointId: string) => () => {
-        const clonedSet = new Set(this.state.selectedFilterCheckpoints);
-        clonedSet.delete(workflowCheckpointId);
-        if (this._isMounted) {
-            this.setState({
-                selectedFilterCheckpoints: clonedSet,
-            })
-        }
-    }
-
     private handleSelectFilterCheckpoint = (event: any) => {
-        const clonedSet = new Set(this.state.selectedFilterCheckpoints);
-        clonedSet.add(event.target.value);
+        const dialogDisplayFilterClone = cloneDeep(this.state.dialogDisplayFilter);
+        dialogDisplayFilterClone.checkpointId = event.target.value;
+
         if (this._isMounted) {
             this.setState({
-                selectedFilterCheckpoints: clonedSet,
+                selectedFilterCheckpoint: event.target.value,
+                dialogDisplayFilter: dialogDisplayFilterClone,
             });
         }
     }
@@ -491,8 +466,12 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
     }
 
     private selectDoctor = (doctor: IDoctorUser) => () => {
+        const dialogDisplayFilterClone = cloneDeep(this.state.dialogDisplayFilter);
+        dialogDisplayFilterClone.doctorId = doctor.id;
+
         this.setState({
             selectedDoctorInformation: doctor,
+            dialogDisplayFilter: dialogDisplayFilterClone,
             doctorSearchValue: '',
             potentialDoctors: [],
         })

@@ -16,6 +16,6 @@ export interface ICaseFilter {
     /**
      * only present if the checkpoint flag indicates specific checkpoints
      */
-    checkpointIds?: string[],
+    checkpointId?: string,
     notificationFlag: NotificationFlag,
 }

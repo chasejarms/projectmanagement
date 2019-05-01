@@ -1,6 +1,7 @@
 import * as firebase from 'firebase';
 import { db } from 'src/firebase';
 import { ICaseCheckpoint } from 'src/Models/caseCheckpoint';
+import { CheckpointFlag } from 'src/Models/caseFilter/checkpointFlag';
 import { CompletionStatus } from 'src/Models/caseFilter/completionStatus';
 import { DoctorFlag } from 'src/Models/caseFilter/doctorFlag';
 import { NotificationFlag } from 'src/Models/caseFilter/notificationFlag';
@@ -13,6 +14,9 @@ import { ICaseApi, ICaseCreateRequest, ICasesSearchRequest, IUpdateCaseInformati
 
 export class ProjectsApi implements ICaseApi {
     public async searchCases(slimCasesSearchRequest: ICasesSearchRequest, userType: string, userId: string): Promise<FirebaseFirestore.QueryDocumentSnapshot[]> {
+        // tslint:disable-next-line:no-console
+        console.log('slimeCasesSearchRequest: ', slimCasesSearchRequest);
+
         let query: any = db.collection('cases')
             .where('companyId', '==', slimCasesSearchRequest.companyId)
             .orderBy('deadline', 'asc')
@@ -46,12 +50,17 @@ export class ProjectsApi implements ICaseApi {
             query = query.where('showNewInfoFrom', '==', correctShowNewInfoFromType);
         }
 
+        if (slimCasesSearchRequest.checkpointFlag === CheckpointFlag.Specific && slimCasesSearchRequest.checkpointId) {
+            // tslint:disable-next-line:no-console
+            console.log('inside the checkpoint flag piece');
+            const correctCaseKey = userType === UserType.Doctor ? 'currentDoctorCheckpoint' : 'currentLabCheckpoint';
+            query = query.where(correctCaseKey, '==', slimCasesSearchRequest.checkpointId);
+        }
+
         const queryForSpecificDoctor = slimCasesSearchRequest.doctorFlag === DoctorFlag.Specific;
         if (queryForSpecificDoctor && slimCasesSearchRequest.doctorId) {
             query = query.where('doctor', '==', slimCasesSearchRequest.doctorId);
         }
-
-        // handle the checkpoints here
 
         const slimCases = await query.limit(slimCasesSearchRequest.limit).get();
         const slimCasesList: FirebaseFirestore.QueryDocumentSnapshot[] = [];

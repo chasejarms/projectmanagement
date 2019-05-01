@@ -25,7 +25,7 @@ export interface IProjectsPresentationState {
     doctorSearchValue: string;
     potentialDoctors: IDoctorUser[];
     selectedDoctorInformation: IDoctorUser | null;
-    selectedFilterCheckpoints: Set<string>;
+    selectedFilterCheckpoint: string;
     workflowCheckpoints: IWorkflowCheckpoint[];
 }
 
