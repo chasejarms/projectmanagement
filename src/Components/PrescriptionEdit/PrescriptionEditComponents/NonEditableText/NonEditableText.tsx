@@ -9,7 +9,7 @@ export class NonEditableText extends React.Component<INonEditableTextProps, INon
         } = this.props;
 
         return (
-            <Typography variant="body1">{control.text}</Typography>
+            <Typography variant="subtitle1">{control.text}</Typography>
         )
     }
 }
