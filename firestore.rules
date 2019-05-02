@@ -1,7 +1,105 @@
+// allow get;
+// allow list;
+
+// allow read; (same as the two above)
+
+// allow create;
+// allow update;
+// allow delete;
+
+// allow write; (same as three above)
+
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write;
+
+    match /cases/{caseId} {
+      allow read, write: if isSignedIn() && companyUserIsActive(companyIdFromCaseId()) && (isAdminOrStaffUser(companyIdFromCaseId()) || (isDoctorUser(companyIdFromCaseId()) && isSameDoctorForCase()))
+    }
+
+    match /companyUserJoin/{companyUserJoinId} {
+      allow read, write: if true
+    }
+
+    match /companies/{companyId} {
+      allow read, write: if true
+    }
+
+    match /users/{userId} {
+      allow read, write: if true
+    }
+
+    match /workflowCheckpoints/{workflowCheckpointId} {
+      allow read, write: if true
+    }
+
+    match /companyWorkflows/{companyWorkflowId} {
+      allow read, write: if true
+    }
+
+    match /prescriptionTemplates/{prescriptionTemplateId} {
+      allow read, write: if true
+    }
+
+    /// Functions ///
+
+    function existingData() {
+      return resource.data
+    }
+
+    function incomingData() {
+      return request.resource.data
+    }
+
+    function isSignedIn() {
+      return request.auth != null
+    }
+
+    function uid() {
+      return request.auth.uid
+    }
+
+    function companyIdFromCaseId() {
+      return existingData().companyId
+    }
+
+    function isSameDoctorForCase() {
+      return existingData().doctor == companyUserIdFromCompanyId(companyIdFromCaseId())
+    }
+
+    function companyIdUidString(companyId) {
+      return companyId + '_' + uid();
+    }
+
+    function companyUserJoinFromCompanyIdExists(companyId) {
+      return exists(/databases/$(database)/documents/companyUserJoin/$(companyIdUidString(companyId)))
+    }
+
+    function companyUserIdFromCompanyId(companyId) {
+      return get(/databases/$(database)/documents/companyUserJoin/$(companyIdUidString(companyId))).data.userId
+    }
+
+    function companyUserFromCompanyUserId(companyUserId) {
+      return get(/databases/$(database)/documents/users/$(companyUserId)).data
+    }
+
+    function isAdminOrStaffUser(companyId) {
+      return isAdminUser(companyId) || isStaffUser(companyId)
+    }
+
+    function companyUserIsActive(companyId) {
+      return companyUserJoinFromCompanyIdExists(companyId) && companyUserFromCompanyUserId(companyUserIdFromCompanyId(companyId)).isActive
+    }
+
+    function isAdminUser(companyId) {
+      return companyUserFromCompanyUserId(companyUserIdFromCompanyId(companyId)).type == 'Admin'
+    }
+
+    function isStaffUser(companyId) {
+      return companyUserFromCompanyUserId(companyUserIdFromCompanyId(companyId)).type == 'Staff'
+    }
+
+    function isDoctorUser(companyId) {
+      return companyUserFromCompanyUserId(companyUserIdFromCompanyId(companyId)).type == 'Doctor'
     }
   }
 }
