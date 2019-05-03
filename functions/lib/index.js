@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const canCreateCases_1 = require("./functions/canCreateCases");
 const admin = require("firebase-admin");
 const signUp_1 = require("./functions/signUp");
 const createCase_1 = require("./functions/createCase");
@@ -12,6 +11,8 @@ const createThumbnailFromImage_1 = require("./functions/createThumbnailFromImage
 const createUser_1 = require("./functions/createUser");
 const onCaseUpdate_1 = require("./functions/onCaseUpdate");
 const updateUserTypesOnUserWrite_1 = require("./functions/updateUserTypesOnUserWrite");
+const onChangePrescriptionTemplate_1 = require("./functions/onChangePrescriptionTemplate");
+const onChangeCompanyWorkflow_1 = require("./functions/onChangeCompanyWorkflow");
 const app = admin.initializeApp({
     credential: admin.credential.applicationDefault(),
     databaseURL: 'https://project-management-develop.firebaseio.com',
@@ -26,7 +27,8 @@ exports.deleteUser = deleteUser_1.deleteUserLocal(auth, app);
 exports.onCreateOrUpdateUser = onUserWrite_1.onCreateOrUpdateUserLocal(app);
 exports.linkFileToProject = linkFileToProject_1.linkFileToProjectLocal(app);
 exports.createThumbnailFromImage = createThumbnailFromImage_1.createThumbnailFromImageLocal(app);
-exports.canCreateCases = canCreateCases_1.canCreateCasesLocal(app);
 exports.onCaseUpdate = onCaseUpdate_1.onCaseUpdateLocal(app);
 exports.updateUserTypesCountOnUserWrite = updateUserTypesOnUserWrite_1.updateUserTypesCountOnUserWriteLocal(app);
+exports.onChangePrescriptionTemplate = onChangePrescriptionTemplate_1.onChangePrescriptionTemplateLocal(app);
+exports.onChangeCompanyWorkflow = onChangeCompanyWorkflow_1.onChangeCompanyWorkflowLocal(app);
 //# sourceMappingURL=index.js.map

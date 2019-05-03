@@ -27,7 +27,9 @@ exports.signUpLocal = (passedInAdmin) => functions.https.onCall((data, context) 
                 Admin: 0,
                 Staff: 0,
                 Doctor: 0,
-            }
+            },
+            workflowCheckpointsCount: 0,
+            prescriptionTemplateHasSufficientFields: false,
         });
         const userDocumentReference = yield firebase.collection('users').add({
             companyId: companyDocumentReference.id,

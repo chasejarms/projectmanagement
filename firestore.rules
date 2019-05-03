@@ -28,7 +28,8 @@ service cloud.firestore {
 
     match /companies/{companyId} {
       /// all of interaction with companies occurs in cloud functions ///
-      allow read, write: if false
+      allow read: if isSignedIn() && companyUserIsActive(companyId)
+      allow write: if false
     }
 
     match /users/{userId} {

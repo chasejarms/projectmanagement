@@ -182,13 +182,14 @@ export class ProjectsApi implements ICaseApi {
     }
 
     public async canCreateCases(companyId: string): Promise<boolean> {
-        const canCreateCasesCloudFunction = firebase.functions().httpsCallable('canCreateCases');
+        const companySnapshot = await firebase.firestore().collection('companies').doc(companyId).get();
 
-        const createCaseResponse = await canCreateCasesCloudFunction({
-            companyId,
-        });
+        const companyData = companySnapshot.data()!;
+        const hasDoctors = companyData.roleCount[UserType.Doctor] > 0;
+        const hasWorkflowCheckpoints = companyData.workflowCheckpointsCount > 0;
+        const hasSufficientFieldsOnTemplate = companyData.prescriptionTemplateHasSufficientFields;
 
-        return createCaseResponse.data;
+        return hasDoctors && hasWorkflowCheckpoints && hasSufficientFieldsOnTemplate;
     }
 
 }

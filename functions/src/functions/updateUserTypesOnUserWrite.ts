@@ -4,15 +4,18 @@ import * as admin from 'firebase-admin';
 export const updateUserTypesCountOnUserWriteLocal = (passedInAdmin: admin.app.App) => functions.firestore
     .document('users/{uid}')
     .onWrite(async(documentSnapshot) => {
-        const isCreate = !documentSnapshot.before.exists || (!documentSnapshot.before.data().isActive && documentSnapshot.after.data().isActive);
-        const isDelete = documentSnapshot.before.data().isActive && !documentSnapshot.after.data().isActive;
+        const beforeData = documentSnapshot.before.data();
+        const afterData = documentSnapshot.after.data();
+
+        const isCreate = !documentSnapshot.before.exists || (beforeData && !beforeData.isActive && afterData.isActive);
+        const isDelete = !isCreate && beforeData.isActive && !afterData.isActive;
 
         console.log('isCreate: ', isCreate);
         console.log('isDelete: ', isDelete);
 
         if (isCreate) {
-            const userRole = documentSnapshot.after.data().type;
-            const companyId = documentSnapshot.after.data().companyId;
+            const userRole = afterData.type;
+            const companyId = afterData.companyId;
 
             const companySnapshot = await passedInAdmin.firestore().collection('companies').doc(companyId).get();
 
@@ -28,8 +31,8 @@ export const updateUserTypesCountOnUserWriteLocal = (passedInAdmin: admin.app.Ap
                 }
             }, { merge: true });
         } else if (isDelete) {
-            const userRole = documentSnapshot.before.data().type;
-            const companyId = documentSnapshot.before.data().companyId;
+            const userRole = beforeData.type;
+            const companyId = beforeData.companyId;
 
             const companySnapshot = await passedInAdmin.firestore().collection('companies').doc(companyId).get();
 
@@ -44,10 +47,10 @@ export const updateUserTypesCountOnUserWriteLocal = (passedInAdmin: admin.app.Ap
                     [userRole]: newRoleCount,
                 }
             }, { merge: true });
-        } else if (documentSnapshot.after.data().type !== documentSnapshot.before.data().type) {
-            const companyId = documentSnapshot.after.data().companyId;
-            const newUserRole = documentSnapshot.after.data().type;
-            const oldUserRole = documentSnapshot.before.data().type;
+        } else if (afterData.type !== beforeData.type) {
+            const companyId = afterData.companyId;
+            const newUserRole = afterData.type;
+            const oldUserRole = beforeData.type;
 
             const companySnapshot = await passedInAdmin.firestore().collection('companies').doc(companyId).get();
 
