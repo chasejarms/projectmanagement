@@ -36,7 +36,7 @@ service cloud.firestore {
       allow create: if isSignedIn() && companyUserIsActive(companyIdFromQueriedUser()) && isAdminUser(companyIdFromQueriedUser())
       allow update: if isSignedIn() && companyUserIsActive(companyIdFromQueriedUser()) && isAdminUser(companyIdFromQueriedUser()) && isNotDeactivatingOwnUser() && isNotChangingRoleOnOnlyAdmin()
       /// Users cannot be deleted in our system. Instead, they are set as inactive.
-      allow delete: if true
+      allow delete: if false
     }
 
     match /workflowCheckpoints/{workflowCheckpointId} {

@@ -41,7 +41,22 @@ export const updateUserLocal = (passedInAdmin: admin.app.App) => functions.https
         userWeAreTryingToUpdate,
     ])
 
+    const userExists = userQuerySnapshot.docs.length > 0;
+    console.log('userExists: ', userExists);
+
+    if (!userExists) {
+        throw new functions.https.HttpsError('permission-denied', 'The requesting user does not exist on this company');
+    }
+
+    const userIsActive = userQuerySnapshot.docs[0].data().isActive;
+    console.log('userIsActive: ', userIsActive);
+
+    if (!userIsActive) {
+        throw new functions.https.HttpsError('permission-denied', 'The requesting user is not active on this company');
+    }
+
     const isAdmin = userQuerySnapshot.docs[0].data().type === UserType.Admin;
+    console.log('isAdmin: ', isAdmin);
 
     if (!isAdmin) {
         throw new functions.https.HttpsError('permission-denied', 'You are not an admin user');
