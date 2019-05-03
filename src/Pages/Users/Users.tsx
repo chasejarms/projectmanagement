@@ -283,6 +283,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                         <FormControl required={true}>
                             <InputLabel htmlFor="role">Role</InputLabel>
                             <Select
+                                disabled={this.isSameUser()}
                                 name="userRole"
                                 className={dialogControl}
                                 inputProps={{

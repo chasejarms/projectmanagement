@@ -32,7 +32,11 @@ service cloud.firestore {
     }
 
     match /users/{userId} {
-      allow read, write: if true
+      allow read: if true
+      allow create: if isSignedIn() && companyUserIsActive(companyIdFromQueriedUser()) && isAdminUser(companyIdFromQueriedUser())
+      allow update: if isSignedIn() && companyUserIsActive(companyIdFromQueriedUser()) && isAdminUser(companyIdFromQueriedUser()) && isNotDeactivatingOwnUser() && isNotChangingRoleOnOnlyAdmin()
+      /// Users cannot be deleted in our system. Instead, they are set as inactive.
+      allow delete: if true
     }
 
     match /workflowCheckpoints/{workflowCheckpointId} {
@@ -69,7 +73,31 @@ service cloud.firestore {
       return request.auth.uid
     }
 
+    function isNotDeactivatingOwnUser() {
+      return !sameUser() || !isDeactivatingUser()
+    }
+
+    function isNotChangingRoleOnOnlyAdmin() {
+      return !isSameUser() || !isChangingUserRole()
+    }
+
+    function sameUser() {
+      return existingData().uid == uid()
+    }
+
+    function isDeactivatingUser() {
+      return existingData().isActive && !incomingData().isActive
+    }
+
+    function isChangingUserRole() {
+      return existingData().type != incomingData().type
+    }
+
     function companyIdFromCaseId() {
+      return existingData().companyId
+    }
+
+    function companyIdFromQueriedUser() {
       return existingData().companyId
     }
 

@@ -35,10 +35,11 @@ exports.updateUserLocal = (passedInAdmin) => functions.https.onCall((data, conte
         throw new functions.https.HttpsError('invalid-argument', 'The user you are trying to update does not exist');
     }
     const userBeforeUpdate = userWeAreTryingToUpdateSnapshot.docs[0].data();
+    const isUpdatingSelf = context.auth.uid === userBeforeUpdate.uid;
     const updatedUser = {
         email: data.email,
         fullName: data.fullName,
-        type: data.type,
+        type: isUpdatingSelf ? userBeforeUpdate.type : data.type,
     };
     console.log('updatedUser before checking type: ', updatedUser);
     if (userBeforeUpdate.type === userTypes_1.UserType.Admin && data.type !== userTypes_1.UserType.Admin) {
