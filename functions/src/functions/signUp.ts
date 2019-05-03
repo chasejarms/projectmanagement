@@ -17,6 +17,11 @@ export const signUpLocal = (passedInAdmin: admin.app.App) => functions.https.onC
 
         const companyDocumentReference = await firebase.collection('companies').add({
             companyName: data.companyName,
+            roleCount: {
+                Admin: 0,
+                Staff: 0,
+                Doctor: 0,
+            }
         })
 
 
