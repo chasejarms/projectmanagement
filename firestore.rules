@@ -32,7 +32,8 @@ service cloud.firestore {
     }
 
     match /users/{userId} {
-      allow read: if true
+      allow get: if isSignedIn() && companyUserIsActive(companyIdFromQueriedUser()) && (isAdminUser(companyIdFromQueriedUser()) || isSameUser())
+      allow list: if isSignedIn() && companyUserIsActive(companyIdFromQueriedUser()) && isAdminUser(companyIdFromQueriedUser())
       allow create: if isSignedIn() && companyUserIsActive(companyIdFromQueriedUser()) && isAdminUser(companyIdFromQueriedUser())
       allow update: if isSignedIn() && companyUserIsActive(companyIdFromQueriedUser()) && isAdminUser(companyIdFromQueriedUser()) && isNotDeactivatingOwnUser() && isNotChangingRoleOnOnlyAdmin()
       /// Users cannot be deleted in our system. Instead, they are set as inactive.
@@ -86,14 +87,14 @@ service cloud.firestore {
     }
 
     function isNotDeactivatingOwnUser() {
-      return !sameUser() || !isDeactivatingUser()
+      return !isameUser() || !isDeactivatingUser()
     }
 
     function isNotChangingRoleOnOnlyAdmin() {
       return !isSameUser() || !isChangingUserRole()
     }
 
-    function sameUser() {
+    function isSameUser() {
       return existingData().uid == uid()
     }
 

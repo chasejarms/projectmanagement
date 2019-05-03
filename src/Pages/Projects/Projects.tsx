@@ -408,7 +408,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
             ...this.state.dialogDisplayFilter,
         }
         const userType = this.props.userState[companyId].type;
-        const userId = this.props.userState[companyId].uid;
+        const userId = this.props.userState[companyId].id;
 
         const caseDocumentSnapshots = await Api.projectsApi.searchCases(casesSearchRequest, userType, userId);
 
@@ -531,7 +531,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         }
 
         const userType = this.props.userState[companyId].type;
-        const userId = this.props.userState[companyId].uid;
+        const userId = this.props.userState[companyId].id;
 
         Api.projectsApi.searchCases(casesSearchRequest, userType, userId).then((caseDocumentSnapshots) => {
             const cases: IAugmentedCase[] = [];
@@ -574,7 +574,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         }
 
         const userType = this.props.userState[companyId].type;
-        const userId = this.props.userState[companyId].uid;
+        const userId = this.props.userState[companyId].id;
 
         Api.projectsApi.searchCases(casesSearchRequest, userType, userId).then((caseDocumentSnapshots) => {
             const cases: IAugmentedCase[] = [];
