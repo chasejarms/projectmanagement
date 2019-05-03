@@ -40,6 +40,7 @@ exports.signUpLocal = (passedInAdmin) => functions.https.onCall((data, context) 
             isActive: true,
         });
         const prescriptionTemplateDocumentReference = yield firebase.collection('prescriptionTemplates').add({
+            companyId: companyDocumentReference.id,
             sectionOrder: [],
             sections: {},
             controls: {},

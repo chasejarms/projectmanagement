@@ -63,6 +63,7 @@ const initialState = {
         sections: {},
         controls: {},
         companyLogoURL: null,
+        companyId: '',
     },
     selectedSection: null,
     selectedControl: null,

@@ -17,7 +17,10 @@ export class PrescriptionTemplateApi implements IPrescriptionTemplateApi {
     public async updatePrescriptionTemplate(companyId: string, prescriptionFormTemplate: IPrescriptionFormTemplate): Promise<IPrescriptionFormTemplate> {
         const workflowDocumentSnapshots = await this.getWorkflowDocumentSnapshotPromise(companyId);
         const companyWorkflowId = workflowDocumentSnapshots.docs[0].id;
-        const newPrescriptionTemplate = await db.collection('prescriptionTemplates').add(prescriptionFormTemplate);
+        const newPrescriptionTemplate = await db.collection('prescriptionTemplates').add({
+            ...prescriptionFormTemplate,
+            companyId,
+        });
         await db.collection('companyWorkflows').doc(companyWorkflowId).set({
             prescriptionTemplate: newPrescriptionTemplate.id,
             id: newPrescriptionTemplate.id,

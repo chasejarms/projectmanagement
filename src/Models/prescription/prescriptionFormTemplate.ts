@@ -7,4 +7,5 @@ export interface IPrescriptionFormTemplate {
     sections: IPrescriptionSectionMapping;
     controls: IPrescriptionControlMapping;
     companyLogoURL: string | null;
+    companyId: string;
 }

@@ -37,6 +37,7 @@ export const signUpLocal = (passedInAdmin: admin.app.App) => functions.https.onC
         })
 
         const prescriptionTemplateDocumentReference = await firebase.collection('prescriptionTemplates').add({
+            companyId: companyDocumentReference.id,
             sectionOrder: [],
             sections: {},
             controls: {},

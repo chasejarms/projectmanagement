@@ -40,15 +40,21 @@ service cloud.firestore {
     }
 
     match /workflowCheckpoints/{workflowCheckpointId} {
-      allow read, write: if true
+      allow read: if isSignedIn() && companyUserIsActive(companyIdFromWorkflowCheckpoint())
+      allow create: if isSignedIn() && companyUserIsActive(companyIdFromWorkflowCheckpoint()) && isAdminUser(companyIdFromWorkflowCheckpoint())
+      allow update: if isSignedIn() && companyUserIsActive(companyIdFromWorkflowCheckpoint()) && isAdminUser(companyIdFromWorkflowCheckpoint())
+      /// Workflow checkpoints cannot be deleted in our system because they may correspond to case checkpoints.
+      allow delete: if false
     }
 
     match /companyWorkflows/{companyWorkflowId} {
-      allow read, write: if true
+      allow read: if isSignedIn() && companyUserIsActive(companyIdFromCompanyWorkflow())
+      allow write: if isSignedIn() && companyUserIsActive(companyIdFromCompanyWorkflow()) && isAdminUser(companyIdFromCompanyWorkflow())
     }
 
     match /prescriptionTemplates/{prescriptionTemplateId} {
-      allow read, write: if true
+      allow read: if isSignedIn() && companyUserIsActive(companyIdFromPrescriptionTemplate())
+      allow write: if isSignedIn() && companyUserIsActive(companyIdFromPrescriptionTemplate()) && isAdminUser(companyIdFromPrescriptionTemplate())
     }
 
     /// Functions ///
@@ -98,6 +104,18 @@ service cloud.firestore {
     }
 
     function companyIdFromQueriedUser() {
+      return existingData().companyId
+    }
+
+    function companyIdFromWorkflowCheckpoint() {
+      return existingData().companyId
+    }
+
+    function companyIdFromCompanyWorkflow() {
+      return existingData().companyId
+    }
+
+    function companyIdFromPrescriptionTemplate() {
       return existingData().companyId
     }
 

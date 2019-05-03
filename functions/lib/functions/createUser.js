@@ -31,6 +31,16 @@ exports.createUserLocal = (auth, firestore) => functions.https.onCall((data, con
         userWeAreTryingToCreatePromise,
         companyDocumentPromise,
     ]);
+    const userExists = userQuerySnapshot.docs.length > 0;
+    console.log('userExists: ', userExists);
+    if (!userExists) {
+        throw new functions.https.HttpsError('permission-denied', 'The requesting user does not exist on this company');
+    }
+    const userIsActive = userQuerySnapshot.docs[0].data().isActive;
+    console.log('userIsActive: ', userIsActive);
+    if (!userIsActive) {
+        throw new functions.https.HttpsError('permission-denied', 'The requesting user is not active on this company');
+    }
     const isAdmin = userQuerySnapshot.docs[0].data().type === userTypes_1.UserType.Admin;
     console.log('isAdmin: ', isAdmin);
     if (!isAdmin) {
