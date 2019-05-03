@@ -21,7 +21,9 @@ export const signUpLocal = (passedInAdmin: admin.app.App) => functions.https.onC
                 Admin: 0,
                 Staff: 0,
                 Doctor: 0,
-            }
+            },
+            workflowCheckpointsCount: 0,
+            prescriptionTemplateHasSufficientFields: false,
         })
 
 

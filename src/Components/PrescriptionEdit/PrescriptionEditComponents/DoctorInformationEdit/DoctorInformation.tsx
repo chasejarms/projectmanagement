@@ -163,11 +163,6 @@ class DoctorInformationEditPresentation extends React.Component<IDoctorInformati
     }
 
     private selectDoctor = (doctor: IDoctorUser) => () => {
-        // tslint:disable-next-line:no-console
-        console.log('doctor: ', doctor);
-
-        // tslint:disable-next-line:no-console
-        console.log('mounted: ', this._isMounted);
         if (this._isMounted) {
             this.setState({
                 selectedDoctorInformation: doctor,
@@ -175,9 +170,6 @@ class DoctorInformationEditPresentation extends React.Component<IDoctorInformati
                 doctorSearchValue: '',
             })
         }
-
-        // tslint:disable-next-line:no-console
-        console.log('state: ', this.state);
 
         const {
             control,
