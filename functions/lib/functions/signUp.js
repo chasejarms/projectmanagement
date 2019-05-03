@@ -23,6 +23,11 @@ exports.signUpLocal = (passedInAdmin) => functions.https.onCall((data, context) 
         });
         const companyDocumentReference = yield firebase.collection('companies').add({
             companyName: data.companyName,
+            roleCount: {
+                Admin: 0,
+                Staff: 0,
+                Doctor: 0,
+            }
         });
         const userDocumentReference = yield firebase.collection('users').add({
             companyId: companyDocumentReference.id,

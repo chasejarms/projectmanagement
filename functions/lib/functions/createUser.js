@@ -14,6 +14,7 @@ const sgMail = require("@sendgrid/mail");
 exports.createUserLocal = (auth, firestore) => functions.https.onCall((data, context) => __awaiter(this, void 0, void 0, function* () {
     const uid = context.auth.uid;
     console.log('uid is: ', uid);
+    console.log('data: ', data);
     const userQueryPromise = firestore.collection('users')
         .where('uid', '==', uid)
         .where('companyId', '==', data.companyId)
@@ -31,6 +32,7 @@ exports.createUserLocal = (auth, firestore) => functions.https.onCall((data, con
         companyDocumentPromise,
     ]);
     const isAdmin = userQuerySnapshot.docs[0].data().type === userTypes_1.UserType.Admin;
+    console.log('isAdmin: ', isAdmin);
     if (!isAdmin) {
         throw new functions.https.HttpsError('permission-denied', 'You are not an admin user');
     }
@@ -90,6 +92,8 @@ exports.createUserLocal = (auth, firestore) => functions.https.onCall((data, con
             userToUpdate.address = data.address;
         }
         companyUserId = userWeAreTryingToCreateSnapshot.docs[0].id;
+        console.log('companyUserId: ', companyUserId);
+        console.log('userToUpdate: ', userToUpdate);
         yield firestore.collection('users')
             .doc(companyUserId)
             .set(userToUpdate, {
@@ -117,8 +121,10 @@ exports.createUserLocal = (auth, firestore) => functions.https.onCall((data, con
         const createdUserDocumentSnapshot = yield firestore.collection('users').add(userToCreate);
         companyUserId = createdUserDocumentSnapshot.id;
     }
+    const companyUserJoinCompositeIndex = `${data.companyId}_${userRecord.uid}`;
+    console.log('companyUserJoinCompositeIndex: ', companyUserJoinCompositeIndex);
     yield firestore.collection('companyUserJoin')
-        .doc(`${data.companyId}_${userRecord.uid}`)
+        .doc(companyUserJoinCompositeIndex)
         .set({
         companyId: data.companyId,
         companyName: companyDocumentSnapshot.data().companyName,

@@ -18,6 +18,8 @@ export const createUserLocal = (auth: admin.auth.Auth, firestore: FirebaseFirest
     const uid = context.auth.uid;
     console.log('uid is: ', uid);
 
+    console.log('data: ', data);
+
     const userQueryPromise = firestore.collection('users')
         .where('uid', '==', uid)
         .where('companyId', '==', data.companyId)
@@ -43,6 +45,7 @@ export const createUserLocal = (auth: admin.auth.Auth, firestore: FirebaseFirest
     ])
 
     const isAdmin = userQuerySnapshot.docs[0].data().type === UserType.Admin;
+    console.log('isAdmin: ', isAdmin);
 
     if (!isAdmin) {
         throw new functions.https.HttpsError('permission-denied', 'You are not an admin user');
@@ -111,6 +114,11 @@ export const createUserLocal = (auth: admin.auth.Auth, firestore: FirebaseFirest
         }
 
         companyUserId = userWeAreTryingToCreateSnapshot.docs[0].id;
+
+        console.log('companyUserId: ', companyUserId);
+
+        console.log('userToUpdate: ', userToUpdate);
+
         await firestore.collection('users')
             .doc(companyUserId)
             .set(userToUpdate, {
@@ -143,8 +151,11 @@ export const createUserLocal = (auth: admin.auth.Auth, firestore: FirebaseFirest
         companyUserId = createdUserDocumentSnapshot.id;
     }
 
+    const companyUserJoinCompositeIndex = `${data.companyId}_${userRecord.uid}`;
+    console.log('companyUserJoinCompositeIndex: ', companyUserJoinCompositeIndex);
+
     await firestore.collection('companyUserJoin')
-        .doc(`${data.companyId}_${userRecord.uid}`)
+        .doc(companyUserJoinCompositeIndex)
         .set({
             companyId: data.companyId,
             companyName: companyDocumentSnapshot.data().companyName,

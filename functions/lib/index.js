@@ -11,6 +11,7 @@ const linkFileToProject_1 = require("./functions/linkFileToProject");
 const createThumbnailFromImage_1 = require("./functions/createThumbnailFromImage");
 const createUser_1 = require("./functions/createUser");
 const onCaseUpdate_1 = require("./functions/onCaseUpdate");
+const updateUserTypesOnUserWrite_1 = require("./functions/updateUserTypesOnUserWrite");
 const app = admin.initializeApp({
     credential: admin.credential.applicationDefault(),
     databaseURL: 'https://project-management-develop.firebaseio.com',
@@ -27,4 +28,5 @@ exports.linkFileToProject = linkFileToProject_1.linkFileToProjectLocal(app);
 exports.createThumbnailFromImage = createThumbnailFromImage_1.createThumbnailFromImageLocal(app);
 exports.canCreateCases = canCreateCases_1.canCreateCasesLocal(app);
 exports.onCaseUpdate = onCaseUpdate_1.onCaseUpdateLocal(app);
+exports.updateUserTypesCountOnUserWrite = updateUserTypesOnUserWrite_1.updateUserTypesCountOnUserWriteLocal(app);
 //# sourceMappingURL=index.js.map
