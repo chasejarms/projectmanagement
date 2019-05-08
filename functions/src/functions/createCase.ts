@@ -3,15 +3,7 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { UserType } from '../models/userTypes';
 import { IFunctionsCaseCheckpoint } from '../models/caseCheckpoint';
-
-interface IProjectCreateData {
-    id: string;
-    prescriptionFormTemplateId: string;
-    controlValues: {
-        [sectionIdControlId: string]: any;
-    };
-    companyId: string;
-}
+import { IProjectCreateDataCloudFunctions } from '../models/projectCreateData';
 
 interface ICase {
     complete: boolean;
@@ -33,11 +25,11 @@ interface ICase {
     currentLabCheckpoint: string;
 }
 
-export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https.onCall(async(data: IProjectCreateData, context) => {
-    console.log('data: ', data);
+export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https.onCall(async(data: IProjectCreateDataCloudFunctions, context) => {
     const firestore = passedInAdmin.firestore();
     const uid = context.auth.uid;
-    console.log('uid is: ', uid);
+    console.log('uid: ', uid);
+    console.log('data: ', data);
 
     const companyUserJoinQuerySnapshot = await firestore.collection('companyUserJoin')
         .where('companyId', '==', data.companyId)
@@ -45,6 +37,7 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
         .get();
 
     if (companyUserJoinQuerySnapshot.empty) {
+        console.log('hexre 1');
         throw new functions.https.HttpsError('permission-denied', 'The user does not exist on the company');
     }
 
@@ -53,14 +46,18 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
     const companyUserDocumentSnapshot = await firestore.collection('users').doc(userId).get();
 
     if (!companyUserDocumentSnapshot.exists) {
+        console.log('here two');
         throw new functions.https.HttpsError('permission-denied', 'The user does not exist on the company');
     }
 
+    const userIsActive = companyUserDocumentSnapshot.data().isActive;
+    if (!userIsActive) {
+        throw new functions.https.HttpsError('permission-denied', 'The user is not active on the company');
+    }
+
     const userType = companyUserDocumentSnapshot.data().type;
-    console.log('userType: ', userType);
 
     const isAdminOrStaff = userType === UserType.Admin || userType === UserType.Staff;
-    console.log('isAdminOrStaff: ', isAdminOrStaff);
 
     const companyWorkflowsQuerySnapshot = await firestore.collection('companyWorkflows')
         .where('companyId', '==', data.companyId)
@@ -88,8 +85,6 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
 
     const prescriptionTemplateId = companyWorkflowsQuerySnapshot.docs[0].data().prescriptionTemplate;
 
-    console.log('prescription template id: ', prescriptionTemplateId);
-
     const prescriptionTemplateResponse = await firestore.collection('prescriptionTemplates').doc(prescriptionTemplateId).get();
 
     const prescriptionFormTemplate = prescriptionTemplateResponse.data();
@@ -106,7 +101,6 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
             } else if (control.type === 'CaseDeadline') {
                 const caseDeadlineObject = data.controlValues[control.id];
                 caseDeadline = new admin.firestore.Timestamp(caseDeadlineObject.seconds, caseDeadlineObject.nanoseconds);
-                console.log('caseDeadline: ', caseDeadline);
             }
         })
     });
@@ -127,7 +121,6 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
     const currentLabCheckpoint = firstCheckpoint.linkedWorkflowCheckpoint;
 
     const nowInSeconds = Math.round(new Date().getTime() / 1000);
-    console.log('nowInSeconds: ', nowInSeconds);
     const caseToCreate: ICase = {
         prescriptionFormTemplateId: data.prescriptionFormTemplateId,
         controlValues: data.controlValues,

@@ -1,12 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 
-import { Storage } from '@google-cloud/storage';
-
-const gcs = new Storage({
-    projectId: 'project-management-develop',
-});
-
 import { tmpdir } from 'os';
 import {
     join,
@@ -20,7 +14,8 @@ export const createThumbnailFromImageLocal = (passedInAdmin: admin.app.App) => f
     .object()
     .onFinalize(async object => {
         console.log('object: ', object);
-        const bucket = gcs.bucket(object.bucket);
+        const storage = passedInAdmin.storage();
+        const bucket = storage.bucket(object.bucket);
         const filePath = object.name;
         console.log('filePath: ', filePath);
 
