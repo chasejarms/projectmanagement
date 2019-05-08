@@ -42,7 +42,7 @@ export const createAuthenticatedClasses = (
 
     const drawerContainer = css({
         flexShrink: 0,
-        width: 56,
+        width: '56px !important',
         height: '100%',
     });
 
@@ -76,7 +76,7 @@ export const createAuthenticatedClasses = (
     });
 
     const listItemIcon = css({
-        margin: 0,
+        marginRight: '0px !important',
     })
 
     return {
