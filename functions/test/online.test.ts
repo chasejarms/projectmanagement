@@ -1,3 +1,4 @@
+import { ShowNewInfoFromType } from './../../src/Models/showNewInfoFromTypes';
 import { generateUniqueId } from '../src/utils/generateUniqueId';
 
 import * as functions from 'firebase-functions-test';
@@ -8,6 +9,8 @@ import { createCase } from '../src';
 import { WrappedFunction } from 'firebase-functions-test/lib/main';
 import { IProjectCreateDataCloudFunctions } from '../src/models/projectCreateData';
 import { UserType } from '../src/models/userTypes';
+
+import { cloneDeep } from 'lodash';
 
 // Online Testing
 const testEnv = functions({
@@ -25,8 +28,13 @@ describe('createCase', () => {
     let firebaseAuthenticationUid: string;
     let companyUserJoinId: string;
 
-    let caseCreateRequest: IProjectCreateDataCloudFunctions;
+    let doctorCompanyUserId: string;
+    let doctorFirebaseAuthenticationUid: string;
+
+    let initialCaseCreateRequest: IProjectCreateDataCloudFunctions;
     let wrapped: WrappedFunction;
+
+    let caseId: string;
 
     beforeEach(() => {
         companyId = generateUniqueId();
@@ -34,15 +42,15 @@ describe('createCase', () => {
         firebaseAuthenticationUid = generateUniqueId();
         companyUserJoinId = `${companyId}_${firebaseAuthenticationUid}`;
 
-        caseCreateRequest = {
-            id: generateUniqueId(),
+        doctorCompanyUserId = generateUniqueId();
+        doctorFirebaseAuthenticationUid = generateUniqueId();
+
+        caseId = generateUniqueId();
+
+        initialCaseCreateRequest = {
+            id: caseId,
             prescriptionFormTemplateId: generateUniqueId(),
-            controlValues: {
-                '1': '1234',
-                '2': {
-                    type: 'CaseDeadline',
-                }
-            },
+            controlValues: {},
             companyId,
         }
     });
@@ -52,13 +60,13 @@ describe('createCase', () => {
     })
 
     afterAll(() => {
-        // testEnv.cleanup();
+        testEnv.cleanup();
     });
 
     test('it does not allow case creation if the user does not exists on the company or is not active', async() => {
         let noCompanyUserJoinDocumentErrorMessage: string = '';
         try {
-            await wrapped(caseCreateRequest, { auth: { uid: firebaseAuthenticationUid }});
+            await wrapped(initialCaseCreateRequest, { auth: { uid: firebaseAuthenticationUid }});
         } catch (error) {
             const httpsError = error as functionsTyping.https.HttpsError;
             noCompanyUserJoinDocumentErrorMessage = httpsError.message;
@@ -76,7 +84,7 @@ describe('createCase', () => {
 
         let noCompanyUserErrorMessage: string = '';
         try {
-            await wrapped(caseCreateRequest, { auth: { uid: firebaseAuthenticationUid }});
+            await wrapped(initialCaseCreateRequest, { auth: { uid: firebaseAuthenticationUid }});
         } catch (error) {
             const httpsError = error as functionsTyping.https.HttpsError;
             noCompanyUserErrorMessage = httpsError.message;
@@ -97,12 +105,256 @@ describe('createCase', () => {
 
         let noActiveUserErrorMessage: string = '';
         try {
-            await wrapped(caseCreateRequest, { auth: { uid: firebaseAuthenticationUid }});
+            await wrapped(initialCaseCreateRequest, { auth: { uid: firebaseAuthenticationUid }});
         } catch (error) {
             const httpsError = error as functionsTyping.https.HttpsError;
             noActiveUserErrorMessage = httpsError.message;
         }
 
         expect(noActiveUserErrorMessage).toBe('The user is not active on the company');
+    });
+
+    test('it does not allow case creation if the prescription template does not exist', async() => {
+        const companyUserJoinData = {
+            companyId,
+            userId: companyUserId,
+            firebaseAuthenticationUid,
+        };
+
+        await admin.firestore().collection('companyUserJoin').doc(companyUserJoinId).set(companyUserJoinData);
+
+        const companyUserData = {
+            companyId,
+            email: 'someone@gmail.com',
+            fullName: 'Jane Doe',
+            isActive: true,
+            type: UserType.Admin,
+            uid: firebaseAuthenticationUid,
+        }
+
+        await admin.firestore().collection('users').doc(companyUserId).set(companyUserData);
+        await admin.firestore().collection('companyWorkflows').add({
+            companyId,
+            prescriptionTemplate: '123',
+            workflowCheckpoints: [],
+        })
+
+        let noPrescriptionTemplateError: string = '';
+        try {
+            await wrapped(initialCaseCreateRequest, { auth: { uid: firebaseAuthenticationUid }});
+        } catch (error) {
+            const httpsError = error as functionsTyping.https.HttpsError;
+            noPrescriptionTemplateError = httpsError.message;
+        }
+
+        expect(noPrescriptionTemplateError).toBe('The prescription template does not exist');
+    });
+
+    test('it does not allow case creation if there is no case deadline or no doctor', async() => {
+        const companyUserJoinData = {
+            companyId,
+            userId: companyUserId,
+            firebaseAuthenticationUid,
+        };
+
+        await admin.firestore().collection('companyUserJoin').doc(companyUserJoinId).set(companyUserJoinData);
+
+        const companyUserData = {
+            companyId,
+            email: 'someone@gmail.com',
+            fullName: 'Jane Doe',
+            isActive: true,
+            type: UserType.Admin,
+            uid: firebaseAuthenticationUid,
+        }
+
+        await admin.firestore().collection('users').doc(companyUserId).set(companyUserData);
+        const prescriptionTemplateId = generateUniqueId();
+        await admin.firestore().collection('companyWorkflows').add({
+            companyId,
+            prescriptionTemplate: prescriptionTemplateId,
+            workflowCheckpoints: [],
+        })
+
+        const sectionId = '1';
+        const caseDeadlineControlId = '2';
+        const doctorInformationControlId = '3';
+
+        await admin.firestore().collection('prescriptionTemplates').doc(prescriptionTemplateId).set({
+            sectionOrder: [sectionId],
+            sections: {
+                [sectionId]: {
+                    controlOrder: [caseDeadlineControlId],
+                }
+            },
+            controls: {
+                [caseDeadlineControlId]: {
+                    type: 'CaseDeadline',
+                    id: caseDeadlineControlId,
+                }
+            }
+        });
+
+        const firstCaseCreateRequest = cloneDeep(initialCaseCreateRequest);
+        firstCaseCreateRequest.controlValues = {
+            [caseDeadlineControlId]: {
+                seconds: 0,
+                nanoseconds: 0,
+            }
+        }
+
+        let noDoctorInformationError: string = '';
+        try {
+            await wrapped(firstCaseCreateRequest, { auth: { uid: firebaseAuthenticationUid }});
+        } catch (error) {
+            const httpsError = error as functionsTyping.https.HttpsError;
+            noDoctorInformationError = httpsError.message;
+        }
+
+        expect(noDoctorInformationError).toBe('The case requires a doctor information field');
+
+        await admin.firestore().collection('prescriptionTemplates').doc(prescriptionTemplateId).set({
+            sectionOrder: [sectionId],
+            sections: {
+                [sectionId]: {
+                    controlOrder: [doctorInformationControlId],
+                }
+            },
+            controls: {
+                [doctorInformationControlId]: {
+                    type: 'DoctorInformation',
+                    id: doctorInformationControlId,
+                }
+            }
+        });
+
+        const secondCaseCreationRequest = cloneDeep(initialCaseCreateRequest);
+        secondCaseCreationRequest.controlValues = {
+            [doctorInformationControlId]: '1',
+        }
+
+        let noCaseDeadlineError: string = '';
+        try {
+            await wrapped(secondCaseCreationRequest, { auth: { uid: firebaseAuthenticationUid }});
+        } catch (error) {
+            const httpsError = error as functionsTyping.https.HttpsError;
+            noCaseDeadlineError = httpsError.message;
+        }
+
+        expect(noCaseDeadlineError).toBe('The case requires a case deadline field');
+    });
+
+    it('should hoist / set the top level information', async() => {
+        const companyUserJoinData = {
+            companyId,
+            userId: companyUserId,
+            firebaseAuthenticationUid,
+        };
+
+        await admin.firestore().collection('companyUserJoin').doc(companyUserJoinId).set(companyUserJoinData);
+
+        const companyUserData = {
+            companyId,
+            email: 'someone@gmail.com',
+            fullName: 'Jane Doe',
+            isActive: true,
+            type: UserType.Admin,
+            uid: firebaseAuthenticationUid,
+        }
+
+        await admin.firestore().collection('users').doc(companyUserId).set(companyUserData);
+
+        const doctorCompanyUserData = {
+            companyId,
+            email: 'doctor@doctorjohnson.com',
+            fullName: 'Doctor Johnson',
+            isActive: true,
+            type: UserType.Doctor,
+            uid: doctorFirebaseAuthenticationUid,
+        }
+
+        await admin.firestore().collection('users').doc(doctorCompanyUserId).set(doctorCompanyUserData);
+
+        const firstWorkflowCheckpointId = generateUniqueId();
+        const secondWorkflowCheckpointId = generateUniqueId();
+        await admin.firestore().collection('workflowCheckpoints').doc(firstWorkflowCheckpointId).set({
+            linkedWorkflowCheckpoint: '2',
+            name: 'First Actual Checkpoint',
+            visibleToDoctor: false,
+        });
+
+        await admin.firestore().collection('workflowCheckpoints').doc(secondWorkflowCheckpointId).set({
+            linkedWorkflowCheckpoint: '1',
+            name: 'First Doctor Checkpoint',
+            visibleToDoctor: true
+        });
+
+        const prescriptionTemplateId = generateUniqueId();
+        await admin.firestore().collection('companyWorkflows').add({
+            companyId,
+            prescriptionTemplate: prescriptionTemplateId,
+            workflowCheckpoints: [firstWorkflowCheckpointId, secondWorkflowCheckpointId],
+        });
+
+        const sectionId = '1';
+        const caseDeadlineControlId = '2';
+        const doctorInformationControlId = '3';
+
+        await admin.firestore().collection('prescriptionTemplates').doc(prescriptionTemplateId).set({
+            sectionOrder: [sectionId],
+            sections: {
+                [sectionId]: {
+                    controlOrder: [caseDeadlineControlId, doctorInformationControlId],
+                }
+            },
+            controls: {
+                [caseDeadlineControlId]: {
+                    type: 'CaseDeadline',
+                    id: caseDeadlineControlId,
+                },
+                [doctorInformationControlId]: {
+                    type: 'DoctorInformation',
+                    id: doctorInformationControlId,
+                },
+            }
+        });
+
+        const caseCreationRequest = cloneDeep(initialCaseCreateRequest);
+        caseCreationRequest.controlValues = {
+            [doctorInformationControlId]: doctorCompanyUserId,
+            [caseDeadlineControlId]: {
+                seconds: 0,
+                nanoseconds: 0,
+            }
+        }
+
+        await wrapped(caseCreationRequest, { auth: { uid: firebaseAuthenticationUid }});
+
+        const caseSnapshot = await admin.firestore().collection('cases').doc(caseId).get();
+        const {
+            complete,
+            deadline,
+            doctor,
+            created,
+            showNewInfoFrom,
+            hasStarted,
+            currentDoctorCheckpoint,
+            currentDoctorCheckpointName,
+            currentLabCheckpointName,
+            currentLabCheckpoint,
+            doctorName,
+        } = caseSnapshot.data();
+
+        expect(complete).toBe(false);
+        expect(deadline).toBeDefined();
+        expect(doctor).toBe(doctorCompanyUserId);
+        expect(created).toBeDefined();
+        expect(showNewInfoFrom).toBe(ShowNewInfoFromType.Lab);
+        expect(hasStarted).toBe(false);
+        expect(currentDoctorCheckpoint).toBe(secondWorkflowCheckpointId);
+        expect(currentDoctorCheckpointName).toBe('First Doctor Checkpoint');
+        expect(currentLabCheckpoint).toBe(firstWorkflowCheckpointId);
+        expect(currentLabCheckpointName).toBe('First Actual Checkpoint');
+        expect(doctorName).toBe('Doctor Johnson');
     });
 });

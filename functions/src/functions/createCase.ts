@@ -28,8 +28,6 @@ interface ICase {
 export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https.onCall(async(data: IProjectCreateDataCloudFunctions, context) => {
     const firestore = passedInAdmin.firestore();
     const uid = context.auth.uid;
-    console.log('uid: ', uid);
-    console.log('data: ', data);
 
     const companyUserJoinQuerySnapshot = await firestore.collection('companyUserJoin')
         .where('companyId', '==', data.companyId)
@@ -37,7 +35,6 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
         .get();
 
     if (companyUserJoinQuerySnapshot.empty) {
-        console.log('hexre 1');
         throw new functions.https.HttpsError('permission-denied', 'The user does not exist on the company');
     }
 
@@ -46,7 +43,6 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
     const companyUserDocumentSnapshot = await firestore.collection('users').doc(userId).get();
 
     if (!companyUserDocumentSnapshot.exists) {
-        console.log('here two');
         throw new functions.https.HttpsError('permission-denied', 'The user does not exist on the company');
     }
 
@@ -87,6 +83,10 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
 
     const prescriptionTemplateResponse = await firestore.collection('prescriptionTemplates').doc(prescriptionTemplateId).get();
 
+    if (!prescriptionTemplateResponse.exists) {
+        throw new functions.https.HttpsError('invalid-argument', 'The prescription template does not exist');
+    }
+
     const prescriptionFormTemplate = prescriptionTemplateResponse.data();
 
     let doctorId: string;
@@ -104,6 +104,14 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
             }
         })
     });
+
+    if (!doctorId) {
+        throw new functions.https.HttpsError('invalid-argument', 'The case requires a doctor information field');
+    }
+
+    if (!caseDeadline) {
+        throw new functions.https.HttpsError('invalid-argument', 'The case requires a case deadline field');
+    }
 
     const doctorSnapshot = await firestore.collection('users').doc(doctorId).get();
     const doctorName = doctorSnapshot.data().fullName;
