@@ -24,8 +24,9 @@ service cloud.firestore {
     match /CompanyUser/{companyUserId} {
       allow get: if isSignedIn() && companyUserIsActive(companyIdFromQueriedUser()) && (isAdminUser(companyIdFromQueriedUser()) || isSameUser())
       allow list: if isSignedIn() && companyUserIsActive(companyIdFromQueriedUser()) && isAdminUser(companyIdFromQueriedUser())
-      allow create: if isSignedIn() && companyUserIsActive(companyIdFromQueriedUser()) && isAdminUser(companyIdFromQueriedUser())
-      allow update: if isSignedIn() && companyUserIsActive(companyIdFromQueriedUser()) && isAdminUser(companyIdFromQueriedUser()) && isNotDeactivatingOwnUser() && isNotChangingRoleOnOnlyAdmin()
+      /// User can only be created and updated through cloud functions. ///
+      allow create: if false
+      allow update: if false
       /// Users cannot be deleted in our system. Instead, they are set as inactive.
       allow delete: if false
     }

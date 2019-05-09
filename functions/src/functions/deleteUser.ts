@@ -2,17 +2,11 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { UserType } from '../models/userTypes';
 import { Collections } from '../models/collections';
+import { ICloudFunctionsDeleteUserRequest } from '../models/deleteUserRequest';
 
-export interface IDeleteUserRequest {
-    id: string;
-    companyId: string;
-    uidOfUserToDelete: string;
-}
-
-export const deleteUserLocal = (auth: admin.auth.Auth, passedInAdmin: admin.app.App) => functions.https.onCall(async(deleteUserRequest: IDeleteUserRequest, context) => {
+export const deleteUserLocal = (auth: admin.auth.Auth, passedInAdmin: admin.app.App) => functions.https.onCall(async(deleteUserRequest: ICloudFunctionsDeleteUserRequest, context) => {
     const firestore = passedInAdmin.firestore();
     const uid = context.auth.uid;
-    console.log('uid is: ', uid);
 
     const userQueryPromise = firestore.collection(Collections.CompanyUser)
         .where('uid', '==', uid)
@@ -37,26 +31,31 @@ export const deleteUserLocal = (auth: admin.auth.Auth, passedInAdmin: admin.app.
         usersAcrossAllCompaniesPromise,
     ])
 
+    const userExists = userQuerySnapshot.docs.length > 0;
+
+    if (!userExists) {
+        throw new functions.https.HttpsError('permission-denied', 'The requesting user does not exist on this company');
+    }
+
+    const userIsActive = userQuerySnapshot.docs[0].data().isActive;
+
+    if (!userIsActive) {
+        throw new functions.https.HttpsError('permission-denied', 'The requesting user is not active on this company');
+    }
+
     const isAdmin = userQuerySnapshot.docs[0].data().type === UserType.Admin;
 
     if (!isAdmin) {
-        throw new functions.https.HttpsError('permission-denied', 'You are not an admin user');
+        throw new functions.https.HttpsError('permission-denied', 'The requesting user is not an admin user');
     }
 
     if (!userWeAreTryingToDeleteSnapshot.exists) {
-        throw new functions.https.HttpsError('invalid-argument', 'That user you are trying to delete does not exist');
+        throw new functions.https.HttpsError('invalid-argument', 'The user you are trying to delete does not exist');
     }
 
-    if (userWeAreTryingToDeleteSnapshot.data().type === UserType.Admin) {
-        const adminUsersQuerySnapshot = await firestore.collection(Collections.CompanyUser)
-            .where('companyId', '==', deleteUserRequest.companyId)
-            .where('type', '==', UserType.Admin)
-            .limit(2)
-            .get()
-
-        if (adminUsersQuerySnapshot.size < 1) {
-            throw new functions.https.HttpsError('invalid-argument', 'You cannot change the last Admin user.')
-        }
+    const tryingToDeleteOwnUser = userWeAreTryingToDeleteSnapshot.data().uid === uid;
+    if (tryingToDeleteOwnUser) {
+        throw new functions.https.HttpsError('invalid-argument', 'You cannot delete your own user from the system');
     }
 
     const shouldDeleteAuthenticatedUser = usersAcrossAllCompaniesSnapshot.docs.every((userCompanySnapshot) => {
@@ -77,7 +76,17 @@ export const deleteUserLocal = (auth: admin.auth.Auth, passedInAdmin: admin.app.
         await auth.deleteUser(deleteUserRequest.uidOfUserToDelete);
     }
 
-    await firestore.collection(Collections.CompanyUser).doc(deleteUserRequest.id).set({
+    const companyAuthUserJoinToDeleteId = `${deleteUserRequest.companyId}_${deleteUserRequest.uidOfUserToDelete}`;
+    const deleteCompanyAuthUserJoinPromise = firestore.collection(Collections.CompanyAuthUserJoin)
+        .doc(companyAuthUserJoinToDeleteId)
+        .delete();
+
+    const setUserAsInactivePromise = firestore.collection(Collections.CompanyUser).doc(deleteUserRequest.id).set({
         isActive: false,
     }, { merge: true });
+
+    await Promise.all([
+        deleteCompanyAuthUserJoinPromise,
+        setUserAsInactivePromise,
+    ]);
 })
