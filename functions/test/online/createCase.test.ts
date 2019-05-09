@@ -16,7 +16,7 @@ import { Collections } from '../../src/models/collections';
 const testEnv = functionsTest({
     databaseURL: "https://shentaro-test.firebaseio.com",
     projectId: "shentaro-test",
-    storageBucket: "gs://shentaro-test.appspot.com",
+    storageBucket: "shentaro-test.appspot.com",
 }, './service-account.json');
 
 // Provide 3rd party API keys

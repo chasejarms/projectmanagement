@@ -16,7 +16,7 @@ const app = admin.initializeApp({
     credential: admin.credential.applicationDefault(),
     databaseURL: 'https://project-management-develop.firebaseio.com',
 })
-const auth = app.auth();
+export const auth = app.auth();
 const firestore = app.firestore();
 
 export const createUser = createUserLocal(auth, firestore);

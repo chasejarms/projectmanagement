@@ -2,24 +2,11 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { UserType } from '../models/userTypes';
 import sgMail = require('@sendgrid/mail');
-import { IUnitedStatesAddress } from '../models/unitedStatesAddress';
 import { Collections } from '../models/collections';
+import { ICloudFunctionUserCreateRequest } from '../models/userCreateRequest';
 
-interface IUserCreateRequest {
-    companyId: string;
-    email: string;
-    fullName: string;
-    type: UserType;
-    scanCheckpoints?: string[];
-    address?: IUnitedStatesAddress;
-    telephone?: IUserCreateRequest;
-}
-
-export const createUserLocal = (auth: admin.auth.Auth, firestore: FirebaseFirestore.Firestore) => functions.https.onCall(async(data: IUserCreateRequest, context) => {
+export const createUserLocal = (auth: admin.auth.Auth, firestore: FirebaseFirestore.Firestore) => functions.https.onCall(async(data: ICloudFunctionUserCreateRequest, context) => {
     const uid = context.auth.uid;
-    console.log('uid is: ', uid);
-
-    console.log('data: ', data);
 
     const userQueryPromise = firestore.collection(Collections.CompanyUser)
         .where('uid', '==', uid)
@@ -46,24 +33,21 @@ export const createUserLocal = (auth: admin.auth.Auth, firestore: FirebaseFirest
     ])
 
     const userExists = userQuerySnapshot.docs.length > 0;
-    console.log('userExists: ', userExists);
 
     if (!userExists) {
         throw new functions.https.HttpsError('permission-denied', 'The requesting user does not exist on this company');
     }
 
     const userIsActive = userQuerySnapshot.docs[0].data().isActive;
-    console.log('userIsActive: ', userIsActive);
 
     if (!userIsActive) {
         throw new functions.https.HttpsError('permission-denied', 'The requesting user is not active on this company');
     }
 
     const isAdmin = userQuerySnapshot.docs[0].data().type === UserType.Admin;
-    console.log('isAdmin: ', isAdmin);
 
     if (!isAdmin) {
-        throw new functions.https.HttpsError('permission-denied', 'You are not an admin user');
+        throw new functions.https.HttpsError('permission-denied', 'The requesting user is not an admin user');
     }
 
     if (!userWeAreTryingToCreateSnapshot.empty && userWeAreTryingToCreateSnapshot.docs[0].data().isActive) {
@@ -96,10 +80,7 @@ export const createUserLocal = (auth: admin.auth.Auth, firestore: FirebaseFirest
                     password,
                 }
             }
-            const sendGridResponse = await sgMail.send(msg);
-            console.log('sendGridResponse status code: ', sendGridResponse[0].statusCode);
-            console.log('sendGridResponse status message: ', sendGridResponse[0].statusMessage);
-            console.log('sendGridResponse body: ', sendGridResponse[0].body);
+            await sgMail.send(msg);
         } catch (e) {
             console.log('The send grid email did not work. Here is the email: ', e);
         }
@@ -129,10 +110,6 @@ export const createUserLocal = (auth: admin.auth.Auth, firestore: FirebaseFirest
         }
 
         companyUserId = userWeAreTryingToCreateSnapshot.docs[0].id;
-
-        console.log('companyUserId: ', companyUserId);
-
-        console.log('userToUpdate: ', userToUpdate);
 
         await firestore.collection(Collections.CompanyUser)
             .doc(companyUserId)
@@ -167,7 +144,6 @@ export const createUserLocal = (auth: admin.auth.Auth, firestore: FirebaseFirest
     }
 
     const companyUserJoinCompositeIndex = `${data.companyId}_${userRecord.uid}`;
-    console.log('companyUserJoinCompositeIndex: ', companyUserJoinCompositeIndex);
 
     await firestore.collection(Collections.CompanyAuthUserJoin)
         .doc(companyUserJoinCompositeIndex)
