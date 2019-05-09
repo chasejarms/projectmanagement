@@ -1,9 +1,9 @@
 import { ShowNewInfoFromType } from './../../src/Models/showNewInfoFromTypes';
 import { generateUniqueId } from '../../src/utils/generateUniqueId';
 
-import * as functions from 'firebase-functions-test';
+import * as functionsTest from 'firebase-functions-test';
 import * as admin from 'firebase-admin';
-import * as functionsTyping from 'firebase-functions';
+import * as functions from 'firebase-functions';
 
 import { createCase } from '../../src';
 import { WrappedFunction } from 'firebase-functions-test/lib/main';
@@ -13,7 +13,7 @@ import { UserType } from '../../src/models/userTypes';
 import { cloneDeep } from 'lodash';
 import { Collections } from '../../src/models/collections';
 
-const testEnv = functions({
+const testEnv = functionsTest({
     databaseURL: "https://shentaro-test.firebaseio.com",
     projectId: "shentaro-test",
     storageBucket: "gs://shentaro-test.appspot.com",
@@ -68,7 +68,7 @@ describe('createCase', () => {
         try {
             await wrapped(initialCaseCreateRequest, { auth: { uid: firebaseAuthenticationUid }});
         } catch (error) {
-            const httpsError = error as functionsTyping.https.HttpsError;
+            const httpsError = error as functions.https.HttpsError;
             noCompanyUserJoinDocumentErrorMessage = httpsError.message;
         }
 
@@ -86,7 +86,7 @@ describe('createCase', () => {
         try {
             await wrapped(initialCaseCreateRequest, { auth: { uid: firebaseAuthenticationUid }});
         } catch (error) {
-            const httpsError = error as functionsTyping.https.HttpsError;
+            const httpsError = error as functions.https.HttpsError;
             noCompanyUserErrorMessage = httpsError.message;
         }
 
@@ -107,7 +107,7 @@ describe('createCase', () => {
         try {
             await wrapped(initialCaseCreateRequest, { auth: { uid: firebaseAuthenticationUid }});
         } catch (error) {
-            const httpsError = error as functionsTyping.https.HttpsError;
+            const httpsError = error as functions.https.HttpsError;
             noActiveUserErrorMessage = httpsError.message;
         }
 
@@ -154,7 +154,7 @@ describe('createCase', () => {
         try {
             await wrapped(initialCaseCreateRequest, { auth: { uid: firebaseAuthenticationUid }});
         } catch (error) {
-            const httpsError = error as functionsTyping.https.HttpsError;
+            const httpsError = error as functions.https.HttpsError;
             noPrescriptionTemplateError = httpsError.message;
         }
 
@@ -230,7 +230,7 @@ describe('createCase', () => {
         try {
             await wrapped(firstCaseCreateRequest, { auth: { uid: firebaseAuthenticationUid }});
         } catch (error) {
-            const httpsError = error as functionsTyping.https.HttpsError;
+            const httpsError = error as functions.https.HttpsError;
             noDoctorInformationError = httpsError.message;
         }
 
@@ -260,7 +260,7 @@ describe('createCase', () => {
         try {
             await wrapped(secondCaseCreationRequest, { auth: { uid: firebaseAuthenticationUid }});
         } catch (error) {
-            const httpsError = error as functionsTyping.https.HttpsError;
+            const httpsError = error as functions.https.HttpsError;
             noCaseDeadlineError = httpsError.message;
         }
 
@@ -364,7 +364,7 @@ describe('createCase', () => {
         try {
             await wrapped(caseCreationRequest, { auth: { uid: firebaseAuthenticationUid }});
         } catch (error) {
-            const httpsError = error as functionsTyping.https.HttpsError;
+            const httpsError = error as functions.https.HttpsError;
             noDoctorError = httpsError.message;
         }
 
@@ -394,7 +394,7 @@ describe('createCase', () => {
         try {
             await wrapped(caseCreationRequestTwo, { auth: { uid: firebaseAuthenticationUid }});
         } catch (error) {
-            const httpsError = error as functionsTyping.https.HttpsError;
+            const httpsError = error as functions.https.HttpsError;
             doctorIsInactiveError = httpsError.message;
         }
 
