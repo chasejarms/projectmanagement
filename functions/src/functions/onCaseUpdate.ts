@@ -15,7 +15,7 @@ export const onCaseUpdateLocal = (passedInAdmin: admin.app.App) => functions.fir
         const noCheckpointsHaveChanged = isEqual(beforeCaseCheckpoints, afterCaseCheckpoints);
 
         if (noCheckpointsHaveChanged) {
-            return;
+            return false;
         }
 
         const earliestDoctorCheckpoint = afterCaseCheckpoints.find((caseCheckpoint) => {
@@ -32,13 +32,9 @@ export const onCaseUpdateLocal = (passedInAdmin: admin.app.App) => functions.fir
         const currentLabCheckpointName = earliestLabCheckpoint ? earliestLabCheckpoint.name : '';
         const currentLabCheckpoint = earliestLabCheckpoint ? earliestLabCheckpoint.linkedWorkflowCheckpoint : '';
 
-        console.log('after case checkpoints: ', afterCaseCheckpoints);
-
         const complete = afterCaseCheckpoints.every((caseCheckpoint) => {
             return caseCheckpoint.complete;
         });
-
-        console.log('complete: ', complete);
 
         const hasStarted = afterCaseCheckpoints.some((caseCheckpoint) => {
             return caseCheckpoint.complete;
@@ -54,4 +50,6 @@ export const onCaseUpdateLocal = (passedInAdmin: admin.app.App) => functions.fir
             complete,
             hasStarted,
         }, { merge: true });
+
+        return true;
     })
