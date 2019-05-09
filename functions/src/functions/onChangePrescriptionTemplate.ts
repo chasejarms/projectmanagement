@@ -1,8 +1,9 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
+import { Collections } from '../models/collections';
 
 export const onChangePrescriptionTemplateLocal = (passedInAdmin: admin.app.App) => functions.firestore
-    .document('prescriptionTemplates/{prescriptionTemplateId}')
+    .document(`${Collections.PrescriptionTemplate}/{prescriptionTemplateId}`)
     .onCreate(async(documentSnapshot) => {
         const prescriptionFormTemplate = documentSnapshot.data();
 
@@ -23,7 +24,7 @@ export const onChangePrescriptionTemplateLocal = (passedInAdmin: admin.app.App) 
 
         const prescriptionTemplateHasSufficientFields = doctorControlExists && caseDeadlineExists;
 
-        await passedInAdmin.firestore().collection('companies')
+        await passedInAdmin.firestore().collection(Collections.Company)
             .doc(prescriptionFormTemplate.companyId)
             .set({
                 prescriptionTemplateHasSufficientFields,

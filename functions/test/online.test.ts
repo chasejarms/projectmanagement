@@ -11,6 +11,7 @@ import { IProjectCreateDataCloudFunctions } from '../src/models/projectCreateDat
 import { UserType } from '../src/models/userTypes';
 
 import { cloneDeep } from 'lodash';
+import { Collections } from '../src/models/collections';
 
 // Online Testing
 const testEnv = functions({
@@ -80,7 +81,7 @@ describe('createCase', () => {
             firebaseAuthenticationUid,
         };
 
-        await admin.firestore().collection('companyUserJoin').doc(companyUserJoinId).set(companyUserJoinData);
+        await admin.firestore().collection(Collections.CompanyAuthUserJoin).doc(companyUserJoinId).set(companyUserJoinData);
 
         let noCompanyUserErrorMessage: string = '';
         try {
@@ -101,7 +102,7 @@ describe('createCase', () => {
             uid: firebaseAuthenticationUid,
         }
 
-        await admin.firestore().collection('users').doc(companyUserId).set(companyUserData);
+        await admin.firestore().collection(Collections.CompanyUser).doc(companyUserId).set(companyUserData);
 
         let noActiveUserErrorMessage: string = '';
         try {
@@ -121,7 +122,7 @@ describe('createCase', () => {
             firebaseAuthenticationUid,
         };
 
-        await admin.firestore().collection('companyUserJoin').doc(companyUserJoinId).set(companyUserJoinData);
+        await admin.firestore().collection(Collections.CompanyAuthUserJoin).doc(companyUserJoinId).set(companyUserJoinData);
 
         const companyUserData = {
             companyId,
@@ -132,8 +133,8 @@ describe('createCase', () => {
             uid: firebaseAuthenticationUid,
         }
 
-        await admin.firestore().collection('users').doc(companyUserId).set(companyUserData);
-        await admin.firestore().collection('companyWorkflows').add({
+        await admin.firestore().collection(Collections.CompanyUser).doc(companyUserId).set(companyUserData);
+        await admin.firestore().collection(Collections.CompanyWorkflow).add({
             companyId,
             prescriptionTemplate: '123',
             workflowCheckpoints: [],
@@ -157,7 +158,7 @@ describe('createCase', () => {
             firebaseAuthenticationUid,
         };
 
-        await admin.firestore().collection('companyUserJoin').doc(companyUserJoinId).set(companyUserJoinData);
+        await admin.firestore().collection(Collections.CompanyAuthUserJoin).doc(companyUserJoinId).set(companyUserJoinData);
 
         const companyUserData = {
             companyId,
@@ -168,9 +169,9 @@ describe('createCase', () => {
             uid: firebaseAuthenticationUid,
         }
 
-        await admin.firestore().collection('users').doc(companyUserId).set(companyUserData);
+        await admin.firestore().collection(Collections.CompanyUser).doc(companyUserId).set(companyUserData);
         const prescriptionTemplateId = generateUniqueId();
-        await admin.firestore().collection('companyWorkflows').add({
+        await admin.firestore().collection(Collections.CompanyWorkflow).add({
             companyId,
             prescriptionTemplate: prescriptionTemplateId,
             workflowCheckpoints: [],
@@ -180,7 +181,7 @@ describe('createCase', () => {
         const caseDeadlineControlId = '2';
         const doctorInformationControlId = '3';
 
-        await admin.firestore().collection('prescriptionTemplates').doc(prescriptionTemplateId).set({
+        await admin.firestore().collection(Collections.PrescriptionTemplate).doc(prescriptionTemplateId).set({
             sectionOrder: [sectionId],
             sections: {
                 [sectionId]: {
@@ -213,7 +214,7 @@ describe('createCase', () => {
 
         expect(noDoctorInformationError).toBe('The case requires a doctor information field');
 
-        await admin.firestore().collection('prescriptionTemplates').doc(prescriptionTemplateId).set({
+        await admin.firestore().collection(Collections.PrescriptionTemplate).doc(prescriptionTemplateId).set({
             sectionOrder: [sectionId],
             sections: {
                 [sectionId]: {
@@ -244,14 +245,14 @@ describe('createCase', () => {
         expect(noCaseDeadlineError).toBe('The case requires a case deadline field');
     });
 
-    it('should hoist / set the top level information', async() => {
+    test('does not allow case creation if the specified doctor does not exist or is not active on the company', async() => {
         const companyUserJoinData = {
             companyId,
             userId: companyUserId,
             firebaseAuthenticationUid,
         };
 
-        await admin.firestore().collection('companyUserJoin').doc(companyUserJoinId).set(companyUserJoinData);
+        await admin.firestore().collection(Collections.CompanyAuthUserJoin).doc(companyUserJoinId).set(companyUserJoinData);
 
         const companyUserData = {
             companyId,
@@ -262,7 +263,121 @@ describe('createCase', () => {
             uid: firebaseAuthenticationUid,
         }
 
-        await admin.firestore().collection('users').doc(companyUserId).set(companyUserData);
+        await admin.firestore().collection(Collections.CompanyUser).doc(companyUserId).set(companyUserData);
+
+        const firstWorkflowCheckpointId = generateUniqueId();
+        const secondWorkflowCheckpointId = generateUniqueId();
+        await admin.firestore().collection(Collections.WorkflowCheckpoint).doc(firstWorkflowCheckpointId).set({
+            linkedWorkflowCheckpoint: '2',
+            name: 'First Actual Checkpoint',
+            visibleToDoctor: false,
+        });
+
+        await admin.firestore().collection(Collections.WorkflowCheckpoint).doc(secondWorkflowCheckpointId).set({
+            linkedWorkflowCheckpoint: '1',
+            name: 'First Doctor Checkpoint',
+            visibleToDoctor: true
+        });
+
+        const prescriptionTemplateId = generateUniqueId();
+        await admin.firestore().collection(Collections.CompanyWorkflow).add({
+            companyId,
+            prescriptionTemplate: prescriptionTemplateId,
+            workflowCheckpoints: [firstWorkflowCheckpointId, secondWorkflowCheckpointId],
+        });
+
+        const sectionId = '1';
+        const caseDeadlineControlId = '2';
+        const doctorInformationControlId = '3';
+
+        await admin.firestore().collection(Collections.PrescriptionTemplate).doc(prescriptionTemplateId).set({
+            sectionOrder: [sectionId],
+            sections: {
+                [sectionId]: {
+                    controlOrder: [caseDeadlineControlId, doctorInformationControlId],
+                }
+            },
+            controls: {
+                [caseDeadlineControlId]: {
+                    type: 'CaseDeadline',
+                    id: caseDeadlineControlId,
+                },
+                [doctorInformationControlId]: {
+                    type: 'DoctorInformation',
+                    id: doctorInformationControlId,
+                },
+            }
+        });
+
+        const caseCreationRequest = cloneDeep(initialCaseCreateRequest);
+        caseCreationRequest.controlValues = {
+            [doctorInformationControlId]: '1',
+            [caseDeadlineControlId]: {
+                seconds: 0,
+                nanoseconds: 0,
+            }
+        }
+
+        let noDoctorError: string = '';
+        try {
+            await wrapped(caseCreationRequest, { auth: { uid: firebaseAuthenticationUid }});
+        } catch (error) {
+            const httpsError = error as functionsTyping.https.HttpsError;
+            noDoctorError = httpsError.message;
+        }
+
+        expect(noDoctorError).toBe('The specified doctor does not exist on the company');
+
+        const doctorCompanyUserData = {
+            companyId,
+            email: 'doctor@doctorjohnson.com',
+            fullName: 'Doctor Johnson',
+            isActive: false,
+            type: UserType.Doctor,
+            uid: doctorFirebaseAuthenticationUid,
+        }
+
+        await admin.firestore().collection(Collections.CompanyUser).doc(doctorCompanyUserId).set(doctorCompanyUserData);
+
+        const caseCreationRequestTwo = cloneDeep(initialCaseCreateRequest);
+        caseCreationRequestTwo.controlValues = {
+            [doctorInformationControlId]: doctorCompanyUserId,
+            [caseDeadlineControlId]: {
+                seconds: 0,
+                nanoseconds: 0,
+            }
+        }
+
+        let doctorIsInactiveError: string = '';
+        try {
+            await wrapped(caseCreationRequestTwo, { auth: { uid: firebaseAuthenticationUid }});
+        } catch (error) {
+            const httpsError = error as functionsTyping.https.HttpsError;
+            doctorIsInactiveError = httpsError.message;
+        }
+
+        expect(doctorIsInactiveError).toBe('The specified doctor is not active on the company');
+    });
+
+    test('it should hoist / set the top level information', async() => {
+        const companyUserJoinData = {
+            companyId,
+            userId: companyUserId,
+            firebaseAuthenticationUid,
+        };
+
+        await admin.firestore().collection(Collections.CompanyAuthUserJoin).doc(companyUserJoinId).set(companyUserJoinData);
+
+        const companyUserData = {
+            companyId,
+            email: 'someone@gmail.com',
+            fullName: 'Jane Doe',
+            isActive: true,
+            type: UserType.Admin,
+            uid: firebaseAuthenticationUid,
+        }
+
+        await admin.firestore().collection(Collections.CompanyUser).doc(companyUserId).set(companyUserData);
 
         const doctorCompanyUserData = {
             companyId,
@@ -273,24 +388,24 @@ describe('createCase', () => {
             uid: doctorFirebaseAuthenticationUid,
         }
 
-        await admin.firestore().collection('users').doc(doctorCompanyUserId).set(doctorCompanyUserData);
+        await admin.firestore().collection(Collections.CompanyUser).doc(doctorCompanyUserId).set(doctorCompanyUserData);
 
         const firstWorkflowCheckpointId = generateUniqueId();
         const secondWorkflowCheckpointId = generateUniqueId();
-        await admin.firestore().collection('workflowCheckpoints').doc(firstWorkflowCheckpointId).set({
+        await admin.firestore().collection(Collections.WorkflowCheckpoint).doc(firstWorkflowCheckpointId).set({
             linkedWorkflowCheckpoint: '2',
             name: 'First Actual Checkpoint',
             visibleToDoctor: false,
         });
 
-        await admin.firestore().collection('workflowCheckpoints').doc(secondWorkflowCheckpointId).set({
+        await admin.firestore().collection(Collections.WorkflowCheckpoint).doc(secondWorkflowCheckpointId).set({
             linkedWorkflowCheckpoint: '1',
             name: 'First Doctor Checkpoint',
             visibleToDoctor: true
         });
 
         const prescriptionTemplateId = generateUniqueId();
-        await admin.firestore().collection('companyWorkflows').add({
+        await admin.firestore().collection(Collections.CompanyWorkflow).add({
             companyId,
             prescriptionTemplate: prescriptionTemplateId,
             workflowCheckpoints: [firstWorkflowCheckpointId, secondWorkflowCheckpointId],
@@ -300,7 +415,7 @@ describe('createCase', () => {
         const caseDeadlineControlId = '2';
         const doctorInformationControlId = '3';
 
-        await admin.firestore().collection('prescriptionTemplates').doc(prescriptionTemplateId).set({
+        await admin.firestore().collection(Collections.PrescriptionTemplate).doc(prescriptionTemplateId).set({
             sectionOrder: [sectionId],
             sections: {
                 [sectionId]: {
@@ -330,7 +445,7 @@ describe('createCase', () => {
 
         await wrapped(caseCreationRequest, { auth: { uid: firebaseAuthenticationUid }});
 
-        const caseSnapshot = await admin.firestore().collection('cases').doc(caseId).get();
+        const caseSnapshot = await admin.firestore().collection(Collections.Case).doc(caseId).get();
         const {
             complete,
             deadline,

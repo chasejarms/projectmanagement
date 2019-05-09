@@ -6,6 +6,7 @@ import { CompletionStatus } from 'src/Models/caseFilter/completionStatus';
 import { DoctorFlag } from 'src/Models/caseFilter/doctorFlag';
 import { NotificationFlag } from 'src/Models/caseFilter/notificationFlag';
 import { StartedStatus } from 'src/Models/caseFilter/startedStatus';
+import { Collections } from 'src/Models/collections';
 import { ShowNewInfoFromType } from 'src/Models/showNewInfoFromTypes';
 import { UserType } from 'src/Models/userTypes';
 import { generateUniqueId } from 'src/Utils/generateUniqueId';
@@ -17,7 +18,7 @@ export class ProjectsApi implements ICaseApi {
         // tslint:disable-next-line:no-console
         console.log('slimeCasesSearchRequest: ', slimCasesSearchRequest);
 
-        let query: any = db.collection('cases')
+        let query: any = db.collection(Collections.Case)
             .where('companyId', '==', slimCasesSearchRequest.companyId)
             .orderBy('deadline', 'asc')
 
@@ -93,7 +94,7 @@ export class ProjectsApi implements ICaseApi {
 
     public async getProject(caseId: string): Promise<ICase> {
         const documentReference = await firebase.firestore()
-            .collection('cases')
+            .collection(Collections.Case)
             .doc(caseId)
             .get();
 
@@ -148,12 +149,12 @@ export class ProjectsApi implements ICaseApi {
             controlValues: updateCaseInformationRequest.controlValues,
             showNewInfoFrom,
         }
-        await firebase.firestore().collection('cases').doc(caseId)
+        await firebase.firestore().collection(Collections.Case).doc(caseId)
             .set(caseInformation, { merge: true });
     }
 
     public async getNewCases(companyId: string): Promise<ICase[]> {
-        const casesQuerySnapshot = await firebase.firestore().collection('cases')
+        const casesQuerySnapshot = await firebase.firestore().collection(Collections.Case)
             .where('companyId', '==', companyId)
             .where('hasStarted', '==', false)
             .orderBy('name', 'asc')
@@ -168,7 +169,7 @@ export class ProjectsApi implements ICaseApi {
     }
 
     public async updateCaseCheckpoints(caseId: string, caseCheckpoints: ICaseCheckpoint[]) {
-        await firebase.firestore().collection('cases').doc(caseId).set({
+        await firebase.firestore().collection(Collections.Case).doc(caseId).set({
             caseCheckpoints,
         }, { merge: true });
 
@@ -176,13 +177,13 @@ export class ProjectsApi implements ICaseApi {
     }
 
     public async markProjectUpdatesAsSeen(companyId: string, caseId: string): Promise<void> {
-        await firebase.firestore().collection('cases').doc(caseId).set({
+        await firebase.firestore().collection(Collections.Case).doc(caseId).set({
             showNewInfoFrom: null,
         }, { merge: true });
     }
 
     public async canCreateCases(companyId: string): Promise<boolean> {
-        const companySnapshot = await firebase.firestore().collection('companies').doc(companyId).get();
+        const companySnapshot = await firebase.firestore().collection(Collections.Company).doc(companyId).get();
 
         const companyData = companySnapshot.data()!;
         const hasDoctors = companyData.roleCount[UserType.Doctor] > 0;

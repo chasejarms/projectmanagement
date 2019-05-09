@@ -1,3 +1,4 @@
+import { Collections } from 'src/Models/collections';
 import { db } from './../../firebase';
 import { IWorkflow, IWorkflowCheckpoint, IWorkflowCheckpointCreateRequest } from './../../Models/workflow';
 import { IWorkflowApi } from './workflowApiInterface';
@@ -8,7 +9,7 @@ export class WorkflowApi implements IWorkflowApi {
 
         const workflowCheckpoints = workflowDocumentSnapshot.docs[0].data().workflowCheckpoints;
         const workflowCheckpointDocumentSnapshots = await Promise.all(workflowCheckpoints.map((workflowCheckpointId: string) => {
-            return db.collection('workflowCheckpoints').doc(workflowCheckpointId).get();
+            return db.collection(Collections.WorkflowCheckpoint).doc(workflowCheckpointId).get();
         }));
 
         const fullWorkflowCheckpoints = workflowCheckpointDocumentSnapshots.map((workflowCheckpointDocumentSnapshot: firebase.firestore.DocumentSnapshot) => {
@@ -22,7 +23,7 @@ export class WorkflowApi implements IWorkflowApi {
     }
 
     public async addWorkflowCheckpoint(companyId: string, workflowCheckpoint: IWorkflowCheckpointCreateRequest): Promise<IWorkflowCheckpoint> {
-        const createWorkflowCheckpointPromise = db.collection('workflowCheckpoints').add({
+        const createWorkflowCheckpointPromise = db.collection(Collections.WorkflowCheckpoint).add({
             ...workflowCheckpoint,
             companyId,
         });
@@ -38,7 +39,7 @@ export class WorkflowApi implements IWorkflowApi {
         const workflowCheckpoints = workflowDocumentSnapshot.docs[0].data().workflowCheckpoints;
         workflowCheckpoints.push(workflowCheckpointSnapshot.id);
 
-        await db.collection('companyWorkflows')
+        await db.collection(Collections.CompanyWorkflow)
             .doc(workflowDocumentSnapshot.docs[0].id)
             .set({
                 workflowCheckpoints,
@@ -59,7 +60,7 @@ export class WorkflowApi implements IWorkflowApi {
             return workflowCheckpointId !== workflowCheckpointIdToDelete;
         })
 
-        await db.collection('companyWorkflows')
+        await db.collection(Collections.CompanyWorkflow)
             .doc(workflowDocumentSnapshot.docs[0].id)
             .set({
                 workflowCheckpoints: checkpointsWithoutDeletedId,
@@ -67,7 +68,7 @@ export class WorkflowApi implements IWorkflowApi {
     }
 
     public async updateWorkflowCheckpoint(companyId: string, workflowCheckpoint: IWorkflowCheckpoint): Promise<IWorkflowCheckpoint> {
-        await db.collection('workflowCheckpoints')
+        await db.collection(Collections.WorkflowCheckpoint)
             .doc(workflowCheckpoint.id)
             .set({
                 name: workflowCheckpoint.name,
@@ -82,7 +83,7 @@ export class WorkflowApi implements IWorkflowApi {
         const workflowDocumentSnapshot = await this.getWorkflowDocumentSnapshotPromise(companyId);
         const workflowCheckpointId = workflowDocumentSnapshot.docs[0].id;
 
-        await db.collection('companyWorkflows')
+        await db.collection(Collections.CompanyWorkflow)
             .doc(workflowCheckpointId)
             .set({
                 workflowCheckpoints: newCheckpointOrder,
@@ -90,7 +91,7 @@ export class WorkflowApi implements IWorkflowApi {
     }
 
     private getWorkflowDocumentSnapshotPromise = (companyId: string): Promise<firebase.firestore.QuerySnapshot> => {
-        return db.collection('companyWorkflows')
+        return db.collection(Collections.CompanyWorkflow)
             .where('companyId', '==', companyId)
             .get();
     }

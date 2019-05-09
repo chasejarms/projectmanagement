@@ -1,8 +1,9 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
+import { Collections } from '../models/collections';
 
 export const onCreateOrUpdateUserLocal = (passedInAdmin: admin.app.App) => functions.firestore
-    .document('users/{uid}')
+    .document(`${Collections.CompanyUser}/{companyUserId}`)
     .onWrite(async(documentSnapshot) => {
         // don't need to do any of the following logic on delete
         if (!documentSnapshot.after.exists) {
@@ -13,7 +14,7 @@ export const onCreateOrUpdateUserLocal = (passedInAdmin: admin.app.App) => funct
         if (!documentSnapshot.before.exists || documentSnapshot.before.data().fullName !== documentSnapshot.after.data().fullName) {
             const existingUserData = documentSnapshot.after.data();
             const nameSearchValues = createNameSearchValues(existingUserData.fullName);
-            await passedInAdmin.firestore().collection('users').doc(documentSnapshot.before.id).set({
+            await passedInAdmin.firestore().collection(Collections.CompanyUser).doc(documentSnapshot.before.id).set({
                 ...existingUserData,
                 nameSearchValues,
             }, { merge: true });

@@ -1,3 +1,4 @@
+import { Collections } from '../models/collections';
 import { ShowNewInfoFromType } from '../models/showNewInfoFromTypes';
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
@@ -29,7 +30,7 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
     const firestore = passedInAdmin.firestore();
     const uid = context.auth.uid;
 
-    const companyUserJoinQuerySnapshot = await firestore.collection('companyUserJoin')
+    const companyUserJoinQuerySnapshot = await firestore.collection(Collections.CaseCheckpoint)
         .where('companyId', '==', data.companyId)
         .where('firebaseAuthenticationUid', '==', uid)
         .get();
@@ -40,7 +41,7 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
 
     const userId = companyUserJoinQuerySnapshot.docs[0].data().userId;
 
-    const companyUserDocumentSnapshot = await firestore.collection('users').doc(userId).get();
+    const companyUserDocumentSnapshot = await firestore.collection(Collections.CompanyUser).doc(userId).get();
 
     if (!companyUserDocumentSnapshot.exists) {
         throw new functions.https.HttpsError('permission-denied', 'The user does not exist on the company');
@@ -55,13 +56,13 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
 
     const isAdminOrStaff = userType === UserType.Admin || userType === UserType.Staff;
 
-    const companyWorkflowsQuerySnapshot = await firestore.collection('companyWorkflows')
+    const companyWorkflowsQuerySnapshot = await firestore.collection(Collections.CompanyWorkflow)
         .where('companyId', '==', data.companyId)
         .get();
 
     const workflowCheckpointIds: string[] = companyWorkflowsQuerySnapshot.docs[0].data().workflowCheckpoints;
     const workflowCheckpointPromises = workflowCheckpointIds.map((workflowCheckpointId) => {
-        return firestore.collection('workflowCheckpoints').doc(workflowCheckpointId).get();
+        return firestore.collection(Collections.WorkflowCheckpoint).doc(workflowCheckpointId).get();
     });
 
     const workflowCheckpointsSnapshots = await Promise.all(workflowCheckpointPromises);
@@ -81,7 +82,7 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
 
     const prescriptionTemplateId = companyWorkflowsQuerySnapshot.docs[0].data().prescriptionTemplate;
 
-    const prescriptionTemplateResponse = await firestore.collection('prescriptionTemplates').doc(prescriptionTemplateId).get();
+    const prescriptionTemplateResponse = await firestore.collection(Collections.PrescriptionTemplate).doc(prescriptionTemplateId).get();
 
     if (!prescriptionTemplateResponse.exists) {
         throw new functions.https.HttpsError('invalid-argument', 'The prescription template does not exist');
@@ -113,7 +114,16 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
         throw new functions.https.HttpsError('invalid-argument', 'The case requires a case deadline field');
     }
 
-    const doctorSnapshot = await firestore.collection('users').doc(doctorId).get();
+    const doctorSnapshot = await firestore.collection(Collections.CompanyUser).doc(doctorId).get();
+
+    if (!doctorSnapshot.exists) {
+        throw new functions.https.HttpsError('invalid-argument', 'The specified doctor does not exist on the company');
+    }
+
+    if (!doctorSnapshot.data().isActive) {
+        throw new functions.https.HttpsError('invalid-argument', 'The specified doctor is not active on the company');
+    }
+
     const doctorName = doctorSnapshot.data().fullName;
 
     const earliestDoctorCheckpoint = caseCheckpoints.find((caseCheckpoint) => {
@@ -147,7 +157,7 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
         doctorName,
     };
 
-    await firestore.collection('cases').doc(data.id).set(caseToCreate);
+    await firestore.collection(Collections.Case).doc(data.id).set(caseToCreate);
 
     return data.id;
 });

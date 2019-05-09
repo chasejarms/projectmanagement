@@ -3,6 +3,7 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { UserType } from '../models/userTypes';
 import { IUnitedStatesAddress } from '../models/unitedStatesAddress';
+import { Collections } from '../models/collections';
 
 interface IUser {
     id: string;
@@ -23,12 +24,12 @@ export const updateUserLocal = (passedInAdmin: admin.app.App) => functions.https
     const uid = context.auth.uid;
     console.log('uid is: ', uid);
 
-    const userQueryPromise = firestore.collection('users')
+    const userQueryPromise = firestore.collection(Collections.CompanyUser)
         .where('uid', '==', uid)
         .where('companyId', '==', data.companyId)
         .get();
 
-    const userWeAreTryingToUpdate = firestore.collection('users')
+    const userWeAreTryingToUpdate = firestore.collection(Collections.CompanyUser)
         .where('uid', '==', data.uid)
         .where('companyId', '==', data.companyId)
         .get();
@@ -78,7 +79,7 @@ export const updateUserLocal = (passedInAdmin: admin.app.App) => functions.https
 
     if (userBeforeUpdate.type === UserType.Admin && data.type !== UserType.Admin) {
         console.log('trying to change the last admin user');
-        const adminUsersQuerySnapshot = await firestore.collection('users')
+        const adminUsersQuerySnapshot = await firestore.collection(Collections.CompanyUser)
             .where('companyId', '==', data.companyId)
             .where('type', '==', UserType.Admin)
             .limit(2)
@@ -102,7 +103,7 @@ export const updateUserLocal = (passedInAdmin: admin.app.App) => functions.https
             id: userWeAreTryingToUpdateSnapshot.docs[0].id,
         }
     } else {
-        await firestore.collection('users')
+        await firestore.collection(Collections.CompanyUser)
             .doc(userWeAreTryingToUpdateSnapshot.docs[0].id)
             .set(updatedUser, {
                 merge: true,

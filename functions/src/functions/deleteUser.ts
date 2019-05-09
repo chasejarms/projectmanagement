@@ -1,6 +1,7 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { UserType } from '../models/userTypes';
+import { Collections } from '../models/collections';
 
 export interface IDeleteUserRequest {
     id: string;
@@ -13,16 +14,16 @@ export const deleteUserLocal = (auth: admin.auth.Auth, passedInAdmin: admin.app.
     const uid = context.auth.uid;
     console.log('uid is: ', uid);
 
-    const userQueryPromise = firestore.collection('users')
+    const userQueryPromise = firestore.collection(Collections.CompanyUser)
         .where('uid', '==', uid)
         .where('companyId', '==', deleteUserRequest.companyId)
         .get();
 
-    const userWeAreTryingToDeletePromise = firestore.collection('users')
+    const userWeAreTryingToDeletePromise = firestore.collection(Collections.CompanyUser)
         .doc(deleteUserRequest.id)
         .get()
 
-    const usersAcrossAllCompaniesPromise = firestore.collection('users')
+    const usersAcrossAllCompaniesPromise = firestore.collection(Collections.CompanyUser)
         .where('uid', '==', deleteUserRequest.uidOfUserToDelete)
         .get();
 
@@ -47,7 +48,7 @@ export const deleteUserLocal = (auth: admin.auth.Auth, passedInAdmin: admin.app.
     }
 
     if (userWeAreTryingToDeleteSnapshot.data().type === UserType.Admin) {
-        const adminUsersQuerySnapshot = await firestore.collection('users')
+        const adminUsersQuerySnapshot = await firestore.collection(Collections.CompanyUser)
             .where('companyId', '==', deleteUserRequest.companyId)
             .where('type', '==', UserType.Admin)
             .limit(2)
@@ -76,7 +77,7 @@ export const deleteUserLocal = (auth: admin.auth.Auth, passedInAdmin: admin.app.
         await auth.deleteUser(deleteUserRequest.uidOfUserToDelete);
     }
 
-    await firestore.collection('users').doc(deleteUserRequest.id).set({
+    await firestore.collection(Collections.CompanyUser).doc(deleteUserRequest.id).set({
         isActive: false,
     }, { merge: true });
 })

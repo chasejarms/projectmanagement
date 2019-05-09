@@ -3,6 +3,7 @@ import * as admin from 'firebase-admin';
 import { UserType } from '../models/userTypes';
 import sgMail = require('@sendgrid/mail');
 import { IUnitedStatesAddress } from '../models/unitedStatesAddress';
+import { Collections } from '../models/collections';
 
 interface IUserCreateRequest {
     companyId: string;
@@ -20,17 +21,17 @@ export const createUserLocal = (auth: admin.auth.Auth, firestore: FirebaseFirest
 
     console.log('data: ', data);
 
-    const userQueryPromise = firestore.collection('users')
+    const userQueryPromise = firestore.collection(Collections.CompanyUser)
         .where('uid', '==', uid)
         .where('companyId', '==', data.companyId)
         .get();
 
-    const userWeAreTryingToCreatePromise = firestore.collection('users')
+    const userWeAreTryingToCreatePromise = firestore.collection(Collections.CompanyUser)
         .where('email', '==', data.email)
         .where('companyId', '==', data.companyId)
         .get();
 
-    const companyDocumentPromise = firestore.collection('companies')
+    const companyDocumentPromise = firestore.collection(Collections.Company)
         .doc(data.companyId)
         .get();
 
@@ -133,7 +134,7 @@ export const createUserLocal = (auth: admin.auth.Auth, firestore: FirebaseFirest
 
         console.log('userToUpdate: ', userToUpdate);
 
-        await firestore.collection('users')
+        await firestore.collection(Collections.CompanyUser)
             .doc(companyUserId)
             .set(userToUpdate, {
                 merge: true,
@@ -160,7 +161,7 @@ export const createUserLocal = (auth: admin.auth.Auth, firestore: FirebaseFirest
             (userToCreate as any).address = data.address;
         }
 
-        const createdUserDocumentSnapshot = await firestore.collection('users').add(userToCreate);
+        const createdUserDocumentSnapshot = await firestore.collection(Collections.CompanyUser).add(userToCreate);
 
         companyUserId = createdUserDocumentSnapshot.id;
     }
@@ -168,7 +169,7 @@ export const createUserLocal = (auth: admin.auth.Auth, firestore: FirebaseFirest
     const companyUserJoinCompositeIndex = `${data.companyId}_${userRecord.uid}`;
     console.log('companyUserJoinCompositeIndex: ', companyUserJoinCompositeIndex);
 
-    await firestore.collection('companyUserJoin')
+    await firestore.collection(Collections.CompanyAuthUserJoin)
         .doc(companyUserJoinCompositeIndex)
         .set({
             companyId: data.companyId,
@@ -177,7 +178,7 @@ export const createUserLocal = (auth: admin.auth.Auth, firestore: FirebaseFirest
             userId: companyUserId,
         });
 
-    const fullyUpdatedUserSnapshot = await firestore.collection('users')
+    const fullyUpdatedUserSnapshot = await firestore.collection(Collections.CompanyUser)
         .doc(companyUserId)
         .get();
 

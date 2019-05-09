@@ -1,4 +1,5 @@
 import * as firebase from 'firebase';
+import { Collections } from 'src/Models/collections';
 import { IDoctorUser } from 'src/Models/doctorUser';
 import { IUserCreateRequest } from 'src/Models/requests/userCreateRequest';
 import { UserType } from 'src/Models/userTypes';
@@ -8,7 +9,7 @@ import { IDeleteUserRequest, IUsersApi } from './usersApiInterface';
 
 export class UsersApi implements IUsersApi {
     public async getUsers(companyId: string): Promise<IUser[]> {
-        const usersQuerySnapshot = await db.collection('users')
+        const usersQuerySnapshot = await db.collection(Collections.CompanyUser)
             .where('companyId', '==', companyId)
             .where('isActive', '==', true)
             .orderBy('fullName', 'asc')
@@ -42,7 +43,7 @@ export class UsersApi implements IUsersApi {
 
     public async searchDoctorUsers(companyId: string, searchString: string): Promise<IDoctorUser[]> {
         const updatedSearchString = searchString.toLowerCase();
-        const userQuerySnapshot = await db.collection('users')
+        const userQuerySnapshot = await db.collection(Collections.CompanyUser)
             .where('companyId', '==', companyId)
             .where('type', '==', UserType.Doctor)
             .where('nameSearchValues', 'array-contains', updatedSearchString)
@@ -60,7 +61,7 @@ export class UsersApi implements IUsersApi {
     }
 
     public async getUser(userId: string): Promise<IUser> {
-        const userDocumentSnapshot = await db.collection('users')
+        const userDocumentSnapshot = await db.collection(Collections.CompanyUser)
             .doc(userId)
             .get();
 

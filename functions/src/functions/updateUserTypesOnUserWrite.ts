@@ -1,8 +1,9 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
+import { Collections } from '../models/collections';
 
 export const updateUserTypesCountOnUserWriteLocal = (passedInAdmin: admin.app.App) => functions.firestore
-    .document('users/{uid}')
+    .document(`${Collections.CompanyUser}/{companyUserId}`)
     .onWrite(async(documentSnapshot) => {
         const beforeData = documentSnapshot.before.data();
         const afterData = documentSnapshot.after.data();
@@ -17,14 +18,14 @@ export const updateUserTypesCountOnUserWriteLocal = (passedInAdmin: admin.app.Ap
             const userRole = afterData.type;
             const companyId = afterData.companyId;
 
-            const companySnapshot = await passedInAdmin.firestore().collection('companies').doc(companyId).get();
+            const companySnapshot = await passedInAdmin.firestore().collection(Collections.Company).doc(companyId).get();
 
             const newRoleCount = companySnapshot.data().roleCount[userRole] + 1;
 
             console.log('userRole: ', userRole);
             console.log('newroleCount: ', newRoleCount);
 
-            await passedInAdmin.firestore().collection('companies').doc(companyId).set({
+            await passedInAdmin.firestore().collection(Collections.Company).doc(companyId).set({
                 roleCount: {
                     ...companySnapshot.data().roleCount,
                     [userRole]: newRoleCount,
@@ -34,14 +35,14 @@ export const updateUserTypesCountOnUserWriteLocal = (passedInAdmin: admin.app.Ap
             const userRole = beforeData.type;
             const companyId = beforeData.companyId;
 
-            const companySnapshot = await passedInAdmin.firestore().collection('companies').doc(companyId).get();
+            const companySnapshot = await passedInAdmin.firestore().collection(Collections.Company).doc(companyId).get();
 
             const newRoleCount = companySnapshot.data().roleCount[userRole] - 1;
 
             console.log('userRole: ', userRole);
             console.log('newroleCount: ', newRoleCount);
 
-            await passedInAdmin.firestore().collection('companies').doc(companyId).set({
+            await passedInAdmin.firestore().collection(Collections.Company).doc(companyId).set({
                 roleCount: {
                     ...companySnapshot.data().roleCount,
                     [userRole]: newRoleCount,
@@ -52,7 +53,7 @@ export const updateUserTypesCountOnUserWriteLocal = (passedInAdmin: admin.app.Ap
             const newUserRole = afterData.type;
             const oldUserRole = beforeData.type;
 
-            const companySnapshot = await passedInAdmin.firestore().collection('companies').doc(companyId).get();
+            const companySnapshot = await passedInAdmin.firestore().collection(Collections.Company).doc(companyId).get();
 
             const newRoleCount = companySnapshot.data().roleCount[newUserRole] + 1;
             const oldRoleCount = companySnapshot.data().roleCount[oldUserRole] - 1;
@@ -63,7 +64,7 @@ export const updateUserTypesCountOnUserWriteLocal = (passedInAdmin: admin.app.Ap
             console.log('newRoleCount: ', newRoleCount);
             console.log('oldRoleCount: ', oldRoleCount);
 
-            await passedInAdmin.firestore().collection('companies').doc(companyId).set({
+            await passedInAdmin.firestore().collection(Collections.Company).doc(companyId).set({
                 roleCount: {
                     ...companySnapshot.data().roleCount,
                     [newUserRole]: newRoleCount,

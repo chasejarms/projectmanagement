@@ -1,18 +1,7 @@
-// allow get;
-// allow list;
-
-// allow read; (same as the two above)
-
-// allow create;
-// allow update;
-// allow delete;
-
-// allow write; (same as three above)
-
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    match /cases/{caseId} {
+    match /Case/{caseId} {
       allow read: if isSignedIn() && companyUserIsActive(companyIdFromCaseId()) && (isAdminOrStaffUser(companyIdFromCaseId()) || (isDoctorUser(companyIdFromCaseId()) && isSameDoctorForCase()))
       allow create: if isSignedIn() && companyUserIsActive(companyIdFromCaseId()) && (isAdminOrStaffUser(companyIdFromCaseId()) || (isDoctorUser(companyIdFromCaseId()) && isSameDoctorForCase()))
       allow update: if isSignedIn() && companyUserIsActive(companyIdFromCaseId()) && (isAdminOrStaffUser(companyIdFromCaseId()) || (isDoctorUser(companyIdFromCaseId()) && isSameDoctorForCase()))
@@ -20,19 +9,19 @@ service cloud.firestore {
       allow delete: if false
     }
 
-    match /companyUserJoin/{companyUserJoinId} {
-      allow read: if isSignedIn() && requestingUserIsOnCompanyUserJoin()
+    match /CompanyAuthUserJoin/{companyAuthUserJoinId} {
+      allow read: if isSignedIn() && requestingUserIsOnCompanyAuthUserJoin()
       /// we only allow writes from the create user / sign up cloud functions ///
       allow write: if false
     }
 
-    match /companies/{companyId} {
+    match /Company/{companyId} {
       /// all of interaction with companies occurs in cloud functions ///
       allow read: if isSignedIn() && companyUserIsActive(companyId)
       allow write: if false
     }
 
-    match /users/{userId} {
+    match /CompanyUser/{companyUserId} {
       allow get: if isSignedIn() && companyUserIsActive(companyIdFromQueriedUser()) && (isAdminUser(companyIdFromQueriedUser()) || isSameUser())
       allow list: if isSignedIn() && companyUserIsActive(companyIdFromQueriedUser()) && isAdminUser(companyIdFromQueriedUser())
       allow create: if isSignedIn() && companyUserIsActive(companyIdFromQueriedUser()) && isAdminUser(companyIdFromQueriedUser())
@@ -41,7 +30,7 @@ service cloud.firestore {
       allow delete: if false
     }
 
-    match /workflowCheckpoints/{workflowCheckpointId} {
+    match /WorkflowCheckpoint/{workflowCheckpointId} {
       allow read: if isSignedIn() && companyUserIsActive(companyIdFromWorkflowCheckpoint())
       allow create: if isSignedIn() && companyUserIsActive(companyIdFromIncomingData()) && isAdminUser(companyIdFromIncomingData())
       allow update: if isSignedIn() && companyUserIsActive(companyIdFromWorkflowCheckpoint()) && isAdminUser(companyIdFromWorkflowCheckpoint())
@@ -49,12 +38,12 @@ service cloud.firestore {
       allow delete: if false
     }
 
-    match /companyWorkflows/{companyWorkflowId} {
+    match /CompanyWorkflow/{companyWorkflowId} {
       allow read: if isSignedIn() && companyUserIsActive(companyIdFromCompanyWorkflow())
       allow write: if isSignedIn() && companyUserIsActive(companyIdFromCompanyWorkflow()) && isAdminUser(companyIdFromCompanyWorkflow())
     }
 
-    match /prescriptionTemplates/{prescriptionTemplateId} {
+    match /PrescriptionTemplate/{prescriptionTemplateId} {
       allow read: if isSignedIn() && companyUserIsActive(companyIdFromPrescriptionTemplate())
       allow create: if isSignedIn() && companyUserIsActive(companyIdFromIncomingData()) && isAdminUser(companyIdFromIncomingData())
       allow delete: if false
@@ -67,7 +56,7 @@ service cloud.firestore {
       return resource.data
     }
 
-    function requestingUserIsOnCompanyUserJoin() {
+    function requestingUserIsOnCompanyAuthUserJoin() {
       return existingData().firebaseAuthenticationUid == uid()
     }
 
@@ -135,16 +124,16 @@ service cloud.firestore {
       return companyId + '_' + uid()
     }
 
-    function companyUserJoinFromCompanyIdExists(companyId) {
-      return exists(/databases/$(database)/documents/companyUserJoin/$(companyIdUidString(companyId)))
+    function companyAuthUserJoinFromCompanyIdExists(companyId) {
+      return exists(/databases/$(database)/documents/CompanyAuthUserJoin/$(companyIdUidString(companyId)))
     }
 
     function companyUserIdFromCompanyId(companyId) {
-      return get(/databases/$(database)/documents/companyUserJoin/$(companyIdUidString(companyId))).data.userId
+      return get(/databases/$(database)/documents/CompanyAuthUserJoin/$(companyIdUidString(companyId))).data.userId
     }
 
     function companyUserFromCompanyUserId(companyUserId) {
-      return get(/databases/$(database)/documents/users/$(companyUserId)).data
+      return get(/databases/$(database)/documents/CompanyUser/$(companyUserId)).data
     }
 
     function isAdminOrStaffUser(companyId) {
@@ -152,7 +141,7 @@ service cloud.firestore {
     }
 
     function companyUserIsActive(companyId) {
-      return companyUserJoinFromCompanyIdExists(companyId) && companyUserFromCompanyUserId(companyUserIdFromCompanyId(companyId)).isActive
+      return companyAuthUserJoinFromCompanyIdExists(companyId) && companyUserFromCompanyUserId(companyUserIdFromCompanyId(companyId)).isActive
     }
 
     function isAdminUser(companyId) {

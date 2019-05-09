@@ -1,6 +1,7 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { UserType } from '../models/userTypes';
+import { Collections } from '../models/collections';
 
 export const signUpLocal = (passedInAdmin: admin.app.App) => functions.https.onCall(async(data, context) => {
     const auth = passedInAdmin.auth();
@@ -15,7 +16,7 @@ export const signUpLocal = (passedInAdmin: admin.app.App) => functions.https.onC
             password: data.password,
         })
 
-        const companyDocumentReference = await firebase.collection('companies').add({
+        const companyDocumentReference = await firebase.collection(Collections.Company).add({
             companyName: data.companyName,
             roleCount: {
                 Admin: 0,
@@ -27,7 +28,7 @@ export const signUpLocal = (passedInAdmin: admin.app.App) => functions.https.onC
         })
 
 
-        const userDocumentReference = await firebase.collection('users').add({
+        const userDocumentReference = await firebase.collection(Collections.CompanyUser).add({
             companyId: companyDocumentReference.id,
             email: data.email,
             fullName: data.fullName,
@@ -38,19 +39,19 @@ export const signUpLocal = (passedInAdmin: admin.app.App) => functions.https.onC
             isActive: true,
         })
 
-        const prescriptionTemplateDocumentReference = await firebase.collection('prescriptionTemplates').add({
+        const prescriptionTemplateDocumentReference = await firebase.collection(Collections.PrescriptionTemplate).add({
             companyId: companyDocumentReference.id,
             sectionOrder: [],
             sections: {},
             controls: {},
         });
-        const createCompanyWorkflowPromise = firebase.collection('companyWorkflows').add({
+        const createCompanyWorkflowPromise = firebase.collection(Collections.CompanyWorkflow).add({
             companyId: companyDocumentReference.id,
             workflowCheckpoints: [],
             prescriptionTemplate: prescriptionTemplateDocumentReference.id,
         });
 
-        const createCompanyUserJoinPromise = firebase.collection('companyUserJoin')
+        const createCompanyUserJoinPromise = firebase.collection(Collections.CompanyAuthUserJoin)
             .doc(`${companyDocumentReference.id}_${firebaseAuthenticationUser.uid}`)
             .set({
                 companyId: companyDocumentReference.id,

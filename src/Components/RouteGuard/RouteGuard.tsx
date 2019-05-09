@@ -2,6 +2,7 @@ import { CircularProgress } from '@material-ui/core';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Redirect, Route, withRouter } from 'react-router';
+import { Collections } from 'src/Models/collections';
 import { IUser } from 'src/Models/user';
 import { setHasMultipleCompanies } from 'src/Redux/ActionCreators/authenticatedUIActionCreators';
 import { setUserForCompany } from 'src/Redux/ActionCreators/userActionCreators';
@@ -88,7 +89,7 @@ class RouteGuardPresentation extends React.Component<IRouteGuardPresentationProp
 
       const companyId = this.props.location.pathname.split('/')[2];
 
-      const companyUserJoinQuerySnapshot = await db.collection('companyUserJoin')
+      const companyUserJoinQuerySnapshot = await db.collection(Collections.CompanyAuthUserJoin)
         .where('companyId', '==', companyId)
         .where('firebaseAuthenticationUid', '==', user.uid)
         .get();
@@ -102,7 +103,7 @@ class RouteGuardPresentation extends React.Component<IRouteGuardPresentationProp
         return;
       }
 
-      const userDocumentSnapshot = await db.collection('users')
+      const userDocumentSnapshot = await db.collection(Collections.CompanyUser)
         .doc(companyUserJoinQuerySnapshot.docs[0].data().userId)
         .get();
 

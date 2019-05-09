@@ -1,5 +1,6 @@
 import * as firebase from 'firebase';
 import { db } from 'src/firebase';
+import { Collections } from 'src/Models/collections';
 import { IPrescriptionFormTemplate } from 'src/Models/prescription/prescriptionFormTemplate';
 import { generateUniqueId } from 'src/Utils/generateUniqueId';
 import { IPrescriptionTemplateApi } from './prescriptionTemplateInterface';
@@ -8,7 +9,7 @@ export class PrescriptionTemplateApi implements IPrescriptionTemplateApi {
     public async getPrescriptionTemplate(companyId: string): Promise<IPrescriptionFormTemplate> {
         const workflowDocumentSnapshots = await this.getWorkflowDocumentSnapshotPromise(companyId);
         const prescriptionTemplateId = workflowDocumentSnapshots.docs[0].data().prescriptionTemplate;
-        const prescriptionTemplate = await db.collection('prescriptionTemplates').doc(prescriptionTemplateId).get();
+        const prescriptionTemplate = await db.collection(Collections.PrescriptionTemplate).doc(prescriptionTemplateId).get();
         return {
             ...prescriptionTemplate.data() as IPrescriptionFormTemplate,
             id: prescriptionTemplate.id,
@@ -17,11 +18,11 @@ export class PrescriptionTemplateApi implements IPrescriptionTemplateApi {
     public async updatePrescriptionTemplate(companyId: string, prescriptionFormTemplate: IPrescriptionFormTemplate): Promise<IPrescriptionFormTemplate> {
         const workflowDocumentSnapshots = await this.getWorkflowDocumentSnapshotPromise(companyId);
         const companyWorkflowId = workflowDocumentSnapshots.docs[0].id;
-        const newPrescriptionTemplate = await db.collection('prescriptionTemplates').add({
+        const newPrescriptionTemplate = await db.collection(Collections.PrescriptionTemplate).add({
             ...prescriptionFormTemplate,
             companyId,
         });
-        await db.collection('companyWorkflows').doc(companyWorkflowId).set({
+        await db.collection(Collections.CompanyWorkflow).doc(companyWorkflowId).set({
             prescriptionTemplate: newPrescriptionTemplate.id,
             id: newPrescriptionTemplate.id,
         }, { merge: true });
@@ -30,7 +31,7 @@ export class PrescriptionTemplateApi implements IPrescriptionTemplateApi {
     }
 
     public async getPrescriptionTemplateById(prescriptionTemplateId: string): Promise<IPrescriptionFormTemplate> {
-        const prescriptionFormTemplate = await db.collection('prescriptionTemplates')
+        const prescriptionFormTemplate = await db.collection(Collections.PrescriptionTemplate)
             .doc(prescriptionTemplateId)
             .get();
 
@@ -47,7 +48,7 @@ export class PrescriptionTemplateApi implements IPrescriptionTemplateApi {
         const uploadTaskSnapshot: firebase.storage.UploadTaskSnapshot = await updatedStorageRef.put(file);
 
         const companyLogoURL = uploadTaskSnapshot.metadata.fullPath;
-        await db.collection('prescriptionTemplates')
+        await db.collection(Collections.PrescriptionTemplate)
             .doc(prescriptionTemplateId)
             .set({
                 companyLogoURL,
@@ -61,7 +62,7 @@ export class PrescriptionTemplateApi implements IPrescriptionTemplateApi {
             Of note here is that we do not remove the image from storage as that image may be referenced
             on older prescription template versions and should continue to exist.
         */
-        await db.collection('prescriptionTemplates')
+        await db.collection(Collections.PrescriptionTemplate)
             .doc(prescriptionTemplateId)
             .set({
                 companyLogoURL: null,
@@ -71,7 +72,7 @@ export class PrescriptionTemplateApi implements IPrescriptionTemplateApi {
     }
 
     private getWorkflowDocumentSnapshotPromise = (companyId: string): Promise<firebase.firestore.QuerySnapshot> => {
-        return db.collection('companyWorkflows')
+        return db.collection(Collections.CompanyWorkflow)
             .where('companyId', '==', companyId)
             .get();
     }

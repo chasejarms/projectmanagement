@@ -2,9 +2,10 @@ import * as admin from 'firebase-admin';
 import * as functions from 'firebase-functions';
 import { isEqual } from 'lodash';
 import { IFunctionsCaseCheckpoint } from '../models/caseCheckpoint';
+import { Collections } from '../models/collections';
 
 export const onCaseUpdateLocal = (passedInAdmin: admin.app.App) => functions.firestore
-    .document('cases/{caseId}')
+    .document(`${Collections.Case}/{caseId}`)
     .onUpdate(async(documentSnapshot, context) => {
 
         const caseId = context.params['caseId'];
@@ -45,7 +46,7 @@ export const onCaseUpdateLocal = (passedInAdmin: admin.app.App) => functions.fir
 
         const firestore = passedInAdmin.firestore();
 
-        await firestore.collection('cases').doc(caseId).set({
+        await firestore.collection(Collections.Case).doc(caseId).set({
             currentDoctorCheckpoint,
             currentDoctorCheckpointName,
             currentLabCheckpoint,
