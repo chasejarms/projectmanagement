@@ -30,7 +30,7 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
     const firestore = passedInAdmin.firestore();
     const uid = context.auth.uid;
 
-    const companyUserJoinQuerySnapshot = await firestore.collection(Collections.CaseCheckpoint)
+    const companyUserJoinQuerySnapshot = await firestore.collection(Collections.CompanyAuthUserJoin)
         .where('companyId', '==', data.companyId)
         .where('firebaseAuthenticationUid', '==', uid)
         .get();
