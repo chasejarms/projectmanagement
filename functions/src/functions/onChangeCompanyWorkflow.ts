@@ -6,10 +6,8 @@ export const onChangeCompanyWorkflowLocal = (passedInAdmin: admin.app.App) => fu
     .document(`${Collections.CompanyWorkflow}/{companyWorkflowId}`)
     .onUpdate(async(documentSnapshot) => {
         const companyWorkflow = documentSnapshot.after.data();
-        console.log('companyWorkflow: ', companyWorkflow);
 
         const workflowCheckpointsCount = companyWorkflow.workflowCheckpoints.length;
-        console.log('workflowCheckpointsCount: ', workflowCheckpointsCount);
 
         await passedInAdmin.firestore().collection(Collections.Company)
             .doc(companyWorkflow.companyId)
