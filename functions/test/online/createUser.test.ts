@@ -6,7 +6,8 @@ import { WrappedFunction } from 'firebase-functions-test/lib/main';
 import { ICloudFunctionUserCreateRequest } from '../../src/models/userCreateRequest';
 import { generateUniqueId } from '../../src/utils/generateUniqueId';
 import { UserType } from '../../src/models/userTypes';
-import { auth, createUser } from '../../src';
+import { createUser } from '../../src';
+import { auth } from '../../src/initialization';
 import { Collections } from '../../src/models/collections';
 
 import sgMail = require('@sendgrid/mail');

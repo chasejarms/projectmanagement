@@ -26,8 +26,8 @@ function createNameSearchValues(fullName: string) {
     const uniqueNameSearchValues = new Set([]);
     const nameSearchValues = [];
 
-    for (let i = 0; i < arr.length; i++) {
-        for (let j = i; j < arr.length; j++) {
+    for (let i = 0; i < arr.length - 1; i++) {
+        for (let j = i + 1; j < arr.length; j++) {
             const key = arr.slice(i, j).join('');
             console.log('The key is: ', key);
             if (!uniqueNameSearchValues.has(key)) {

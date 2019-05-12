@@ -3,7 +3,8 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 
 import { WrappedFunction } from 'firebase-functions-test/lib/main';
-import { deleteUser, auth } from '../../src';
+import { deleteUser } from '../../src';
+import { auth } from '../../src/initialization';
 import { ICloudFunctionsDeleteUserRequest } from '../../src/models/deleteUserRequest';
 import { generateUniqueId } from '../../src/utils/generateUniqueId';
 import { UserType } from '../../src/models/userTypes';

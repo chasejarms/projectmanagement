@@ -1,5 +1,3 @@
-import * as admin from 'firebase-admin';
-
 import { signUpLocal } from './functions/signUp';
 import { createCaseLocal } from './functions/createCase';
 import { updateUserLocal } from './functions/updateUser';
@@ -11,13 +9,7 @@ import { onCaseUpdateLocal } from './functions/onCaseUpdate';
 import { updateUserTypesCountOnUserWriteLocal } from './functions/updateUserTypesOnUserWrite';
 import { onChangePrescriptionTemplateLocal } from './functions/onChangePrescriptionTemplate';
 import { onChangeCompanyWorkflowLocal } from './functions/onChangeCompanyWorkflow';
-
-const app = admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
-    databaseURL: 'https://project-management-develop.firebaseio.com',
-})
-export const auth = app.auth();
-const firestore = app.firestore();
+import { auth, firestore, app } from './initialization';
 
 export const createUser = createUserLocal(auth, firestore);
 export const signUp = signUpLocal(app);
