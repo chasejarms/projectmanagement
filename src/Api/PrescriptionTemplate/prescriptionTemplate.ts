@@ -9,10 +9,10 @@ export class PrescriptionTemplateApi implements IPrescriptionTemplateApi {
     public async getPrescriptionTemplate(companyId: string): Promise<IPrescriptionFormTemplate> {
         const workflowDocumentSnapshots = await this.getWorkflowDocumentSnapshotPromise(companyId);
         const prescriptionTemplateId = workflowDocumentSnapshots.docs[0].data().prescriptionTemplateId;
-        const prescriptionTemplate = await db.collection(Collections.PrescriptionTemplate).doc(prescriptionTemplateId).get();
+        const prescriptionTemplateDocumentSnapshot = await db.collection(Collections.PrescriptionTemplate).doc(prescriptionTemplateId).get();
         return {
-            ...prescriptionTemplate.data() as IPrescriptionFormTemplate,
-            id: prescriptionTemplateId.id,
+            ...prescriptionTemplateDocumentSnapshot.data() as IPrescriptionFormTemplate,
+            id: prescriptionTemplateDocumentSnapshot.id,
         };
     };
     public async updatePrescriptionTemplate(companyId: string, prescriptionFormTemplate: IPrescriptionFormTemplate): Promise<IPrescriptionFormTemplate> {

@@ -118,7 +118,7 @@ service cloud.firestore {
     }
 
     function isSameDoctorForCase() {
-      return existingData().doctor == companyUserIdFromCompanyId(companyIdFromCaseId())
+      return existingData().doctorCompanyUserId == companyUserIdFromCompanyId(companyIdFromCaseId())
     }
 
     function companyIdUidString(companyId) {

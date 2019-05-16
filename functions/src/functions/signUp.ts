@@ -44,6 +44,7 @@ export const signUpLocal = (passedInAdmin: admin.app.App) => functions.https.onC
             sectionOrder: [],
             sections: {},
             controls: {},
+            companyLogoURL: null,
         });
         const createCompanyWorkflowPromise = firebase.collection(Collections.CompanyWorkflow).add({
             companyId: companyDocumentReference.id,

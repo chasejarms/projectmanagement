@@ -34,6 +34,7 @@ import { NumberEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComp
 import { SingleLineTextEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/SingleLineTextEdit/SingleLineTextEdit";
 import { TitleEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/TitleEdit/TitleEdit";
 import { QRCodeDisplay } from "src/Components/QRCodeDisplay/QRCodeDisplay";
+import { ICase } from "src/Models/case";
 import { ICaseCheckpoint } from "src/Models/caseCheckpoint";
 import { IDoctorUser } from "src/Models/doctorUser";
 import { IPrescriptionControlTemplateType } from "src/Models/prescription/controls/prescriptionControlTemplateType";
@@ -294,7 +295,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             Api.prescriptionTemplateApi.getPrescriptionTemplateById(
                 caseObject.prescriptionTemplateId,
             ),
-            Api.userApi.getUser((caseObject as any).doctor),
+            Api.userApi.getUser((caseObject as ICase).doctorCompanyUserId),
         ]);
 
         // tslint:disable-next-line:no-console
