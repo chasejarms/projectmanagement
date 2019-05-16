@@ -30,5 +30,8 @@
   ],
   "include": [
     "src/**/*"
+  ],
+  "files": [
+    "./images.d.ts"
   ]
 }
