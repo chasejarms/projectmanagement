@@ -104,7 +104,7 @@ export const createHomeClasses = (
     });
 
     const footerText = css({
-        color: '#f9f9f9 !important',
+        color: '#50566A !important',
     });
 
     return {
