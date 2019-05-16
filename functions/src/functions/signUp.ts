@@ -66,7 +66,7 @@ export const signUpLocal = (passedInAdmin: admin.app.App) => functions.https.onC
         ])
 
         return {
-            user: firebaseAuthenticationUser,
+            user: authUser,
         };
     }
 

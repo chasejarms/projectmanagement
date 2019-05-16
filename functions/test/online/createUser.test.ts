@@ -102,7 +102,7 @@ describe.only('createUser', () => {
             isActive: true,
             scanCheckpointIds: [],
             type: UserType.Staff,
-            uid: requestingUserAuthUserId,
+            authUserId: requestingUserAuthUserId,
         }
         await admin.firestore().collection(Collections.CompanyUser)
             .doc(requestingUserCompanyUserId)
