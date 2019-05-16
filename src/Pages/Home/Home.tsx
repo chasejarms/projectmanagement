@@ -30,28 +30,30 @@ export class HomePresentation extends React.Component<IHomeProps, IHomeState> {
             iconStyling,
             headlineText,
             subtitleText,
+            footerSection,
+            footerText,
         } = createHomeClasses(this.props, this.state);
 
         const features = [
             {
                 icon: <PersonIcon className={iconStyling}/>,
                 headline: 'DOCTOR PORTAL',
-                subtitle: 'Doctors can enter case information online and track the progress',
+                subtitle: 'Doctors can enter case information and track case progress online.',
             },
             {
                 icon: <TrackChangesIcon className={iconStyling}/>,
                 headline: 'QR CODE TRACKING',
-                subtitle: 'Know where every case is at throughout your entire workflow'
+                subtitle: 'Know where every case is at throughout your entire workflow.'
             },
             {
                 icon: <DescriptionIcon className={iconStyling}/>,
                 headline: 'CUSTOMIZED PRESCRIPTIONS',
-                subtitle: 'Easily customize your prescription to fit your needs',
+                subtitle: 'Easily customize your prescription to fit your company\'s needs',
             },
             {
                 icon: <AttachmentIcon className={iconStyling}/>,
                 headline: 'UPLOAD FILES',
-                subtitle: 'Quickly upload and manage case files',
+                subtitle: 'Quickly upload and manage case files.',
             }
         ]
 
@@ -90,6 +92,9 @@ export class HomePresentation extends React.Component<IHomeProps, IHomeState> {
                             </div>
                         )
                     })}
+                </div>
+                <div className={footerSection}>
+                    <Typography className={footerText}>Shentaro - All Rights Reserved 2019</Typography>
                 </div>
             </div>
         )

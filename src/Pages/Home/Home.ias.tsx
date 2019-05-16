@@ -95,6 +95,18 @@ export const createHomeClasses = (
         width: 240,
     });
 
+    const footerSection = css({
+        backgroundColor: '#242e44',
+        height: 100,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+    });
+
+    const footerText = css({
+        color: '#f9f9f9 !important',
+    });
+
     return {
         dentalLabCloseUpContainer,
         topSectionContainer,
@@ -109,5 +121,7 @@ export const createHomeClasses = (
         iconStyling,
         headlineText,
         subtitleText,
+        footerSection,
+        footerText,
     };
 }
