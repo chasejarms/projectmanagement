@@ -97,12 +97,12 @@ export const createProjectsPresentationClasses = (
     });
 
     const gridNameContainer = css({
-        marginTop: 12,
+        marginTop: '12px !important',
     });
 
     const filterCasesDialogActionButtons = css({
         display: 'flex',
-        justifyContent: 'space-between',
+        justifyContent: 'space-between !important',
     });
 
     const rowRadioGroup = css({

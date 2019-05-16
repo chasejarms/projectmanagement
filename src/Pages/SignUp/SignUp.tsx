@@ -10,7 +10,7 @@ import {
     Input,
     InputLabel,
 } from '@material-ui/core';
-import { withTheme } from '@material-ui/core/styles';
+import { withTheme } from '@material-ui/core';
 import * as React from 'react';
 import { companyNameValidator } from 'src/Validators/companyName.validator';
 import { emailValidator } from 'src/Validators/email.validator';
@@ -104,7 +104,7 @@ export class SignUpPresentation extends React.Component<
                 </div>
                 <div className={signUpRow}>
                     <FormControl required={true} className={textField} error={name!.shouldShowError()}>
-                        <InputLabel>Full Name</InputLabel>
+                        <InputLabel>Name</InputLabel>
                         <Input
                             name="name"
                             value={this.state.name!.value}

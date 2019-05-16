@@ -383,6 +383,16 @@ export const createProjectPresentationClasses = (
         });
     }
 
+    const companyLogoContainer = css({
+        paddingLeft: 32,
+        paddingRight: 32,
+        paddingTop: 32,
+    });
+
+    const formContainer = css({
+        flex: 1,
+    });
+
     return {
         loadingCheckpointsContainer,
         downloadIcon,
@@ -425,5 +435,7 @@ export const createProjectPresentationClasses = (
         prescriptionPaper,
         createCaseButtonContainer,
         companyLogoImage,
+        companyLogoContainer,
+        formContainer,
     };
 }

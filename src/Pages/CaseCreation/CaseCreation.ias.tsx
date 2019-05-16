@@ -102,6 +102,7 @@ export const createCaseCreationClasses = (
         width: '100%',
         justifyContent: 'center',
         alignItems: 'center',
+        flex: 1,
     })
 
     return {

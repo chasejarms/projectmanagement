@@ -239,7 +239,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                     <Table>
                         <TableHead>
                             <TableRow>
-                                <TableCell>Full Name</TableCell>
+                                <TableCell>Name</TableCell>
                                 <TableCell>Email</TableCell>
                                 <TableCell>Role</TableCell>
                             </TableRow>
@@ -258,7 +258,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                     <DialogContent className={dialogContent}>
                         <div className={nameAndEmailContainer}>
                             <FormControl required={true} error={userFullName.shouldShowError()}>
-                                <InputLabel>Full Name</InputLabel>
+                                <InputLabel>Name</InputLabel>
                                 <Input
                                     name="userFullName"
                                     value={userFullName.value}

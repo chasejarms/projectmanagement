@@ -84,6 +84,8 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             controlContainer,
             sectionContainer,
             companyLogoImage,
+            companyLogoContainer,
+            formContainer,
         } = createProjectPresentationClasses(this.props, this.state, this.props.theme);
 
         const companyId = this.props.location.pathname.split('/')[2];
@@ -146,34 +148,36 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                                     />
                                 </div>
                             ) : (
-                                <div className={`${sectionsContainer} hide-on-print`}>
-                                        {this.state.companyLogoDownloadURL ? (
-                                            <div>
-                                                <img src={this.state.companyLogoDownloadURL} className={companyLogoImage}/>
-                                            </div>
-                                        ) : undefined}
-                                    {this.state.prescriptionFormTemplate!.sectionOrder.map((sectionId, sectionIndex) => {
-                                        const sections = this.state.prescriptionFormTemplate!.sections;
-                                        const currentSection = sections[sectionId];
-                                        const controlOrderForSection = currentSection.controlOrder;
-                                        const noControlForSection = controlOrderForSection.length === 0;
+                                <div className={formContainer}>
+                                    {this.state.companyLogoDownloadURL ? (
+                                        <div className={companyLogoContainer}>
+                                            <img src={this.state.companyLogoDownloadURL} className={companyLogoImage}/>
+                                        </div>
+                                    ) : undefined}
+                                     <div className={`${sectionsContainer} hide-on-print`}>
+                                        {this.state.prescriptionFormTemplate!.sectionOrder.map((sectionId, sectionIndex) => {
+                                            const sections = this.state.prescriptionFormTemplate!.sections;
+                                            const currentSection = sections[sectionId];
+                                            const controlOrderForSection = currentSection.controlOrder;
+                                            const noControlForSection = controlOrderForSection.length === 0;
 
-                                        if (noControlForSection) {
-                                            return undefined;
-                                        }
+                                            if (noControlForSection) {
+                                                return undefined;
+                                            }
 
-                                        return (
-                                            <div key={sectionId} className={sectionContainer}>
-                                                {controlOrderForSection.map((controlId) => {
-                                                    return (
-                                                        <div key={controlId} className={controlContainer}>
-                                                            {this.correctControlDisplay(controlId)}
-                                                        </div>
-                                                    )
-                                                })}
-                                            </div>
-                                        )
-                                    })}
+                                            return (
+                                                <div key={sectionId} className={sectionContainer}>
+                                                    {controlOrderForSection.map((controlId) => {
+                                                        return (
+                                                            <div key={controlId} className={controlContainer}>
+                                                                {this.correctControlDisplay(controlId)}
+                                                            </div>
+                                                        )
+                                                    })}
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
                                 </div>
                             )}
                             {!this.state.loadingPrescriptionTemplate ? (

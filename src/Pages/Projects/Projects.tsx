@@ -153,7 +153,6 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
             nameAndFilterIconContainer,
             gridNameContainer,
             filterCasesDialogActionButtons,
-            rowRadioGroup,
             dialogContent,
             doctorSearchContainer,
             doctorContainer,
@@ -284,7 +283,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                             <DialogContent className={dialogContent}>
                                 <FormControl fullWidth={true}>
                                     <FormLabel>Case Completion Status</FormLabel>
-                                    <RadioGroup className={rowRadioGroup} value={completionStatus} onChange={this.handleDialogFilterChange('completionStatus')}>
+                                    <RadioGroup row={true} value={completionStatus} onChange={this.handleDialogFilterChange('completionStatus')}>
                                         <FormControlLabel value={CompletionStatus.All} control={<Radio/>} label="All"/>
                                         <FormControlLabel value={CompletionStatus.Complete} control={<Radio/>} label="Complete Cases"/>
                                         <FormControlLabel value={CompletionStatus.Incomplete} control={<Radio/>} label="Incomplete Cases"/>
@@ -292,7 +291,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                                 </FormControl>
                                 <FormControl fullWidth={true}>
                                     <FormLabel>Case Started Status</FormLabel>
-                                    <RadioGroup className={rowRadioGroup} value={startedStatus} onChange={this.handleDialogFilterChange('startedStatus')}>
+                                    <RadioGroup row={true} value={startedStatus} onChange={this.handleDialogFilterChange('startedStatus')}>
                                         <FormControlLabel value={StartedStatus.All} control={<Radio/>} label="All"/>
                                         <FormControlLabel value={StartedStatus.Started} control={<Radio/>} label="Started Cases"/>
                                         <FormControlLabel value={StartedStatus.NotStarted} control={<Radio/>} label="Unstarted Cases"/>
@@ -302,7 +301,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                                     <div className={doctorContainer}>
                                         <FormControl>
                                             <FormLabel>Doctors</FormLabel>
-                                            <RadioGroup className={rowRadioGroup} value={doctorFlag} onChange={this.handleDialogFilterChange('doctorFlag')}>
+                                            <RadioGroup row={true} value={doctorFlag} onChange={this.handleDialogFilterChange('doctorFlag')}>
                                                 <FormControlLabel value={DoctorFlag.All} control={<Radio/>} label="All"/>
                                                 <FormControlLabel value={DoctorFlag.Specific} control={<Radio/>} label="Specific Doctor"/>
                                             </RadioGroup>
@@ -347,7 +346,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                                     <div className={checkpointsContainer}>
                                         <FormControl>
                                             <FormLabel>Checkpoints</FormLabel>
-                                            <RadioGroup className={rowRadioGroup} value={checkpointFlag} onChange={this.handleDialogFilterChange('checkpointFlag')}>
+                                            <RadioGroup row={true} value={checkpointFlag} onChange={this.handleDialogFilterChange('checkpointFlag')}>
                                                 <FormControlLabel value={CheckpointFlag.All} control={<Radio/>} label="All"/>
                                                 <FormControlLabel value={CheckpointFlag.Specific} control={<Radio/>} label="Specific Checkpoints"/>
                                             </RadioGroup>
@@ -371,13 +370,13 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                                 )}
                                 <FormControl fullWidth={true}>
                                     <FormLabel>Notifications</FormLabel>
-                                    <RadioGroup className={rowRadioGroup} value={notificationFlag} onChange={this.handleDialogFilterChange('notificationFlag')}>
+                                    <RadioGroup row={true} value={notificationFlag} onChange={this.handleDialogFilterChange('notificationFlag')}>
                                         <FormControlLabel value={NotificationFlag.All} control={<Radio/>} label="All"/>
                                         <FormControlLabel value={NotificationFlag.HasNotification} control={<Radio/>} label="Cases With Notifications"/>
                                     </RadioGroup>
                                 </FormControl>
                             </DialogContent>
-                            <DialogActions className={filterCasesDialogActionButtons}>
+                            <DialogActions classes={{ 'root': filterCasesDialogActionButtons }}>
                                 <Button onClick={this.closeFilterCasesDialog}>
                                     Close
                                 </Button>

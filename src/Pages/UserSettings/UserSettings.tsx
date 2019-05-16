@@ -99,7 +99,7 @@ export class UserSettingsPresentation extends React.Component<
                     <div className={userInformationContainer}>
                         <TextField
                             disabled={true}
-                            label="Full Name"
+                            label="Name"
                             name="name"
                             value={user.name}
                         />

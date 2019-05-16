@@ -10,8 +10,8 @@ import {
     Input,
     InputLabel,
     Typography,
+    withTheme,
 } from '@material-ui/core';
-import { withTheme } from '@material-ui/core/styles';
 import * as React from 'react';
 import { emailValidator } from 'src/Validators/email.validator';
 import { passwordValidator } from 'src/Validators/password.validator';
