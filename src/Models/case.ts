@@ -5,7 +5,7 @@ import { ShowNewInfoFromType } from "./showNewInfoFromTypes";
 export interface ICase {
     id: string;
     complete: boolean;
-    prescriptionFormTemplateId: string;
+    prescriptionTemplateId: string;
     controlValues: {
         [sectionIdControlId: string]: any;
     };
@@ -13,14 +13,14 @@ export interface ICase {
     caseCheckpoints: ICaseCheckpoint[];
     showNewInfoFrom: ShowNewInfoFromType.Doctor | ShowNewInfoFromType.Lab | null;
     hasStarted: boolean;
-    doctor: string;
+    doctorCompanyUserId: string;
     companyId: string;
     deadline: Timestamp;
     currentDoctorCheckpointName: string;
     currentLabCheckpointName: string;
     doctorName: string;
-    currentDoctorCheckpoint: string;
-    currentLabCheckpoint: string;
+    currentDoctorCheckpointId: string;
+    currentLabCheckpointId: string;
 }
 
 export interface IAugmentedCase extends ICase {

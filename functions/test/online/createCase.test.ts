@@ -49,7 +49,7 @@ describe('createCase', () => {
 
         initialCaseCreateRequest = {
             id: caseId,
-            prescriptionFormTemplateId: generateUniqueId(),
+            prescriptionTemplateId: generateUniqueId(),
             controlValues: {},
             companyId,
         }
@@ -514,26 +514,25 @@ describe('createCase', () => {
         const {
             complete,
             deadline,
-            doctor,
             created,
             showNewInfoFrom,
             hasStarted,
-            currentDoctorCheckpoint,
+            currentDoctorCheckpointId,
             currentDoctorCheckpointName,
             currentLabCheckpointName,
-            currentLabCheckpoint,
+            currentLabCheckpointId,
             doctorName,
         } = caseSnapshot.data();
 
         expect(complete).toBe(false);
         expect(deadline).toBeDefined();
-        expect(doctor).toBe(doctorCompanyUserId);
+        expect(caseSnapshot.data().doctorCompanyUserId).toBe(doctorCompanyUserId);
         expect(created).toBeDefined();
         expect(showNewInfoFrom).toBe(ShowNewInfoFromType.Lab);
         expect(hasStarted).toBe(false);
-        expect(currentDoctorCheckpoint).toBe(secondWorkflowCheckpointId);
+        expect(currentDoctorCheckpointId).toBe(secondWorkflowCheckpointId);
         expect(currentDoctorCheckpointName).toBe('First Doctor Checkpoint');
-        expect(currentLabCheckpoint).toBe(firstWorkflowCheckpointId);
+        expect(currentLabCheckpointId).toBe(firstWorkflowCheckpointId);
         expect(currentLabCheckpointName).toBe('First Actual Checkpoint');
         expect(doctorName).toBe('Doctor Johnson');
     });

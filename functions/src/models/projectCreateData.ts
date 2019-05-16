@@ -1,6 +1,6 @@
 export interface IProjectCreateDataCloudFunctions {
     id: string;
-    prescriptionFormTemplateId: string;
+    prescriptionTemplateId: string;
     controlValues: {
         [sectionIdControlId: string]: any;
     };

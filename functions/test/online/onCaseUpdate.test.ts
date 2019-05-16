@@ -82,7 +82,7 @@ describe.only('onCaseUpdate', () => {
             .doc(initialCaseId)
             .get();
 
-        expect(caseSnapshot.data().currentDoctorCheckpoint).toBe('2');
+        expect(caseSnapshot.data().currentDoctorCheckpointId).toBe('2');
     });
 
     test('it should find the earliest lab checkpoint', async() => {
@@ -110,7 +110,7 @@ describe.only('onCaseUpdate', () => {
             .doc(initialCaseId)
             .get();
 
-        expect(caseSnapshot.data().currentLabCheckpoint).toBe('2');
+        expect(caseSnapshot.data().currentLabCheckpointId).toBe('2');
     });
 
     test('it should find the earliest doctor checkpoint name', async() => {

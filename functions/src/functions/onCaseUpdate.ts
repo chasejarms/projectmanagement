@@ -26,11 +26,11 @@ export const onCaseUpdateLocal = (passedInAdmin: admin.app.App) => functions.fir
             return !caseCheckpoint.complete;
         });
 
-        const currentDoctorCheckpoint = earliestDoctorCheckpoint ? earliestDoctorCheckpoint.linkedWorkflowCheckpoint : '';
+        const currentDoctorCheckpointId = earliestDoctorCheckpoint ? earliestDoctorCheckpoint.linkedWorkflowCheckpoint : '';
         const currentDoctorCheckpointName = earliestDoctorCheckpoint ? earliestDoctorCheckpoint.name : '';
 
+        const currentLabCheckpointId  = earliestLabCheckpoint ? earliestLabCheckpoint.linkedWorkflowCheckpoint : '';
         const currentLabCheckpointName = earliestLabCheckpoint ? earliestLabCheckpoint.name : '';
-        const currentLabCheckpoint = earliestLabCheckpoint ? earliestLabCheckpoint.linkedWorkflowCheckpoint : '';
 
         const complete = afterCaseCheckpoints.every((caseCheckpoint) => {
             return caseCheckpoint.complete;
@@ -43,9 +43,9 @@ export const onCaseUpdateLocal = (passedInAdmin: admin.app.App) => functions.fir
         const firestore = passedInAdmin.firestore();
 
         await firestore.collection(Collections.Case).doc(caseId).set({
-            currentDoctorCheckpoint,
+            currentDoctorCheckpointId,
             currentDoctorCheckpointName,
-            currentLabCheckpoint,
+            currentLabCheckpointId,
             currentLabCheckpointName,
             complete,
             hasStarted,

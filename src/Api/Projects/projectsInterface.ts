@@ -5,7 +5,7 @@ import { ICase } from './../../Models/case';
 
 export interface ICaseCreateRequest {
     id: string;
-    prescriptionFormTemplateId: string;
+    prescriptionTemplateId: string;
     controlValues: {
         [sectionIdControlId: string]: any;
     };

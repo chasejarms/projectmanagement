@@ -23,7 +23,7 @@ export class ProjectsApi implements ICaseApi {
             .orderBy('deadline', 'asc')
 
         if (userType === UserType.Doctor) {
-            query = query.where('doctor', '==', userId)
+            query = query.where('doctorCompanyUserId', '==', userId)
         }
 
         if (slimCasesSearchRequest.startAfter) {
@@ -54,13 +54,13 @@ export class ProjectsApi implements ICaseApi {
         if (slimCasesSearchRequest.checkpointFlag === CheckpointFlag.Specific && slimCasesSearchRequest.checkpointId) {
             // tslint:disable-next-line:no-console
             console.log('inside the checkpoint flag piece');
-            const correctCaseKey = userType === UserType.Doctor ? 'currentDoctorCheckpoint' : 'currentLabCheckpoint';
+            const correctCaseKey = userType === UserType.Doctor ? 'currentDoctorCheckpointId' : 'currentLabCheckpointId';
             query = query.where(correctCaseKey, '==', slimCasesSearchRequest.checkpointId);
         }
 
         const queryForSpecificDoctor = slimCasesSearchRequest.doctorFlag === DoctorFlag.Specific;
         if (queryForSpecificDoctor && slimCasesSearchRequest.doctorId) {
-            query = query.where('doctor', '==', slimCasesSearchRequest.doctorId);
+            query = query.where('doctorCompanyUserId', '==', slimCasesSearchRequest.doctorId);
         }
 
         const slimCases = await query.limit(slimCasesSearchRequest.limit).get();

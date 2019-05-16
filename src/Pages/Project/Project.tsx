@@ -292,7 +292,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             user,
         ] = await Promise.all([
             Api.prescriptionTemplateApi.getPrescriptionTemplateById(
-                caseObject.prescriptionFormTemplateId,
+                caseObject.prescriptionTemplateId,
             ),
             Api.userApi.getUser((caseObject as any).doctor),
         ]);

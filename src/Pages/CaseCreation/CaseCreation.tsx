@@ -324,7 +324,7 @@ export class CaseCreationPresentation extends React.Component<
         const companyId = this.props.match.path.split('/')[2];
         const caseCreateRequest = {
             id: this.state.caseId,
-            prescriptionFormTemplateId: this.state.prescriptionFormTemplate!.id!,
+            prescriptionTemplateId: this.state.prescriptionFormTemplate!.id!,
             controlValues: this.props.caseCreationState.controlValues,
         }
 

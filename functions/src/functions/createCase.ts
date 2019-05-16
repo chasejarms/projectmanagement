@@ -8,7 +8,7 @@ import { IProjectCreateDataCloudFunctions } from '../models/projectCreateData';
 
 interface ICase {
     complete: boolean;
-    prescriptionFormTemplateId: string;
+    prescriptionTemplateId: string;
     controlValues: {
         [sectionIdControlId: string]: any;
     };
@@ -16,14 +16,14 @@ interface ICase {
     caseCheckpoints: IFunctionsCaseCheckpoint[];
     showNewInfoFrom: ShowNewInfoFromType.Doctor | ShowNewInfoFromType.Lab | null;
     hasStarted: boolean;
-    doctor: string;
+    doctorCompanyUserId: string;
     companyId: string;
     deadline: admin.firestore.Timestamp;
     currentDoctorCheckpointName: string;
     currentLabCheckpointName: string;
     doctorName: string;
-    currentDoctorCheckpoint: string;
-    currentLabCheckpoint: string;
+    currentDoctorCheckpointId: string;
+    currentLabCheckpointId: string;
 }
 
 export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https.onCall(async(data: IProjectCreateDataCloudFunctions, context) => {
@@ -90,7 +90,7 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
 
     const prescriptionFormTemplate = prescriptionTemplateResponse.data();
 
-    let doctorId: string;
+    let doctorCompanyUserId: string;
     let caseDeadline: admin.firestore.Timestamp;
 
     prescriptionFormTemplate.sectionOrder.forEach((sectionId) => {
@@ -98,7 +98,7 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
         section.controlOrder.forEach((controlId) => {
             const control = prescriptionFormTemplate.controls[controlId];
             if (control.type === 'DoctorInformation') {
-                doctorId = data.controlValues[control.id];
+                doctorCompanyUserId = data.controlValues[control.id];
             } else if (control.type === 'CaseDeadline') {
                 const caseDeadlineObject = data.controlValues[control.id];
                 caseDeadline = new admin.firestore.Timestamp(caseDeadlineObject.seconds, caseDeadlineObject.nanoseconds);
@@ -106,7 +106,7 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
         })
     });
 
-    if (!doctorId) {
+    if (!doctorCompanyUserId) {
         throw new functions.https.HttpsError('invalid-argument', 'The case requires a doctor information field');
     }
 
@@ -114,7 +114,7 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
         throw new functions.https.HttpsError('invalid-argument', 'The case requires a case deadline field');
     }
 
-    const doctorSnapshot = await firestore.collection(Collections.CompanyUser).doc(doctorId).get();
+    const doctorSnapshot = await firestore.collection(Collections.CompanyUser).doc(doctorCompanyUserId).get();
 
     if (!doctorSnapshot.exists) {
         throw new functions.https.HttpsError('invalid-argument', 'The specified doctor does not exist on the company');
@@ -132,28 +132,28 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
 
     const firstCheckpoint = caseCheckpoints[0];
 
-    const currentDoctorCheckpoint = earliestDoctorCheckpoint ? earliestDoctorCheckpoint.linkedWorkflowCheckpoint : '';
+    const currentDoctorCheckpointId = earliestDoctorCheckpoint ? earliestDoctorCheckpoint.linkedWorkflowCheckpoint : '';
     const currentDoctorCheckpointName = earliestDoctorCheckpoint ? earliestDoctorCheckpoint.name : '';
 
+    const currentLabCheckpointId = firstCheckpoint.linkedWorkflowCheckpoint;
     const currentLabCheckpointName = firstCheckpoint.name;
-    const currentLabCheckpoint = firstCheckpoint.linkedWorkflowCheckpoint;
 
     const nowInSeconds = Math.round(new Date().getTime() / 1000);
     const caseToCreate: ICase = {
-        prescriptionFormTemplateId: data.prescriptionFormTemplateId,
+        prescriptionTemplateId: data.prescriptionTemplateId,
         controlValues: data.controlValues,
         complete: false,
         deadline: caseDeadline,
-        doctor: doctorId,
+        doctorCompanyUserId: doctorCompanyUserId,
         created: new admin.firestore.Timestamp(nowInSeconds, 0),
         caseCheckpoints,
         companyId: data.companyId,
         showNewInfoFrom: isAdminOrStaff ? ShowNewInfoFromType.Lab : ShowNewInfoFromType.Doctor,
         hasStarted: false,
-        currentDoctorCheckpoint,
+        currentDoctorCheckpointId,
         currentDoctorCheckpointName,
         currentLabCheckpointName,
-        currentLabCheckpoint,
+        currentLabCheckpointId,
         doctorName,
     };
 
