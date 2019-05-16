@@ -477,14 +477,14 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         const companyId = this.props.location.pathname.split('/')[2];
         const currentUser = this.props.userState[companyId];
 
-        const completedBy = !checkpoint.complete ? currentUser.id : null;
-        const completedByName = !checkpoint.complete ? currentUser.fullName : null;
+        const completedByCompanyUserId = !checkpoint.complete ? currentUser.id : null;
+        const completedByName = !checkpoint.complete ? currentUser.name : null;
         const checkpoints = this.state.checkpoints!.map((compareCheckpoint, compareIndex) => {
             if (index === compareIndex) {
                 return {
                     ...checkpoint,
                     complete: !compareCheckpoint.complete,
-                    completedBy,
+                    completedByCompanyUserId,
                     completedByName,
                 }
             } else {

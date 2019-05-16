@@ -26,7 +26,7 @@ export interface IProjectsPresentationState {
     potentialDoctors: IDoctorUser[];
     selectedDoctorInformation: IDoctorUser | null;
     selectedFilterCheckpoint: string;
-    workflowCheckpoints: IWorkflowCheckpoint[];
+    workflowCheckpointIds: IWorkflowCheckpoint[];
 }
 
 export const createProjectsPresentationClasses = (

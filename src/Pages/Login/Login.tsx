@@ -177,8 +177,8 @@ export class LoginPresentation extends React.Component<
         this.redirectToCompanySelection(userCredential.user!.uid);
     }
 
-    private redirectToCompanySelection(uid: string): void {
-        this.props.history.push(`companySelection?uid=${uid}`);
+    private redirectToCompanySelection(authUserId: string): void {
+        this.props.history.push(`companySelection?authUserId=${authUserId}`);
     }
 
     private navigateToResetPassword = (): void => {
@@ -188,7 +188,7 @@ export class LoginPresentation extends React.Component<
     private handleFormControlChange = (event: any): void => {
         const formControl: FormControlState<string> = this.state[event.target.name];
         const controlToSetOnState = formControl.setValue(event.target.value);
-        const name: 'fullName' | 'companyName' | 'email' | 'password' = event.target.name;
+        const name: 'name' | 'companyName' | 'email' | 'password' = event.target.name;
 
         if (this._isMounted) {
             this.setState({

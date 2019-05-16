@@ -14,7 +14,7 @@ import { ICase } from './../../Models/case';
 import { ICaseApi, ICaseCreateRequest, ICasesSearchRequest, IUpdateCaseInformationRequest } from './projectsInterface';
 
 export class ProjectsApi implements ICaseApi {
-    public async searchCases(slimCasesSearchRequest: ICasesSearchRequest, userType: string, userId: string): Promise<FirebaseFirestore.QueryDocumentSnapshot[]> {
+    public async searchCases(slimCasesSearchRequest: ICasesSearchRequest, userType: string, companyUserId: string): Promise<FirebaseFirestore.QueryDocumentSnapshot[]> {
         // tslint:disable-next-line:no-console
         console.log('slimeCasesSearchRequest: ', slimCasesSearchRequest);
 
@@ -23,7 +23,7 @@ export class ProjectsApi implements ICaseApi {
             .orderBy('deadline', 'asc')
 
         if (userType === UserType.Doctor) {
-            query = query.where('doctorCompanyUserId', '==', userId)
+            query = query.where('doctorCompanyUserId', '==', companyUserId)
         }
 
         if (slimCasesSearchRequest.startAfter) {

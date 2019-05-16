@@ -91,7 +91,7 @@ class RouteGuardPresentation extends React.Component<IRouteGuardPresentationProp
 
       const companyUserJoinQuerySnapshot = await db.collection(Collections.CompanyAuthUserJoin)
         .where('companyId', '==', companyId)
-        .where('firebaseAuthenticationUid', '==', user.uid)
+        .where('authUserId', '==', user.uid)
         .get();
 
       if (companyUserJoinQuerySnapshot.empty) {
@@ -104,7 +104,7 @@ class RouteGuardPresentation extends React.Component<IRouteGuardPresentationProp
       }
 
       const userDocumentSnapshot = await db.collection(Collections.CompanyUser)
-        .doc(companyUserJoinQuerySnapshot.docs[0].data().userId)
+        .doc(companyUserJoinQuerySnapshot.docs[0].data().companyUserId)
         .get();
 
       if (!userDocumentSnapshot.exists) {

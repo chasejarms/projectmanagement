@@ -66,11 +66,11 @@ describe('deleteUser', () => {
         const requestingUserCompanyUserData = {
             companyId: requestingUserCompanyId,
             email: 'me@me.com',
-            fullName: 'me',
+            name: 'me',
             isActive: false,
-            scanCheckpoints: [],
+            scanCheckpointIds: [],
             type: UserType.Admin,
-            uid: requestingUserAuthUserId,
+            authUserId: requestingUserAuthUserId,
         }
         await admin.firestore().collection(Collections.CompanyUser)
             .doc(requestingUserCompanyUserId)
@@ -91,11 +91,11 @@ describe('deleteUser', () => {
         const requestingUserCompanyUserData = {
             companyId: requestingUserCompanyId,
             email: 'me@me.com',
-            fullName: 'me',
+            name: 'me',
             isActive: true,
-            scanCheckpoints: [],
+            scanCheckpointIds: [],
             type: UserType.Staff,
-            uid: requestingUserAuthUserId,
+            authUserId: requestingUserAuthUserId,
         }
         await admin.firestore().collection(Collections.CompanyUser)
             .doc(requestingUserCompanyUserId)
@@ -116,11 +116,11 @@ describe('deleteUser', () => {
         const requestingUserCompanyUserData = {
             companyId: requestingUserCompanyId,
             email: 'me@me.com',
-            fullName: 'me',
+            name: 'me',
             isActive: true,
-            scanCheckpoints: [],
+            scanCheckpointIds: [],
             type: UserType.Admin,
-            uid: requestingUserAuthUserId,
+            authUserId: requestingUserAuthUserId,
         }
         await admin.firestore().collection(Collections.CompanyUser)
             .doc(requestingUserCompanyUserId)
@@ -154,11 +154,11 @@ describe('deleteUser', () => {
         const requestingUserCompanyUserData = {
             companyId: requestingUserCompanyId,
             email: 'me@me.com',
-            fullName: 'me',
+            name: 'me',
             isActive: true,
-            scanCheckpoints: [],
+            scanCheckpointIds: [],
             type: UserType.Admin,
-            uid: requestingUserAuthUserId,
+            authUserId: requestingUserAuthUserId,
         }
 
         const requestingUserCompanyUserPromise = admin.firestore().collection(Collections.CompanyUser)
@@ -168,11 +168,11 @@ describe('deleteUser', () => {
         const companyUserWeWillTryDeleting = {
             companyId: requestingUserCompanyId,
             email: 'personToDelete@personToDelete.com',
-            fullName: 'Jane Doe',
+            name: 'Jane Doe',
             isActive: true,
-            scanCheckpoints: [],
+            scanCheckpointIds: [],
             type: UserType.Staff,
-            uid: userToDeleteAuthUserId,
+            authUserId: userToDeleteAuthUserId,
         }
 
         const userWeWillTryDeletingCompanyUserPromise = admin.firestore().collection(Collections.CompanyUser)
@@ -181,8 +181,8 @@ describe('deleteUser', () => {
 
         const companyAuthUserJoinOne = {
             companyId: requestingUserCompanyId,
-            firebaseAuthenticationUid: userToDeleteAuthUserId,
-            userId: userToDeleteCompanyUserId,
+            authUserId: userToDeleteAuthUserId,
+            companyUserId: userToDeleteCompanyUserId,
         }
 
         const companyAuthUserJoinOneId = generateUniqueId();
@@ -195,11 +195,11 @@ describe('deleteUser', () => {
         const companyUserOnOtherCompany = {
             companyId: otherCompanyId,
             email: 'personToDelete@personToDelete.com',
-            fullName: 'Jane Doe',
+            name: 'Jane Doe',
             isActive: true,
-            scanCheckpoints: [],
+            scanCheckpointIds: [],
             type: UserType.Staff,
-            uid: userToDeleteAuthUserId,
+            authUserId: userToDeleteAuthUserId,
         }
 
         const otherUserCompanyUserPromise = admin.firestore().collection(Collections.CompanyUser)
@@ -208,8 +208,8 @@ describe('deleteUser', () => {
 
         const companyAuthUserJoinTwo = {
             companyId: otherCompanyId,
-            firebaseAuthenticationUid: userToDeleteAuthUserId,
-            userId: companyUserIdOnOtherCompany,
+            authUserId: userToDeleteAuthUserId,
+            companyUserId: companyUserIdOnOtherCompany,
         }
 
         const companyAuthUserJoinTwoId = generateUniqueId();
@@ -249,11 +249,11 @@ describe('deleteUser', () => {
         const requestingUserCompanyUserData = {
             companyId: requestingUserCompanyId,
             email: 'me@me.com',
-            fullName: 'me',
+            name: 'me',
             isActive: true,
-            scanCheckpoints: [],
+            scanCheckpointIds: [],
             type: UserType.Admin,
-            uid: requestingUserAuthUserId,
+            authUserId: requestingUserAuthUserId,
         }
 
         const requestingUserCompanyUserPromise = admin.firestore().collection(Collections.CompanyUser)
@@ -263,11 +263,11 @@ describe('deleteUser', () => {
         const companyUserWeWillTryDeleting = {
             companyId: requestingUserCompanyId,
             email: 'personToDelete@personToDelete.com',
-            fullName: 'Jane Doe',
+            name: 'Jane Doe',
             isActive: true,
-            scanCheckpoints: [],
+            scanCheckpointIds: [],
             type: UserType.Staff,
-            uid: userToDeleteAuthUserId,
+            authUserId: userToDeleteAuthUserId,
         }
 
         const userWeWillTryDeletingCompanyUserPromise = admin.firestore().collection(Collections.CompanyUser)
@@ -276,8 +276,8 @@ describe('deleteUser', () => {
 
         const companyAuthUserJoinOne = {
             companyId: requestingUserCompanyId,
-            firebaseAuthenticationUid: userToDeleteAuthUserId,
-            userId: userToDeleteCompanyUserId,
+            authUserId: userToDeleteAuthUserId,
+            companyUserId: userToDeleteCompanyUserId,
         }
 
         const companyAuthUserJoinOneId = generateUniqueId();
@@ -305,11 +305,11 @@ describe('deleteUser', () => {
         const requestingUserCompanyUserData = {
             companyId: requestingUserCompanyId,
             email: 'me@me.com',
-            fullName: 'me',
+            name: 'me',
             isActive: true,
-            scanCheckpoints: [],
+            scanCheckpointIds: [],
             type: UserType.Admin,
-            uid: requestingUserAuthUserId,
+            authUserId: requestingUserAuthUserId,
         }
 
         const requestingUserCompanyUserPromise = admin.firestore().collection(Collections.CompanyUser)
@@ -319,11 +319,11 @@ describe('deleteUser', () => {
         const companyUserWeWillTryDeleting = {
             companyId: requestingUserCompanyId,
             email: 'personToDelete@personToDelete.com',
-            fullName: 'Jane Doe',
+            name: 'Jane Doe',
             isActive: true,
-            scanCheckpoints: [],
+            scanCheckpointIds: [],
             type: UserType.Staff,
-            uid: userToDeleteAuthUserId,
+            authUserId: userToDeleteAuthUserId,
         }
 
         const userWeWillTryDeletingCompanyUserPromise = admin.firestore().collection(Collections.CompanyUser)
@@ -332,8 +332,8 @@ describe('deleteUser', () => {
 
         const companyAuthUserJoinOne = {
             companyId: requestingUserCompanyId,
-            firebaseAuthenticationUid: userToDeleteAuthUserId,
-            userId: userToDeleteCompanyUserId,
+            authUserId: userToDeleteAuthUserId,
+            companyUserId: userToDeleteCompanyUserId,
         }
 
         const companyAuthUserJoinOnePromise = admin.firestore().collection(Collections.CompanyAuthUserJoin)

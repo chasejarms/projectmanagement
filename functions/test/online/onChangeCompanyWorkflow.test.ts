@@ -40,7 +40,7 @@ describe('onChangeCompanyWorkflow', () => {
             .doc(companyWorkflowId)
             .set({
                 companyId,
-                workflowCheckpoints: [],
+                workflowCheckpointIds: [],
             })
 
         await Promise.all([
@@ -52,7 +52,7 @@ describe('onChangeCompanyWorkflow', () => {
             after: {
                 data: () => ({
                     companyId,
-                    workflowCheckpoints: [
+                    workflowCheckpointIds: [
                         {},
                         {},
                         {},

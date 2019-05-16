@@ -8,11 +8,11 @@ import { IPrescriptionTemplateApi } from './prescriptionTemplateInterface';
 export class PrescriptionTemplateApi implements IPrescriptionTemplateApi {
     public async getPrescriptionTemplate(companyId: string): Promise<IPrescriptionFormTemplate> {
         const workflowDocumentSnapshots = await this.getWorkflowDocumentSnapshotPromise(companyId);
-        const prescriptionTemplateId = workflowDocumentSnapshots.docs[0].data().prescriptionTemplate;
+        const prescriptionTemplateId = workflowDocumentSnapshots.docs[0].data().prescriptionTemplateId;
         const prescriptionTemplate = await db.collection(Collections.PrescriptionTemplate).doc(prescriptionTemplateId).get();
         return {
             ...prescriptionTemplate.data() as IPrescriptionFormTemplate,
-            id: prescriptionTemplate.id,
+            id: prescriptionTemplateId.id,
         };
     };
     public async updatePrescriptionTemplate(companyId: string, prescriptionFormTemplate: IPrescriptionFormTemplate): Promise<IPrescriptionFormTemplate> {
@@ -23,7 +23,7 @@ export class PrescriptionTemplateApi implements IPrescriptionTemplateApi {
             companyId,
         });
         await db.collection(Collections.CompanyWorkflow).doc(companyWorkflowId).set({
-            prescriptionTemplate: newPrescriptionTemplate.id,
+            prescriptionTemplateId: newPrescriptionTemplate.id,
             id: newPrescriptionTemplate.id,
         }, { merge: true });
 

@@ -5,7 +5,7 @@ export interface IAuthenticationMessage {
 }
 
 export interface IAuthenticationApi {
-    signUp(companyName: string, fullName: string, username: string, password: string): Promise<IAuthenticationMessage>;
+    signUp(companyName: string, name: string, username: string, password: string): Promise<IAuthenticationMessage>;
     login(username: string, password: string): Promise<firebase.auth.UserCredential>;
     logout(): Promise<void>;
 }

@@ -11,7 +11,7 @@ export const signUpLocal = (passedInAdmin: admin.app.App) => functions.https.onC
     } catch {
         const firebase = passedInAdmin.firestore();
 
-        const firebaseAuthenticationUser = await auth.createUser({
+        const authUser = await auth.createUser({
             email: data.email,
             password: data.password,
         })
@@ -31,11 +31,11 @@ export const signUpLocal = (passedInAdmin: admin.app.App) => functions.https.onC
         const userDocumentReference = await firebase.collection(Collections.CompanyUser).add({
             companyId: companyDocumentReference.id,
             email: data.email,
-            fullName: data.fullName,
+            name: data.name,
             type: UserType.Admin,
-            scanCheckpoints: [],
+            scanCheckpointIds: [],
             mustResetPassword: false,
-            uid: firebaseAuthenticationUser.uid,
+            authUserId: authUser.uid,
             isActive: true,
         })
 
@@ -47,16 +47,16 @@ export const signUpLocal = (passedInAdmin: admin.app.App) => functions.https.onC
         });
         const createCompanyWorkflowPromise = firebase.collection(Collections.CompanyWorkflow).add({
             companyId: companyDocumentReference.id,
-            workflowCheckpoints: [],
-            prescriptionTemplate: prescriptionTemplateDocumentReference.id,
+            workflowCheckpointIds: [],
+            prescriptionTemplateId: prescriptionTemplateDocumentReference.id,
         });
 
         const createCompanyUserJoinPromise = firebase.collection(Collections.CompanyAuthUserJoin)
-            .doc(`${companyDocumentReference.id}_${firebaseAuthenticationUser.uid}`)
+            .doc(`${companyDocumentReference.id}_${authUser.uid}`)
             .set({
                 companyId: companyDocumentReference.id,
-                userId: userDocumentReference.id,
-                firebaseAuthenticationUid: firebaseAuthenticationUser.uid,
+                companyUserId: userDocumentReference.id,
+                authUserId: authUser.uid,
                 companyName: data.companyName,
             })
 

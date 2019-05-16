@@ -7,8 +7,8 @@ export class WorkflowApi implements IWorkflowApi {
     public async getWorkflow(companyId: string): Promise<IWorkflow> {
         const workflowDocumentSnapshot = await this.getWorkflowDocumentSnapshotPromise(companyId);
 
-        const workflowCheckpoints = workflowDocumentSnapshot.docs[0].data().workflowCheckpoints;
-        const workflowCheckpointDocumentSnapshots = await Promise.all(workflowCheckpoints.map((workflowCheckpointId: string) => {
+        const workflowCheckpointIds = workflowDocumentSnapshot.docs[0].data().workflowCheckpointIds;
+        const workflowCheckpointDocumentSnapshots = await Promise.all(workflowCheckpointIds.map((workflowCheckpointId: string) => {
             return db.collection(Collections.WorkflowCheckpoint).doc(workflowCheckpointId).get();
         }));
 
@@ -36,13 +36,13 @@ export class WorkflowApi implements IWorkflowApi {
             createWorkflowCheckpointPromise,
         ]);
 
-        const workflowCheckpoints = workflowDocumentSnapshot.docs[0].data().workflowCheckpoints;
-        workflowCheckpoints.push(workflowCheckpointSnapshot.id);
+        const workflowCheckpointIds = workflowDocumentSnapshot.docs[0].data().workflowCheckpointIds;
+        workflowCheckpointIds.push(workflowCheckpointSnapshot.id);
 
         await db.collection(Collections.CompanyWorkflow)
             .doc(workflowDocumentSnapshot.docs[0].id)
             .set({
-                workflowCheckpoints,
+                workflowCheckpointIds,
             }, { merge: true });
 
         return {
@@ -55,15 +55,15 @@ export class WorkflowApi implements IWorkflowApi {
     public async removeWorkflowCheckpoint(companyId: string, workflowCheckpointIdToDelete: string): Promise<void> {
         const workflowDocumentSnapshot = await this.getWorkflowDocumentSnapshotPromise(companyId);
 
-        const workflowCheckpoints = workflowDocumentSnapshot.docs[0].data().workflowCheckpoints;
-        const checkpointsWithoutDeletedId = workflowCheckpoints.filter((workflowCheckpointId: string) => {
+        const workflowCheckpointIds = workflowDocumentSnapshot.docs[0].data().workflowCheckpointIds;
+        const checkpointsWithoutDeletedId = workflowCheckpointIds.filter((workflowCheckpointId: string) => {
             return workflowCheckpointId !== workflowCheckpointIdToDelete;
         })
 
         await db.collection(Collections.CompanyWorkflow)
             .doc(workflowDocumentSnapshot.docs[0].id)
             .set({
-                workflowCheckpoints: checkpointsWithoutDeletedId,
+                workflowCheckpointIds: checkpointsWithoutDeletedId,
             }, { merge: true });
     }
 
@@ -86,7 +86,7 @@ export class WorkflowApi implements IWorkflowApi {
         await db.collection(Collections.CompanyWorkflow)
             .doc(workflowCheckpointId)
             .set({
-                workflowCheckpoints: newCheckpointOrder,
+                workflowCheckpointIds: newCheckpointOrder,
             }, { merge: true });
     }
 

@@ -5,9 +5,9 @@ import { UserType } from './userTypes';
 export interface ICloudFunctionUserCreateRequest {
     companyId: string;
     email: string;
-    fullName: string;
+    name: string;
     type: UserType;
-    scanCheckpoints?: string[];
+    scanCheckpointIds?: string[];
     address?: IUnitedStatesAddress;
     telephone?: string;
 }

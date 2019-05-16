@@ -6,10 +6,10 @@ import { ICloudFunctionsDeleteUserRequest } from '../models/deleteUserRequest';
 
 export const deleteUserLocal = (auth: admin.auth.Auth, passedInAdmin: admin.app.App) => functions.https.onCall(async(deleteUserRequest: ICloudFunctionsDeleteUserRequest, context) => {
     const firestore = passedInAdmin.firestore();
-    const uid = context.auth.uid;
+    const authUserId = context.auth.uid;
 
     const userQueryPromise = firestore.collection(Collections.CompanyUser)
-        .where('uid', '==', uid)
+        .where('authUserId', '==', authUserId)
         .where('companyId', '==', deleteUserRequest.companyId)
         .get();
 
@@ -18,7 +18,7 @@ export const deleteUserLocal = (auth: admin.auth.Auth, passedInAdmin: admin.app.
         .get()
 
     const usersAcrossAllCompaniesPromise = firestore.collection(Collections.CompanyUser)
-        .where('uid', '==', deleteUserRequest.uidOfUserToDelete)
+        .where('authUserId', '==', deleteUserRequest.uidOfUserToDelete)
         .get();
 
     const [
@@ -53,7 +53,7 @@ export const deleteUserLocal = (auth: admin.auth.Auth, passedInAdmin: admin.app.
         throw new functions.https.HttpsError('invalid-argument', 'The user you are trying to delete does not exist');
     }
 
-    const tryingToDeleteOwnUser = userWeAreTryingToDeleteSnapshot.data().uid === uid;
+    const tryingToDeleteOwnUser = userWeAreTryingToDeleteSnapshot.data().authUserId === authUserId;
     if (tryingToDeleteOwnUser) {
         throw new functions.https.HttpsError('invalid-argument', 'You cannot delete your own user from the system');
     }

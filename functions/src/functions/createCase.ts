@@ -28,20 +28,20 @@ interface ICase {
 
 export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https.onCall(async(data: IProjectCreateDataCloudFunctions, context) => {
     const firestore = passedInAdmin.firestore();
-    const uid = context.auth.uid;
+    const authUserId = context.auth.uid;
 
     const companyUserJoinQuerySnapshot = await firestore.collection(Collections.CompanyAuthUserJoin)
         .where('companyId', '==', data.companyId)
-        .where('firebaseAuthenticationUid', '==', uid)
+        .where('authUserId', '==', authUserId)
         .get();
 
     if (companyUserJoinQuerySnapshot.empty) {
         throw new functions.https.HttpsError('permission-denied', 'The user does not exist on the company');
     }
 
-    const userId = companyUserJoinQuerySnapshot.docs[0].data().userId;
+    const companyUserId = companyUserJoinQuerySnapshot.docs[0].data().companyUserId;
 
-    const companyUserDocumentSnapshot = await firestore.collection(Collections.CompanyUser).doc(userId).get();
+    const companyUserDocumentSnapshot = await firestore.collection(Collections.CompanyUser).doc(companyUserId).get();
 
     if (!companyUserDocumentSnapshot.exists) {
         throw new functions.https.HttpsError('permission-denied', 'The user does not exist on the company');
@@ -60,7 +60,7 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
         .where('companyId', '==', data.companyId)
         .get();
 
-    const workflowCheckpointIds: string[] = companyWorkflowsQuerySnapshot.docs[0].data().workflowCheckpoints;
+    const workflowCheckpointIds: string[] = companyWorkflowsQuerySnapshot.docs[0].data().workflowCheckpointIds;
     const workflowCheckpointPromises = workflowCheckpointIds.map((workflowCheckpointId) => {
         return firestore.collection(Collections.WorkflowCheckpoint).doc(workflowCheckpointId).get();
     });
@@ -72,15 +72,15 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
         return {
             ...workflowCheckpoint as any,
             complete: false,
-            completedDate: null,
-            completedBy: null,
+            completedTimestamp: null,
+            completedByCompanyUserId: null,
             completedByName: null,
             caseId: data.id,
-            linkedWorkflowCheckpoint: workflowCheckpointSnapshot.id,
+            linkedWorkflowCheckpointId: workflowCheckpointSnapshot.id,
         }
     })
 
-    const prescriptionTemplateId = companyWorkflowsQuerySnapshot.docs[0].data().prescriptionTemplate;
+    const prescriptionTemplateId = companyWorkflowsQuerySnapshot.docs[0].data().prescriptionTemplateId;
 
     const prescriptionTemplateResponse = await firestore.collection(Collections.PrescriptionTemplate).doc(prescriptionTemplateId).get();
 
@@ -124,7 +124,7 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
         throw new functions.https.HttpsError('invalid-argument', 'The specified doctor is not active on the company');
     }
 
-    const doctorName = doctorSnapshot.data().fullName;
+    const doctorName = doctorSnapshot.data().name;
 
     const earliestDoctorCheckpoint = caseCheckpoints.find((caseCheckpoint) => {
         return caseCheckpoint.visibleToDoctor;
@@ -132,10 +132,10 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
 
     const firstCheckpoint = caseCheckpoints[0];
 
-    const currentDoctorCheckpointId = earliestDoctorCheckpoint ? earliestDoctorCheckpoint.linkedWorkflowCheckpoint : '';
+    const currentDoctorCheckpointId = earliestDoctorCheckpoint ? earliestDoctorCheckpoint.linkedWorkflowCheckpointId : '';
     const currentDoctorCheckpointName = earliestDoctorCheckpoint ? earliestDoctorCheckpoint.name : '';
 
-    const currentLabCheckpointId = firstCheckpoint.linkedWorkflowCheckpoint;
+    const currentLabCheckpointId = firstCheckpoint.linkedWorkflowCheckpointId;
     const currentLabCheckpointName = firstCheckpoint.name;
 
     const nowInSeconds = Math.round(new Date().getTime() / 1000);

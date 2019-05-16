@@ -12,7 +12,7 @@ export class UsersApi implements IUsersApi {
         const usersQuerySnapshot = await db.collection(Collections.CompanyUser)
             .where('companyId', '==', companyId)
             .where('isActive', '==', true)
-            .orderBy('fullName', 'asc')
+            .orderBy('name', 'asc')
             .get();
 
         return usersQuerySnapshot.docs.map((querySnapshot) => {
@@ -60,9 +60,9 @@ export class UsersApi implements IUsersApi {
         });
     }
 
-    public async getUser(userId: string): Promise<IUser> {
+    public async getUser(companyUserId: string): Promise<IUser> {
         const userDocumentSnapshot = await db.collection(Collections.CompanyUser)
-            .doc(userId)
+            .doc(companyUserId)
             .get();
 
         return {

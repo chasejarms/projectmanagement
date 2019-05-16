@@ -1,3 +1,3 @@
 export interface ICompanySelectionApi {
-    getCompaniesForCurrentUser(firebaseAuthenticationUid: string): Promise<firebase.firestore.QuerySnapshot>;
+    getCompaniesForCurrentUser(authUserId: string): Promise<firebase.firestore.QuerySnapshot>;
 }

@@ -7,13 +7,13 @@ import { Collections } from '../models/collections';
 
 interface IUser {
     id: string;
-    uid: string;
+    authUserId: string;
     companyId: string;
     email: string;
-    fullName: string;
+    name: string;
     type: UserType;
     mustResetPassword: boolean;
-    scanCheckpoints: string[];
+    scanCheckpointIds: string[];
     address?: IUnitedStatesAddress;
     telephone?: string;
 }
@@ -21,16 +21,16 @@ interface IUser {
 export const updateUserLocal = (passedInAdmin: admin.app.App) => functions.https.onCall(async(data: IUser, context) => {
     console.log('update user is being called');
     const firestore = passedInAdmin.firestore();
-    const uid = context.auth.uid;
-    console.log('uid is: ', uid);
+    const authUserId = context.auth.uid;
+    console.log('auth user id is: ', authUserId);
 
     const userQueryPromise = firestore.collection(Collections.CompanyUser)
-        .where('uid', '==', uid)
+        .where('authUserId', '==', authUserId)
         .where('companyId', '==', data.companyId)
         .get();
 
     const userWeAreTryingToUpdate = firestore.collection(Collections.CompanyUser)
-        .where('uid', '==', data.uid)
+        .where('authUserId', '==', data.authUserId)
         .where('companyId', '==', data.companyId)
         .get();
 
@@ -68,10 +68,10 @@ export const updateUserLocal = (passedInAdmin: admin.app.App) => functions.https
     }
 
     const userBeforeUpdate = userWeAreTryingToUpdateSnapshot.docs[0].data() as IUser;
-    const isUpdatingSelf = context.auth.uid === userBeforeUpdate.uid;
+    const isUpdatingSelf = context.auth.uid === userBeforeUpdate.authUserId;
     const updatedUser = {
         email: data.email,
-        fullName: data.fullName,
+        name: data.name,
         type: isUpdatingSelf ? userBeforeUpdate.type : data.type,
     };
 
@@ -94,7 +94,7 @@ export const updateUserLocal = (passedInAdmin: admin.app.App) => functions.https
         updatedUser['address'] = data.address;
         updatedUser['telephone'] = data.telephone;
     } else {
-        updatedUser['scanCheckpoints'] = data.scanCheckpoints;
+        updatedUser['scanCheckpointIds'] = data.scanCheckpointIds;
     }
 
     if (Object.keys(updatedUser).length === 0) {

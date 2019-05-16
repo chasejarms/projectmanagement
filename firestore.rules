@@ -58,7 +58,7 @@ service cloud.firestore {
     }
 
     function requestingUserIsOnCompanyAuthUserJoin() {
-      return existingData().firebaseAuthenticationUid == uid()
+      return existingData().authUserId == authUserId()
     }
 
     function companyIdFromIncomingData() {
@@ -73,7 +73,7 @@ service cloud.firestore {
       return request.auth != null
     }
 
-    function uid() {
+    function authUserId() {
       return request.auth.uid
     }
 
@@ -86,7 +86,7 @@ service cloud.firestore {
     }
 
     function isSameUser() {
-      return existingData().uid == uid()
+      return existingData().authUserId == authUserId()
     }
 
     function isDeactivatingUser() {
@@ -122,7 +122,7 @@ service cloud.firestore {
     }
 
     function companyIdUidString(companyId) {
-      return companyId + '_' + uid()
+      return companyId + '_' + authUserId()
     }
 
     function companyAuthUserJoinFromCompanyIdExists(companyId) {
@@ -130,7 +130,7 @@ service cloud.firestore {
     }
 
     function companyUserIdFromCompanyId(companyId) {
-      return get(/databases/$(database)/documents/CompanyAuthUserJoin/$(companyIdUidString(companyId))).data.userId
+      return get(/databases/$(database)/documents/CompanyAuthUserJoin/$(companyIdUidString(companyId))).data.companyUserId
     }
 
     function companyUserFromCompanyUserId(companyUserId) {

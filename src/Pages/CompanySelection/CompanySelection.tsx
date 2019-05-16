@@ -23,10 +23,10 @@ class CompanySelectionPresentation extends React.Component<ICompanySelectionPres
 
     public async componentWillMount(): Promise<void> {
         this._isMounted = true;
-        const uid = this.props.location.search.split('uid=')[1];
+        const authUserId = this.props.location.search.split('authUserId=')[1];
         // tslint:disable-next-line:no-console
-        console.log(uid);
-        const companiesQuerySnapshot = await Api.companySelectionApi.getCompaniesForCurrentUser(uid);
+        console.log(authUserId);
+        const companiesQuerySnapshot = await Api.companySelectionApi.getCompaniesForCurrentUser(authUserId);
         // tslint:disable-next-line:no-console
         console.log('querySnapshot: ', companiesQuerySnapshot);
         if (companiesQuerySnapshot.size === 1) {

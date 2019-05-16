@@ -6,10 +6,10 @@ import { Collections } from '../models/collections';
 import { ICloudFunctionUserCreateRequest } from '../models/userCreateRequest';
 
 export const createUserLocal = (auth: admin.auth.Auth, firestore: FirebaseFirestore.Firestore) => functions.https.onCall(async(data: ICloudFunctionUserCreateRequest, context) => {
-    const uid = context.auth.uid;
+    const authUserId = context.auth.uid;
 
     const userQueryPromise = firestore.collection(Collections.CompanyUser)
-        .where('uid', '==', uid)
+        .where('authUserId', '==', authUserId)
         .where('companyId', '==', data.companyId)
         .get();
 
@@ -74,7 +74,7 @@ export const createUserLocal = (auth: admin.auth.Auth, firestore: FirebaseFirest
                 templateId: 'd-cbbbc673651741c68a16e6d496002018',
                 substitutionWrappers: ['{{', '}}'],
                 dynamicTemplateData: {
-                    fullName: data.fullName,
+                    name: data.name,
                     companyName: companyDocumentSnapshot.data().companyName,
                     email: data.email,
                     password,
@@ -91,14 +91,14 @@ export const createUserLocal = (auth: admin.auth.Auth, firestore: FirebaseFirest
 
     if (userIsInactiveOnCompany) {
         const userToUpdate = {
-            fullName: data.fullName,
+            name: data.name,
             type: data.type,
-            uid: userRecord.uid,
+            authUserId: userRecord.uid,
             isActive: true,
         }
 
-        if (data.scanCheckpoints && data.type !== UserType.Doctor) {
-            (userToUpdate as any).scanCheckpoints = data.scanCheckpoints;
+        if (data.scanCheckpointIds && data.type !== UserType.Doctor) {
+            (userToUpdate as any).scanCheckpointIds = data.scanCheckpointIds;
         }
 
         if (data.telephone && data.type === UserType.Doctor) {
@@ -120,14 +120,14 @@ export const createUserLocal = (auth: admin.auth.Auth, firestore: FirebaseFirest
         const userToCreate = {
             companyId: data.companyId,
             email: data.email,
-            fullName: data.fullName,
+            name: data.name,
             type: data.type,
-            uid: userRecord.uid,
+            authUserId: userRecord.uid,
             isActive: true,
         }
 
-        if (data.scanCheckpoints && data.type !== UserType.Doctor) {
-            (userToCreate as any).scanCheckpoints = data.scanCheckpoints;
+        if (data.scanCheckpointIds && data.type !== UserType.Doctor) {
+            (userToCreate as any).scanCheckpointIds = data.scanCheckpointIds;
         }
 
         if (data.telephone && data.type === UserType.Doctor) {
@@ -150,8 +150,8 @@ export const createUserLocal = (auth: admin.auth.Auth, firestore: FirebaseFirest
         .set({
             companyId: data.companyId,
             companyName: companyDocumentSnapshot.data().companyName,
-            firebaseAuthenticationUid: userRecord.uid,
-            userId: companyUserId,
+            authUserId: userRecord.uid,
+            companyUserId: companyUserId,
         });
 
     const fullyUpdatedUserSnapshot = await firestore.collection(Collections.CompanyUser)

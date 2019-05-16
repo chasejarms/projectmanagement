@@ -25,11 +25,11 @@ const testEnv = functionsTest({
 describe('createCase', () => {
     let companyId: string;
     let companyUserId: string;
-    let firebaseAuthenticationUid: string;
+    let authUserId: string;
     let companyAuthUserJoinId: string;
 
     let doctorCompanyUserId: string;
-    let doctorFirebaseAuthenticationUid: string;
+    let doctorAuthUserId: string;
 
     let initialCaseCreateRequest: IProjectCreateDataCloudFunctions;
     let wrapped: WrappedFunction;
@@ -39,11 +39,11 @@ describe('createCase', () => {
     beforeEach(() => {
         companyId = generateUniqueId();
         companyUserId = generateUniqueId();
-        firebaseAuthenticationUid = generateUniqueId();
-        companyAuthUserJoinId = `${companyId}_${firebaseAuthenticationUid}`;
+        authUserId = generateUniqueId();
+        companyAuthUserJoinId = `${companyId}_${authUserId}`;
 
         doctorCompanyUserId = generateUniqueId();
-        doctorFirebaseAuthenticationUid = generateUniqueId();
+        doctorAuthUserId = generateUniqueId();
 
         caseId = generateUniqueId();
 
@@ -66,7 +66,7 @@ describe('createCase', () => {
     test('it does not allow case creation if the user does not exists on the company or is not active', async() => {
         let noCompanyUserJoinDocumentErrorMessage: string = '';
         try {
-            await wrapped(initialCaseCreateRequest, { auth: { uid: firebaseAuthenticationUid }});
+            await wrapped(initialCaseCreateRequest, { auth: { uid: authUserId }});
         } catch (error) {
             const httpsError = error as functions.https.HttpsError;
             noCompanyUserJoinDocumentErrorMessage = httpsError.message;
@@ -76,15 +76,15 @@ describe('createCase', () => {
 
         const companyAuthUserJoinData = {
             companyId,
-            userId: companyUserId,
-            firebaseAuthenticationUid,
+            companyUserId: companyUserId,
+            authUserId,
         };
 
         await admin.firestore().collection(Collections.CompanyAuthUserJoin).doc(companyAuthUserJoinId).set(companyAuthUserJoinData);
 
         let noCompanyUserErrorMessage: string = '';
         try {
-            await wrapped(initialCaseCreateRequest, { auth: { uid: firebaseAuthenticationUid }});
+            await wrapped(initialCaseCreateRequest, { auth: { uid: authUserId }});
         } catch (error) {
             const httpsError = error as functions.https.HttpsError;
             noCompanyUserErrorMessage = httpsError.message;
@@ -95,17 +95,17 @@ describe('createCase', () => {
         const companyUserData = {
             companyId,
             email: 'someone@gmail.com',
-            fullName: 'Jane Doe',
+            name: 'Jane Doe',
             isActive: false,
             type: UserType.Admin,
-            uid: firebaseAuthenticationUid,
+            authUserId,
         }
 
         await admin.firestore().collection(Collections.CompanyUser).doc(companyUserId).set(companyUserData);
 
         let noActiveUserErrorMessage: string = '';
         try {
-            await wrapped(initialCaseCreateRequest, { auth: { uid: firebaseAuthenticationUid }});
+            await wrapped(initialCaseCreateRequest, { auth: { uid: authUserId }});
         } catch (error) {
             const httpsError = error as functions.https.HttpsError;
             noActiveUserErrorMessage = httpsError.message;
@@ -117,8 +117,8 @@ describe('createCase', () => {
     test('it does not allow case creation if the prescription template does not exist', async() => {
         const companyAuthUserJoinData = {
             companyId,
-            userId: companyUserId,
-            firebaseAuthenticationUid,
+            companyUserId: companyUserId,
+            authUserId,
         };
 
         const companyAuthUserJoinPromise = admin.firestore().collection(Collections.CompanyAuthUserJoin)
@@ -128,10 +128,10 @@ describe('createCase', () => {
         const companyUserData = {
             companyId,
             email: 'someone@gmail.com',
-            fullName: 'Jane Doe',
+            name: 'Jane Doe',
             isActive: true,
             type: UserType.Admin,
-            uid: firebaseAuthenticationUid,
+            authUserId,
         }
 
         const companyUserPromise = admin.firestore().collection(Collections.CompanyUser)
@@ -140,8 +140,8 @@ describe('createCase', () => {
 
         const companyWorkflowPromise = admin.firestore().collection(Collections.CompanyWorkflow).add({
             companyId,
-            prescriptionTemplate: '123',
-            workflowCheckpoints: [],
+            prescriptionTemplateId: '123',
+            workflowCheckpointIds: [],
         })
 
         await Promise.all([
@@ -152,7 +152,7 @@ describe('createCase', () => {
 
         let noPrescriptionTemplateError: string = '';
         try {
-            await wrapped(initialCaseCreateRequest, { auth: { uid: firebaseAuthenticationUid }});
+            await wrapped(initialCaseCreateRequest, { auth: { uid: authUserId }});
         } catch (error) {
             const httpsError = error as functions.https.HttpsError;
             noPrescriptionTemplateError = httpsError.message;
@@ -164,8 +164,8 @@ describe('createCase', () => {
     test('it does not allow case creation if there is no case deadline or no doctor', async() => {
         const companyAuthUserJoinData = {
             companyId,
-            userId: companyUserId,
-            firebaseAuthenticationUid,
+            companyUserId: companyUserId,
+            authUserId,
         };
 
         const companyAuthUserJoinPromise = admin.firestore().collection(Collections.CompanyAuthUserJoin)
@@ -175,10 +175,10 @@ describe('createCase', () => {
         const companyUserData = {
             companyId,
             email: 'someone@gmail.com',
-            fullName: 'Jane Doe',
+            name: 'Jane Doe',
             isActive: true,
             type: UserType.Admin,
-            uid: firebaseAuthenticationUid,
+            authUserId,
         }
 
         const companyUserPromise = admin.firestore().collection(Collections.CompanyUser)
@@ -188,8 +188,8 @@ describe('createCase', () => {
         const companyWorkflowPromise = admin.firestore().collection(Collections.CompanyWorkflow)
             .add({
                 companyId,
-                prescriptionTemplate: prescriptionTemplateId,
-                workflowCheckpoints: [],
+                prescriptionTemplateId: prescriptionTemplateId,
+                workflowCheckpointIds: [],
             });
 
         const sectionId = '1';
@@ -228,7 +228,7 @@ describe('createCase', () => {
 
         let noDoctorInformationError: string = '';
         try {
-            await wrapped(firstCaseCreateRequest, { auth: { uid: firebaseAuthenticationUid }});
+            await wrapped(firstCaseCreateRequest, { auth: { uid: authUserId }});
         } catch (error) {
             const httpsError = error as functions.https.HttpsError;
             noDoctorInformationError = httpsError.message;
@@ -258,7 +258,7 @@ describe('createCase', () => {
 
         let noCaseDeadlineError: string = '';
         try {
-            await wrapped(secondCaseCreationRequest, { auth: { uid: firebaseAuthenticationUid }});
+            await wrapped(secondCaseCreationRequest, { auth: { uid: authUserId }});
         } catch (error) {
             const httpsError = error as functions.https.HttpsError;
             noCaseDeadlineError = httpsError.message;
@@ -270,8 +270,8 @@ describe('createCase', () => {
     test('does not allow case creation if the specified doctor does not exist or is not active on the company', async() => {
         const companyAuthUserJoinData = {
             companyId,
-            userId: companyUserId,
-            firebaseAuthenticationUid,
+            companyUserId: companyUserId,
+            authUserId,
         };
 
         const companyAuthUserJoinPromise = admin.firestore().collection(Collections.CompanyAuthUserJoin)
@@ -281,10 +281,10 @@ describe('createCase', () => {
         const companyUserData = {
             companyId,
             email: 'someone@gmail.com',
-            fullName: 'Jane Doe',
+            name: 'Jane Doe',
             isActive: true,
             type: UserType.Admin,
-            uid: firebaseAuthenticationUid,
+            authUserId,
         }
 
         const companyUserPromise = admin.firestore().collection(Collections.CompanyUser)
@@ -296,7 +296,7 @@ describe('createCase', () => {
         const firstWorkflowCheckpointPromise = admin.firestore().collection(Collections.WorkflowCheckpoint)
             .doc(firstWorkflowCheckpointId)
             .set({
-                linkedWorkflowCheckpoint: '2',
+                linkedWorkflowCheckpointId: '2',
                 name: 'First Actual Checkpoint',
                 visibleToDoctor: false,
             });
@@ -304,7 +304,7 @@ describe('createCase', () => {
         const secondWorkflowCheckpointPromise = admin.firestore().collection(Collections.WorkflowCheckpoint)
             .doc(secondWorkflowCheckpointId)
             .set({
-                linkedWorkflowCheckpoint: '1',
+                linkedWorkflowCheckpointId: '1',
                 name: 'First Doctor Checkpoint',
                 visibleToDoctor: true
             });
@@ -313,8 +313,8 @@ describe('createCase', () => {
         const companyWorkflowPromise = admin.firestore().collection(Collections.CompanyWorkflow)
             .add({
                 companyId,
-                prescriptionTemplate: prescriptionTemplateId,
-                workflowCheckpoints: [firstWorkflowCheckpointId, secondWorkflowCheckpointId],
+                prescriptionTemplateId: prescriptionTemplateId,
+                workflowCheckpointIds: [firstWorkflowCheckpointId, secondWorkflowCheckpointId],
             });
 
         const sectionId = '1';
@@ -362,7 +362,7 @@ describe('createCase', () => {
 
         let noDoctorError: string = '';
         try {
-            await wrapped(caseCreationRequest, { auth: { uid: firebaseAuthenticationUid }});
+            await wrapped(caseCreationRequest, { auth: { uid: authUserId }});
         } catch (error) {
             const httpsError = error as functions.https.HttpsError;
             noDoctorError = httpsError.message;
@@ -373,10 +373,10 @@ describe('createCase', () => {
         const doctorCompanyUserData = {
             companyId,
             email: 'doctor@doctorjohnson.com',
-            fullName: 'Doctor Johnson',
+            name: 'Doctor Johnson',
             isActive: false,
             type: UserType.Doctor,
-            uid: doctorFirebaseAuthenticationUid,
+            authUserId: doctorAuthUserId,
         }
 
         await admin.firestore().collection(Collections.CompanyUser).doc(doctorCompanyUserId).set(doctorCompanyUserData);
@@ -392,7 +392,7 @@ describe('createCase', () => {
 
         let doctorIsInactiveError: string = '';
         try {
-            await wrapped(caseCreationRequestTwo, { auth: { uid: firebaseAuthenticationUid }});
+            await wrapped(caseCreationRequestTwo, { auth: { uid: authUserId }});
         } catch (error) {
             const httpsError = error as functions.https.HttpsError;
             doctorIsInactiveError = httpsError.message;
@@ -404,8 +404,8 @@ describe('createCase', () => {
     test('it should hoist / set the top level information', async() => {
         const companyAuthUserJoinData = {
             companyId,
-            userId: companyUserId,
-            firebaseAuthenticationUid,
+            companyUserId: companyUserId,
+            authUserId,
         };
 
         const companyAuthUserJoinPromise = admin.firestore().collection(Collections.CompanyAuthUserJoin)
@@ -415,10 +415,10 @@ describe('createCase', () => {
         const companyUserData = {
             companyId,
             email: 'someone@gmail.com',
-            fullName: 'Jane Doe',
+            name: 'Jane Doe',
             isActive: true,
             type: UserType.Admin,
-            uid: firebaseAuthenticationUid,
+            authUserId,
         }
 
         const companyUserPromise = admin.firestore().collection(Collections.CompanyUser)
@@ -428,10 +428,10 @@ describe('createCase', () => {
         const doctorCompanyUserData = {
             companyId,
             email: 'doctor@doctorjohnson.com',
-            fullName: 'Doctor Johnson',
+            name: 'Doctor Johnson',
             isActive: true,
             type: UserType.Doctor,
-            uid: doctorFirebaseAuthenticationUid,
+            authUserId: doctorAuthUserId,
         }
 
         const doctorCompanyUserPromise = admin.firestore().collection(Collections.CompanyUser)
@@ -443,7 +443,7 @@ describe('createCase', () => {
         const firstWorkflowCheckpointPromise = admin.firestore().collection(Collections.WorkflowCheckpoint)
             .doc(firstWorkflowCheckpointId)
             .set({
-                linkedWorkflowCheckpoint: '2',
+                linkedWorkflowCheckpointId: '2',
                 name: 'First Actual Checkpoint',
                 visibleToDoctor: false,
             });
@@ -451,7 +451,7 @@ describe('createCase', () => {
         const secondWorkflowCheckpointPromise = admin.firestore().collection(Collections.WorkflowCheckpoint)
             .doc(secondWorkflowCheckpointId)
             .set({
-                linkedWorkflowCheckpoint: '1',
+                linkedWorkflowCheckpointId: '1',
                 name: 'First Doctor Checkpoint',
                 visibleToDoctor: true
             });
@@ -460,8 +460,8 @@ describe('createCase', () => {
         const companyWorkflowPromise = admin.firestore().collection(Collections.CompanyWorkflow)
             .add({
                 companyId,
-                prescriptionTemplate: prescriptionTemplateId,
-                workflowCheckpoints: [firstWorkflowCheckpointId, secondWorkflowCheckpointId],
+                prescriptionTemplateId: prescriptionTemplateId,
+                workflowCheckpointIds: [firstWorkflowCheckpointId, secondWorkflowCheckpointId],
             });
 
         const sectionId = '1';
@@ -508,7 +508,7 @@ describe('createCase', () => {
             }
         }
 
-        await wrapped(caseCreationRequest, { auth: { uid: firebaseAuthenticationUid }});
+        await wrapped(caseCreationRequest, { auth: { uid: authUserId }});
 
         const caseSnapshot = await admin.firestore().collection(Collections.Case).doc(caseId).get();
         const {

@@ -100,8 +100,8 @@ export class UserSettingsPresentation extends React.Component<
                         <TextField
                             disabled={true}
                             label="Full Name"
-                            name="fullName"
-                            value={user.fullName}
+                            name="name"
+                            value={user.name}
                         />
                         <TextField
                             disabled={true}

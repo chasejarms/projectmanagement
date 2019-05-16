@@ -65,13 +65,13 @@ describe.only('onCaseUpdate', () => {
                     complete: true,
                     visibleToDoctor: true,
                     name: 'First Visible Doctor Checkpoint',
-                    linkedWorkflowCheckpoint: '1',
+                    linkedWorkflowCheckpointId: '1',
                 },
                 {
                     complete: false,
                     visibleToDoctor: true,
                     name: 'Second Visible Doctor Checkpoint',
-                    linkedWorkflowCheckpoint: '2',
+                    linkedWorkflowCheckpointId: '2',
                 }
             ],
         })
@@ -93,13 +93,13 @@ describe.only('onCaseUpdate', () => {
                     complete: true,
                     visibleToDoctor: false,
                     name: 'First Lab Checkpoint',
-                    linkedWorkflowCheckpoint: '1',
+                    linkedWorkflowCheckpointId: '1',
                 },
                 {
                     complete: false,
                     visibleToDoctor: false,
                     name: 'Second Lab Checkpoint',
-                    linkedWorkflowCheckpoint: '2',
+                    linkedWorkflowCheckpointId: '2',
                 }
             ],
         })
@@ -121,13 +121,13 @@ describe.only('onCaseUpdate', () => {
                     complete: true,
                     visibleToDoctor: true,
                     name: 'First Visible Doctor Checkpoint',
-                    linkedWorkflowCheckpoint: '1',
+                    linkedWorkflowCheckpointId: '1',
                 },
                 {
                     complete: false,
                     visibleToDoctor: true,
                     name: 'Second Visible Doctor Checkpoint',
-                    linkedWorkflowCheckpoint: '2',
+                    linkedWorkflowCheckpointId: '2',
                 }
             ],
         })
@@ -149,19 +149,19 @@ describe.only('onCaseUpdate', () => {
                     complete: true,
                     visibleToDoctor: true,
                     name: 'First Checkpoint',
-                    linkedWorkflowCheckpoint: '1',
+                    linkedWorkflowCheckpointId: '1',
                 },
                 {
                     complete: false,
                     visibleToDoctor: true,
                     name: 'Second Checkpoint',
-                    linkedWorkflowCheckpoint: '2',
+                    linkedWorkflowCheckpointId: '2',
                 },
                 {
                     complete: false,
                     visibleToDoctor: true,
                     name: 'Third Checkpoint',
-                    linkedWorkflowCheckpoint: '3',
+                    linkedWorkflowCheckpointId: '3',
                 }
             ],
         })
@@ -183,19 +183,19 @@ describe.only('onCaseUpdate', () => {
                     complete: true,
                     visibleToDoctor: true,
                     name: 'First Checkpoint',
-                    linkedWorkflowCheckpoint: '1',
+                    linkedWorkflowCheckpointId: '1',
                 },
                 {
                     complete: true,
                     visibleToDoctor: true,
                     name: 'Second Checkpoint',
-                    linkedWorkflowCheckpoint: '2',
+                    linkedWorkflowCheckpointId: '2',
                 },
                 {
                     complete: true,
                     visibleToDoctor: true,
                     name: 'Third Checkpoint',
-                    linkedWorkflowCheckpoint: '3',
+                    linkedWorkflowCheckpointId: '3',
                 }
             ],
         })
@@ -215,19 +215,19 @@ describe.only('onCaseUpdate', () => {
                     complete: true,
                     visibleToDoctor: true,
                     name: 'First Checkpoint',
-                    linkedWorkflowCheckpoint: '1',
+                    linkedWorkflowCheckpointId: '1',
                 },
                 {
                     complete: false,
                     visibleToDoctor: true,
                     name: 'Second Checkpoint',
-                    linkedWorkflowCheckpoint: '2',
+                    linkedWorkflowCheckpointId: '2',
                 },
                 {
                     complete: true,
                     visibleToDoctor: true,
                     name: 'Third Checkpoint',
-                    linkedWorkflowCheckpoint: '3',
+                    linkedWorkflowCheckpointId: '3',
                 }
             ],
         })
@@ -249,19 +249,19 @@ describe.only('onCaseUpdate', () => {
                     complete: false,
                     visibleToDoctor: true,
                     name: 'First Checkpoint',
-                    linkedWorkflowCheckpoint: '1',
+                    linkedWorkflowCheckpointId: '1',
                 },
                 {
                     complete: false,
                     visibleToDoctor: true,
                     name: 'Second Checkpoint',
-                    linkedWorkflowCheckpoint: '2',
+                    linkedWorkflowCheckpointId: '2',
                 },
                 {
                     complete: false,
                     visibleToDoctor: true,
                     name: 'Third Checkpoint',
-                    linkedWorkflowCheckpoint: '3',
+                    linkedWorkflowCheckpointId: '3',
                 }
             ],
         })
@@ -281,19 +281,19 @@ describe.only('onCaseUpdate', () => {
                     complete: true,
                     visibleToDoctor: true,
                     name: 'First Checkpoint',
-                    linkedWorkflowCheckpoint: '1',
+                    linkedWorkflowCheckpointId: '1',
                 },
                 {
                     complete: false,
                     visibleToDoctor: true,
                     name: 'Second Checkpoint',
-                    linkedWorkflowCheckpoint: '2',
+                    linkedWorkflowCheckpointId: '2',
                 },
                 {
                     complete: false,
                     visibleToDoctor: true,
                     name: 'Third Checkpoint',
-                    linkedWorkflowCheckpoint: '3',
+                    linkedWorkflowCheckpointId: '3',
                 }
             ],
         })

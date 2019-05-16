@@ -155,8 +155,8 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
         } = createUsersPresentationClasses(this.props, this.state);
 
         const mappedUsers = this.state.users.map((user: IUser) => (
-                <TableRow key={user.uid} className={userRow} onClick={this.openExistingUserDialog(user)}>
-                    <TableCell>{user.fullName}</TableCell>
+                <TableRow key={user.authUserId} className={userRow} onClick={this.openExistingUserDialog(user)}>
+                    <TableCell>{user.name}</TableCell>
                     <TableCell>{user.email}</TableCell>
                     <TableCell>{user.type}</TableCell>
                 </TableRow>
@@ -572,7 +572,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
     }
 
     private openExistingUserDialog = (user: IUser) => {
-        const additionalCheckpoints = user.type === UserType.Doctor ? [] : (user as IStaffOrAdminUser).scanCheckpoints;
+        const additionalCheckpoints = user.type === UserType.Doctor ? [] : (user as IStaffOrAdminUser).scanCheckpointIds;
         const additionalCheckpointsSet = new Set(additionalCheckpoints);
 
         const streetValue = user.type === UserType.Doctor ? user.address.street : '';
@@ -588,14 +588,14 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                     isUpdate: true,
                     additionalCheckpoints: additionalCheckpointsSet,
                     userFullName: this.state.userFullName.setValue(
-                        user.fullName,
+                        user.name,
                     ).markAsBrandNew(),
                     userEmail: this.state.userEmail.setValue(
                         user.email,
                     ).markAsBrandNew(),
                     userRole: user.type,
                     idOfUserBeingUpdated: user.id,
-                    uidOfUserBeingUpdated: user.uid,
+                    uidOfUserBeingUpdated: user.authUserId,
                     street: this.state.street.setValue(
                         streetValue,
                     ).markAsBrandNew(),
@@ -626,9 +626,9 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
 
     private handleSave = async() => {
         const companyId = this.props.match.path.split('/')[2];
-        const scanCheckpoints: string[] = [];
+        const scanCheckpointIds: string[] = [];
         this.state.additionalCheckpoints.forEach((checkpoint) => {
-            scanCheckpoints.push(checkpoint);
+            scanCheckpointIds.push(checkpoint);
         });
 
         if (this._isMounted) {
@@ -647,7 +647,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
             if (this.state.userRole === UserType.Doctor) {
                 userUpdateRequest = {
                     ...user,
-                    fullName: this.state.userFullName.value,
+                    name: this.state.userFullName.value,
                     email: this.state.userEmail.value,
                     type: this.state.userRole as any,
                     address: this.getAddressFromState(),
@@ -656,10 +656,10 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
             } else {
                 userUpdateRequest = {
                     ...user,
-                    fullName: this.state.userFullName.value,
+                    name: this.state.userFullName.value,
                     email: this.state.userEmail.value,
                     type: this.state.userRole as any,
-                    scanCheckpoints,
+                    scanCheckpointIds,
                 } as IStaffOrAdminUser;
             }
 
@@ -683,7 +683,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
         } else {
             const addUserRequest: IUserCreateRequest = {
                 companyId,
-                fullName: this.state.userFullName.value,
+                name: this.state.userFullName.value,
                 email: this.state.userEmail.value,
                 type: this.state.userRole as UserType,
             }
@@ -692,7 +692,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                 addUserRequest.address = this.getAddressFromState();
                 addUserRequest.telephone = this.state.telephone.value;
             } else {
-                addUserRequest.scanCheckpoints = scanCheckpoints;
+                addUserRequest.scanCheckpointIds = scanCheckpointIds;
             }
 
             const addedUser = await Api.userApi.addUser(addUserRequest);

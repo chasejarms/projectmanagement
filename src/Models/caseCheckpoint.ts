@@ -2,10 +2,10 @@ import { firestore } from 'firebase';
 
 export interface ICaseCheckpoint {
     complete: boolean;
-    completedBy: string | null;
-    completedDate: firestore.Timestamp | null;
+    completedByCompanyUserId: string | null;
+    completedTimestamp: firestore.Timestamp | null;
     completedByName: string | null;
-    linkedWorkflowCheckpoint: string;
+    linkedWorkflowCheckpointId: string;
     estimatedCompletionTime: string;
     name: string;
     visibleToDoctor: boolean;

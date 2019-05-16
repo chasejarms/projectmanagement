@@ -118,7 +118,7 @@ export class WorkflowPresentation extends React.Component<IWorkflowPresentationP
 
         return (
             // <div className={workflowContainer}>
-            //     {workflowCheckpoints}
+            //     {workflowCheckpointIds}
             // </div>
             <div className={workflowContainer}>
                 <Paper className={workflowPaper}>

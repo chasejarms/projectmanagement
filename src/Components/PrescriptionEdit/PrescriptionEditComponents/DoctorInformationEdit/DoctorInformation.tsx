@@ -61,7 +61,7 @@ class DoctorInformationEditPresentation extends React.Component<IDoctorInformati
         const passedInDoctorExists = !!this.props.existingDoctorInformation;
         const passedInDoctor = this.props.existingDoctorInformation!;
 
-        const doctorName = passedInDoctorExists ? passedInDoctor.fullName : doctorExists && controlHasValue ? this.state.selectedDoctorInformation!.fullName : '';
+        const doctorName = passedInDoctorExists ? passedInDoctor.name : doctorExists && controlHasValue ? this.state.selectedDoctorInformation!.name : '';
         const street = passedInDoctorExists ? passedInDoctor.address.street : doctorExists && controlHasValue ? this.state.selectedDoctorInformation!.address.street : '';
         const city = passedInDoctorExists ? passedInDoctor.address.city : doctorExists && controlHasValue ? this.state.selectedDoctorInformation!.address.city : '';
         const state = passedInDoctorExists ? passedInDoctor.address.state : doctorExists && controlHasValue ? this.state.selectedDoctorInformation!.address.state : '';
@@ -94,7 +94,7 @@ class DoctorInformationEditPresentation extends React.Component<IDoctorInformati
                         {this.state.potentialDoctors.map((potentialDoctor) => {
                             return (
                                 <MenuItem key={potentialDoctor.id} onClick={this.selectDoctor(potentialDoctor)}>
-                                    {potentialDoctor.fullName} ({potentialDoctor.email})
+                                    {potentialDoctor.name} ({potentialDoctor.email})
                                 </MenuItem>
                             )
                         })}

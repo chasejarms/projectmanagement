@@ -1,7 +1,7 @@
 import { UserType } from './userTypes';
 
 export interface IProjectCreationProjectUser {
-    userId: string;
+    companyUserId: string;
     email: string;
     name: string;
     type: UserType;

@@ -4,9 +4,9 @@ import { UserType } from "../userTypes";
 export interface IUserCreateRequest {
     companyId: string;
     email: string;
-    fullName: string;
+    name: string;
     type: UserType;
-    scanCheckpoints?: string[];
+    scanCheckpointIds?: string[];
     address?: IUnitedStatesAddress;
     telephone?: string;
 }

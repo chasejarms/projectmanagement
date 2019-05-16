@@ -104,7 +104,7 @@ export class ResetPasswordPresentation extends React.Component<IResetPasswordPro
     private handleFormControlChange = (event: any): void => {
         const formControl: FormControlState<string> = this.state[event.target.name];
         const controlToSetOnState = formControl.setValue(event.target.value);
-        const name: 'fullName' | 'companyName' | 'email' | 'password' = event.target.name;
+        const name: 'name' | 'companyName' | 'email' | 'password' = event.target.name;
 
         if (this._isMounted) {
             this.setState({

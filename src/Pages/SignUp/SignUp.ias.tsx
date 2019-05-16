@@ -6,7 +6,7 @@ import { IFormControlState } from '../../Classes/formControlState';
 export interface ISignUpPresentationProps extends RouteComponentProps<{}>, WithTheme {}
 
 export interface ISignUpPresentationState {
-    fullName: IFormControlState<string>;
+    name: IFormControlState<string>;
     companyName: IFormControlState<string>;
     email: IFormControlState<string>;
     password: IFormControlState<string>;

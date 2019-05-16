@@ -82,7 +82,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         potentialDoctors: [],
         selectedDoctorInformation: null,
         selectedFilterCheckpoint: '',
-        workflowCheckpoints: [],
+        workflowCheckpointIds: [],
     }
 
     // tslint:disable-next-line:variable-name
@@ -98,13 +98,13 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         }
 
         const userType = this.props.userState[companyId].type;
-        const userId = this.props.userState[companyId].id;
+        const companyUserId = this.props.userState[companyId].id;
 
         const getWorkflowCheckpointsPromise = Api.workflowApi.getWorkflow(companyId);
-        const getSlimCasesPromise = Api.projectsApi.searchCases(casesSearchRequest, userType, userId);
+        const getSlimCasesPromise = Api.projectsApi.searchCases(casesSearchRequest, userType, companyUserId);
 
         const [
-            workflowCheckpoints,
+            workflowCheckpointIds,
             caseDocumentSnapshots,
         ] = await Promise.all([
             getWorkflowCheckpointsPromise,
@@ -132,7 +132,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                 loadingCases: false,
                 moreCasesExist,
                 startingCases: [cases[0]],
-                workflowCheckpoints,
+                workflowCheckpointIds,
             })
         }
     }
@@ -193,7 +193,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
             )
         });
 
-        const checkpointItems = this.state.workflowCheckpoints.filter((workflowCheckpoint) => {
+        const checkpointItems = this.state.workflowCheckpointIds.filter((workflowCheckpoint) => {
             return this.state.selectedFilterCheckpoint !== workflowCheckpoint.id;
         }).map((workflowCheckpoint, index) => {
             return (
@@ -206,7 +206,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
             )
         });
 
-        const selectedCheckpoint = this.state.workflowCheckpoints.find((workflowCheckpoint) => {
+        const selectedCheckpoint = this.state.workflowCheckpointIds.find((workflowCheckpoint) => {
             return workflowCheckpoint.id === this.state.selectedFilterCheckpoint;
         });
 
@@ -329,7 +329,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                                                     {this.state.potentialDoctors.map((potentialDoctor) => {
                                                         return (
                                                             <MenuItem key={potentialDoctor.id} onClick={this.selectDoctor(potentialDoctor)}>
-                                                                {potentialDoctor.fullName} ({potentialDoctor.email})
+                                                                {potentialDoctor.name} ({potentialDoctor.email})
                                                             </MenuItem>
                                                         )
                                                     })}
@@ -338,7 +338,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                                         ) : undefined}
                                         {doctorFlag === DoctorFlag.Specific && !!this.state.selectedDoctorInformation ? (
                                             <div className={selectedDoctorContainer}>
-                                                <Typography variant="body1">Selected Doctor: {this.state.selectedDoctorInformation.fullName}</Typography>
+                                                <Typography variant="body1">Selected Doctor: {this.state.selectedDoctorInformation.name}</Typography>
                                             </div>
                                         ) : undefined}
                                     </div>
@@ -408,9 +408,9 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
             ...this.state.dialogDisplayFilter,
         }
         const userType = this.props.userState[companyId].type;
-        const userId = this.props.userState[companyId].id;
+        const companyUserId = this.props.userState[companyId].id;
 
-        const caseDocumentSnapshots = await Api.projectsApi.searchCases(casesSearchRequest, userType, userId);
+        const caseDocumentSnapshots = await Api.projectsApi.searchCases(casesSearchRequest, userType, companyUserId);
 
         const cases: IAugmentedCase[] = [];
         caseDocumentSnapshots.forEach((document) => {
@@ -531,9 +531,9 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         }
 
         const userType = this.props.userState[companyId].type;
-        const userId = this.props.userState[companyId].id;
+        const companyUserId = this.props.userState[companyId].id;
 
-        Api.projectsApi.searchCases(casesSearchRequest, userType, userId).then((caseDocumentSnapshots) => {
+        Api.projectsApi.searchCases(casesSearchRequest, userType, companyUserId).then((caseDocumentSnapshots) => {
             const cases: IAugmentedCase[] = [];
             caseDocumentSnapshots.forEach((document) => {
                 const data = document.data();
@@ -574,9 +574,9 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         }
 
         const userType = this.props.userState[companyId].type;
-        const userId = this.props.userState[companyId].id;
+        const companyUserId = this.props.userState[companyId].id;
 
-        Api.projectsApi.searchCases(casesSearchRequest, userType, userId).then((caseDocumentSnapshots) => {
+        Api.projectsApi.searchCases(casesSearchRequest, userType, companyUserId).then((caseDocumentSnapshots) => {
             const cases: IAugmentedCase[] = [];
             caseDocumentSnapshots.forEach((document) => {
                 const data = document.data();

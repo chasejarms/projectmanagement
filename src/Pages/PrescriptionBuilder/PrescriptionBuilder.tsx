@@ -1063,7 +1063,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
     }
 
     private updatePrescriptionTemplate = async (): Promise<void> => {
-        const prescriptionTemplate = this.props.prescriptionBuilderState.prescriptionFormTemplate;
+        const prescriptionTemplateId = this.props.prescriptionBuilderState.prescriptionFormTemplate;
         if (this._isMounted) {
             this.setState({
                 updatingPrescriptionTemplate: true,
@@ -1071,7 +1071,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
         }
 
         const companyId = this.props.match.path.split('/')[2];
-        await Api.prescriptionTemplateApi.updatePrescriptionTemplate(companyId, prescriptionTemplate);
+        await Api.prescriptionTemplateApi.updatePrescriptionTemplate(companyId, prescriptionTemplateId);
 
         if (this._isMounted) {
             this.setState({

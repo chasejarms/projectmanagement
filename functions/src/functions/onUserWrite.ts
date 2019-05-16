@@ -11,9 +11,9 @@ export const onCreateOrUpdateUserLocal = (passedInAdmin: admin.app.App) => funct
         }
 
         // for create and on update if the user's full name changed
-        if (!documentSnapshot.before.exists || documentSnapshot.before.data().fullName !== documentSnapshot.after.data().fullName) {
+        if (!documentSnapshot.before.exists || documentSnapshot.before.data().name !== documentSnapshot.after.data().name) {
             const existingUserData = documentSnapshot.after.data();
-            const nameSearchValues = createNameSearchValues(existingUserData.fullName);
+            const nameSearchValues = createNameSearchValues(existingUserData.name);
             await passedInAdmin.firestore().collection(Collections.CompanyUser).doc(documentSnapshot.before.id).set({
                 ...existingUserData,
                 nameSearchValues,
@@ -21,8 +21,8 @@ export const onCreateOrUpdateUserLocal = (passedInAdmin: admin.app.App) => funct
         }
     });
 
-function createNameSearchValues(fullName: string) {
-    const arr = fullName.toLowerCase().split('');
+function createNameSearchValues(name: string) {
+    const arr = name.toLowerCase().split('');
     const uniqueNameSearchValues = new Set([]);
     const nameSearchValues = [];
 

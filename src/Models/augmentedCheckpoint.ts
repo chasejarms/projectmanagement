@@ -3,10 +3,10 @@ import { Timestamp } from '@google-cloud/firestore';
 export interface IAugmentedCheckpoint {
     id: string;
     complete: boolean;
-    completedDate: Timestamp | null;
-    completedBy: string | null;
+    completedTimestamp: Timestamp | null;
+    completedByCompanyUserId: string | null;
     completedByName: string | null;
-    linkedWorkflowCheckpoint: string;
+    linkedWorkflowCheckpointId: string;
     name: string;
     estimatedCompletionTime: string;
     visibleToDoctor: boolean;

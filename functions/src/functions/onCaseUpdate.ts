@@ -26,10 +26,10 @@ export const onCaseUpdateLocal = (passedInAdmin: admin.app.App) => functions.fir
             return !caseCheckpoint.complete;
         });
 
-        const currentDoctorCheckpointId = earliestDoctorCheckpoint ? earliestDoctorCheckpoint.linkedWorkflowCheckpoint : '';
+        const currentDoctorCheckpointId = earliestDoctorCheckpoint ? earliestDoctorCheckpoint.linkedWorkflowCheckpointId : '';
         const currentDoctorCheckpointName = earliestDoctorCheckpoint ? earliestDoctorCheckpoint.name : '';
 
-        const currentLabCheckpointId  = earliestLabCheckpoint ? earliestLabCheckpoint.linkedWorkflowCheckpoint : '';
+        const currentLabCheckpointId  = earliestLabCheckpoint ? earliestLabCheckpoint.linkedWorkflowCheckpointId : '';
         const currentLabCheckpointName = earliestLabCheckpoint ? earliestLabCheckpoint.name : '';
 
         const complete = afterCaseCheckpoints.every((caseCheckpoint) => {

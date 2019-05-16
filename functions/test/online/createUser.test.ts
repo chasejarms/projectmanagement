@@ -46,7 +46,7 @@ describe.only('createUser', () => {
         initialUserCreateRequest = {
             companyId: requestingUserCompanyId,
             email: 'jim@theoffice.com',
-            fullName: 'Jim Halpert',
+            name: 'Jim Halpert',
             type: UserType.Staff,
         }
     });
@@ -73,11 +73,11 @@ describe.only('createUser', () => {
         const requestingUserCompanyUserData = {
             companyId: requestingUserCompanyId,
             email: 'me@me.com',
-            fullName: 'me',
+            name: 'me',
             isActive: false,
-            scanCheckpoints: [],
+            scanCheckpointIds: [],
             type: UserType.Admin,
-            uid: requestingUserAuthUserId,
+            authUserId: requestingUserAuthUserId,
         }
         await admin.firestore().collection(Collections.CompanyUser)
             .doc(requestingUserCompanyUserId)
@@ -98,9 +98,9 @@ describe.only('createUser', () => {
         const requestingUserCompanyUserData = {
             companyId: requestingUserCompanyId,
             email: 'me@me.com',
-            fullName: 'me',
+            name: 'me',
             isActive: true,
-            scanCheckpoints: [],
+            scanCheckpointIds: [],
             type: UserType.Staff,
             uid: requestingUserAuthUserId,
         }
@@ -123,11 +123,11 @@ describe.only('createUser', () => {
         const requestingUserCompanyUserData = {
             companyId: requestingUserCompanyId,
             email: 'me@me.com',
-            fullName: 'me',
+            name: 'me',
             isActive: true,
-            scanCheckpoints: [],
+            scanCheckpointIds: [],
             type: UserType.Admin,
-            uid: requestingUserAuthUserId,
+            authUserId: requestingUserAuthUserId,
         }
 
         const userWeAreTryingToCreate = {
@@ -177,11 +177,11 @@ describe.only('createUser', () => {
         const requestingUserCompanyUserData = {
             companyId: requestingUserCompanyId,
             email: 'me@me.com',
-            fullName: 'me',
+            name: 'me',
             isActive: true,
-            scanCheckpoints: [],
+            scanCheckpointIds: [],
             type: UserType.Admin,
-            uid: requestingUserAuthUserId,
+            authUserId: requestingUserAuthUserId,
         }
 
         const createRequestingUserPromise = admin.firestore().collection(Collections.CompanyUser)
@@ -228,11 +228,11 @@ describe.only('createUser', () => {
         const requestingUserCompanyUserData = {
             companyId: requestingUserCompanyId,
             email: 'me@me.com',
-            fullName: 'me',
+            name: 'me',
             isActive: true,
-            scanCheckpoints: [],
+            scanCheckpointIds: [],
             type: UserType.Admin,
-            uid: requestingUserAuthUserId,
+            authUserId: requestingUserAuthUserId,
         }
 
         const createRequestingUserPromise = admin.firestore().collection(Collections.CompanyUser)
@@ -256,24 +256,24 @@ describe.only('createUser', () => {
         expect(message.dynamicTemplateData.email).toBe('jim@theoffice.com');
         expect(message.dynamicTemplateData.password).toBeDefined();
         expect(message.dynamicTemplateData.companyName).toBe('An Amazing Company');
-        expect(message.dynamicTemplateData.fullName).toBe('Jim Halpert');
+        expect(message.dynamicTemplateData.name).toBe('Jim Halpert');
     });
 
     test('it overrides the existing company user if the company user was inactive', async() => {
         const requestingUserCompanyUserData = {
             companyId: requestingUserCompanyId,
             email: 'me@me.com',
-            fullName: 'me',
+            name: 'me',
             isActive: true,
-            scanCheckpoints: [],
+            scanCheckpointIds: [],
             type: UserType.Admin,
-            uid: requestingUserAuthUserId,
+            authUserId: requestingUserAuthUserId,
         }
 
         const userWeAreTryingToCreate = {
             ...initialUserCreateRequest,
             isActive: false,
-            fullName: 'Not Jim Halpert',
+            name: 'Not Jim Halpert',
         }
 
         const createRequestingUserPromise = admin.firestore().collection(Collections.CompanyUser)
@@ -318,25 +318,25 @@ describe.only('createUser', () => {
             .doc(addedCompanyUserId)
             .get();
 
-        const fullName = createdUserSnapshot.data().fullName;
-        expect(fullName).toBe(initialUserCreateRequest.fullName);
+        const name = createdUserSnapshot.data().name;
+        expect(name).toBe(initialUserCreateRequest.name);
     });
 
     test('it creates a new company user if the company user does not exist', async() => {
         const requestingUserCompanyUserData = {
             companyId: requestingUserCompanyId,
             email: 'me@me.com',
-            fullName: 'me',
+            name: 'me',
             isActive: true,
-            scanCheckpoints: [],
+            scanCheckpointIds: [],
             type: UserType.Admin,
-            uid: requestingUserAuthUserId,
+            authUserId: requestingUserAuthUserId,
         }
 
         const userWeAreTryingToCreate = {
             ...initialUserCreateRequest,
             isActive: false,
-            fullName: 'Not Jim Halpert',
+            name: 'Not Jim Halpert',
         }
 
         const createRequestingUserPromise = admin.firestore().collection(Collections.CompanyUser)
@@ -384,11 +384,11 @@ describe.only('createUser', () => {
         const requestingUserCompanyUserData = {
             companyId: requestingUserCompanyId,
             email: 'me@me.com',
-            fullName: 'me',
+            name: 'me',
             isActive: true,
-            scanCheckpoints: [],
+            scanCheckpointIds: [],
             type: UserType.Admin,
-            uid: requestingUserAuthUserId,
+            authUserId: requestingUserAuthUserId,
         }
 
         const createRequestingUserPromise = admin.firestore().collection(Collections.CompanyUser)
@@ -436,11 +436,11 @@ describe.only('createUser', () => {
         const requestingUserCompanyUserData = {
             companyId: requestingUserCompanyId,
             email: 'me@me.com',
-            fullName: 'me',
+            name: 'me',
             isActive: true,
-            scanCheckpoints: [],
+            scanCheckpointIds: [],
             type: UserType.Admin,
-            uid: requestingUserAuthUserId,
+            authUserId: requestingUserAuthUserId,
         }
 
         const createRequestingUserPromise = admin.firestore().collection(Collections.CompanyUser)
@@ -476,7 +476,7 @@ describe.only('createUser', () => {
 
         const addedUser = await wrapped(initialUserCreateRequest, { auth: { uid: requestingUserAuthUserId }});
 
-        expect(addedUser.fullName).toBe(initialUserCreateRequest.fullName);
+        expect(addedUser.name).toBe(initialUserCreateRequest.name);
         expect(addedUser.companyId).toBe(initialUserCreateRequest.companyId);
         expect(addedUser.email).toBe(initialUserCreateRequest.email);
     });

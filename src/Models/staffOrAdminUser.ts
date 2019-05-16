@@ -3,5 +3,5 @@ import { UserType } from "./userTypes";
 
 export interface IStaffOrAdminUser extends IBaseUser {
     type: UserType.Staff | UserType.Admin;
-    scanCheckpoints: string[];
+    scanCheckpointIds: string[];
 }

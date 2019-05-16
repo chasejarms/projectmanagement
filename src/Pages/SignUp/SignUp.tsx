@@ -47,7 +47,7 @@ export class SignUpPresentation extends React.Component<
                 companyNameValidator,
             ],
         }).markAsInvalid(),
-        fullName: new FormControlState({
+        name: new FormControlState({
             value: '',
             validators: [requiredValidator('A full name is required')],
         }).markAsInvalid(),
@@ -77,13 +77,13 @@ export class SignUpPresentation extends React.Component<
         } = createAuthenticationClasses(this.props, this.state);
 
         const {
-            fullName,
+            name,
             companyName,
             email,
             password,
         } = this.state;
 
-        const fullNameError = fullName!.shouldShowError() ? fullName!.errors[0] : undefined;
+        const fullNameError = name!.shouldShowError() ? name!.errors[0] : undefined;
         const companyNameError = companyName.shouldShowError() ? companyName.errors[0] : undefined;
         const emailError = email.shouldShowError() ? email.errors[0] : undefined;
         const passwordError = password.shouldShowError() ? password.errors[0] : undefined;
@@ -103,11 +103,11 @@ export class SignUpPresentation extends React.Component<
                     </FormControl>
                 </div>
                 <div className={signUpRow}>
-                    <FormControl required={true} className={textField} error={fullName!.shouldShowError()}>
+                    <FormControl required={true} className={textField} error={name!.shouldShowError()}>
                         <InputLabel>Full Name</InputLabel>
                         <Input
-                            name="fullName"
-                            value={this.state.fullName!.value}
+                            name="name"
+                            value={this.state.name!.value}
                             onChange={this.handleFormControlChange}
                         />
                         <FormHelperText>{fullNameError}</FormHelperText>
@@ -187,7 +187,7 @@ export class SignUpPresentation extends React.Component<
         try {
             await Api.authenticationApi.signUp(
                 this.state.companyName.value,
-                this.state.fullName!.value,
+                this.state.name!.value,
                 this.state.email.value,
                 this.state.password.value,
             )
@@ -209,14 +209,14 @@ export class SignUpPresentation extends React.Component<
         }
     }
 
-    private redirectToCompanySelection(uid: string): void {
-        this.props.history.push(`companySelection?uid=${uid}`);
+    private redirectToCompanySelection(authUserId: string): void {
+        this.props.history.push(`companySelection?authUserId=${authUserId}`);
     }
 
     private handleFormControlChange = (event: any): void => {
         const formControl: FormControlState<string> = this.state[event.target.name];
         const controlToSetOnState = formControl.setValue(event.target.value);
-        const name: 'fullName' | 'companyName' | 'email' | 'password' = event.target.name;
+        const name: 'name' | 'companyName' | 'email' | 'password' = event.target.name;
 
         if (this._isMounted) {
             this.setState({
@@ -227,13 +227,13 @@ export class SignUpPresentation extends React.Component<
 
     private allControlsAreValid(): boolean {
         const {
-            fullName,
+            name,
             email,
             password,
             companyName,
         } = this.state;
 
-        return !fullName.invalid && !email.invalid && !password.invalid && !companyName.invalid;
+        return !name.invalid && !email.invalid && !password.invalid && !companyName.invalid;
     }
 }
 

@@ -221,8 +221,8 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
 
     private navigateToCompanySelection = () => {
         const { companyName } = this.props.match.params as any;
-        const uid = this.props.userState[companyName].uid;
-        this.props.history.push(`/companySelection?uid=${uid}`);
+        const authUserId = this.props.userState[companyName].authUserId;
+        this.props.history.push(`/companySelection?authUserId=${authUserId}`);
     }
 
     private logout = async() => {

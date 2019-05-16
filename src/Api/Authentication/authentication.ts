@@ -5,7 +5,7 @@ import { IAuthenticationApi, IAuthenticationMessage } from './authenticationInte
 export class AuthenticationApi implements IAuthenticationApi {
     public async signUp(
         companyName: string,
-        fullName: string,
+        name: string,
         email: string,
         password: string,
     ): Promise<IAuthenticationMessage> {
@@ -13,7 +13,7 @@ export class AuthenticationApi implements IAuthenticationApi {
         try {
             await signUp({
                 companyName,
-                fullName,
+                name,
                 email,
                 password,
             });

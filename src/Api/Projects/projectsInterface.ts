@@ -30,7 +30,7 @@ export interface IUpdateCaseInformationRequest {
 }
 
 export interface ICaseApi {
-    searchCases(searchRequest: ICasesSearchRequest, userType: string, userId: string): Promise<FirebaseFirestore.QueryDocumentSnapshot[]>;
+    searchCases(searchRequest: ICasesSearchRequest, userType: string, companyUserId: string): Promise<FirebaseFirestore.QueryDocumentSnapshot[]>;
     createProject(companyId: string, projectCreateRequest: ICaseCreateRequest): Promise<ICase>;
     getProject(projectId: string): Promise<ICase>;
     uploadFile(companyName: string, projectId: string, file: File): Promise<firebase.storage.UploadTaskSnapshot>;
