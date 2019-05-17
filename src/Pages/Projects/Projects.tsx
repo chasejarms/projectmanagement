@@ -183,9 +183,9 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
             return (
                 <TableRow key={caseObject.id} onClick={this.navigateToProject(caseObject.id)} className={rowStyling}>
                     <TableCell>{caseObject.doctorName}</TableCell>
+                    <TableCell>{caseObject.hasStarted ? <DoneIcon/> : undefined}</TableCell>
                     <TableCell>{prettyDeadline}</TableCell>
                     <TableCell>{caseObject.complete ? <DoneIcon/> : undefined}</TableCell>
-                    <TableCell>{caseObject.hasStarted ? <DoneIcon/> : undefined}</TableCell>
                     <TableCell>{currentCheckpointName}</TableCell>
                     {newInfoCell}
                 </TableRow>
@@ -253,9 +253,9 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                             <TableHead>
                                 <TableRow>
                                     <TableCell>Doctor</TableCell>
+                                    <TableCell>Started</TableCell>
                                     <TableCell>Case Deadline</TableCell>
                                     <TableCell>Complete</TableCell>
-                                    <TableCell>Started</TableCell>
                                     <TableCell>Current Checkpoint</TableCell>
                                     <TableCell/>
                                 </TableRow>

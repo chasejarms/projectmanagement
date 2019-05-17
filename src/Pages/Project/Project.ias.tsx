@@ -391,6 +391,7 @@ export const createProjectPresentationClasses = (
 
     const formContainer = css({
         flex: 1,
+        overflowY: 'auto',
     });
 
     return {
