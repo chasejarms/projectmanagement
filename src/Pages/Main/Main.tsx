@@ -8,6 +8,7 @@ import { UserType } from 'src/Models/userTypes';
 import { CompanySelection } from '../CompanySelection/CompanySelection';
 import { Home } from '../Home/Home';
 import { Login } from '../Login/Login';
+import { NotFound } from '../NotFound/NotFound';
 import { ResetPassword } from '../ResetPassword/ResetPassword';
 import { SignUp } from '../SignUp/SignUp';
 import {
@@ -26,10 +27,12 @@ class MainPresentation extends React.Component<IMainPresentationProps, IMainPres
             <Route
               path="/signup"
               component={SignUp}
+              exact={true}
             />
             <Route
               path="/login"
               component={Login}
+              exact={true}
             />
             <RouteGuard
               mustHaveRole={[UserType.Admin, UserType.Doctor, UserType.Staff]}
@@ -39,14 +42,20 @@ class MainPresentation extends React.Component<IMainPresentationProps, IMainPres
             <Route
               path="/companySelection"
               component={CompanySelection}
+              exact={true}
             />
             <Route
               path="/reset-password"
               component={ResetPassword}
+              exact={true}
             />
             <Route
               path="/"
               component={Home}
+              exact={true}
+            />
+            <Route
+              component={NotFound}
             />
           </Switch>
         </div>
