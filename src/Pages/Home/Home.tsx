@@ -9,6 +9,7 @@ import PersonIcon from '@material-ui/icons/Person';
 import TrackChangesIcon from '@material-ui/icons/TrackChanges';
 import * as React from 'react';
 import { withRouter } from 'react-router';
+import * as scrollIntoView from 'scroll-into-view';
 import { createHomeClasses, IHomeProps, IHomeState } from './Home.ias';
 
 // tslint:disable-next-line:no-var-requires
@@ -70,7 +71,7 @@ export class HomePresentation extends React.Component<IHomeProps, IHomeState> {
                             <Typography variant="h2" className={mainTopSectionText}>
                                 Visual Dental Lab Management
                             </Typography>
-                            <Button variant="contained" color="secondary" className={seeFeaturesButton}>Explore Features</Button>
+                            <Button variant="contained" color="secondary" className={seeFeaturesButton} onClick={this.scrollToFeatures}>Explore Features</Button>
                         </div>
                     </div>
                 </div>
@@ -93,11 +94,22 @@ export class HomePresentation extends React.Component<IHomeProps, IHomeState> {
                         )
                     })}
                 </div>
+                <div id="below-home-page-features-section"/>
                 <div className={footerSection}>
                     <Typography className={footerText}>Shentaro - All Rights Reserved 2019</Typography>
                 </div>
             </div>
         )
+    }
+
+    private scrollToFeatures = (): void => {
+        const belowHomePageFeaturesSectionElement = document.getElementById('below-home-page-features-section')!;
+        scrollIntoView(belowHomePageFeaturesSectionElement, {
+            time: 500,
+            align: {
+                top: 1,
+            }
+        });
     }
 
     private navigateToLogin = (): void => {
