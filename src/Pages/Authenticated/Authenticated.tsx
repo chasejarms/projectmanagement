@@ -24,6 +24,7 @@ import { removeUserForCompany } from 'src/Redux/ActionCreators/userActionCreator
 import { IAppState } from 'src/Redux/Reducers/rootReducer';
 import Api from '../../Api/api';
 import { CaseCreation } from '../CaseCreation/CaseCreation';
+import { NotFound } from '../NotFound/NotFound';
 import { PrescriptionBuilder } from '../PrescriptionBuilder/PrescriptionBuilder';
 import { Project } from '../Project/Project';
 import { Projects } from '../Projects/Projects';
@@ -166,6 +167,7 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                         <Route
                             path={this.props.match.url + '/project/:projectId'}
                             component={Project}
+                            exact={true}
                         />
                         <RouteGuard
                             mustHaveRole={[UserType.Admin]}
@@ -194,6 +196,9 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                             path={this.props.match.url + '/userSettings'}
                             exact={true}
                             component={UserSettings}
+                        />
+                        <Route
+                            component={NotFound}
                         />
                     </Switch>
                 </div>
