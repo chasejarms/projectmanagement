@@ -12,7 +12,7 @@
     .qr-code-display {
         display: block;
         position: absolute !important;
-        height: auto !important;
+        height: 100vh !important;
 
         width: 100%;
         margin: 0;
