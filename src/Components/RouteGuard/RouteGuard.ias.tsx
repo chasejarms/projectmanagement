@@ -12,6 +12,7 @@ export interface IRouteGuardPresentationProps extends RouteComponentProps<{}> {
   setUser: (companyId: string, user: IUser) => void;
   setHasMultipleCompanies: (hasMultipleCompanies: boolean) => void;
   mustHaveRole: string[];
+  exact?: boolean;
 }
 
 export interface IRouteGuardPresentationState {

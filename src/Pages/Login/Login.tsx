@@ -182,7 +182,7 @@ export class LoginPresentation extends React.Component<
     }
 
     private navigateToResetPassword = (): void => {
-        this.props.history.push('reset-password');
+        this.props.history.push('resetPassword');
     }
 
     private handleFormControlChange = (event: any): void => {

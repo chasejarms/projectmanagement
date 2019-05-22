@@ -165,18 +165,19 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                         />
                         <Route
                             path={this.props.match.url + '/project/:projectId'}
-                            exact={true}
                             component={Project}
                         />
                         <RouteGuard
                             mustHaveRole={[UserType.Admin]}
                             path={this.props.match.url + '/users'}
                             component={Users}
+                            exact={true}
                         />
                         <RouteGuard
                             mustHaveRole={[UserType.Admin]}
                             path={this.props.match.url + '/workflow'}
                             component={Workflow as any}
+                            exact={true}
                         />
                         <Route
                             path={this.props.match.url + '/createCase'}
@@ -187,6 +188,7 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                             mustHaveRole={[UserType.Admin]}
                             path={this.props.match.url + '/prescriptionBuilder'}
                             component={PrescriptionBuilder as any}
+                            exact={true}
                         />
                         <Route
                             path={this.props.match.url + '/userSettings'}

@@ -45,7 +45,7 @@ class MainPresentation extends React.Component<IMainPresentationProps, IMainPres
               exact={true}
             />
             <Route
-              path="/reset-password"
+              path="/resetPassword"
               component={ResetPassword}
               exact={true}
             />
