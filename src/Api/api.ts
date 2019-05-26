@@ -2,6 +2,8 @@ import { AuthenticationApi } from './Authentication/authentication'
 import { IAuthenticationApi } from './Authentication/authenticationInterface';
 import { CompanySelectionApi } from './CompanySelection/companySelection';
 import { ICompanySelectionApi } from './CompanySelection/companySelectionInterface';
+import { ContactUsApi } from './ContactUs/contactUs';
+import { IContactUsApi } from './ContactUs/contactUsInterface';
 import { PrescriptionTemplateApi } from './PrescriptionTemplate/prescriptionTemplate';
 import { IPrescriptionTemplateApi } from './PrescriptionTemplate/prescriptionTemplateInterface';
 import { ProjectsApi } from './Projects/projects';
@@ -18,6 +20,7 @@ export interface IApi {
     projectsApi: ICaseApi;
     companySelectionApi: ICompanySelectionApi;
     prescriptionTemplateApi: IPrescriptionTemplateApi;
+    contactUsApi: IContactUsApi;
 }
 
 const api: IApi = {
@@ -27,6 +30,7 @@ const api: IApi = {
     projectsApi: new ProjectsApi(),
     companySelectionApi: new CompanySelectionApi(),
     prescriptionTemplateApi: new PrescriptionTemplateApi(),
+    contactUsApi: new ContactUsApi(),
 }
 
 export default api;

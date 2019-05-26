@@ -1,6 +1,6 @@
 import {
     FormControl,
-    // FormHelperText,
+    FormHelperText,
     Input,
     InputLabel,
     Typography,
@@ -8,6 +8,9 @@ import {
 import * as React from 'react';
 import { FormControlState } from 'src/Classes/formControlState';
 import { AsyncButton } from 'src/Components/AsyncButton/AsyncButton';
+import { emailValidator } from 'src/Validators/email.validator';
+import { requiredValidator } from 'src/Validators/required.validator';
+import Api from '../../Api/api';
 import { createContactUsClasses, IContactUsProps, IContactUsState } from './ContactUs.ias';
 
 export class ContactUs extends React.Component<IContactUsProps, IContactUsState> {
@@ -17,16 +20,29 @@ export class ContactUs extends React.Component<IContactUsProps, IContactUsState>
     public state: IContactUsState = {
         name: new FormControlState({
             value: '',
-        }),
+            validators: [
+                requiredValidator('A name is required'),
+            ]
+        }).markAsInvalid(),
         email: new FormControlState({
             value: '',
-        }),
+            validators: [
+                requiredValidator('An email is required'),
+                emailValidator,
+            ],
+        }).markAsInvalid(),
         phoneNumber: new FormControlState({
             value: '',
-        }),
+            validators: [
+                requiredValidator('A phone number is required'),
+            ],
+        }).markAsInvalid(),
         message: new FormControlState({
             value: '',
-        }),
+            validators: [
+                requiredValidator('A message is required'),
+            ],
+        }).markAsInvalid(),
     }
 
     public componentWillMount = () => {
@@ -44,6 +60,18 @@ export class ContactUs extends React.Component<IContactUsProps, IContactUsState>
             submitButtonContainer,
         } = createContactUsClasses(this.props, this.state);
 
+        const {
+            name,
+            email,
+            phoneNumber,
+            message,
+        } = this.state;
+
+        const nameError = name.shouldShowError() ? name.errors[0] : undefined;
+        const emailError = email.shouldShowError() ? email.errors[0] : undefined;
+        const phoneNumberError = phoneNumber.shouldShowError() ? phoneNumber.errors[0] : undefined;
+        const messageError = message.shouldShowError() ? message.errors[0] : undefined;
+
         return (
             <div className={pageContainer}>
                 <div className={formContainer}>
@@ -58,7 +86,7 @@ export class ContactUs extends React.Component<IContactUsProps, IContactUsState>
                             value={this.state.name.value}
                             onChange={this.handleFormControlChange}
                         />
-                        {/* <FormHelperText>{emailError}</FormHelperText> */}
+                        <FormHelperText>{nameError}</FormHelperText>
                     </FormControl>
                     <FormControl required={true} error={this.state.email.shouldShowError()}>
                         <InputLabel>Email</InputLabel>
@@ -67,7 +95,7 @@ export class ContactUs extends React.Component<IContactUsProps, IContactUsState>
                             value={this.state.email.value}
                             onChange={this.handleFormControlChange}
                         />
-                        {/* <FormHelperText>{emailError}</FormHelperText> */}
+                        <FormHelperText>{emailError}</FormHelperText>
                     </FormControl>
                     <FormControl required={true} error={this.state.phoneNumber.shouldShowError()}>
                         <InputLabel>Phone Number</InputLabel>
@@ -76,7 +104,7 @@ export class ContactUs extends React.Component<IContactUsProps, IContactUsState>
                             value={this.state.phoneNumber.value}
                             onChange={this.handleFormControlChange}
                         />
-                        {/* <FormHelperText>{emailError}</FormHelperText> */}
+                        <FormHelperText>{phoneNumberError}</FormHelperText>
                     </FormControl>
                     <FormControl required={true} error={this.state.message.shouldShowError()}>
                         <InputLabel>Message</InputLabel>
@@ -86,10 +114,13 @@ export class ContactUs extends React.Component<IContactUsProps, IContactUsState>
                             value={this.state.message.value}
                             onChange={this.handleFormControlChange}
                         />
-                        {/* <FormHelperText>{emailError}</FormHelperText> */}
+                        <FormHelperText>{messageError}</FormHelperText>
                     </FormControl>
                     <div className={submitButtonContainer}>
-                        <AsyncButton onClick={this.submitMessage} color="primary">
+                        <AsyncButton
+                            onClick={this.submitMessage}
+                            color="primary"
+                            disabled={!this.allControlsAreValid()}>
                             Submit
                         </AsyncButton>
                     </div>
@@ -110,7 +141,32 @@ export class ContactUs extends React.Component<IContactUsProps, IContactUsState>
         }
     }
 
-    private submitMessage = () => {
-        //
+    private allControlsAreValid(): boolean {
+        const {
+            name,
+            email,
+            phoneNumber,
+            message,
+        } = this.state;
+
+        return !name.invalid && !email.invalid && !phoneNumber.invalid && !message.invalid;
+    }
+
+    private submitMessage = async() => {
+        const {
+            name,
+            email,
+            phoneNumber,
+            message,
+        } = this.state;
+
+        const contactUsRequest = {
+            name: name.value,
+            email: email.value,
+            phoneNumber: phoneNumber.value,
+            message: message.value,
+        }
+
+        await Api.contactUsApi.contactUs(contactUsRequest);
     }
 }

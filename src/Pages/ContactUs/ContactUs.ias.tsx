@@ -28,7 +28,7 @@ export const createContactUsClasses = (
     const formContainer = css({
         width: 600,
         display: 'grid',
-        gridGap: 16,
+        gridGap: 8,
         overflowY: 'auto',
     });
 
