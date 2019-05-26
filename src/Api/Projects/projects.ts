@@ -15,9 +15,6 @@ import { ICaseApi, ICaseCreateRequest, ICasesSearchRequest, IUpdateCaseInformati
 
 export class ProjectsApi implements ICaseApi {
     public async searchCases(slimCasesSearchRequest: ICasesSearchRequest, userType: string, companyUserId: string): Promise<FirebaseFirestore.QueryDocumentSnapshot[]> {
-        // tslint:disable-next-line:no-console
-        console.log('slimeCasesSearchRequest: ', slimCasesSearchRequest);
-
         let query: any = db.collection(Collections.Case)
             .where('companyId', '==', slimCasesSearchRequest.companyId)
             .orderBy('deadline', 'asc')
@@ -52,8 +49,6 @@ export class ProjectsApi implements ICaseApi {
         }
 
         if (slimCasesSearchRequest.checkpointFlag === CheckpointFlag.Specific && slimCasesSearchRequest.checkpointId) {
-            // tslint:disable-next-line:no-console
-            console.log('inside the checkpoint flag piece');
             const correctCaseKey = userType === UserType.Doctor ? 'currentDoctorCheckpointId' : 'currentLabCheckpointId';
             query = query.where(correctCaseKey, '==', slimCasesSearchRequest.checkpointId);
         }
@@ -85,8 +80,7 @@ export class ProjectsApi implements ICaseApi {
         } catch (error) {
             return Promise.reject(error.message);
         }
-        // tslint:disable-next-line:no-console
-        console.log('createCaseResponse: ', createCaseResponse);
+
         return {
             id: createCaseResponse.data,
         } as any;
