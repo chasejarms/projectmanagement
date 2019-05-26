@@ -6,6 +6,7 @@ import { Authenticated } from '../Authenticated/Authenticated';
 import { RouteGuard } from 'src/Components/RouteGuard/RouteGuard';
 import { UserType } from 'src/Models/userTypes';
 import { CompanySelection } from '../CompanySelection/CompanySelection';
+import { ContactUs } from '../ContactUs/ContactUs';
 import { Home } from '../Home/Home';
 import { Login } from '../Login/Login';
 import { NotFound } from '../NotFound/NotFound';
@@ -47,6 +48,11 @@ class MainPresentation extends React.Component<IMainPresentationProps, IMainPres
             <Route
               path="/resetPassword"
               component={ResetPassword}
+              exact={true}
+            />
+            <Route
+              path="/contactUs"
+              component={ContactUs}
               exact={true}
             />
             <Route
