@@ -43,6 +43,7 @@ export class ContactUs extends React.Component<IContactUsProps, IContactUsState>
                 requiredValidator('A message is required'),
             ],
         }).markAsInvalid(),
+        contactUsInProgress: false,
     }
 
     public componentWillMount = () => {
@@ -120,7 +121,8 @@ export class ContactUs extends React.Component<IContactUsProps, IContactUsState>
                         <AsyncButton
                             onClick={this.submitMessage}
                             color="primary"
-                            disabled={!this.allControlsAreValid()}>
+                            disabled={!this.allControlsAreValid() || this.state.contactUsInProgress}
+                            asyncActionInProgress={this.state.contactUsInProgress}>
                             Submit
                         </AsyncButton>
                     </div>
@@ -153,6 +155,12 @@ export class ContactUs extends React.Component<IContactUsProps, IContactUsState>
     }
 
     private submitMessage = async() => {
+        if (this._isMounted) {
+            this.setState({
+                contactUsInProgress: true,
+            })
+        }
+
         const {
             name,
             email,
@@ -167,6 +175,17 @@ export class ContactUs extends React.Component<IContactUsProps, IContactUsState>
             message: message.value,
         }
 
-        await Api.contactUsApi.contactUs(contactUsRequest);
+        try {
+            await Api.contactUsApi.contactUs(contactUsRequest);
+        } catch (e) {
+            this.setState({
+                contactUsInProgress: false,
+            })
+            return;
+        }
+
+        this.setState({
+            contactUsInProgress: false,
+        })
     }
 }

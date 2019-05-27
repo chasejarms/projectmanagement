@@ -10,6 +10,7 @@ import { updateUserTypesCountOnUserWriteLocal } from './functions/updateUserType
 import { onChangePrescriptionTemplateLocal } from './functions/onChangePrescriptionTemplate';
 import { onChangeCompanyWorkflowLocal } from './functions/onChangeCompanyWorkflow';
 import { auth, firestore, app } from './initialization';
+import { contactUsLocal } from './functions/contactUs';
 
 export const createUser = createUserLocal(auth, firestore);
 export const signUp = signUpLocal(app);
@@ -22,3 +23,4 @@ export const onCaseUpdate = onCaseUpdateLocal(app);
 export const updateUserTypesCountOnUserWrite = updateUserTypesCountOnUserWriteLocal(app);
 export const onChangePrescriptionTemplate = onChangePrescriptionTemplateLocal(app);
 export const onChangeCompanyWorkflow = onChangeCompanyWorkflowLocal(app);
+export const contactUs = contactUsLocal(app);

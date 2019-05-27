@@ -9,6 +9,7 @@ export interface IContactUsState {
     email: IFormControlState<string>;
     phoneNumber: IFormControlState<string>;
     message: IFormControlState<string>;
+    contactUsInProgress: boolean;
 }
 
 export const createContactUsClasses = (
