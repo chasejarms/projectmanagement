@@ -3,6 +3,7 @@ import {
     FormHelperText,
     Input,
     InputLabel,
+    Snackbar,
     Typography,
 } from '@material-ui/core';
 import * as React from 'react';
@@ -44,6 +45,8 @@ export class ContactUs extends React.Component<IContactUsProps, IContactUsState>
             ],
         }).markAsInvalid(),
         contactUsInProgress: false,
+        snackbarIsOpen: false,
+        contactUsSuccess: true,
     }
 
     public componentWillMount = () => {
@@ -126,9 +129,37 @@ export class ContactUs extends React.Component<IContactUsProps, IContactUsState>
                             Submit
                         </AsyncButton>
                     </div>
+                    <Snackbar
+                        open={this.state.snackbarIsOpen}
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'center',
+                        }}
+                        autoHideDuration={5000}
+                        message={
+                            (
+                                <span>
+                                    {this.state.contactUsSuccess ? (
+                                        'Success! We\'ll get back to you soon'
+                                    ): (
+                                        'Oops! It looks like there was an error. Try back again later'
+                                    )}
+                                </span>
+                            )
+                        }
+                        onClose={this.handleSnackbarClose}
+                    />
                 </div>
             </div>
         )
+    }
+
+    private handleSnackbarClose = () => {
+        if (this._isMounted) {
+            this.setState({
+                snackbarIsOpen: false,
+            })
+        }
     }
 
     private handleFormControlChange = (event: any): void => {
@@ -179,13 +210,29 @@ export class ContactUs extends React.Component<IContactUsProps, IContactUsState>
             await Api.contactUsApi.contactUs(contactUsRequest);
         } catch (e) {
             this.setState({
+                snackbarIsOpen: true,
                 contactUsInProgress: false,
+                contactUsSuccess: false,
             })
             return;
         }
 
         this.setState({
+            snackbarIsOpen: true,
             contactUsInProgress: false,
+            contactUsSuccess: true,
+            name: name.setValue('')
+                .markAsBrandNew()
+                .markAsInvalid(),
+            email: email.setValue('')
+                .markAsBrandNew()
+                .markAsInvalid(),
+            phoneNumber: phoneNumber.setValue('')
+                .markAsBrandNew()
+                .markAsInvalid(),
+            message: message.setValue('')
+                .markAsBrandNew()
+                .markAsInvalid(),
         })
     }
 }

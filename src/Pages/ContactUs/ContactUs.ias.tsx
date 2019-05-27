@@ -10,6 +10,8 @@ export interface IContactUsState {
     phoneNumber: IFormControlState<string>;
     message: IFormControlState<string>;
     contactUsInProgress: boolean;
+    snackbarIsOpen: boolean;
+    contactUsSuccess: boolean;
 }
 
 export const createContactUsClasses = (
