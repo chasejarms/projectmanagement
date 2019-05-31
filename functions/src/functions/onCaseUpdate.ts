@@ -5,10 +5,10 @@ import { IFunctionsCaseCheckpoint } from '../models/caseCheckpoint';
 import { Collections } from '../models/collections';
 
 export const onCaseUpdateLocal = (passedInAdmin: admin.app.App) => functions.firestore
-    .document(`${Collections.Case}/{caseId}`)
+    .document(`${Collections.Project}/{projectId}`)
     .onUpdate(async(documentSnapshot, context) => {
 
-        const caseId = context.params['caseId'];
+        const projectId = context.params['projectId'];
         const beforeCaseCheckpoints = documentSnapshot.before.data().caseCheckpoints as IFunctionsCaseCheckpoint[];
         const afterCaseCheckpoints = documentSnapshot.after.data().caseCheckpoints as IFunctionsCaseCheckpoint[];
 
@@ -42,7 +42,7 @@ export const onCaseUpdateLocal = (passedInAdmin: admin.app.App) => functions.fir
 
         const firestore = passedInAdmin.firestore();
 
-        await firestore.collection(Collections.Case).doc(caseId).set({
+        await firestore.collection(Collections.Project).doc(projectId).set({
             currentDoctorCheckpointId,
             currentDoctorCheckpointName,
             currentLabCheckpointId,

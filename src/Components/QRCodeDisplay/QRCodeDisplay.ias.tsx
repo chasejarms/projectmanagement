@@ -11,7 +11,7 @@ export interface IQRCodeDisplayProps {
         [controlId: string]: any,
     };
     doctorUser: IDoctorUser;
-    caseId: string;
+    projectId: string;
 }
 
 export const createQRCodeDisplayClasses = (

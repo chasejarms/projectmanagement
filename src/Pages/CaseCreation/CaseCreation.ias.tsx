@@ -15,7 +15,7 @@ export interface IProjectCreationState {
     caseCreationInProgress: boolean;
     canCreateCases: boolean;
     companyLogoDownloadURL?: string;
-    caseId: string;
+    projectId: string;
 }
 
 export const createCaseCreationClasses = (

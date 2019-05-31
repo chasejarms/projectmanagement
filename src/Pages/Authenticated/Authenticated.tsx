@@ -9,7 +9,6 @@ import {
 import { withTheme } from '@material-ui/core';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import AssignmentIcon from '@material-ui/icons/Assignment';
-import DescriptionIcon from '@material-ui/icons/Description';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import ListIcon from '@material-ui/icons/List';
 import PeopleIcon from '@material-ui/icons/People';
@@ -25,7 +24,6 @@ import { IAppState } from 'src/Redux/Reducers/rootReducer';
 import Api from '../../Api/api';
 import { CaseCreation } from '../CaseCreation/CaseCreation';
 import { NotFound } from '../NotFound/NotFound';
-import { PrescriptionBuilder } from '../PrescriptionBuilder/PrescriptionBuilder';
 import { Project } from '../Project/Project';
 import { Projects } from '../Projects/Projects';
 import { Users } from '../Users/Users';
@@ -89,25 +87,14 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                                                 </ListItemIcon>
                                             </ListItem>
                                         </Tooltip>
-                                        <Tooltip title="Workflow" placement="right" disableFocusListener={true}>
+                                        <Tooltip title="Workflows" placement="right" disableFocusListener={true}>
                                             <ListItem
                                                 button={true}
                                                 className={iconContainer}
-                                                onClick={this.navigateToWorkflow}
+                                                onClick={this.navigateToWorkflows}
                                             >
                                                 <ListItemIcon className={listItemIcon}>
                                                     <ListIcon className={iconStyling}/>
-                                                </ListItemIcon>
-                                            </ListItem>
-                                        </Tooltip>
-                                        <Tooltip title="Prescription Builder" placement="right" disableFocusListener={true}>
-                                            <ListItem
-                                                button={true}
-                                                className={iconContainer}
-                                                onClick={this.navigateToPrescriptionBuilder}
-                                            >
-                                                <ListItemIcon className={listItemIcon}>
-                                                    <DescriptionIcon className={iconStyling}/>
                                                 </ListItemIcon>
                                             </ListItem>
                                         </Tooltip>
@@ -177,7 +164,7 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                         />
                         <RouteGuard
                             mustHaveRole={[UserType.Admin]}
-                            path={this.props.match.url + '/workflow'}
+                            path={this.props.match.url + '/workflows'}
                             component={Workflow as any}
                             exact={true}
                         />
@@ -185,12 +172,6 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                             path={this.props.match.url + '/createCase'}
                             exact={true}
                             component={CaseCreation}
-                        />
-                        <RouteGuard
-                            mustHaveRole={[UserType.Admin]}
-                            path={this.props.match.url + '/prescriptionBuilder'}
-                            component={PrescriptionBuilder as any}
-                            exact={true}
                         />
                         <Route
                             path={this.props.match.url + '/userSettings'}
@@ -216,11 +197,6 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
         this.props.history.push(`/company/${companyName}/users`);
     }
 
-    private navigateToPrescriptionBuilder = () => {
-        const { companyName } = this.props.match.params as any;
-        this.props.history.push(`/company/${companyName}/prescriptionBuilder`);
-    }
-
     private navigateToUserSettings = () => {
         const { companyName } = this.props.match.params as any;
         this.props.history.push(`/company/${companyName}/userSettings`);
@@ -239,9 +215,9 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
         this.props.history.push('/login');
     }
 
-    private navigateToWorkflow = () => {
+    private navigateToWorkflows = () => {
         const { companyName } = this.props.match.params as any;
-        this.props.history.push(`/company/${companyName}/workflow`);
+        this.props.history.push(`/company/${companyName}/workflows`);
     }
 }
 

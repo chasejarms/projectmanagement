@@ -15,7 +15,7 @@ const testEnv = functionsTest({
 
 describe.only('onCaseUpdate', () => {
     let wrapped: WrappedFunction;
-    let initialCaseId: string;
+    let initialprojectId: string;
     let initialCaseSnapshot: any;
     let initialContext: any;
 
@@ -24,7 +24,7 @@ describe.only('onCaseUpdate', () => {
     });
 
     beforeEach(() => {
-        initialCaseId = generateUniqueId();
+        initialprojectId = generateUniqueId();
         initialCaseSnapshot = {
             before: {
                 data: () => ({
@@ -45,7 +45,7 @@ describe.only('onCaseUpdate', () => {
                 }),
             }
         }
-        initialContext = { params: { caseId: initialCaseId }};
+        initialContext = { params: { projectId: initialprojectId }};
     });
 
     afterAll(() => {
@@ -78,8 +78,8 @@ describe.only('onCaseUpdate', () => {
 
         await wrapped(clonedCaseSnapshot, initialContext);
 
-        const caseSnapshot = await admin.firestore().collection(Collections.Case)
-            .doc(initialCaseId)
+        const caseSnapshot = await admin.firestore().collection(Collections.Project)
+            .doc(initialprojectId)
             .get();
 
         expect(caseSnapshot.data().currentDoctorCheckpointId).toBe('2');
@@ -106,8 +106,8 @@ describe.only('onCaseUpdate', () => {
 
         await wrapped(clonedCaseSnapshot, initialContext);
 
-        const caseSnapshot = await admin.firestore().collection(Collections.Case)
-            .doc(initialCaseId)
+        const caseSnapshot = await admin.firestore().collection(Collections.Project)
+            .doc(initialprojectId)
             .get();
 
         expect(caseSnapshot.data().currentLabCheckpointId).toBe('2');
@@ -134,8 +134,8 @@ describe.only('onCaseUpdate', () => {
 
         await wrapped(clonedCaseSnapshot, initialContext);
 
-        const caseSnapshot = await admin.firestore().collection(Collections.Case)
-            .doc(initialCaseId)
+        const caseSnapshot = await admin.firestore().collection(Collections.Project)
+            .doc(initialprojectId)
             .get();
 
         expect(caseSnapshot.data().currentDoctorCheckpointName).toBe('Second Visible Doctor Checkpoint');
@@ -168,8 +168,8 @@ describe.only('onCaseUpdate', () => {
 
         await wrapped(clonedCaseSnapshot, initialContext);
 
-        const caseSnapshot = await admin.firestore().collection(Collections.Case)
-            .doc(initialCaseId)
+        const caseSnapshot = await admin.firestore().collection(Collections.Project)
+            .doc(initialprojectId)
             .get();
 
         expect(caseSnapshot.data().currentLabCheckpointName).toBe('Second Checkpoint');
@@ -202,8 +202,8 @@ describe.only('onCaseUpdate', () => {
 
         await wrapped(clonedCaseSnapshot, initialContext);
 
-        const caseSnapshot = await admin.firestore().collection(Collections.Case)
-            .doc(initialCaseId)
+        const caseSnapshot = await admin.firestore().collection(Collections.Project)
+            .doc(initialprojectId)
             .get();
 
         expect(caseSnapshot.data().complete).toBe(true);
@@ -234,8 +234,8 @@ describe.only('onCaseUpdate', () => {
 
         await wrapped(clonedCaseSnapshot, initialContext);
 
-        const caseSnapshotTwo = await admin.firestore().collection(Collections.Case)
-            .doc(initialCaseId)
+        const caseSnapshotTwo = await admin.firestore().collection(Collections.Project)
+            .doc(initialprojectId)
             .get();
 
         expect(caseSnapshotTwo.data().complete).toBe(false);
@@ -268,8 +268,8 @@ describe.only('onCaseUpdate', () => {
 
         await wrapped(clonedCaseSnapshot, initialContext);
 
-        const caseSnapshot = await admin.firestore().collection(Collections.Case)
-            .doc(initialCaseId)
+        const caseSnapshot = await admin.firestore().collection(Collections.Project)
+            .doc(initialprojectId)
             .get();
 
         expect(caseSnapshot.data().hasStarted).toBe(false);
@@ -300,8 +300,8 @@ describe.only('onCaseUpdate', () => {
 
         await wrapped(clonedCaseSnapshot, initialContext);
 
-        const caseSnapshotTwo = await admin.firestore().collection(Collections.Case)
-            .doc(initialCaseId)
+        const caseSnapshotTwo = await admin.firestore().collection(Collections.Project)
+            .doc(initialprojectId)
             .get();
 
         expect(caseSnapshotTwo.data().hasStarted).toBe(true);

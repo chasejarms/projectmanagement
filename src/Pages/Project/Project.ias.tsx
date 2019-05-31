@@ -34,7 +34,7 @@ export interface IProjectPresentationState {
     // notes: FormControlState<string>;
     // attachmentUrls: IAttachmentMetadata[];
     // open: boolean;
-    // caseId: string;
+    // projectId: string;
     // updateCaseInformationInProgress: boolean;
     // addAttachmentInProgress: boolean;
     // filePath: string;

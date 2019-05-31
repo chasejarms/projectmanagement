@@ -37,7 +37,7 @@ export class CaseCreationPresentation extends React.Component<
         prescriptionFormTemplate: null,
         caseCreationInProgress: false,
         canCreateCases: false,
-        caseId: generateUniqueId(),
+        projectId: generateUniqueId(),
     }
 
     // tslint:disable-next-line:variable-name
@@ -312,7 +312,7 @@ export class CaseCreationPresentation extends React.Component<
                     controlValue={controlValue}
                     disabled={false}
                     updateControlValueActionCreator={updateCaseCreationControlValue}
-                    caseId={this.state.caseId}
+                    projectId={this.state.projectId}
                 />
             )
         }
@@ -323,7 +323,7 @@ export class CaseCreationPresentation extends React.Component<
     private createCase = async() => {
         const companyId = this.props.match.path.split('/')[2];
         const caseCreateRequest = {
-            id: this.state.caseId,
+            id: this.state.projectId,
             prescriptionTemplateId: this.state.prescriptionFormTemplate!.id!,
             controlValues: this.props.caseCreationState.controlValues,
         }
@@ -342,7 +342,7 @@ export class CaseCreationPresentation extends React.Component<
             })
         }
 
-        const postRoute = `/company/${companyId}/project/${this.state.caseId}`;
+        const postRoute = `/company/${companyId}/project/${this.state.projectId}`;
         this.props.history.push(postRoute);
     }
 }

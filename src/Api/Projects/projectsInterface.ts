@@ -20,7 +20,7 @@ export interface IProjectsSearchRequest extends IProjectFilter {
 
 export interface IGetCaseCheckpointsRequest {
     companyId: string;
-    caseId: string;
+    projectId: string;
 }
 
 export interface IUpdateCaseInformationRequest {
@@ -35,10 +35,10 @@ export interface IProjectApi {
     getProject(projectId: string): Promise<IProject>;
     uploadFile(companyName: string, projectId: string, file: File): Promise<firebase.storage.UploadTaskSnapshot>;
     updateProject(companyName: string, project: IProject): IProject;
-    updateCaseInformation(caseId: string, updateCaseInformationRequest: IUpdateCaseInformationRequest, showNewInfoFrom: ShowNewInfoFromType): Promise<void>;
+    updateCaseInformation(projectId: string, updateCaseInformationRequest: IUpdateCaseInformationRequest, showNewInfoFrom: ShowNewInfoFromType): Promise<void>;
     removeFile(fileName: string): Promise<void>;
     getNewCases(companyId: string): Promise<IProject[]>;
-    updateCaseCheckpoints(caseId: string, caseCheckpoints: IProjectCheckpoint[]): Promise<boolean>;
-    markProjectUpdatesAsSeen(companyId: string, caseId: string): Promise<void>;
+    updateCaseCheckpoints(projectId: string, caseCheckpoints: IProjectCheckpoint[]): Promise<boolean>;
+    markProjectUpdatesAsSeen(companyId: string, projectId: string): Promise<void>;
     canCreateCases(companyId: string): Promise<boolean>;
 }

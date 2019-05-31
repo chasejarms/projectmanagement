@@ -627,7 +627,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     controlValue={controlValue}
                     disabled={disabled}
                     updateControlValueActionCreator={updateControlValue}
-                    caseId={'5'}
+                    projectId={'5'}
                 />
             )
         }

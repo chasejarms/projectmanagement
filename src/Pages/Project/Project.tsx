@@ -115,7 +115,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         const controlValuesExist = Object.keys(this.props.existingCaseState.controlValues).length > 0;
         const dataIsReady = !this.state.loadingPrescriptionTemplate && controlValuesExist;
         const showQRCodeDisplay = this.props.existingCaseState && this.state.prescriptionFormTemplate && this.state.doctorUser;
-        const caseId = this.props.match.params['projectId'];
+        const projectId = this.props.match.params['projectId'];
 
         return (
             <div className={projectContainer}>
@@ -133,7 +133,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                                     controlValues={this.props.existingCaseState.controlValues}
                                     prescriptionFormTemplate={this.state.prescriptionFormTemplate!}
                                     doctorUser={this.state.doctorUser!}
-                                    caseId={caseId}
+                                    projectId={projectId}
                                 />
                             ) : undefined}
                             {!dataIsReady ? (
@@ -263,7 +263,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
 
     public componentWillMount = async(): Promise<void> => {
         this._isMounted = true;
-        const caseId = this.props.match.params['projectId'];
+        const projectId = this.props.match.params['projectId'];
 
         if (this._isMounted) {
             this.setState({
@@ -274,7 +274,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         const [
             caseObject,
         ] = await Promise.all([
-            Api.projectsApi.getProject(caseId),
+            Api.projectsApi.getProject(projectId),
         ]);
 
         if (this._isMounted) {
@@ -301,12 +301,12 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             });
         }
 
-        const caseId = this.props.match.params['projectId'];
+        const projectId = this.props.match.params['projectId'];
         const companyId = this.props.location.pathname.split('/')[2];
         const userIsDoctor = this.props.userState[companyId].type === UserType.Doctor;
         const showNewInfoFrom = userIsDoctor ? ShowNewInfoFromType.Doctor : ShowNewInfoFromType.Lab;
 
-        await Api.projectsApi.updateCaseInformation(caseId, {
+        await Api.projectsApi.updateCaseInformation(projectId, {
             controlValues: this.props.existingCaseState!.controlValues,
         }, showNewInfoFrom);
 
@@ -330,7 +330,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         const control = this.state.prescriptionFormTemplate!.controls[controlId];
         const controlValue = this.props.existingCaseState.controlValues[control.id]
         const updatingCaseInformation = this.state.updateCaseInformationInProgress;
-        const caseId = this.props.match.params['projectId'];
+        const projectId = this.props.match.params['projectId'];
 
         if (control.type === IPrescriptionControlTemplateType.Title) {
             return <TitleEdit control={control}/>
@@ -421,7 +421,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                     controlValue={controlValue}
                     disabled={false}
                     updateControlValueActionCreator={updateExistingCaseControlValue}
-                    caseId={caseId}
+                    projectId={projectId}
                 />
             )
         }
@@ -454,8 +454,8 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             })
         }
 
-        const caseId = this.props.match.params['projectId'];
-        await Api.projectsApi.updateCaseCheckpoints(caseId, checkpoints);
+        const projectId = this.props.match.params['projectId'];
+        await Api.projectsApi.updateCaseCheckpoints(projectId, checkpoints);
     }
 
     private showQrCodeDialog = (): void => {

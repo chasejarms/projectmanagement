@@ -7,7 +7,7 @@ export interface IFileEditPropsFromParent {
     controlValue: any;
     disabled: boolean;
     updateControlValueActionCreator: (controlId: string, value: any) => any;
-    caseId: string;
+    projectId: string;
 }
 
 export interface IFileEditProps extends IFileEditPropsFromParent, RouteComponentProps<any> {

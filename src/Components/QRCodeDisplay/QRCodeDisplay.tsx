@@ -34,7 +34,7 @@ export class QRCodeDisplay extends React.Component<IQRCodeDisplayProps, IQRCodeD
             <div className={`${printableCaseInfoContainer} qr-code-display`}>
                 <div className={qrCodeContainer}>
                     <QRCode
-                        value={this.props.caseId}
+                        value={this.props.projectId}
                         size={64}
                     />
                 </div>

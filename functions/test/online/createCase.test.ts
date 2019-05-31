@@ -34,7 +34,7 @@ describe('createCase', () => {
     let initialCaseCreateRequest: IProjectCreateDataCloudFunctions;
     let wrapped: WrappedFunction;
 
-    let caseId: string;
+    let projectId: string;
 
     beforeEach(() => {
         companyId = generateUniqueId();
@@ -45,10 +45,10 @@ describe('createCase', () => {
         doctorCompanyUserId = generateUniqueId();
         doctorAuthUserId = generateUniqueId();
 
-        caseId = generateUniqueId();
+        projectId = generateUniqueId();
 
         initialCaseCreateRequest = {
-            id: caseId,
+            id: projectId,
             prescriptionTemplateId: generateUniqueId(),
             controlValues: {},
             companyId,
@@ -510,7 +510,7 @@ describe('createCase', () => {
 
         await wrapped(caseCreationRequest, { auth: { uid: authUserId }});
 
-        const caseSnapshot = await admin.firestore().collection(Collections.Case).doc(caseId).get();
+        const caseSnapshot = await admin.firestore().collection(Collections.Project).doc(projectId).get();
         const {
             complete,
             deadline,

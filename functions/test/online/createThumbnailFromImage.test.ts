@@ -25,9 +25,9 @@ describe('createThumbnailFromImage', () => {
 
     beforeEach(() => {
         const companyId = generateUniqueId();
-        const caseId = generateUniqueId();
+        const projectId = generateUniqueId();
         const folderId = generateUniqueId();
-        filePathWithoutFileName = `${companyId}/caseFiles/${caseId}/${folderId}/`;
+        filePathWithoutFileName = `${companyId}/caseFiles/${projectId}/${folderId}/`;
     });
 
     afterAll(() => {

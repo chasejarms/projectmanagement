@@ -75,7 +75,7 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
             completedTimestamp: null,
             completedByCompanyUserId: null,
             completedByName: null,
-            caseId: data.id,
+            projectId: data.id,
             linkedWorkflowCheckpointId: workflowCheckpointSnapshot.id,
         }
     })
@@ -157,7 +157,7 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
         doctorName,
     };
 
-    await firestore.collection(Collections.Case).doc(data.id).set(caseToCreate);
+    await firestore.collection(Collections.Project).doc(data.id).set(caseToCreate);
 
     return data.id;
 });

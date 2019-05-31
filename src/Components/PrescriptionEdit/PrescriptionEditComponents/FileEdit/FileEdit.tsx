@@ -278,7 +278,7 @@ export class FileEditPresentation extends React.Component<
         const uploadFilePromises: Array<Promise<firebase.storage.UploadTaskSnapshot>>= [];
         for (let i = 0; i < files.length; i++) {
             const file = files.item(i)!;
-            const uploadFilePromise = Api.projectsApi.uploadFile(companyId, this.props.caseId, file);
+            const uploadFilePromise = Api.projectsApi.uploadFile(companyId, this.props.projectId, file);
             uploadFilePromises.push(uploadFilePromise);
         }
 
@@ -317,7 +317,7 @@ export class FileEditPresentation extends React.Component<
                 const [
                     companyIdInFile,
                     caseFilesConstant,
-                    caseIdInFile,
+                    projectIdInFile,
                     uniqueFolderId,
                     ...actualFileName
                 ] = path.split('/');
@@ -326,7 +326,7 @@ export class FileEditPresentation extends React.Component<
                 let attempts: number = 0;
                 while (attempts < 15) {
                     try {
-                        const downloadUrl = await storageRef.child(`${companyIdInFile}/${caseFilesConstant}/${caseIdInFile}/${uniqueFolderId}/thumb@512_${fileNameWithoutSeparation}`).getDownloadURL();
+                        const downloadUrl = await storageRef.child(`${companyIdInFile}/${caseFilesConstant}/${projectIdInFile}/${uniqueFolderId}/thumb@512_${fileNameWithoutSeparation}`).getDownloadURL();
                         if (downloadUrl) {
                             return downloadUrl;
                         }

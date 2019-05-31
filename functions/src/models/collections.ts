@@ -1,5 +1,5 @@
 export enum Collections {
-    Case = 'Case',
+    Project = 'Project',
     CompanyAuthUserJoin = 'CompanyAuthUserJoin',
     Company = 'Company',
     CompanyUser = 'CompanyUser',

@@ -15,7 +15,7 @@ import { IProjectApi, IProjectCreateRequest, IProjectsSearchRequest, IUpdateCase
 
 export class ProjectsApi implements IProjectApi {
     public async searchCases(slimCasesSearchRequest: IProjectsSearchRequest, userType: string, companyUserId: string): Promise<FirebaseFirestore.QueryDocumentSnapshot[]> {
-        let query: any = db.collection(Collections.Case)
+        let query: any = db.collection(Collections.Project)
             .where('companyId', '==', slimCasesSearchRequest.companyId)
             .orderBy('deadline', 'asc')
 
@@ -86,10 +86,10 @@ export class ProjectsApi implements IProjectApi {
         } as any;
     }
 
-    public async getProject(caseId: string): Promise<IProject> {
+    public async getProject(projectId: string): Promise<IProject> {
         const documentReference = await firebase.firestore()
-            .collection(Collections.Case)
-            .doc(caseId)
+            .collection(Collections.Project)
+            .doc(projectId)
             .get();
 
         const createdFromRequest = documentReference.data()!.created as firebase.firestore.Timestamp;
@@ -97,14 +97,14 @@ export class ProjectsApi implements IProjectApi {
         return {
             ...documentReference.data(),
             created: new firebase.firestore.Timestamp(createdFromRequest.seconds, createdFromRequest.nanoseconds),
-            id: caseId,
+            id: projectId,
         } as IProject;
     }
 
-    public async uploadFile(companyId: string, caseId: string, file: File): Promise<firebase.storage.UploadTaskSnapshot> {
+    public async uploadFile(companyId: string, projectId: string, file: File): Promise<firebase.storage.UploadTaskSnapshot> {
         const storageRef = firebase.storage().ref();
         const uniqueFolderId = generateUniqueId();
-        const updatedStorageRef = storageRef.child(`${companyId}/caseFiles/${caseId}/${uniqueFolderId}/${file.name}`);
+        const updatedStorageRef = storageRef.child(`${companyId}/caseFiles/${projectId}/${uniqueFolderId}/${file.name}`);
         const uploadTaskSnapshot: firebase.storage.UploadTaskSnapshot = await updatedStorageRef.put(file);
 
         return uploadTaskSnapshot;
@@ -119,17 +119,17 @@ export class ProjectsApi implements IProjectApi {
         throw new Error("Method not implemented");
     }
 
-    public async updateCaseInformation(caseId: string, updateCaseInformationRequest: IUpdateCaseInformationRequest, showNewInfoFrom: ShowNewInfoFromType): Promise<void> {
+    public async updateCaseInformation(projectId: string, updateCaseInformationRequest: IUpdateCaseInformationRequest, showNewInfoFrom: ShowNewInfoFromType): Promise<void> {
         const caseInformation = {
             controlValues: updateCaseInformationRequest.controlValues,
             showNewInfoFrom,
         }
-        await firebase.firestore().collection(Collections.Case).doc(caseId)
+        await firebase.firestore().collection(Collections.Project).doc(projectId)
             .set(caseInformation, { merge: true });
     }
 
     public async getNewCases(companyId: string): Promise<IProject[]> {
-        const casesQuerySnapshot = await firebase.firestore().collection(Collections.Case)
+        const casesQuerySnapshot = await firebase.firestore().collection(Collections.Project)
             .where('companyId', '==', companyId)
             .where('hasStarted', '==', false)
             .orderBy('name', 'asc')
@@ -143,16 +143,16 @@ export class ProjectsApi implements IProjectApi {
         });
     }
 
-    public async updateCaseCheckpoints(caseId: string, caseCheckpoints: IProjectCheckpoint[]) {
-        await firebase.firestore().collection(Collections.Case).doc(caseId).set({
+    public async updateCaseCheckpoints(projectId: string, caseCheckpoints: IProjectCheckpoint[]) {
+        await firebase.firestore().collection(Collections.Project).doc(projectId).set({
             caseCheckpoints,
         }, { merge: true });
 
         return true;
     }
 
-    public async markProjectUpdatesAsSeen(companyId: string, caseId: string): Promise<void> {
-        await firebase.firestore().collection(Collections.Case).doc(caseId).set({
+    public async markProjectUpdatesAsSeen(companyId: string, projectId: string): Promise<void> {
+        await firebase.firestore().collection(Collections.Project).doc(projectId).set({
             showNewInfoFrom: null,
         }, { merge: true });
     }
