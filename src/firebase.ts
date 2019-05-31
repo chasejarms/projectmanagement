@@ -2,12 +2,13 @@ import * as firebase from 'firebase';
 // tslint:disable-next-line:no-var-requires
 require("firebase/firestore");
 const config = {
-  apiKey: "AIzaSyD6P-B2YeC7fTqaN9y5udCPvLq5quTuF3o",
-  authDomain: "project-management-develop.firebaseapp.com",
-  databaseURL: "https://project-management-develop.firebaseio.com",
-  messagingSenderId: "1058726788485",
-  projectId: "project-management-develop",
-  storageBucket: "gs://project-management-develop.appspot.com",
+  apiKey: "AIzaSyA1fk-Oi8nS_SOTfOVTgVZGWVUkinRVnCY",
+  authDomain: "shentaro-scan-only.firebaseapp.com",
+  databaseURL: "https://shentaro-scan-only.firebaseio.com",
+  projectId: "shentaro-scan-only",
+  storageBucket: "shentaro-scan-only.appspot.com",
+  messagingSenderId: "549559098413",
+  appId: "1:549559098413:web:269134d63445c4d1"
 };
 firebase.initializeApp(config);
 export default firebase;

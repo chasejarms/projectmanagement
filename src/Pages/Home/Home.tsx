@@ -3,7 +3,6 @@ import {
     Typography,
     withTheme,
 } from '@material-ui/core';
-import AttachmentIcon from '@material-ui/icons/Attachment';
 import DescriptionIcon from '@material-ui/icons/Description';
 import PersonIcon from '@material-ui/icons/Person';
 import TrackChangesIcon from '@material-ui/icons/TrackChanges';
@@ -38,24 +37,19 @@ export class HomePresentation extends React.Component<IHomeProps, IHomeState> {
         const features = [
             {
                 icon: <PersonIcon className={iconStyling}/>,
-                headline: 'DOCTOR PORTAL',
-                subtitle: 'Doctors can enter case information and track case progress online.',
+                headline: 'USER MANAGEMENT',
+                subtitle: 'Match staff to project checkpoints to see who completed a checkpoint and when it was completed.',
             },
             {
                 icon: <TrackChangesIcon className={iconStyling}/>,
                 headline: 'QR CODE TRACKING',
-                subtitle: 'Know where every case is at throughout your entire workflow.'
+                subtitle: 'Know where every project is at throughout your entire workflow.'
             },
             {
                 icon: <DescriptionIcon className={iconStyling}/>,
-                headline: 'CUSTOMIZED PRESCRIPTIONS',
-                subtitle: 'Easily customize your prescription to fit your company\'s needs',
+                headline: 'CUSTOM REPORTING',
+                subtitle: 'Receive visual insights about your process and drive change with data.',
             },
-            {
-                icon: <AttachmentIcon className={iconStyling}/>,
-                headline: 'UPLOAD FILES',
-                subtitle: 'Quickly upload and manage case files.',
-            }
         ]
 
         return (
@@ -69,7 +63,7 @@ export class HomePresentation extends React.Component<IHomeProps, IHomeState> {
                         </div>
                         <div className={dentalLabCloseUpContent}>
                             <Typography variant="h2" className={mainTopSectionText}>
-                                Visual Dental Lab Management
+                                Visual Process Management
                             </Typography>
                             <Button variant="contained" color="secondary" className={seeFeaturesButton} onClick={this.scrollToFeatures}>Explore Features</Button>
                         </div>
