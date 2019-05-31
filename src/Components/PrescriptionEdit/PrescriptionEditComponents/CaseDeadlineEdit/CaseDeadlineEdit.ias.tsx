@@ -1,14 +1,14 @@
-import { ICaseDeadlineControl } from "src/Models/prescription/controls/caseDeadlineControl";
+import { IProjectDeadlineControl } from "src/Models/prescription/controls/caseDeadlineControl";
 
-export interface ICaseDeadlinePropsFromParent {
-    control: ICaseDeadlineControl;
+export interface IProjectDeadlinePropsFromParent {
+    control: IProjectDeadlineControl;
     controlValue: any;
     disabled: boolean;
     updateControlValueActionCreator: (controlId: string, value: any) => any;
 }
 
-export interface ICaseDeadlineProps extends ICaseDeadlinePropsFromParent {
+export interface IProjectDeadlineProps extends IProjectDeadlinePropsFromParent {
     updateControlValue: (controlId: string, value: any) => void;
 }
 // tslint:disable-next-line:no-empty-interface
-export interface ICaseDeadlineState {}
+export interface IProjectDeadlineState {}

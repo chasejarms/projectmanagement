@@ -2,14 +2,14 @@ import { WithTheme } from '@material-ui/core';
 import { css } from 'emotion';
 import { RouteComponentProps } from 'react-router';
 import { IPrescriptionFormTemplate } from 'src/Models/prescription/prescriptionFormTemplate';
-import { ICaseCreationSliceOfState } from 'src/Redux/Reducers/caseCreationReducer';
+import { IProjectCreationSliceOfState } from 'src/Redux/Reducers/caseCreationReducer';
 
-export interface ICaseCreationProps extends WithTheme, RouteComponentProps<{}> {
-    caseCreationState: ICaseCreationSliceOfState;
+export interface IProjectCreationProps extends WithTheme, RouteComponentProps<{}> {
+    caseCreationState: IProjectCreationSliceOfState;
     clearCaseCreationState: () => void;
 };
 
-export interface ICaseCreationState {
+export interface IProjectCreationState {
     loadingPrescriptionTemplate: boolean;
     prescriptionFormTemplate: IPrescriptionFormTemplate | null;
     caseCreationInProgress: boolean;
@@ -19,8 +19,8 @@ export interface ICaseCreationState {
 }
 
 export const createCaseCreationClasses = (
-    props: ICaseCreationProps,
-    state: ICaseCreationState,
+    props: IProjectCreationProps,
+    state: IProjectCreationState,
 ) => {
     let companyLogoImage: string = '';
 

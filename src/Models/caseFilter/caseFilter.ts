@@ -4,7 +4,7 @@ import { DoctorFlag } from "./doctorFlag";
 import { NotificationFlag } from "./notificationFlag";
 import { StartedStatus } from "./startedStatus";
 
-export interface ICaseFilter {
+export interface IProjectFilter {
     completionStatus: CompletionStatus,
     startedStatus: StartedStatus,
     doctorFlag: DoctorFlag,

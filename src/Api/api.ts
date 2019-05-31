@@ -7,7 +7,7 @@ import { IContactUsApi } from './ContactUs/contactUsInterface';
 import { PrescriptionTemplateApi } from './PrescriptionTemplate/prescriptionTemplate';
 import { IPrescriptionTemplateApi } from './PrescriptionTemplate/prescriptionTemplateInterface';
 import { ProjectsApi } from './Projects/projects';
-import { ICaseApi } from './Projects/projectsInterface';
+import { IProjectApi } from './Projects/projectsInterface';
 import { UsersApi } from './Users/users';
 import { IUsersApi } from './Users/usersApiInterface';
 import { WorkflowApi } from './Workflow/workflow';
@@ -17,7 +17,7 @@ export interface IApi {
     userApi: IUsersApi;
     authenticationApi: IAuthenticationApi;
     workflowApi: IWorkflowApi;
-    projectsApi: ICaseApi;
+    projectsApi: IProjectApi;
     companySelectionApi: ICompanySelectionApi;
     prescriptionTemplateApi: IPrescriptionTemplateApi;
     contactUsApi: IContactUsApi;

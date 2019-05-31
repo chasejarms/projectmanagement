@@ -1,6 +1,6 @@
 import { firestore } from 'firebase';
 
-export interface ICaseCheckpoint {
+export interface IProjectCheckpoint {
     complete: boolean;
     completedByCompanyUserId: string | null;
     completedTimestamp: firestore.Timestamp | null;

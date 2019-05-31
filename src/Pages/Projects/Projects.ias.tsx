@@ -1,9 +1,9 @@
 import { css } from 'emotion';
 import { RouteComponentProps } from "react-router";
-import { IAugmentedCase } from 'src/Models/case';
 import { IDoctorUser } from 'src/Models/doctorUser';
+import { IAugmentedProject } from 'src/Models/project';
 import { IUserSliceOfState } from 'src/Redux/Reducers/userReducer';
-import { ICaseFilter } from '../../Models/caseFilter/caseFilter';
+import { IProjectFilter } from '../../Models/caseFilter/caseFilter';
 import { IWorkflowCheckpoint } from '../../Models/workflow';
 
 export interface IProjectsPresentationProps extends RouteComponentProps<{}> {
@@ -12,16 +12,16 @@ export interface IProjectsPresentationProps extends RouteComponentProps<{}> {
 
 // tslint:disable-next-line:no-empty-interface
 export interface IProjectsPresentationState {
-    cases: IAugmentedCase[];
+    cases: IAugmentedProject[];
     loadingCases: boolean;
     moreCasesExist: boolean;
     page: number;
     limit: number;
-    startingCases: IAugmentedCase[];
+    startingCases: IAugmentedProject[];
     retrievingQRCodes: boolean;
     showFilterCasesDialog: boolean;
-    selectedFilter: ICaseFilter;
-    dialogDisplayFilter: ICaseFilter;
+    selectedFilter: IProjectFilter;
+    dialogDisplayFilter: IProjectFilter;
     doctorSearchValue: string;
     potentialDoctors: IDoctorUser[];
     selectedDoctorInformation: IDoctorUser | null;

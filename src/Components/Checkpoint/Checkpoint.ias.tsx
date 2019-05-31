@@ -1,8 +1,8 @@
 import { css } from 'emotion';
-import { ICaseCheckpoint } from 'src/Models/caseCheckpoint';
+import { IProjectCheckpoint } from 'src/Models/caseCheckpoint';
 
 export interface ICheckpointProps {
-    checkpoint: ICaseCheckpoint;
+    checkpoint: IProjectCheckpoint;
 }
 // tslint:disable-next-line:no-empty-interface
 export interface ICheckpointState {}

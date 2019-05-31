@@ -31,20 +31,18 @@ import DoneIcon from '@material-ui/icons/Done';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
-import NotificationsIcon from '@material-ui/icons/Notifications';
 import * as firebase from 'firebase';
 import { cloneDeep } from 'lodash';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import { ICasesSearchRequest } from 'src/Api/Projects/projectsInterface';
+import { IProjectsSearchRequest } from 'src/Api/Projects/projectsInterface';
 import { AsyncButton } from 'src/Components/AsyncButton/AsyncButton';
-import { IAugmentedCase } from 'src/Models/case';
-import { ICaseFilter } from 'src/Models/caseFilter/caseFilter';
+import { IProjectFilter } from 'src/Models/caseFilter/caseFilter';
 import { DoctorFlag } from 'src/Models/caseFilter/doctorFlag';
 import { NotificationFlag } from 'src/Models/caseFilter/notificationFlag';
 import { IDoctorUser } from 'src/Models/doctorUser';
-import { ShowNewInfoFromType } from 'src/Models/showNewInfoFromTypes';
+import { IAugmentedProject } from 'src/Models/project';
 import { UserType } from 'src/Models/userTypes';
 import { IAppState } from 'src/Redux/Reducers/rootReducer';
 import Api from '../../Api/api';
@@ -91,7 +89,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
     public async componentWillMount(): Promise<void> {
         this._isMounted = true;
         const companyId = this.props.match.path.split('/')[2];
-        const casesSearchRequest: ICasesSearchRequest = {
+        const casesSearchRequest: IProjectsSearchRequest = {
             companyId,
             limit: this.state.limit,
             ...this.state.selectedFilter,
@@ -111,7 +109,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
             getSlimCasesPromise,
         ]);
 
-        const cases: IAugmentedCase[] = [];
+        const cases: IAugmentedProject[] = [];
         caseDocumentSnapshots.forEach((document) => {
             const data = document.data();
             const createdFromRequest = data!.created as firebase.firestore.Timestamp;
@@ -167,27 +165,16 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         const userIsDoctor = this.props.userState[companyId].type === UserType.Doctor;
 
         const mappedProjects = this.state.cases.map(caseObject => {
-            const newInfoFromDoctor = caseObject.showNewInfoFrom === ShowNewInfoFromType.Doctor;
-            const newInfoFromLab = caseObject.showNewInfoFrom === ShowNewInfoFromType.Lab;
-
-            const shouldShowNotification = (userIsDoctor && newInfoFromLab) || (!userIsDoctor && newInfoFromDoctor);
-            const newInfoCell = shouldShowNotification ? (
-                <TableCell>
-                    <NotificationsIcon/>
-                </TableCell>
-            ) : <TableCell/>;
-
             const date = caseObject.deadline.toDate();
             const prettyDeadline = this.makeDeadlinePretty(date);
-            const currentCheckpointName = userIsDoctor ? caseObject.currentDoctorCheckpointName : caseObject.currentLabCheckpointName;
+
             return (
                 <TableRow key={caseObject.id} onClick={this.navigateToProject(caseObject.id)} className={rowStyling}>
-                    <TableCell>{caseObject.doctorName}</TableCell>
+                    <TableCell>{caseObject.name}</TableCell>
                     <TableCell>{caseObject.hasStarted ? <DoneIcon/> : undefined}</TableCell>
                     <TableCell>{prettyDeadline}</TableCell>
                     <TableCell>{caseObject.complete ? <DoneIcon/> : undefined}</TableCell>
-                    <TableCell>{currentCheckpointName}</TableCell>
-                    {newInfoCell}
+                    <TableCell>{caseObject.currentProjectCheckpointName}</TableCell>
                 </TableRow>
             )
         });
@@ -225,7 +212,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                     <Toolbar className={projectsToolbarContainer}>
                         <div className={nameAndFilterIconContainer}>
                             <Typography variant="title" className={gridNameContainer}>
-                                Cases
+                                Projects
                             </Typography>
                             <Tooltip title="Filter Cases" placement="right" disableFocusListener={true}>
                                 <IconButton
@@ -252,10 +239,10 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                         <Table>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell>Doctor</TableCell>
+                                    <TableCell>Name</TableCell>
                                     <TableCell>Started</TableCell>
-                                    <TableCell>Case Deadline</TableCell>
-                                    <TableCell>Complete</TableCell>
+                                    <TableCell>Deadline</TableCell>
+                                    <TableCell>Done</TableCell>
                                     <TableCell>Current Checkpoint</TableCell>
                                     <TableCell/>
                                 </TableRow>
@@ -401,7 +388,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         }
 
         const companyId = this.props.match.path.split('/')[2];
-        const casesSearchRequest: ICasesSearchRequest = {
+        const casesSearchRequest: IProjectsSearchRequest = {
             companyId,
             limit: this.state.limit,
             ...this.state.dialogDisplayFilter,
@@ -411,7 +398,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
 
         const caseDocumentSnapshots = await Api.projectsApi.searchCases(casesSearchRequest, userType, companyUserId);
 
-        const cases: IAugmentedCase[] = [];
+        const cases: IAugmentedProject[] = [];
         caseDocumentSnapshots.forEach((document) => {
             const data = document.data();
             const createdFromRequest = data!.created as firebase.firestore.Timestamp;
@@ -484,7 +471,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         }
     }
 
-    private handleDialogFilterChange = (keyName: keyof ICaseFilter) => (event: any) => {
+    private handleDialogFilterChange = (keyName: keyof IProjectFilter) => (event: any) => {
         const eventValue = event.target.value;
 
         const caseFilterCopy = cloneDeep(this.state.dialogDisplayFilter);
@@ -522,7 +509,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         }
 
         const companyId = this.props.match.path.split('/')[2];
-        const casesSearchRequest: ICasesSearchRequest = {
+        const casesSearchRequest: IProjectsSearchRequest = {
             companyId,
             limit: this.state.limit,
             startAt: this.state.startingCases[this.state.page - 1].document,
@@ -533,7 +520,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         const companyUserId = this.props.userState[companyId].id;
 
         Api.projectsApi.searchCases(casesSearchRequest, userType, companyUserId).then((caseDocumentSnapshots) => {
-            const cases: IAugmentedCase[] = [];
+            const cases: IAugmentedProject[] = [];
             caseDocumentSnapshots.forEach((document) => {
                 const data = document.data();
                 const createdFromRequest = data!.created as firebase.firestore.Timestamp;
@@ -565,7 +552,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         }
 
         const companyId = this.props.match.path.split('/')[2];
-        const casesSearchRequest: ICasesSearchRequest = {
+        const casesSearchRequest: IProjectsSearchRequest = {
             companyId,
             limit: this.state.limit,
             startAfter: this.state.cases[this.state.cases.length - 1].document,
@@ -576,7 +563,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         const companyUserId = this.props.userState[companyId].id;
 
         Api.projectsApi.searchCases(casesSearchRequest, userType, companyUserId).then((caseDocumentSnapshots) => {
-            const cases: IAugmentedCase[] = [];
+            const cases: IAugmentedProject[] = [];
             caseDocumentSnapshots.forEach((document) => {
                 const data = document.data();
                 const createdFromRequest = data!.created as firebase.firestore.Timestamp;

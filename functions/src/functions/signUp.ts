@@ -18,38 +18,15 @@ export const signUpLocal = (passedInAdmin: admin.app.App) => functions.https.onC
 
         const companyDocumentReference = await firebase.collection(Collections.Company).add({
             companyName: data.companyName,
-            roleCount: {
-                Admin: 0,
-                Staff: 0,
-                Doctor: 0,
-            },
-            workflowCheckpointsCount: 0,
-            prescriptionTemplateHasSufficientFields: false,
         })
-
 
         const userDocumentReference = await firebase.collection(Collections.CompanyUser).add({
             companyId: companyDocumentReference.id,
             email: data.email,
             name: data.name,
             type: UserType.Admin,
-            scanCheckpointIds: [],
-            mustResetPassword: false,
             authUserId: authUser.uid,
             isActive: true,
-        })
-
-        const prescriptionTemplateDocumentReference = await firebase.collection(Collections.PrescriptionTemplate).add({
-            companyId: companyDocumentReference.id,
-            sectionOrder: [],
-            sections: {},
-            controls: {},
-            companyLogoURL: null,
-        });
-        const createCompanyWorkflowPromise = firebase.collection(Collections.CompanyWorkflow).add({
-            companyId: companyDocumentReference.id,
-            workflowCheckpointIds: [],
-            prescriptionTemplateId: prescriptionTemplateDocumentReference.id,
         });
 
         const createCompanyUserJoinPromise = firebase.collection(Collections.CompanyAuthUserJoin)
@@ -62,7 +39,6 @@ export const signUpLocal = (passedInAdmin: admin.app.App) => functions.https.onC
             })
 
         await Promise.all([
-            createCompanyWorkflowPromise,
             createCompanyUserJoinPromise,
         ])
 

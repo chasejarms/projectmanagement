@@ -1,6 +1,6 @@
 import * as firebase from 'firebase';
 import { db } from 'src/firebase';
-import { ICaseCheckpoint } from 'src/Models/caseCheckpoint';
+import { IProjectCheckpoint } from 'src/Models/caseCheckpoint';
 import { CheckpointFlag } from 'src/Models/caseFilter/checkpointFlag';
 import { CompletionStatus } from 'src/Models/caseFilter/completionStatus';
 import { DoctorFlag } from 'src/Models/caseFilter/doctorFlag';
@@ -10,11 +10,11 @@ import { Collections } from 'src/Models/collections';
 import { ShowNewInfoFromType } from 'src/Models/showNewInfoFromTypes';
 import { UserType } from 'src/Models/userTypes';
 import { generateUniqueId } from 'src/Utils/generateUniqueId';
-import { ICase } from './../../Models/case';
-import { ICaseApi, ICaseCreateRequest, ICasesSearchRequest, IUpdateCaseInformationRequest } from './projectsInterface';
+import { IProject } from '../../Models/project';
+import { IProjectApi, IProjectCreateRequest, IProjectsSearchRequest, IUpdateCaseInformationRequest } from './projectsInterface';
 
-export class ProjectsApi implements ICaseApi {
-    public async searchCases(slimCasesSearchRequest: ICasesSearchRequest, userType: string, companyUserId: string): Promise<FirebaseFirestore.QueryDocumentSnapshot[]> {
+export class ProjectsApi implements IProjectApi {
+    public async searchCases(slimCasesSearchRequest: IProjectsSearchRequest, userType: string, companyUserId: string): Promise<FirebaseFirestore.QueryDocumentSnapshot[]> {
         let query: any = db.collection(Collections.Case)
             .where('companyId', '==', slimCasesSearchRequest.companyId)
             .orderBy('deadline', 'asc')
@@ -67,7 +67,7 @@ export class ProjectsApi implements ICaseApi {
         return slimCasesList;
     }
 
-    public async createProject(companyId: string, projectCreateRequest: ICaseCreateRequest): Promise<ICase> {
+    public async createProject(companyId: string, projectCreateRequest: IProjectCreateRequest): Promise<IProject> {
         const createCaseCloudFunction = firebase.functions().httpsCallable('createCase');
         let createCaseResponse: firebase.functions.HttpsCallableResult;
 
@@ -86,38 +86,19 @@ export class ProjectsApi implements ICaseApi {
         } as any;
     }
 
-    public async getProject(caseId: string): Promise<ICase> {
+    public async getProject(caseId: string): Promise<IProject> {
         const documentReference = await firebase.firestore()
             .collection(Collections.Case)
             .doc(caseId)
             .get();
 
         const createdFromRequest = documentReference.data()!.created as firebase.firestore.Timestamp;
-        const mappedControlValues = Object.keys((documentReference.data() as ICase).controlValues).reduce((
-            alreadyMappedControlValues,
-            controlId,
-        ) => {
-            const controlValue = documentReference.data()!.controlValues[controlId];
-            const shouldBeTimestamp = typeof controlValue === 'object' && controlValue.seconds;
-            if (shouldBeTimestamp) {
-                alreadyMappedControlValues[controlId] = new firebase.firestore.Timestamp(
-                    controlValue.seconds,
-                    controlValue.nanoseconds,
-                )
-            } else {
-                alreadyMappedControlValues[controlId] = controlValue;
-            }
-
-            return alreadyMappedControlValues;
-        }, {});
-
 
         return {
             ...documentReference.data(),
-            controlValues: mappedControlValues,
             created: new firebase.firestore.Timestamp(createdFromRequest.seconds, createdFromRequest.nanoseconds),
             id: caseId,
-        } as ICase;
+        } as IProject;
     }
 
     public async uploadFile(companyId: string, caseId: string, file: File): Promise<firebase.storage.UploadTaskSnapshot> {
@@ -134,7 +115,7 @@ export class ProjectsApi implements ICaseApi {
         await storageRef.delete();
     }
 
-    public updateProject(companyId: string, project: ICase): ICase {
+    public updateProject(companyId: string, project: IProject): IProject {
         throw new Error("Method not implemented");
     }
 
@@ -147,7 +128,7 @@ export class ProjectsApi implements ICaseApi {
             .set(caseInformation, { merge: true });
     }
 
-    public async getNewCases(companyId: string): Promise<ICase[]> {
+    public async getNewCases(companyId: string): Promise<IProject[]> {
         const casesQuerySnapshot = await firebase.firestore().collection(Collections.Case)
             .where('companyId', '==', companyId)
             .where('hasStarted', '==', false)
@@ -158,11 +139,11 @@ export class ProjectsApi implements ICaseApi {
             return {
                 id: doc.id,
                 ...doc.data(),
-            } as ICase;
+            } as IProject;
         });
     }
 
-    public async updateCaseCheckpoints(caseId: string, caseCheckpoints: ICaseCheckpoint[]) {
+    public async updateCaseCheckpoints(caseId: string, caseCheckpoints: IProjectCheckpoint[]) {
         await firebase.firestore().collection(Collections.Case).doc(caseId).set({
             caseCheckpoints,
         }, { merge: true });

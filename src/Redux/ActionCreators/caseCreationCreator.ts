@@ -8,7 +8,7 @@ export interface IUpdateControlValueCaseCreationAction extends Action<typeof UPD
 
 export interface IClearCaseCreationStateAction extends Action<typeof CLEAR_CASE_CREATION_STATE> {}
 
-export type ICaseCreationActions = IUpdateControlValueCaseCreationAction |
+export type IProjectCreationActions = IUpdateControlValueCaseCreationAction |
     IClearCaseCreationStateAction;
 
 export const updateCaseCreationControlValue = (

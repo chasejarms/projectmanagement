@@ -1,21 +1,21 @@
 import { firestore } from 'firebase';
 import { cloneDeep } from "lodash";
-import { ICaseCreationActions, IUpdateControlValueCaseCreationAction } from "../ActionCreators/caseCreationCreator";
+import { IProjectCreationActions, IUpdateControlValueCaseCreationAction } from "../ActionCreators/caseCreationCreator";
 import { UPDATE_CONTROL_VALUE_CASE_CREATION } from "../Actions/caseCreationActions";
 
-export interface ICaseCreationSliceOfState {
+export interface IProjectCreationSliceOfState {
     controlValues: {
         [controlId: string]: any;
     }
 }
 
-const initialState: ICaseCreationSliceOfState = {
+const initialState: IProjectCreationSliceOfState = {
     controlValues: {},
 }
 
 export const caseCreationReducer = (
-    state: ICaseCreationSliceOfState = initialState,
-    action: ICaseCreationActions,
+    state: IProjectCreationSliceOfState = initialState,
+    action: IProjectCreationActions,
 ) => {
     switch (action.type) {
         case UPDATE_CONTROL_VALUE_CASE_CREATION:
@@ -30,7 +30,7 @@ export const caseCreationReducer = (
 }
 
 const caseCreationTemplateAfterControlUpdate = (
-    state: ICaseCreationSliceOfState,
+    state: IProjectCreationSliceOfState,
     action: IUpdateControlValueCaseCreationAction,
 ) => {
     let value = action.value;

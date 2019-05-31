@@ -5,10 +5,10 @@ import { firestore } from 'firebase';
 import { DatePicker } from 'material-ui-pickers';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { ICaseDeadlineProps, ICaseDeadlinePropsFromParent, ICaseDeadlineState } from './CaseDeadlineEdit.ias';
+import { IProjectDeadlineProps, IProjectDeadlinePropsFromParent, IProjectDeadlineState } from './CaseDeadlineEdit.ias';
 
-export class CaseDeadlineEditPresentation extends React.Component<ICaseDeadlineProps, ICaseDeadlineState> {
-    constructor(props: ICaseDeadlineProps) {
+export class CaseDeadlineEditPresentation extends React.Component<IProjectDeadlineProps, IProjectDeadlineState> {
+    constructor(props: IProjectDeadlineProps) {
         super(props);
     }
 
@@ -71,7 +71,7 @@ export class CaseDeadlineEditPresentation extends React.Component<ICaseDeadlineP
     }
 }
 
-const mapDispatchToProps = (dispatch: React.Dispatch<any>, ownProps: ICaseDeadlinePropsFromParent) => ({
+const mapDispatchToProps = (dispatch: React.Dispatch<any>, ownProps: IProjectDeadlinePropsFromParent) => ({
     updateControlValue: (controlId: string, value: any) => {
         const updateControlValueAction = ownProps.updateControlValueActionCreator(controlId, value);
         dispatch(updateControlValueAction);

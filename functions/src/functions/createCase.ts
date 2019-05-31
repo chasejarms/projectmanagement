@@ -6,7 +6,7 @@ import { UserType } from '../models/userTypes';
 import { IFunctionsCaseCheckpoint } from '../models/caseCheckpoint';
 import { IProjectCreateDataCloudFunctions } from '../models/projectCreateData';
 
-interface ICase {
+interface IProject {
     complete: boolean;
     prescriptionTemplateId: string;
     controlValues: {
@@ -139,7 +139,7 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
     const currentLabCheckpointName = firstCheckpoint.name;
 
     const nowInSeconds = Math.round(new Date().getTime() / 1000);
-    const caseToCreate: ICase = {
+    const caseToCreate: IProject = {
         prescriptionTemplateId: data.prescriptionTemplateId,
         controlValues: data.controlValues,
         complete: false,

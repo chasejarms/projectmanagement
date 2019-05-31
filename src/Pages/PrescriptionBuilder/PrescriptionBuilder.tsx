@@ -37,7 +37,7 @@ import { NonEditableText } from 'src/Components/PrescriptionEdit/PrescriptionEdi
 import { NumberEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/NumberEdit/NumberEdit';
 import { SingleLineTextEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/SingleLineTextEdit/SingleLineTextEdit';
 import { TitleEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/TitleEdit/TitleEdit';
-import { ICaseDeadlineControl } from 'src/Models/prescription/controls/caseDeadlineControl';
+import { IProjectDeadlineControl } from 'src/Models/prescription/controls/caseDeadlineControl';
 import { IDropdownTemplateControl } from 'src/Models/prescription/controls/dropdownTemplateControl';
 import { INonEditableTextField } from 'src/Models/prescription/controls/nonEditableTextField';
 import { INumberTemplateControl } from 'src/Models/prescription/controls/numberTemplateControl';
@@ -992,7 +992,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
         const selectedControlId = this.props.prescriptionBuilderState.selectedControl;
 
         const prescriptionFormTemplateCopy = this.copyPrescriptionFormTemplate();
-        (prescriptionFormTemplateCopy.controls[selectedControlId!] as ICaseDeadlineControl).autofillDays = newAutofillNumber;
+        (prescriptionFormTemplateCopy.controls[selectedControlId!] as IProjectDeadlineControl).autofillDays = newAutofillNumber;
         this.props.setPrescriptionFormTemplate(prescriptionFormTemplateCopy);
     }
 

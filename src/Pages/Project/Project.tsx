@@ -17,7 +17,6 @@ import {
     withTheme,
 } from "@material-ui/core";
 import DoneIcon from '@material-ui/icons/Done';
-import * as firebase from 'firebase';
 import * as React from "react";
 import { connect } from 'react-redux';
 import { withRouter } from "react-router";
@@ -34,9 +33,7 @@ import { NumberEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComp
 import { SingleLineTextEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/SingleLineTextEdit/SingleLineTextEdit";
 import { TitleEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/TitleEdit/TitleEdit";
 import { QRCodeDisplay } from "src/Components/QRCodeDisplay/QRCodeDisplay";
-import { ICase } from "src/Models/case";
-import { ICaseCheckpoint } from "src/Models/caseCheckpoint";
-import { IDoctorUser } from "src/Models/doctorUser";
+import { IProjectCheckpoint } from "src/Models/caseCheckpoint";
 import { IPrescriptionControlTemplateType } from "src/Models/prescription/controls/prescriptionControlTemplateType";
 import { ShowNewInfoFromType } from "src/Models/showNewInfoFromTypes";
 import { UserType } from "src/Models/userTypes";
@@ -91,7 +88,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         const companyId = this.props.location.pathname.split('/')[2];
         const userIsDoctor = this.props.userState[companyId].type === UserType.Doctor;
         const mappedCheckpoints = this.state.checkpoints ? (
-            this.state.checkpoints!.map((checkpoint: ICaseCheckpoint, index: number) => {
+            this.state.checkpoints!.map((checkpoint: IProjectCheckpoint, index: number) => {
                 return (
                     <TableRow key={index}>
                         <TableCell>{checkpoint.name}</TableCell>
@@ -267,7 +264,6 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
     public componentWillMount = async(): Promise<void> => {
         this._isMounted = true;
         const caseId = this.props.match.params['projectId'];
-        const companyId = this.props.location.pathname.split('/')[2];
 
         if (this._isMounted) {
             this.setState({
@@ -281,57 +277,12 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
             Api.projectsApi.getProject(caseId),
         ]);
 
-        const showNewInfoFromDoctor = caseObject.showNewInfoFrom === ShowNewInfoFromType.Doctor;
-        const showNewInfoFromLab = caseObject.showNewInfoFrom === ShowNewInfoFromType.Lab;
-
-        const userIsDoctor = this.props.userState[companyId].type === UserType.Doctor;
-
-        const shouldMarkAsShown = (showNewInfoFromDoctor && !userIsDoctor) || (showNewInfoFromLab && userIsDoctor);
-
-        if (shouldMarkAsShown) {
-            Api.projectsApi.markProjectUpdatesAsSeen(companyId, caseId);
-        }
-
-        const [
-            prescriptionFormTemplate,
-            user,
-        ] = await Promise.all([
-            Api.prescriptionTemplateApi.getPrescriptionTemplateById(
-                caseObject.prescriptionTemplateId,
-            ),
-            Api.userApi.getUser((caseObject as ICase).doctorCompanyUserId),
-        ]);
-
-        // tslint:disable-next-line:no-console
-        console.log('prescriptionFormTemplate: ', prescriptionFormTemplate);
-
-        const doctorUser = user as IDoctorUser;
-
-        if (prescriptionFormTemplate.companyLogoURL) {
-            await this.createCompanyLogoDownloadURL(prescriptionFormTemplate.companyLogoURL);
-        }
-
         if (this._isMounted) {
             this.setState({
-                checkpoints: caseObject.caseCheckpoints,
+                checkpoints: caseObject.projectCheckpoints,
                 retrievingCheckpoints: false,
-                prescriptionFormTemplate,
                 loadingPrescriptionTemplate: false,
-                doctorUser,
             })
-
-            this.props.setControlValues(caseObject.controlValues);
-        }
-    }
-
-    private createCompanyLogoDownloadURL = async(companyLogoURL: string) => {
-        const storageRef = firebase.storage().ref();
-        const companyLogoDownloadURL = await storageRef.child(companyLogoURL).getDownloadURL();
-
-        if (this._isMounted) {
-            this.setState({
-                companyLogoDownloadURL,
-            });
         }
     }
 
@@ -478,7 +429,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         return <div/>
     }
 
-    private handleCheckpointChange = (checkpoint: ICaseCheckpoint, index: number) => async() => {
+    private handleCheckpointChange = (checkpoint: IProjectCheckpoint, index: number) => async() => {
         const companyId = this.props.location.pathname.split('/')[2];
         const currentUser = this.props.userState[companyId];
 

@@ -26,13 +26,13 @@ import { clearCaseCreationState, updateCaseCreationControlValue } from 'src/Redu
 import { IAppState } from 'src/Redux/Reducers/rootReducer';
 import { generateUniqueId } from 'src/Utils/generateUniqueId';
 import Api from '../../Api/api';
-import { createCaseCreationClasses, ICaseCreationProps, ICaseCreationState } from './CaseCreation.ias';
+import { createCaseCreationClasses, IProjectCreationProps, IProjectCreationState } from './CaseCreation.ias';
 
 export class CaseCreationPresentation extends React.Component<
-    ICaseCreationProps,
-    ICaseCreationState
+    IProjectCreationProps,
+    IProjectCreationState
 > {
-    public state: ICaseCreationState = {
+    public state: IProjectCreationState = {
         loadingPrescriptionTemplate: true,
         prescriptionFormTemplate: null,
         caseCreationInProgress: false,

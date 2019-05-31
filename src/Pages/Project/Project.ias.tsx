@@ -1,7 +1,7 @@
 import { Theme, WithTheme } from '@material-ui/core';
 import { css } from 'emotion';
 import { RouteComponentProps } from 'react-router';
-import { ICaseCheckpoint } from 'src/Models/caseCheckpoint';
+import { IProjectCheckpoint } from 'src/Models/caseCheckpoint';
 import { IDoctorUser } from 'src/Models/doctorUser';
 import { IPrescriptionFormTemplate } from 'src/Models/prescription/prescriptionFormTemplate';
 import { IExistingCaseSliceOfState } from 'src/Redux/Reducers/existingCaseReducer';
@@ -9,7 +9,7 @@ import { IExistingCaseSliceOfState } from 'src/Redux/Reducers/existingCaseReduce
 // import { IAttachmentMetadata } from 'src/Models/attachmentMetadata';
 // import { ICheckpoint } from 'src/Models/checkpoint';
 import { IUserSliceOfState } from 'src/Redux/Reducers/userReducer';
-// import { ICase } from '../../Models/case';
+// import { IProject } from '../../Models/case';
 
 // tslint:disable-next-line:no-empty-interface
 export interface IProjectPresentationProps extends RouteComponentProps<{}>, WithTheme {
@@ -22,7 +22,7 @@ export interface IProjectPresentationState {
     tabIndex: number;
     projectInformationIsLoading: boolean;
     retrievingCheckpoints: boolean;
-    checkpoints: ICaseCheckpoint[] | null;
+    checkpoints: IProjectCheckpoint[] | null;
     loadingPrescriptionTemplate: boolean;
     prescriptionFormTemplate: IPrescriptionFormTemplate | null;
     doctorUser: IDoctorUser | null;
