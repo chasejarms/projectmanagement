@@ -1,9 +1,13 @@
 import { css } from 'emotion';
+import { RouteComponentProps } from 'react-router';
+import { IWorkflow } from 'src/Models/workflow';
 
 // tslint:disable-next-line:no-empty-interface
-export interface IWorkflowsProps {}
+export interface IWorkflowsProps extends RouteComponentProps<any> {}
 // tslint:disable-next-line:no-empty-interface
-export interface IWorkflowsState {}
+export interface IWorkflowsState {
+    workflows: IWorkflow[];
+}
 
 export const createWorkflowsClasses = (
     props: IWorkflowsProps,
@@ -26,9 +30,17 @@ export const createWorkflowsClasses = (
         paddingRight: 10,
     });
 
+    const workflowRow = css({
+        cursor: 'pointer',
+        '&:hover': {
+            backgroundColor: '#f5f5f5'
+        },
+    });
+
     return {
         workflowsContainer,
         workflowsPaper,
         workflowsToolbarContainer,
+        workflowRow,
     };
 }

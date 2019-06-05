@@ -1,4 +1,9 @@
-export type IWorkflow = IWorkflowCheckpoint[];
+export interface IWorkflow {
+    companyId: string;
+    workflowCheckpointIds: string[];
+    name: string;
+    id: string;
+}
 
 export interface IWorkflowCheckpoint extends IWorkflowCheckpointCreateRequest {
     id: string;

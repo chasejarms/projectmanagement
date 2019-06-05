@@ -130,7 +130,8 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                 loadingCases: false,
                 moreCasesExist,
                 startingCases: [cases[0]],
-                workflowCheckpointIds,
+                // TODO: Will need to fix this later
+                workflowCheckpointIds: workflowCheckpointIds as any,
             })
         }
     }

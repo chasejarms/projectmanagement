@@ -1,414 +1,420 @@
 import {
-    Checkbox,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    FormControl,
-    FormControlLabel,
-    FormHelperText,
-    IconButton,
-    Input,
-    InputLabel,
-    MenuItem,
-    Paper,
-    Select,
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableRow,
-    Toolbar,
-    Tooltip,
-    Typography,
+    // Checkbox,
+    // Dialog,
+    // DialogActions,
+    // DialogContent,
+    // DialogTitle,
+    // FormControl,
+    // FormControlLabel,
+    // FormHelperText,
+    // IconButton,
+    // Input,
+    // InputLabel,
+    // MenuItem,
+    // Paper,
+    // Select,
+    // Table,
+    // TableBody,
+    // TableCell,
+    // TableHead,
+    // TableRow,
+    // Toolbar,
+    // Tooltip,
+    // Typography,
     withTheme,
 } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
-import DoneIcon from '@material-ui/icons/Done';
+// import AddIcon from '@material-ui/icons/Add';
+// import DoneIcon from '@material-ui/icons/Done';
 import * as React from 'react';
-import { FormControlState } from 'src/Classes/formControlState';
-import { requiredValidator } from 'src/Validators/required.validator';
-import Api from '../../Api/api';
-import { AsyncButton } from '../../Components/AsyncButton/AsyncButton';
-import { IWorkflowCheckpoint, IWorkflowCheckpointCreateRequest } from '../../Models/workflow';
-import { createWorkflowPresentationClasses, IWorkflowPresentationProps, IWorkflowPresentationState } from './Workflow.ias';
+// import { FormControlState } from 'src/Classes/formControlState';
+// import { requiredValidator } from 'src/Validators/required.validator';
+// import Api from '../../Api/api';
+// import { AsyncButton } from '../../Components/AsyncButton/AsyncButton';
+// import { IWorkflowCheckpoint, IWorkflowCheckpointCreateRequest } from '../../Models/workflow';
+import { IWorkflowPresentationProps, IWorkflowPresentationState } from './Workflow.ias';
 
 export class WorkflowPresentation extends React.Component<IWorkflowPresentationProps, IWorkflowPresentationState> {
-    public state: IWorkflowPresentationState = {
-        open: false,
-        checkpointName: new FormControlState({
-            value: '',
-            validators: [requiredValidator('A name is required')],
-        }),
-        checkpointDescription: '',
-        estimatedCompletionTime: new FormControlState({
-            value: '',
-            validators: [requiredValidator('An estimated completion time is required')],
-        }),
-        visibleToDoctor: false,
-        workflow: [],
-        isUpdate: false,
-        checkpointId: '',
-        removingWorkflowCheckpoint: false,
-        addingOrUpdatingCheckpoint: false,
-    }
-
-    // tslint:disable-next-line:variable-name
-    public _isMounted: boolean;
-
-    constructor(props: IWorkflowPresentationProps) {
-        super(props);
-        this.handleSave = this.handleSave.bind(this);
-    }
-
-    public componentWillMount(): void {
-        this._isMounted = true;
-        const companyName = this.props.match.path.split('/')[2];
-        Api.workflowApi.getWorkflow(companyName).then((workflow) => {
-            if (this._isMounted) {
-                this.setState({
-                    workflow,
-                });
-            }
-        });
-    }
-
-    public componentWillUnmount(): void {
-        this._isMounted = false;
-    }
-
     public render() {
-        const {
-            dialogContent,
-            dialogControl,
-            workflowToolbar,
-            workflowContainer,
-            workflowRow,
-            workflowPaper,
-        } = createWorkflowPresentationClasses(this.props, this.state);
-
-        const mappedCheckpoints = this.state.workflow.map((checkpoint, index) => (
-                <TableRow key={checkpoint.id} className={workflowRow}>
-                    <TableCell onClick={this.openCheckpointDialog(checkpoint, checkpoint.id)}>{checkpoint.name}</TableCell>
-                    <TableCell onClick={this.openCheckpointDialog(checkpoint, checkpoint.id)}>{checkpoint.estimatedCompletionTime}</TableCell>
-                    <TableCell onClick={this.openCheckpointDialog(checkpoint, checkpoint.id)}>{checkpoint.visibleToDoctor ? (
-                        <DoneIcon/>
-                    ) : undefined}</TableCell>
-                    <TableCell>
-                        <Select
-                            fullWidth={true}
-                            value={index}
-                            onChange={this.handleCheckpointOrderChange(index)}
-                        >
-                            {this.state.workflow!.map((_, innerIndex) => {
-                                return (
-                                    <MenuItem key={`${index}_${innerIndex}`} value={innerIndex}>
-                                        {innerIndex + 1}
-                                    </MenuItem>
-                                )
-                            })}
-                        </Select>
-                    </TableCell>
-                </TableRow>
-            )
-        )
-
-        const checkpointNameError = this.state.checkpointName.shouldShowError() ? this.state.checkpointName.errors[0] : undefined;
-        const estimatedCompletionError = this.state.estimatedCompletionTime.shouldShowError() ? this.state.estimatedCompletionTime.errors[0] : undefined;
-
         return (
-            // <div className={workflowContainer}>
-            //     {workflowCheckpointIds}
-            // </div>
-            <div className={workflowContainer}>
-                <Paper className={workflowPaper}>
-                    <Toolbar className={workflowToolbar}>
-                        <Typography variant="title">
-                            Workflow
-                        </Typography>
-                        <Tooltip title="New Checkpoint" placement="left" disableFocusListener={true}>
-                            <IconButton
-                                aria-label="New Checkpoint"
-                                onClick={this.openNewCheckpointDialog}
-                                color="secondary"
-                            >
-                                <AddIcon />
-                            </IconButton>
-                        </Tooltip>
-                    </Toolbar>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Checkpoint Name</TableCell>
-                                <TableCell>Estimated Completion Time</TableCell>
-                                <TableCell>Visible To Doctor</TableCell>
-                                <TableCell>Checkpoint Order</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {mappedCheckpoints}
-                        </TableBody>
-                    </Table>
-                </Paper>
-                <Dialog
-                    open={this.state.open}
-                    onClose={this.handleClose}
-                >
-                    <DialogTitle>
-                        { this.state.isUpdate ? 'Update Checkpoint' : 'Create New Checkpoint' }
-                    </DialogTitle>
-                    <DialogContent className={dialogContent}>
-                        <FormControl required={true} className={dialogControl} error={this.state.checkpointName.shouldShowError()}>
-                            <InputLabel>Checkpoint Name</InputLabel>
-                            <Input
-                                autoFocus={true}
-                                name="checkpointName"
-                                value={this.state.checkpointName.value}
-                                onChange={this.handleCheckpointNameChange}
-                            />
-                            <FormHelperText>{checkpointNameError}</FormHelperText>
-                        </FormControl>
-                        <FormControl required={true} className={dialogControl} error={this.state.estimatedCompletionTime.shouldShowError()}>
-                            <InputLabel>Estimated Completion Time</InputLabel>
-                            <Input
-                                name="estimatedCompletionTime"
-                                value={this.state.estimatedCompletionTime.value}
-                                onChange={this.handleEstimatedCompletionTimeChange}
-                            />
-                            <FormHelperText>{estimatedCompletionError}</FormHelperText>
-                        </FormControl>
-                        <FormControlLabel className={dialogControl} control={
-                            <Checkbox
-                                checked={this.state.visibleToDoctor}
-                                onChange={this.handleVisibleToDoctorChange}
-                                name="visibleToDoctor"
-                                color="primary"
-                            />
-                        }
-                        label="Visible To Doctor"/>
-                    </DialogContent>
-                    <DialogActions style={{display: 'flex', justifyContent: this.state.isUpdate ? 'space-between' : 'flex-end' }}>
-                        { this.state.isUpdate ? (
-                            <AsyncButton
-                                color="primary"
-                                onClick={this.handleCheckpointDelete(this.state.checkpointId)}
-                                disabled={this.state.removingWorkflowCheckpoint || this.state.addingOrUpdatingCheckpoint}
-                                asyncActionInProgress={this.state.removingWorkflowCheckpoint}
-                            >
-                                Delete
-                            </AsyncButton>
-                        ) : undefined}
-                        <AsyncButton
-                            color="secondary"
-                            onClick={this.handleSave}
-                            disabled={this.state.removingWorkflowCheckpoint || this.state.addingOrUpdatingCheckpoint || this.workflowIsInvalid()}
-                            asyncActionInProgress={this.state.addingOrUpdatingCheckpoint}
-                        >
-                            {this.state.isUpdate ? 'Update Checkpoint' : 'Add Checkpoint'}
-                        </AsyncButton>
-                    </DialogActions>
-                </Dialog>
-            </div>
-        );
+            <div>The workflow page</div>
+        )
     }
+    // public state: IWorkflowPresentationState = {
+    //     open: false,
+    //     checkpointName: new FormControlState({
+    //         value: '',
+    //         validators: [requiredValidator('A name is required')],
+    //     }),
+    //     checkpointDescription: '',
+    //     estimatedCompletionTime: new FormControlState({
+    //         value: '',
+    //         validators: [requiredValidator('An estimated completion time is required')],
+    //     }),
+    //     visibleToDoctor: false,
+    //     // TODO: Will need to fix this
+    //     workflow: [] as any,
+    //     isUpdate: false,
+    //     checkpointId: '',
+    //     removingWorkflowCheckpoint: false,
+    //     addingOrUpdatingCheckpoint: false,
+    // }
 
-    private handleCheckpointNameChange = (event: any): void => {
-        const newCheckpointName = event.target.value;
-        const updatedFormControlState = this.state.checkpointName.setValue(newCheckpointName);
-        if (this._isMounted) {
-            this.setState({
-                checkpointName: updatedFormControlState,
-            })
-        }
-    }
+    // // tslint:disable-next-line:variable-name
+    // public _isMounted: boolean;
 
-    private handleEstimatedCompletionTimeChange = (event: any): void => {
-        const newEstimatedCompletionTime = event.target.value;
-        const updatedFormControlState = this.state.estimatedCompletionTime.setValue(newEstimatedCompletionTime);
-        if (this._isMounted) {
-            this.setState({
-                estimatedCompletionTime: updatedFormControlState,
-            })
-        }
-    }
+    // constructor(props: IWorkflowPresentationProps) {
+    //     super(props);
+    //     this.handleSave = this.handleSave.bind(this);
+    // }
 
-    private workflowIsInvalid = (): boolean => {
-        const {
-            estimatedCompletionTime,
-            checkpointName,
-        } = this.state;
+    // public componentWillMount(): void {
+    //     this._isMounted = true;
+    //     const companyName = this.props.match.path.split('/')[2];
+    //     Api.workflowApi.getWorkflow(companyName).then((workflow) => {
+    //         if (this._isMounted) {
+    //             this.setState({
+    //                 workflow,
+    //             });
+    //         }
+    //     });
+    // }
 
-        return estimatedCompletionTime.invalid || checkpointName.invalid;
-    }
+    // public componentWillUnmount(): void {
+    //     this._isMounted = false;
+    // }
 
-    private handleCheckpointOrderChange = (currentIndex: number) => (event: any) => {
-        const companyId = this.props.match.path.split('/')[2];
+    // public render() {
+    //     const {
+    //         dialogContent,
+    //         dialogControl,
+    //         workflowToolbar,
+    //         workflowContainer,
+    //         workflowRow,
+    //         workflowPaper,
+    //     } = createWorkflowPresentationClasses(this.props, this.state);
 
-        const futureIndex = event.target.value;
-        const checkpointThatChangesPosition = this.state.workflow![currentIndex];
-        const updatedWorkflow = this.state.workflow!.filter((compareCheckpoint) => {
-            return checkpointThatChangesPosition.id !== compareCheckpoint.id;
-        });
+    //     const mappedCheckpoints = this.state.workflow.map((checkpoint, index) => (
+    //             <TableRow key={checkpoint.id} className={workflowRow}>
+    //                 <TableCell onClick={this.openCheckpointDialog(checkpoint, checkpoint.id)}>{checkpoint.name}</TableCell>
+    //                 <TableCell onClick={this.openCheckpointDialog(checkpoint, checkpoint.id)}>{checkpoint.estimatedCompletionTime}</TableCell>
+    //                 <TableCell onClick={this.openCheckpointDialog(checkpoint, checkpoint.id)}>{checkpoint.visibleToDoctor ? (
+    //                     <DoneIcon/>
+    //                 ) : undefined}</TableCell>
+    //                 <TableCell>
+    //                     <Select
+    //                         fullWidth={true}
+    //                         value={index}
+    //                         onChange={this.handleCheckpointOrderChange(index)}
+    //                     >
+    //                         {this.state.workflow!.map((_, innerIndex) => {
+    //                             return (
+    //                                 <MenuItem key={`${index}_${innerIndex}`} value={innerIndex}>
+    //                                     {innerIndex + 1}
+    //                                 </MenuItem>
+    //                             )
+    //                         })}
+    //                     </Select>
+    //                 </TableCell>
+    //             </TableRow>
+    //         )
+    //     )
 
-        updatedWorkflow.splice(futureIndex, 0, checkpointThatChangesPosition);
+    //     const checkpointNameError = this.state.checkpointName.shouldShowError() ? this.state.checkpointName.errors[0] : undefined;
+    //     const estimatedCompletionError = this.state.estimatedCompletionTime.shouldShowError() ? this.state.estimatedCompletionTime.errors[0] : undefined;
 
-        if (this._isMounted) {
-            this.setState({
-                workflow: updatedWorkflow,
-            })
-        }
+    //     return (
+    //         // <div className={workflowContainer}>
+    //         //     {workflowCheckpointIds}
+    //         // </div>
+    //         <div className={workflowContainer}>
+    //             <Paper className={workflowPaper}>
+    //                 <Toolbar className={workflowToolbar}>
+    //                     <Typography variant="title">
+    //                         Workflow
+    //                     </Typography>
+    //                     <Tooltip title="New Checkpoint" placement="left" disableFocusListener={true}>
+    //                         <IconButton
+    //                             aria-label="New Checkpoint"
+    //                             onClick={this.openNewCheckpointDialog}
+    //                             color="secondary"
+    //                         >
+    //                             <AddIcon />
+    //                         </IconButton>
+    //                     </Tooltip>
+    //                 </Toolbar>
+    //                 <Table>
+    //                     <TableHead>
+    //                         <TableRow>
+    //                             <TableCell>Checkpoint Name</TableCell>
+    //                             <TableCell>Estimated Completion Time</TableCell>
+    //                             <TableCell>Visible To Doctor</TableCell>
+    //                             <TableCell>Checkpoint Order</TableCell>
+    //                         </TableRow>
+    //                     </TableHead>
+    //                     <TableBody>
+    //                         {mappedCheckpoints}
+    //                     </TableBody>
+    //                 </Table>
+    //             </Paper>
+    //             <Dialog
+    //                 open={this.state.open}
+    //                 onClose={this.handleClose}
+    //             >
+    //                 <DialogTitle>
+    //                     { this.state.isUpdate ? 'Update Checkpoint' : 'Create New Checkpoint' }
+    //                 </DialogTitle>
+    //                 <DialogContent className={dialogContent}>
+    //                     <FormControl required={true} className={dialogControl} error={this.state.checkpointName.shouldShowError()}>
+    //                         <InputLabel>Checkpoint Name</InputLabel>
+    //                         <Input
+    //                             autoFocus={true}
+    //                             name="checkpointName"
+    //                             value={this.state.checkpointName.value}
+    //                             onChange={this.handleCheckpointNameChange}
+    //                         />
+    //                         <FormHelperText>{checkpointNameError}</FormHelperText>
+    //                     </FormControl>
+    //                     <FormControl required={true} className={dialogControl} error={this.state.estimatedCompletionTime.shouldShowError()}>
+    //                         <InputLabel>Estimated Completion Time</InputLabel>
+    //                         <Input
+    //                             name="estimatedCompletionTime"
+    //                             value={this.state.estimatedCompletionTime.value}
+    //                             onChange={this.handleEstimatedCompletionTimeChange}
+    //                         />
+    //                         <FormHelperText>{estimatedCompletionError}</FormHelperText>
+    //                     </FormControl>
+    //                     <FormControlLabel className={dialogControl} control={
+    //                         <Checkbox
+    //                             checked={this.state.visibleToDoctor}
+    //                             onChange={this.handleVisibleToDoctorChange}
+    //                             name="visibleToDoctor"
+    //                             color="primary"
+    //                         />
+    //                     }
+    //                     label="Visible To Doctor"/>
+    //                 </DialogContent>
+    //                 <DialogActions style={{display: 'flex', justifyContent: this.state.isUpdate ? 'space-between' : 'flex-end' }}>
+    //                     { this.state.isUpdate ? (
+    //                         <AsyncButton
+    //                             color="primary"
+    //                             onClick={this.handleCheckpointDelete(this.state.checkpointId)}
+    //                             disabled={this.state.removingWorkflowCheckpoint || this.state.addingOrUpdatingCheckpoint}
+    //                             asyncActionInProgress={this.state.removingWorkflowCheckpoint}
+    //                         >
+    //                             Delete
+    //                         </AsyncButton>
+    //                     ) : undefined}
+    //                     <AsyncButton
+    //                         color="secondary"
+    //                         onClick={this.handleSave}
+    //                         disabled={this.state.removingWorkflowCheckpoint || this.state.addingOrUpdatingCheckpoint || this.workflowIsInvalid()}
+    //                         asyncActionInProgress={this.state.addingOrUpdatingCheckpoint}
+    //                     >
+    //                         {this.state.isUpdate ? 'Update Checkpoint' : 'Add Checkpoint'}
+    //                     </AsyncButton>
+    //                 </DialogActions>
+    //             </Dialog>
+    //         </div>
+    //     );
+    // }
 
-        const updatedWorkflowOrderIds = updatedWorkflow.map((updatedWorkflowCheckpoint) => {
-            return updatedWorkflowCheckpoint.id;
-        });
+    // private handleCheckpointNameChange = (event: any): void => {
+    //     const newCheckpointName = event.target.value;
+    //     const updatedFormControlState = this.state.checkpointName.setValue(newCheckpointName);
+    //     if (this._isMounted) {
+    //         this.setState({
+    //             checkpointName: updatedFormControlState,
+    //         })
+    //     }
+    // }
 
-        Api.workflowApi.updateWorkflowCheckpointOrder(companyId, updatedWorkflowOrderIds);
-    }
+    // private handleEstimatedCompletionTimeChange = (event: any): void => {
+    //     const newEstimatedCompletionTime = event.target.value;
+    //     const updatedFormControlState = this.state.estimatedCompletionTime.setValue(newEstimatedCompletionTime);
+    //     if (this._isMounted) {
+    //         this.setState({
+    //             estimatedCompletionTime: updatedFormControlState,
+    //         })
+    //     }
+    // }
 
-    private handleVisibleToDoctorChange = (event: any) => {
-        if (this._isMounted) {
-            this.setState({
-                visibleToDoctor: event.target.checked,
-            })
-        }
-    }
+    // private workflowIsInvalid = (): boolean => {
+    //     const {
+    //         estimatedCompletionTime,
+    //         checkpointName,
+    //     } = this.state;
 
-    private openNewCheckpointDialog = () => {
-        if (this._isMounted) {
-            this.setState({
-                open: true,
-                estimatedCompletionTime: this.state.estimatedCompletionTime
-                    .setValue('')
-                    .markAsValid(),
-                checkpointDescription: '',
-                checkpointName: this.state.estimatedCompletionTime
-                    .setValue('')
-                    .markAsValid(),
-                isUpdate: false,
-                visibleToDoctor: false,
-            })
-        }
-    }
+    //     return estimatedCompletionTime.invalid || checkpointName.invalid;
+    // }
 
-    private openCheckpointDialog = (checkpoint: IWorkflowCheckpoint, checkpointId: string) => {
-        return () => {
-            if (this._isMounted) {
-                this.setState({
-                    open: true,
-                    estimatedCompletionTime: this.state.estimatedCompletionTime
-                        .setValue(checkpoint.estimatedCompletionTime)
-                        .markAsPristine()
-                        .markAsUntouched()
-                        .markAsValid(),
-                    checkpointName: this.state.checkpointName
-                        .setValue(checkpoint.name)
-                        .markAsPristine()
-                        .markAsTouched()
-                        .markAsValid(),
-                    visibleToDoctor: checkpoint.visibleToDoctor,
-                    isUpdate: true,
-                    checkpointId,
-                })
-            }
-        }
-    }
+    // private handleCheckpointOrderChange = (currentIndex: number) => (event: any) => {
+    //     const companyId = this.props.match.path.split('/')[2];
 
-    private handleCheckpointDelete(checkpointId: string) {
-        return async() => {
-            const companyId = this.props.match.path.split('/')[2];
+    //     const futureIndex = event.target.value;
+    //     const checkpointThatChangesPosition = this.state.workflow![currentIndex];
+    //     const updatedWorkflow = this.state.workflow!.filter((compareCheckpoint) => {
+    //         return checkpointThatChangesPosition.id !== compareCheckpoint.id;
+    //     });
 
-            if (this._isMounted) {
-                this.setState({
-                    removingWorkflowCheckpoint: true,
-                })
-            }
+    //     updatedWorkflow.splice(futureIndex, 0, checkpointThatChangesPosition);
 
-            await Api.workflowApi.removeWorkflowCheckpoint(companyId, checkpointId);
+    //     if (this._isMounted) {
+    //         this.setState({
+    //             workflow: updatedWorkflow,
+    //         })
+    //     }
 
-            const workflowWithoutRemovedCheckpoint = this.state.workflow!.filter((workflowCheckpoint) => {
-                return workflowCheckpoint.id !== checkpointId;
-            })
+    //     const updatedWorkflowOrderIds = updatedWorkflow.map((updatedWorkflowCheckpoint) => {
+    //         return updatedWorkflowCheckpoint.id;
+    //     });
 
-            if (this._isMounted) {
-                this.setState({
-                    open: false,
-                    workflow: workflowWithoutRemovedCheckpoint,
-                    removingWorkflowCheckpoint: false,
-                });
-            }
-        }
-    }
+    //     Api.workflowApi.updateWorkflowCheckpointOrder(companyId, updatedWorkflowOrderIds);
+    // }
 
-    private handleClose = () => {
-        if (this._isMounted) {
-            this.setState({
-                open: false,
-            })
-        }
-    }
+    // private handleVisibleToDoctorChange = (event: any) => {
+    //     if (this._isMounted) {
+    //         this.setState({
+    //             visibleToDoctor: event.target.checked,
+    //         })
+    //     }
+    // }
 
-    private async handleSave() {
-        const companyId = this.props.match.path.split('/')[2];
+    // private openNewCheckpointDialog = () => {
+    //     if (this._isMounted) {
+    //         this.setState({
+    //             open: true,
+    //             estimatedCompletionTime: this.state.estimatedCompletionTime
+    //                 .setValue('')
+    //                 .markAsValid(),
+    //             checkpointDescription: '',
+    //             checkpointName: this.state.estimatedCompletionTime
+    //                 .setValue('')
+    //                 .markAsValid(),
+    //             isUpdate: false,
+    //             visibleToDoctor: false,
+    //         })
+    //     }
+    // }
 
-        if (!this.state.isUpdate) {
-            const checkpointCreateRequest: IWorkflowCheckpointCreateRequest = {
-                name: this.state.checkpointName.value,
-                estimatedCompletionTime: this.state.estimatedCompletionTime.value,
-                visibleToDoctor: this.state.visibleToDoctor,
-            }
+    // private openCheckpointDialog = (checkpoint: IWorkflowCheckpoint, checkpointId: string) => {
+    //     return () => {
+    //         if (this._isMounted) {
+    //             this.setState({
+    //                 open: true,
+    //                 estimatedCompletionTime: this.state.estimatedCompletionTime
+    //                     .setValue(checkpoint.estimatedCompletionTime)
+    //                     .markAsPristine()
+    //                     .markAsUntouched()
+    //                     .markAsValid(),
+    //                 checkpointName: this.state.checkpointName
+    //                     .setValue(checkpoint.name)
+    //                     .markAsPristine()
+    //                     .markAsTouched()
+    //                     .markAsValid(),
+    //                 visibleToDoctor: checkpoint.visibleToDoctor,
+    //                 isUpdate: true,
+    //                 checkpointId,
+    //             })
+    //         }
+    //     }
+    // }
 
-            if (this._isMounted) {
-                this.setState({
-                    addingOrUpdatingCheckpoint: true,
-                })
-            }
+    // private handleCheckpointDelete(checkpointId: string) {
+    //     return async() => {
+    //         const companyId = this.props.match.path.split('/')[2];
 
-            const addedCheckpoint = await Api.workflowApi.addWorkflowCheckpoint(companyId, checkpointCreateRequest);
+    //         if (this._isMounted) {
+    //             this.setState({
+    //                 removingWorkflowCheckpoint: true,
+    //             })
+    //         }
 
-            const workflowCheckpointsWithAddedCheckpoint = this.state.workflow!.concat([
-                addedCheckpoint,
-            ])
+    //         await Api.workflowApi.removeWorkflowCheckpoint(companyId, checkpointId);
 
-            if (this._isMounted) {
-                this.setState({
-                    open: false,
-                    addingOrUpdatingCheckpoint: false,
-                    workflow: workflowCheckpointsWithAddedCheckpoint,
-                })
-            }
-        } else {
-            const checkpointUpdateRequest: IWorkflowCheckpoint = {
-                id: this.state.checkpointId,
-                name: this.state.checkpointName.value,
-                estimatedCompletionTime: this.state.estimatedCompletionTime.value,
-                visibleToDoctor: this.state.visibleToDoctor,
-            }
+    //         const workflowWithoutRemovedCheckpoint = this.state.workflow!.filter((workflowCheckpoint) => {
+    //             return workflowCheckpoint.id !== checkpointId;
+    //         })
 
-            if (this._isMounted) {
-                this.setState({
-                    addingOrUpdatingCheckpoint: true,
-                })
-            }
+    //         if (this._isMounted) {
+    //             this.setState({
+    //                 open: false,
+    //                 workflow: workflowWithoutRemovedCheckpoint,
+    //                 removingWorkflowCheckpoint: false,
+    //             });
+    //         }
+    //     }
+    // }
 
-            await Api.workflowApi.updateWorkflowCheckpoint(companyId, checkpointUpdateRequest);
+    // private handleClose = () => {
+    //     if (this._isMounted) {
+    //         this.setState({
+    //             open: false,
+    //         })
+    //     }
+    // }
 
-            const workflowCheckpointsWithUpdatedCheckpoint = this.state.workflow!.map((checkpoint) => {
-                if (checkpoint.id === this.state.checkpointId) {
-                    return checkpointUpdateRequest;
-                } else {
-                    return checkpoint;
-                }
-            })
+    // private async handleSave() {
+    //     const companyId = this.props.match.path.split('/')[2];
 
-            if (this._isMounted) {
-                this.setState({
-                    open: false,
-                    addingOrUpdatingCheckpoint: false,
-                    workflow: workflowCheckpointsWithUpdatedCheckpoint,
-                })
-            }
-        }
-    }
+    //     if (!this.state.isUpdate) {
+    //         const checkpointCreateRequest: IWorkflowCheckpointCreateRequest = {
+    //             name: this.state.checkpointName.value,
+    //             estimatedCompletionTime: this.state.estimatedCompletionTime.value,
+    //             visibleToDoctor: this.state.visibleToDoctor,
+    //         }
+
+    //         if (this._isMounted) {
+    //             this.setState({
+    //                 addingOrUpdatingCheckpoint: true,
+    //             })
+    //         }
+
+    //         const addedCheckpoint = await Api.workflowApi.addWorkflowCheckpoint(companyId, checkpointCreateRequest);
+
+    //         const workflowCheckpointsWithAddedCheckpoint = this.state.workflow!.concat([
+    //             addedCheckpoint,
+    //         ])
+
+    //         if (this._isMounted) {
+    //             this.setState({
+    //                 open: false,
+    //                 addingOrUpdatingCheckpoint: false,
+    //                 workflow: workflowCheckpointsWithAddedCheckpoint,
+    //             })
+    //         }
+    //     } else {
+    //         const checkpointUpdateRequest: IWorkflowCheckpoint = {
+    //             id: this.state.checkpointId,
+    //             name: this.state.checkpointName.value,
+    //             estimatedCompletionTime: this.state.estimatedCompletionTime.value,
+    //             visibleToDoctor: this.state.visibleToDoctor,
+    //         }
+
+    //         if (this._isMounted) {
+    //             this.setState({
+    //                 addingOrUpdatingCheckpoint: true,
+    //             })
+    //         }
+
+    //         await Api.workflowApi.updateWorkflowCheckpoint(companyId, checkpointUpdateRequest);
+
+    //         const workflowCheckpointsWithUpdatedCheckpoint = this.state.workflow!.map((checkpoint) => {
+    //             if (checkpoint.id === this.state.checkpointId) {
+    //                 return checkpointUpdateRequest;
+    //             } else {
+    //                 return checkpoint;
+    //             }
+    //         })
+
+    //         if (this._isMounted) {
+    //             this.setState({
+    //                 open: false,
+    //                 addingOrUpdatingCheckpoint: false,
+    //                 workflow: workflowCheckpointsWithUpdatedCheckpoint,
+    //             })
+    //         }
+    //     }
+    // }
 }
 
 export const Workflow = withTheme()(WorkflowPresentation);

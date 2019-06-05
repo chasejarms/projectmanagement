@@ -19,7 +19,21 @@ export class WorkflowApi implements IWorkflowApi {
             } as IWorkflowCheckpoint;
         });
 
-        return fullWorkflowCheckpoints;
+        // TODO: I will need to fix this one.
+        return fullWorkflowCheckpoints as any;
+    }
+
+    public async getWorkflows(companyId: string): Promise<IWorkflow[]> {
+        const workflowDocumentSnapshot = await this.getWorkflowDocumentSnapshotPromise(companyId);
+
+        const workflows = workflowDocumentSnapshot.docs.map((doc) => {
+            return {
+                ...doc.data() as IWorkflow,
+                id: doc.id,
+            };
+        });
+
+        return workflows;
     }
 
     public async addWorkflowCheckpoint(companyId: string, workflowCheckpoint: IWorkflowCheckpointCreateRequest): Promise<IWorkflowCheckpoint> {

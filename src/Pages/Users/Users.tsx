@@ -126,7 +126,8 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
         if (this._isMounted) {
             this.setState({
                 users,
-                checkpoints,
+                // TODO: Will need to fix this as well
+                checkpoints: checkpoints as any,
             })
         }
     }

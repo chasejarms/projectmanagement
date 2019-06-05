@@ -28,6 +28,7 @@ import { Project } from '../Project/Project';
 import { Projects } from '../Projects/Projects';
 import { Users } from '../Users/Users';
 import { UserSettings } from '../UserSettings/UserSettings';
+import { Workflow } from '../Workflow/Workflow';
 import { Workflows } from '../Workflows/Workflows';
 import {
     createAuthenticatedClasses,
@@ -166,6 +167,12 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                             mustHaveRole={[UserType.Admin]}
                             path={this.props.match.url + '/workflows'}
                             component={Workflows as any}
+                            exact={true}
+                        />
+                        <RouteGuard
+                            mustHaveRole={[UserType.Admin]}
+                            path={this.props.match.url + '/workflows/:workflowId'}
+                            component={Workflow as any}
                             exact={true}
                         />
                         <Route
