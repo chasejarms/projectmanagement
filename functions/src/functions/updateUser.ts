@@ -70,7 +70,6 @@ export const updateUserLocal = (passedInAdmin: admin.app.App) => functions.https
     const userBeforeUpdate = userWeAreTryingToUpdateSnapshot.docs[0].data() as IUser;
     const isUpdatingSelf = context.auth.uid === userBeforeUpdate.authUserId;
     const updatedUser = {
-        email: data.email,
         name: data.name,
         type: isUpdatingSelf ? userBeforeUpdate.type : data.type,
     };

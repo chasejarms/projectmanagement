@@ -268,7 +268,7 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                                     {userFullNameError}
                                 </FormHelperText>
                             </FormControl>
-                            <FormControl required={true} error={userEmail.shouldShowError()}>
+                            <FormControl required={true} error={userEmail.shouldShowError()} disabled={this.state.isUpdate}>
                                 <InputLabel>Email</InputLabel>
                                 <Input
                                     name="newUserEmail"
