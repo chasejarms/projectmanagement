@@ -42,7 +42,7 @@ export const createAuthenticatedClasses = (
 
     const drawerContainer = css({
         flexShrink: 0,
-        width: '56px !important',
+        width: '182px !important',
         height: '100%',
     });
 
@@ -77,7 +77,19 @@ export const createAuthenticatedClasses = (
 
     const listItemIcon = css({
         marginRight: '0px !important',
-    })
+    });
+
+    const logoContainer = css({
+        padding: 16,
+    });
+
+    const navigationWord = css({
+        fontSize: 25,
+        color: 'rgba(0, 0, 0, 0.54)',
+        lineHeight: '19px',
+        marginLeft: 8,
+        fontWeight: 400,
+    });
 
     return {
         iconContainer,
@@ -89,5 +101,7 @@ export const createAuthenticatedClasses = (
         pageBackgroundLayerTwo,
         pageBackgroundLayerThree,
         listItemIcon,
+        logoContainer,
+        navigationWord,
     }
 }

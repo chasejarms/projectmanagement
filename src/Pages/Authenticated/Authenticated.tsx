@@ -4,7 +4,7 @@ import {
     List,
     ListItem,
     ListItemIcon,
-    Tooltip,
+    ListItemText,
 } from '@material-ui/core';
 import { withTheme } from '@material-ui/core';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
@@ -23,6 +23,7 @@ import { UserType } from 'src/Models/userTypes';
 import { removeUserForCompany } from 'src/Redux/ActionCreators/userActionCreators';
 import { IAppState } from 'src/Redux/Reducers/rootReducer';
 import Api from '../../Api/api';
+import { Logo } from '../../Components/Logo/Logo';
 import { CaseCreation } from '../CaseCreation/CaseCreation';
 import { NotFound } from '../NotFound/NotFound';
 import { PrescriptionBuilder } from '../PrescriptionBuilder/PrescriptionBuilder';
@@ -49,6 +50,7 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
             pageBackgroundLayerTwo,
             pageBackgroundLayerThree,
             listItemIcon,
+            logoContainer,
         } = createAuthenticatedClasses(this.props, this.state);
 
         const companyId = this.props.location.pathname.split('/')[2];
@@ -65,92 +67,88 @@ export class AuthenticatedPresentation extends React.Component<IAuthenticatedPro
                     >
                         <List className={list}>
                             <div>
-                                <Tooltip title="Cases" placement="right" disableFocusListener={true}>
-                                    <ListItem
-                                        button={true}
-                                        className={iconContainer}
-                                        onClick={this.navigateToProjects}
-                                    >
-                                        <ListItemIcon className={listItemIcon}>
-                                            <AssignmentIcon className={iconStyling}/>
-                                        </ListItemIcon>
-                                    </ListItem>
-                                </Tooltip>
+                                <div className={logoContainer}>
+                                    <Logo color="blue" width={150}/>
+                                </div>
+                                <ListItem
+                                    button={true}
+                                    className={iconContainer}
+                                    onClick={this.navigateToProjects}
+                                >
+                                    <ListItemIcon className={listItemIcon}>
+                                        <AssignmentIcon className={iconStyling}/>
+                                    </ListItemIcon>
+                                    <ListItemText>Cases</ListItemText>
+                                </ListItem>
                                 {userIsNotAdmin ? undefined : (
                                     <div>
-                                        <Tooltip title="Users" placement="right" disableFocusListener={true}>
-                                            <ListItem
-                                                button={true}
-                                                className={iconContainer}
-                                                onClick={this.navigateToUsers}
-                                            >
-                                                <ListItemIcon className={listItemIcon}>
-                                                    <PeopleIcon className={iconStyling}/>
-                                                </ListItemIcon>
-                                            </ListItem>
-                                        </Tooltip>
-                                        <Tooltip title="Workflow" placement="right" disableFocusListener={true}>
-                                            <ListItem
-                                                button={true}
-                                                className={iconContainer}
-                                                onClick={this.navigateToWorkflow}
-                                            >
-                                                <ListItemIcon className={listItemIcon}>
-                                                    <ListIcon className={iconStyling}/>
-                                                </ListItemIcon>
-                                            </ListItem>
-                                        </Tooltip>
-                                        <Tooltip title="Prescription Builder" placement="right" disableFocusListener={true}>
-                                            <ListItem
-                                                button={true}
-                                                className={iconContainer}
-                                                onClick={this.navigateToPrescriptionBuilder}
-                                            >
-                                                <ListItemIcon className={listItemIcon}>
-                                                    <DescriptionIcon className={iconStyling}/>
-                                                </ListItemIcon>
-                                            </ListItem>
-                                        </Tooltip>
+                                        <ListItem
+                                            button={true}
+                                            className={iconContainer}
+                                            onClick={this.navigateToUsers}
+                                        >
+                                            <ListItemIcon className={listItemIcon}>
+                                                <PeopleIcon className={iconStyling}/>
+                                            </ListItemIcon>
+                                            <ListItemText>Users</ListItemText>
+                                        </ListItem>
+                                        <ListItem
+                                            button={true}
+                                            className={iconContainer}
+                                            onClick={this.navigateToWorkflow}
+                                        >
+                                            <ListItemIcon className={listItemIcon}>
+                                                <ListIcon className={iconStyling}/>
+                                            </ListItemIcon>
+                                            <ListItemText>Workflow</ListItemText>
+                                        </ListItem>
+                                        <ListItem
+                                            button={true}
+                                            className={iconContainer}
+                                            onClick={this.navigateToPrescriptionBuilder}
+                                        >
+                                            <ListItemIcon className={listItemIcon}>
+                                                <DescriptionIcon className={iconStyling}/>
+                                            </ListItemIcon>
+                                            <ListItemText>Prescription</ListItemText>
+                                        </ListItem>
                                     </div>
                                 )}
                             </div>
                             <div>
                                 <Divider/>
                                 {this.props.hasMultipleCompanies ? (
-                                    <Tooltip title="Company Selection" placement="right">
-                                        <ListItem
-                                            button={true}
-                                            className={iconContainer}
-                                            onClick={this.navigateToCompanySelection}
-                                        >
-                                            <ListItemIcon className={listItemIcon}>
-                                                <WorkIcon className={iconStyling}/>
-                                            </ListItemIcon>
-                                        </ListItem>
-                                    </Tooltip>
+                                    <ListItem
+                                        button={true}
+                                        className={iconContainer}
+                                        onClick={this.navigateToCompanySelection}
+                                    >
+                                        <ListItemIcon className={listItemIcon}>
+                                            <WorkIcon className={iconStyling}/>
+                                        </ListItemIcon>
+                                        <ListItemText>Companies</ListItemText>
+                                    </ListItem>
                                 ) : undefined}
-                                <Tooltip title="User Settings" placement="right">
-                                    <ListItem
-                                        button={true}
-                                        className={iconContainer}
-                                        onClick={this.navigateToUserSettings}
-                                    >
-                                        <ListItemIcon className={listItemIcon}>
-                                            <AccountBoxIcon className={iconStyling}/>
-                                        </ListItemIcon>
-                                    </ListItem>
-                                </Tooltip>
-                                <Tooltip title="Logout" placement="right" disableFocusListener={true}>
-                                    <ListItem
-                                        button={true}
-                                        className={iconContainer}
-                                        onClick={this.logout}
-                                    >
-                                        <ListItemIcon className={listItemIcon}>
-                                            <ExitToAppIcon className={iconStyling}/>
-                                        </ListItemIcon>
-                                    </ListItem>
-                                </Tooltip>
+                                <ListItem
+                                    button={true}
+                                    className={iconContainer}
+                                    onClick={this.navigateToUserSettings}
+                                >
+                                    <ListItemIcon className={listItemIcon}>
+                                        <AccountBoxIcon className={iconStyling}/>
+                                    </ListItemIcon>
+                                    <ListItemText>Settings</ListItemText>
+                                </ListItem>
+                                <ListItem
+                                    button={true}
+                                    className={iconContainer}
+                                    onClick={this.logout}
+                                >
+                                    <ListItemIcon className={listItemIcon}>
+                                        <ExitToAppIcon className={iconStyling}/>
+                                    </ListItemIcon>
+                                    <ListItemText>Logout</ListItemText>
+                                </ListItem>
                             </div>
                         </List>
                     </Drawer>
