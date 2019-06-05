@@ -1,4 +1,5 @@
 import {
+    Button,
     FormControl,
     FormHelperText,
     Input,
@@ -7,14 +8,16 @@ import {
     Typography,
 } from '@material-ui/core';
 import * as React from 'react';
+import { withRouter } from 'react-router';
 import { FormControlState } from 'src/Classes/formControlState';
 import { AsyncButton } from 'src/Components/AsyncButton/AsyncButton';
 import { emailValidator } from 'src/Validators/email.validator';
 import { requiredValidator } from 'src/Validators/required.validator';
 import Api from '../../Api/api';
+import { Logo } from '../../Components/Logo/Logo';
 import { createContactUsClasses, IContactUsProps, IContactUsState } from './ContactUs.ias';
 
-export class ContactUs extends React.Component<IContactUsProps, IContactUsState> {
+export class ContactUsPresentation extends React.Component<IContactUsProps, IContactUsState> {
     // tslint:disable-next-line:variable-name
     public _isMounted: boolean;
 
@@ -62,6 +65,8 @@ export class ContactUs extends React.Component<IContactUsProps, IContactUsState>
             pageContainer,
             formContainer,
             submitButtonContainer,
+            logoContainer,
+            homeButtonContainer,
         } = createContactUsClasses(this.props, this.state);
 
         const {
@@ -78,6 +83,12 @@ export class ContactUs extends React.Component<IContactUsProps, IContactUsState>
 
         return (
             <div className={pageContainer}>
+                <div className={logoContainer}>
+                    <Logo color="blue" width={150}/>
+                </div>
+                <div className={homeButtonContainer}>
+                    <Button color="secondary" variant="contained" onClick={this.navigateToHome}>Home</Button>
+                </div>
                 <div className={formContainer}>
                     <Typography variant="h4">
                         Contact Us
@@ -235,4 +246,10 @@ export class ContactUs extends React.Component<IContactUsProps, IContactUsState>
                 .markAsInvalid(),
         })
     }
+
+    private navigateToHome = (): void => {
+        this.props.history.push('');
+    }
 }
+
+export const ContactUs = withRouter(ContactUsPresentation);

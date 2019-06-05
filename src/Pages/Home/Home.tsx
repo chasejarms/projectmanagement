@@ -36,6 +36,7 @@ export class HomePresentation extends React.Component<IHomeProps, IHomeState> {
             footerText,
             homePageContainer,
             logoContainer,
+            contactUsButton,
         } = createHomeClasses(this.props, this.state);
 
         const features = [
@@ -72,6 +73,7 @@ export class HomePresentation extends React.Component<IHomeProps, IHomeState> {
                     }} className={dentalLabCloseUpContainer}>
                         <div className={navigationBar}>
                             <Button variant="contained" color="secondary" onClick={this.navigateToLogin}>Login</Button>
+                            <Button className={contactUsButton} variant="contained" color="secondary" onClick={this.navigateToContactUs}>Contact Us</Button>
                         </div>
                         <div className={dentalLabCloseUpContent}>
                             <Typography variant="h2" className={mainTopSectionText}>
@@ -120,6 +122,10 @@ export class HomePresentation extends React.Component<IHomeProps, IHomeState> {
 
     private navigateToLogin = (): void => {
         this.props.history.push('login');
+    }
+
+    private navigateToContactUs = (): void => {
+        this.props.history.push('contactUs');
     }
 }
 

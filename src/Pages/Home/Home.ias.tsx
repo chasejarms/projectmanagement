@@ -35,6 +35,10 @@ export const createHomeClasses = (
         top: '0',
     });
 
+    const contactUsButton = css({
+        marginLeft: '16px !important',
+    })
+
     const dentalLabCloseUpContent = css({
         flex: 1,
         display: 'flex',
@@ -137,5 +141,6 @@ export const createHomeClasses = (
         footerText,
         homePageContainer,
         logoContainer,
+        contactUsButton,
     };
 }

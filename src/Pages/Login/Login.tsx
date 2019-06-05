@@ -67,6 +67,7 @@ export class LoginPresentation extends React.Component<
             link,
             linkContainer,
             logoContainer,
+            backToHomeContainer,
         } = createAuthenticationClasses(this.props, this.state);
 
         const {
@@ -81,6 +82,9 @@ export class LoginPresentation extends React.Component<
             <div className={loginContainer}>
                 <div className={logoContainer}>
                     <Logo color="blue" width={150}/>
+                </div>
+                <div className={backToHomeContainer}>
+                    <Button color="secondary" variant="contained" onClick={this.navigateToHomePage}>Home</Button>
                 </div>
                 <div className={loginRow}>
                     <FormControl required={true} className={textField} error={this.state.email.shouldShowError()}>
@@ -188,6 +192,10 @@ export class LoginPresentation extends React.Component<
 
     private navigateToResetPassword = (): void => {
         this.props.history.push('resetPassword');
+    }
+
+    private navigateToHomePage = (): void => {
+        this.props.history.push('');
     }
 
     private handleFormControlChange = (event: any): void => {

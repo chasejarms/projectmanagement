@@ -55,13 +55,20 @@ export const createAuthenticationClasses = (
   const linkContainer = css({
     display: 'flex',
   });
-  
+
   const logoContainer = css({
     position: 'absolute',
     top: 0,
     left: 0,
     padding: 16,
-  })
+  });
+
+  const backToHomeContainer = css({
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    padding: 16,
+  });
 
   return {
     loginContainer,
@@ -72,5 +79,6 @@ export const createAuthenticationClasses = (
     link,
     linkContainer,
     logoContainer,
+    backToHomeContainer,
   };
 }

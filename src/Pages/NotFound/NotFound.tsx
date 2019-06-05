@@ -30,7 +30,7 @@ class NotFoundPresentation extends React.Component<INotFoundProps, INotFoundStat
                 <Paper className={notFoundPaper}>
                     <Typography variant="h1" className={notFoundTitle}>404</Typography>
                     <Typography variant="subtitle1" className={notFoundDescription}>Sorry, it looks like the page you were searching for doesn't exist or has been moved.</Typography>
-                    <Button onClick={this.navigateToHomePage} color="secondary">Home Page</Button>
+                    <Button onClick={this.navigateToHomePage} color="secondary">Home</Button>
                 </Paper>
             </div>
         )

@@ -1,4 +1,4 @@
-import { FormControl, FormHelperText, Input, InputLabel, Snackbar, Typography, withTheme } from '@material-ui/core';
+import { Button, FormControl, FormHelperText, Input, InputLabel, Snackbar, Typography, withTheme } from '@material-ui/core';
 import * as React from 'react';
 import { FormControlState } from 'src/Classes/formControlState';
 import { AsyncButton } from 'src/Components/AsyncButton/AsyncButton';
@@ -40,6 +40,7 @@ export class ResetPasswordPresentation extends React.Component<IResetPasswordPro
             link,
             linkContainer,
             logoContainer,
+            backToHomeContainer,
         } = createResetPasswordClasses(this.props, this.state);
 
         const {
@@ -53,9 +54,12 @@ export class ResetPasswordPresentation extends React.Component<IResetPasswordPro
                 <div className={logoContainer}>
                     <Logo width={150} color="blue"/>
                 </div>
+                <div className={backToHomeContainer}>
+                    <Button color="secondary" variant="contained" onClick={this.navigateToHomePage}>Home</Button>
+                </div>
                 <div className={controlContainer}>
                     <FormControl required={true} fullWidth={true} error={this.state.email.shouldShowError()}>
-                        <InputLabel>Email To Reset</InputLabel>
+                        <InputLabel>Email</InputLabel>
                         <Input
                             name="email"
                             value={this.state.email.value}
@@ -101,6 +105,11 @@ export class ResetPasswordPresentation extends React.Component<IResetPasswordPro
             </div>
         )
     }
+
+    private navigateToHomePage = (): void => {
+        this.props.history.push('');
+    }
+
 
     private navigateToLogin = (): void => {
         this.props.history.push('login');

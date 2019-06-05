@@ -1,8 +1,9 @@
 import { css } from 'emotion';
+import { RouteComponentProps } from 'react-router';
 import { IFormControlState } from "src/Classes/formControlState";
 
 // tslint:disable-next-line:no-empty-interface
-export interface IContactUsProps {}
+export interface IContactUsProps extends RouteComponentProps<any> {}
 // tslint:disable-next-line:no-empty-interface
 export interface IContactUsState {
     name: IFormControlState<string>;
@@ -26,6 +27,7 @@ export const createContactUsClasses = (
         alignItems: 'center',
         boxSizing: 'border-box',
         padding: 32,
+        position: 'relative',
     });
 
     const formContainer = css({
@@ -40,11 +42,27 @@ export const createContactUsClasses = (
         width: '100%',
         justifyContent: 'flex-end',
         paddingTop: 16,
-    })
+    });
+
+    const logoContainer = css({
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        padding: 16,
+    });
+
+    const homeButtonContainer = css({
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        padding: 16,
+    });
 
     return {
         pageContainer,
         formContainer,
         submitButtonContainer,
+        logoContainer,
+        homeButtonContainer,
     };
 }
