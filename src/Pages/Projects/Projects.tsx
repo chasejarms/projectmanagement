@@ -65,14 +65,14 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         retrievingQRCodes: false,
         showFilterCasesDialog: false,
         selectedFilter: {
-            completionStatus: CompletionStatus.All,
+            completionStatus: CompletionStatus.Incomplete,
             startedStatus: StartedStatus.All,
             doctorFlag: DoctorFlag.All,
             checkpointFlag: CheckpointFlag.All,
             notificationFlag: NotificationFlag.All,
         },
         dialogDisplayFilter: {
-            completionStatus: CompletionStatus.All,
+            completionStatus: CompletionStatus.Incomplete,
             startedStatus: StartedStatus.All,
             doctorFlag: DoctorFlag.All,
             checkpointFlag: CheckpointFlag.All,
