@@ -328,6 +328,12 @@ export const createPrescriptionBuilderClasses = (
         }
     });
 
+    const noSectionsContainer = css({
+        paddingLeft: 32,
+        paddingRight: 32,
+        paddingBottom: 32,
+    });
+
     return {
         logoAndImageContainer,
         prescriptionBuilderContainer,
@@ -375,5 +381,6 @@ export const createPrescriptionBuilderClasses = (
         takeUpRemainingSpaceFlex,
         companyLogoImageInnerContainer,
         removeLogoIcon,
+        noSectionsContainer,
     };
 }

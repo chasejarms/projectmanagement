@@ -141,6 +141,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
             takeUpRemainingSpaceFlex,
             companyLogoImageInnerContainer,
             removeLogoIcon,
+            noSectionsContainer,
         } = createPrescriptionBuilderClasses(this.props, this.state);
 
         const {
@@ -188,7 +189,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                 ) : (
                     <Paper className={prescriptionFormContainer}>
                         {sectionOrder.length === 0 ? (
-                            <div>
+                            <div className={noSectionsContainer}>
                                 <FormElementDropZone
                                     heightInPixels={100}
                                     showBorderWithNoDragInProgress={true}
