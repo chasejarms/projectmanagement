@@ -4,11 +4,13 @@ import { IUser } from '../../Models/user';
 import { IUserSliceOfState } from '../../Redux/Reducers/userReducer';
 
 import * as _ from 'firebase';
+import { IAuthenticatedUISliceOfState } from 'src/Redux/Reducers/authenticatedUIReducer';
 
 export interface IRouteGuardPresentationProps extends RouteComponentProps<{}> {
   path: string;
   component: React.ComponentClass;
   userState: IUserSliceOfState;
+  authenticatedUIState: IAuthenticatedUISliceOfState;
   setUser: (companyId: string, user: IUser) => void;
   setHasMultipleCompanies: (hasMultipleCompanies: boolean) => void;
   mustHaveRole: string[];

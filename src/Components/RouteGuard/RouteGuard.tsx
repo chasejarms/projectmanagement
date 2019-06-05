@@ -121,8 +121,16 @@ class RouteGuardPresentation extends React.Component<IRouteGuardPresentationProp
         id: userDocumentSnapshot.id,
       });
 
-      const hasMultipleCompanies = companyUserJoinQuerySnapshot.docs.length > 1;
-      this.props.setHasMultipleCompanies(hasMultipleCompanies);
+      if (!this.props.authenticatedUIState.hasMultipleCompanies) {
+        db.collection(Collections.CompanyAuthUserJoin)
+          .where('authUserId', '==', user.uid)
+          .get()
+          .then((companyAuthUserJoinQuerySnapshot) => {
+            if (companyAuthUserJoinQuerySnapshot.docs.length > 1) {
+              this.props.setHasMultipleCompanies(true);
+            }
+          });
+      }
 
       const userData = userDocumentSnapshot.data()! as IUser;
       this.setViewRights(userData);
@@ -154,8 +162,9 @@ class RouteGuardPresentation extends React.Component<IRouteGuardPresentationProp
   }
 }
 
-const mapStateToProps = ({ userState }: IAppState) => ({
-  userState
+const mapStateToProps = ({ userState, authenticatedUIState }: IAppState) => ({
+  userState,
+  authenticatedUIState,
 });
 
 const mapDispatchToProps = (dispatch: React.Dispatch<any>) => ({

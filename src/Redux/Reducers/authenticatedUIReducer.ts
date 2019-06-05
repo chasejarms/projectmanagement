@@ -20,6 +20,6 @@ export const authenticatedUIReducer = (
                 hasMultipleCompanies: setHasMultipleCompaniesAction.hasMultipleCompanies,
             }
         default:
-            return initialState;
+            return state;
     }
 }

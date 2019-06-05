@@ -25,7 +25,7 @@ export const caseCreationReducer = (
                 updateAction,
             );
         default:
-            return initialState;
+            return state;
     }
 }
 

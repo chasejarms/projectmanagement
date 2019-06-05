@@ -33,7 +33,7 @@ export const existingCaseReducer = (
             };
         case CLEAR_EXISTING_CASE_STATE:
         default:
-            return initialState;
+            return state;
     }
 }
 

@@ -144,7 +144,7 @@ export const prescriptionBuilderReducer = (state: IPrescriptionBuilderSliceOfSta
                 action as ISetCompanyLogoUrlPrescriptionFormTemplateAction,
             );
         default:
-            return state;
+            return initialState;
     }
 }
 
