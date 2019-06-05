@@ -26,7 +26,7 @@ class MainPresentation extends React.Component<IMainPresentationProps, IMainPres
         <div>
           <Switch>
             <Route
-              path="/signup"
+              path="/secretSignUp"
               component={SignUp}
               exact={true}
             />
