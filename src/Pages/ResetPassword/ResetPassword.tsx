@@ -4,6 +4,7 @@ import { FormControlState } from 'src/Classes/formControlState';
 import { AsyncButton } from 'src/Components/AsyncButton/AsyncButton';
 import { emailValidator } from 'src/Validators/email.validator';
 import { requiredValidator } from 'src/Validators/required.validator';
+import { Logo } from '../../Components/Logo/Logo';
 import firebase from '../../firebase';
 import { createResetPasswordClasses, IResetPasswordProps, IResetPasswordState } from './ResetPassword.ias';
 
@@ -38,6 +39,7 @@ export class ResetPasswordPresentation extends React.Component<IResetPasswordPro
             actionItemContainer,
             link,
             linkContainer,
+            logoContainer,
         } = createResetPasswordClasses(this.props, this.state);
 
         const {
@@ -48,6 +50,9 @@ export class ResetPasswordPresentation extends React.Component<IResetPasswordPro
 
         return (
             <div className={resetPasswordContainer}>
+                <div className={logoContainer}>
+                    <Logo width={150} color="blue"/>
+                </div>
                 <div className={controlContainer}>
                     <FormControl required={true} fullWidth={true} error={this.state.email.shouldShowError()}>
                         <InputLabel>Email To Reset</InputLabel>

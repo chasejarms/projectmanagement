@@ -22,6 +22,7 @@ export const createAuthenticationClasses = (
     width: '100vw',
     justifyContent: 'center',
     alignItems: 'center',
+    position: 'relative',
   })
 
   const loginRow = css({
@@ -54,6 +55,13 @@ export const createAuthenticationClasses = (
   const linkContainer = css({
     display: 'flex',
   });
+  
+  const logoContainer = css({
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    padding: 16,
+  })
 
   return {
     loginContainer,
@@ -63,5 +71,6 @@ export const createAuthenticationClasses = (
     actionButton,
     link,
     linkContainer,
+    logoContainer,
   };
 }

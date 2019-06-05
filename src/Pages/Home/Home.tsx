@@ -10,6 +10,7 @@ import TrackChangesIcon from '@material-ui/icons/TrackChanges';
 import * as React from 'react';
 import { withRouter } from 'react-router';
 import * as scrollIntoView from 'scroll-into-view';
+import { Logo } from '../../Components/Logo/Logo';
 import { createHomeClasses, IHomeProps, IHomeState } from './Home.ias';
 
 // tslint:disable-next-line:no-var-requires
@@ -33,6 +34,8 @@ export class HomePresentation extends React.Component<IHomeProps, IHomeState> {
             subtitleText,
             footerSection,
             footerText,
+            homePageContainer,
+            logoContainer,
         } = createHomeClasses(this.props, this.state);
 
         const features = [
@@ -59,7 +62,10 @@ export class HomePresentation extends React.Component<IHomeProps, IHomeState> {
         ]
 
         return (
-            <div>
+            <div className={homePageContainer}>
+                <div className={logoContainer}>
+                    <Logo width={150} color="white"/>
+                </div>
                 <div className={topSectionContainer}>
                     <div style={{
                         backgroundImage: `url(${dentalLabCloseUpSrc})`

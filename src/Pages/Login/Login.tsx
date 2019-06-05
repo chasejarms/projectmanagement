@@ -18,6 +18,7 @@ import { passwordValidator } from 'src/Validators/password.validator';
 import Api from '../../Api/api';
 import { FormControlState } from '../../Classes/formControlState';
 import { AsyncButton } from '../../Components/AsyncButton/AsyncButton';
+import { Logo } from '../../Components/Logo/Logo';
 import firebase from '../../firebase';
 import { requiredValidator } from '../../Validators/required.validator';
 import { createAuthenticationClasses, ILoginPresentationProps, ILoginPresentationState } from './Login.ias';
@@ -65,6 +66,7 @@ export class LoginPresentation extends React.Component<
             actionButton,
             link,
             linkContainer,
+            logoContainer,
         } = createAuthenticationClasses(this.props, this.state);
 
         const {
@@ -77,6 +79,9 @@ export class LoginPresentation extends React.Component<
 
         return (
             <div className={loginContainer}>
+                <div className={logoContainer}>
+                    <Logo color="blue" width={150}/>
+                </div>
                 <div className={loginRow}>
                     <FormControl required={true} className={textField} error={this.state.email.shouldShowError()}>
                         <InputLabel>Email</InputLabel>

@@ -12,6 +12,7 @@ import {
 } from '@material-ui/core';
 import { withTheme } from '@material-ui/core';
 import * as React from 'react';
+import { Logo } from 'src/Components/Logo/Logo';
 import { companyNameValidator } from 'src/Validators/companyName.validator';
 import { emailValidator } from 'src/Validators/email.validator';
 import { passwordValidator } from 'src/Validators/password.validator';
@@ -74,6 +75,7 @@ export class SignUpPresentation extends React.Component<
             textField,
             actionContainer,
             actionButton,
+            logoContainer,
         } = createAuthenticationClasses(this.props, this.state);
 
         const {
@@ -90,6 +92,9 @@ export class SignUpPresentation extends React.Component<
 
         return (
             <div className={signUpContainer}>
+                <div className={logoContainer}>
+                    <Logo color="blue" width={150}/>
+                </div>
                 <div className={signUpRow}>
                     <FormControl required={true} className={textField} error={this.state.companyName.shouldShowError()}>
                         <InputLabel>Company Name</InputLabel>

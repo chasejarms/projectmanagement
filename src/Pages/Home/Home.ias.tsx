@@ -107,6 +107,18 @@ export const createHomeClasses = (
         color: '#50566A !important',
     });
 
+    const homePageContainer = css({
+        position: 'relative',
+    });
+
+    const logoContainer = css({
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        padding: 16,
+        zIndex: 1,
+    });
+
     return {
         dentalLabCloseUpContainer,
         topSectionContainer,
@@ -123,5 +135,7 @@ export const createHomeClasses = (
         subtitleText,
         footerSection,
         footerText,
+        homePageContainer,
+        logoContainer,
     };
 }

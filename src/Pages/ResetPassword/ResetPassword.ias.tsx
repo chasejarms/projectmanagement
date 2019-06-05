@@ -52,11 +52,19 @@ export const createResetPasswordClasses = (
         paddingTop: 8,
     });
 
+    const logoContainer = css({
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        padding: 16,
+    })
+
     return {
         resetPasswordContainer,
         controlContainer,
         actionItemContainer,
         link,
         linkContainer,
+        logoContainer,
     };
 }

@@ -43,6 +43,13 @@ export const createAuthenticationClasses = (
 
   const actionButton = css({
     marginLeft: 'auto !important',
+  });
+
+  const logoContainer = css({
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    padding: 16,
   })
 
   return {
@@ -51,5 +58,6 @@ export const createAuthenticationClasses = (
     textField,
     actionContainer,
     actionButton,
+    logoContainer,
   };
 }
