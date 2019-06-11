@@ -74,7 +74,7 @@ export class WorkflowApi implements IWorkflowApi {
                 name: workflowCheckpoint.name,
                 estimatedCompletionTime: workflowCheckpoint.estimatedCompletionTime,
                 visibleToDoctor: workflowCheckpoint.visibleToDoctor,
-            })
+            }, { merge: true });
 
         return workflowCheckpoint;
     }
