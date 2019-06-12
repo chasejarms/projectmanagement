@@ -21,7 +21,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import AddIcon from '@material-ui/icons/Add';
-import ClearIcon from '@material-ui/icons/Clear';
+// import ClearIcon from '@material-ui/icons/Clear';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
@@ -143,12 +143,12 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
             usersToolbarContainer,
             userRow,
             usersPaper,
-            clearCheckpointIcon,
-            addedItemContainer,
-            automaticScanCheckpointsContainer,
-            potentialCheckpointsContainer,
-            potentialCheckpointsSelect,
-            automaticScanCheckpoints,
+            // clearCheckpointIcon,
+            // addedItemContainer,
+            // automaticScanCheckpointsContainer,
+            // potentialCheckpointsContainer,
+            // potentialCheckpointsSelect,
+            // automaticScanCheckpoints,
             dialogActionButtons,
             cityStateZipContainer,
             nameAndEmailContainer,
@@ -163,36 +163,36 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
             )
         )
 
-        const checkpointItems = this.state.checkpoints.filter((workflowCheckpoint) => {
-            return !this.state.additionalCheckpoints.has(workflowCheckpoint.id);
-        }).map((workflowCheckpoint, index) => {
-            return (
-                <MenuItem
-                    value={workflowCheckpoint.id}
-                    key={index}>
-                    {workflowCheckpoint.name}
-                </MenuItem>
-            )
-        });
+        // const checkpointItems = this.state.checkpoints.filter((workflowCheckpoint) => {
+        //     return !this.state.additionalCheckpoints.has(workflowCheckpoint.id);
+        // }).map((workflowCheckpoint, index) => {
+        //     return (
+        //         <MenuItem
+        //             value={workflowCheckpoint.id}
+        //             key={index}>
+        //             {workflowCheckpoint.name}
+        //         </MenuItem>
+        //     )
+        // });
 
         const addedItems: any[] = [];
         this.state.additionalCheckpoints.forEach((checkpoint) => {
             addedItems.push(checkpoint);
         });
 
-        const workflowIdToNameDictionary = this.state.checkpoints.reduce((acc, workflowCheckpoint) => {
-            acc[workflowCheckpoint.id] = workflowCheckpoint.name;
-            return acc;
-        }, {});
+        // const workflowIdToNameDictionary = this.state.checkpoints.reduce((acc, workflowCheckpoint) => {
+        //     acc[workflowCheckpoint.id] = workflowCheckpoint.name;
+        //     return acc;
+        // }, {});
 
-        const addedItemsWithElement = addedItems.map((addedItem, index) => {
-            return (
-                <div key={index} className={addedItemContainer}>
-                    <Typography>{workflowIdToNameDictionary[addedItem]}</Typography>
-                    <ClearIcon onClick={this.removeCheckpointItem(addedItem)} className={clearCheckpointIcon}/>
-                </div>
-            )
-        });
+        // const addedItemsWithElement = addedItems.map((addedItem, index) => {
+        //     return (
+        //         <div key={index} className={addedItemContainer}>
+        //             <Typography>{workflowIdToNameDictionary[addedItem]}</Typography>
+        //             <ClearIcon onClick={this.removeCheckpointItem(addedItem)} className={clearCheckpointIcon}/>
+        //         </div>
+        //     )
+        // });
         const userRoleIsDoctor = this.state.userRole === UserType.Doctor;
 
         const {
@@ -299,26 +299,27 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
                         </FormControl>
                         {
                             userRoleIsDoctor ? undefined : (
-                                <div className={automaticScanCheckpointsContainer}>
-                                    <div className={potentialCheckpointsContainer}>
-                                        <FormControl disabled={checkpointItems.length === 0} className={potentialCheckpointsSelect}>
-                                            <InputLabel htmlFor="role">Automatic Checkpoint Completion</InputLabel>
-                                            <Select
-                                                name=""
-                                                inputProps={{
-                                                    id: "role",
-                                                }}
-                                                value={""}
-                                                onChange={this.handleAdditionalCheckpoint}
-                                            >
-                                                {checkpointItems}
-                                            </Select>
-                                        </FormControl>
-                                    </div>
-                                    <div className={automaticScanCheckpoints}>
-                                        {addedItemsWithElement}
-                                    </div>
-                                </div>
+                                undefined
+                                // <div className={automaticScanCheckpointsContainer}>
+                                //     <div className={potentialCheckpointsContainer}>
+                                //         <FormControl disabled={checkpointItems.length === 0} className={potentialCheckpointsSelect}>
+                                //             <InputLabel htmlFor="role">Automatic Checkpoint Completion</InputLabel>
+                                //             <Select
+                                //                 name=""
+                                //                 inputProps={{
+                                //                     id: "role",
+                                //                 }}
+                                //                 value={""}
+                                //                 onChange={this.handleAdditionalCheckpoint}
+                                //             >
+                                //                 {checkpointItems}
+                                //             </Select>
+                                //         </FormControl>
+                                //     </div>
+                                //     <div className={automaticScanCheckpoints}>
+                                //         {addedItemsWithElement}
+                                //     </div>
+                                // </div>
                             )
                         }
                         {
@@ -538,27 +539,27 @@ export class UsersPresentation extends React.Component<IUsersPresentationProps, 
         }
     }
 
-    private removeCheckpointItem = (workflowCheckpointId: string) => {
-        const clonedSet = new Set(this.state.additionalCheckpoints);
-        clonedSet.delete(workflowCheckpointId);
-        return () => {
-            if (this._isMounted) {
-                this.setState({
-                    additionalCheckpoints: clonedSet,
-                });
-            }
-        }
-    }
+    // private removeCheckpointItem = (workflowCheckpointId: string) => {
+    //     const clonedSet = new Set(this.state.additionalCheckpoints);
+    //     clonedSet.delete(workflowCheckpointId);
+    //     return () => {
+    //         if (this._isMounted) {
+    //             this.setState({
+    //                 additionalCheckpoints: clonedSet,
+    //             });
+    //         }
+    //     }
+    // }
 
-    private handleAdditionalCheckpoint = (event: any): any => {
-        const clonedSet = new Set(this.state.additionalCheckpoints);
-        clonedSet.add(event.target.value);
-        if (this._isMounted) {
-            this.setState({
-                additionalCheckpoints: clonedSet,
-            });
-        }
-    }
+    // private handleAdditionalCheckpoint = (event: any): any => {
+    //     const clonedSet = new Set(this.state.additionalCheckpoints);
+    //     clonedSet.add(event.target.value);
+    //     if (this._isMounted) {
+    //         this.setState({
+    //             additionalCheckpoints: clonedSet,
+    //         });
+    //     }
+    // }
 
     private openNewUserDialog = () => {
         if (this._isMounted) {
