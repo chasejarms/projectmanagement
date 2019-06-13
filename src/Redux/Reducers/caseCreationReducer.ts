@@ -2,6 +2,7 @@ import { firestore } from 'firebase';
 import { cloneDeep } from "lodash";
 import { ICaseCreationActions, IUpdateControlValueCaseCreationAction } from "../ActionCreators/caseCreationCreator";
 import { UPDATE_CONTROL_VALUE_CASE_CREATION } from "../Actions/caseCreationActions";
+import { CLEAR_CASE_CREATION_STATE } from './../Actions/caseCreationActions';
 
 export interface ICaseCreationSliceOfState {
     controlValues: {
@@ -24,6 +25,8 @@ export const caseCreationReducer = (
                 state,
                 updateAction,
             );
+        case CLEAR_CASE_CREATION_STATE:
+            return initialState;
         default:
             return state;
     }
