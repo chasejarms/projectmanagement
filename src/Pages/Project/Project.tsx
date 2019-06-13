@@ -91,7 +91,13 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         const companyId = this.props.location.pathname.split('/')[2];
         const userIsDoctor = this.props.userState[companyId].type === UserType.Doctor;
         const mappedCheckpoints = this.state.checkpoints ? (
-            this.state.checkpoints!.map((checkpoint: ICaseCheckpoint, index: number) => {
+            this.state.checkpoints!.filter((checkpoint: ICaseCheckpoint) => {
+                if (userIsDoctor) {
+                    return checkpoint.visibleToDoctor;
+                } else {
+                    return true;
+                }
+            }).map((checkpoint: ICaseCheckpoint, index: number) => {
                 return (
                     <TableRow key={index}>
                         <TableCell>{checkpoint.name}</TableCell>
