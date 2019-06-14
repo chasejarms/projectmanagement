@@ -37,6 +37,7 @@ export class HomePresentation extends React.Component<IHomeProps, IHomeState> {
             homePageContainer,
             logoContainer,
             contactUsButton,
+            privacyPolicyText,
         } = createHomeClasses(this.props, this.state);
 
         const features = [
@@ -105,6 +106,7 @@ export class HomePresentation extends React.Component<IHomeProps, IHomeState> {
                 <div id="below-home-page-features-section"/>
                 <div className={footerSection}>
                     <Typography className={footerText}>Shentaro - All Rights Reserved 2019</Typography>
+                    <Typography className={privacyPolicyText} onClick={this.navigateToPrivacyPolicy}>Privacy Policy</Typography>
                 </div>
             </div>
         )
@@ -126,6 +128,10 @@ export class HomePresentation extends React.Component<IHomeProps, IHomeState> {
 
     private navigateToContactUs = (): void => {
         this.props.history.push('contactUs');
+    }
+
+    private navigateToPrivacyPolicy = (): void => {
+        this.props.history.push('privacyPolicy');
     }
 }
 

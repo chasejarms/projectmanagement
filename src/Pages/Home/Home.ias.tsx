@@ -105,6 +105,7 @@ export const createHomeClasses = (
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        flexDirection: 'column',
     });
 
     const footerText = css({
@@ -121,6 +122,14 @@ export const createHomeClasses = (
         left: 0,
         padding: 16,
         zIndex: 1,
+    });
+
+    const privacyPolicyText = css({
+        '&:hover': {
+            cursor: 'pointer',
+            color: 'white !important',
+        },
+        color: '#50566A !important',
     });
 
     return {
@@ -142,5 +151,6 @@ export const createHomeClasses = (
         homePageContainer,
         logoContainer,
         contactUsButton,
+        privacyPolicyText,
     };
 }

@@ -10,6 +10,7 @@ import { ContactUs } from '../ContactUs/ContactUs';
 import { Home } from '../Home/Home';
 import { Login } from '../Login/Login';
 import { NotFound } from '../NotFound/NotFound';
+import { PrivacyPolicy } from '../PrivacyPolicy/PrivacyPolicy';
 import { ResetPassword } from '../ResetPassword/ResetPassword';
 import { SignUp } from '../SignUp/SignUp';
 import {
@@ -53,6 +54,11 @@ class MainPresentation extends React.Component<IMainPresentationProps, IMainPres
             <Route
               path="/contactUs"
               component={ContactUs}
+              exact={true}
+            />
+            <Route
+              path="/privacyPolicy"
+              component={PrivacyPolicy}
               exact={true}
             />
             <Route
