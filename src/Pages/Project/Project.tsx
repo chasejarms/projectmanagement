@@ -18,6 +18,10 @@ import {
 } from "@material-ui/core";
 import DoneIcon from '@material-ui/icons/Done';
 import * as firebase from 'firebase';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+(pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
+// import * as admin from 'firebase-admin';
 import * as React from "react";
 import { connect } from 'react-redux';
 import { withRouter } from "react-router";
@@ -37,7 +41,11 @@ import { QRCodeDisplay } from "src/Components/QRCodeDisplay/QRCodeDisplay";
 import { ICase } from "src/Models/case";
 import { ICaseCheckpoint } from "src/Models/caseCheckpoint";
 import { IDoctorUser } from "src/Models/doctorUser";
+import { INonEditableTextField } from "src/Models/prescription/controls/nonEditableTextField";
+import { INumberTemplateControl } from "src/Models/prescription/controls/numberTemplateControl";
 import { IPrescriptionControlTemplateType } from "src/Models/prescription/controls/prescriptionControlTemplateType";
+import { ISingleLineTextControlTemplate } from "src/Models/prescription/controls/singleLineTextControlTemplate";
+import { ITitleTemplateControl } from "src/Models/prescription/controls/titleTemplateControl";
 import { ShowNewInfoFromType } from "src/Models/showNewInfoFromTypes";
 import { UserType } from "src/Models/userTypes";
 import { setCaseCreationControlValues, updateExistingCaseControlValue } from "src/Redux/ActionCreators/existingCaseActionCreators";
@@ -514,7 +522,96 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
     }
 
     private showQrCodeDialog = (): void => {
-        window.print();
+        const content = this.createPdfContent();
+        pdfMake.createPdf({
+            content,
+            pageOrientation: 'LANDSCAPE' as any,
+        }).print();
+    }
+
+    private createPdfContent = (): pdfMake.Content => {
+        const pdfContent: pdfMake.Content = [];
+        // const doctorUser = this.state.doctorUser!;
+        const caseId = this.props.match.params['projectId'];
+        const controlValues = this.props.existingCaseState.controlValues;
+        pdfContent.push({
+            columns: [
+                {
+                    qr: caseId,
+                    fit: '50'
+                },
+                {
+                    width: '*',
+                    text: '',
+                },
+            ]
+        })
+        this.state.prescriptionFormTemplate!.sectionOrder.forEach((sectionId, sectionIndex) => {
+            const sections = this.state.prescriptionFormTemplate!.sections;
+            const currentSection = sections[sectionId];
+            const controlOrderForSection = currentSection.controlOrder;
+            const noControlForSection = controlOrderForSection.length === 0;
+
+            if (noControlForSection) {
+                return;
+            }
+
+            const sectionContent: pdfMake.Content = [];
+
+            controlOrderForSection.forEach((controlId) => {
+                const control = this.state.prescriptionFormTemplate!.controls[controlId];
+                const controlValue = controlValues[controlId];
+                switch (control.type) {
+                    case IPrescriptionControlTemplateType.Checkbox:
+                        break;
+                    case IPrescriptionControlTemplateType.Date:
+                    case IPrescriptionControlTemplateType.CaseDeadline:
+                        const prettyDeadline = this.makeDeadlinePretty(controlValue.toDate());
+                        sectionContent.push({
+                            text: `${control.label}: ${prettyDeadline}`,
+                        });
+                        break;
+                    case IPrescriptionControlTemplateType.Number:
+                        const numberTextControl = control as INumberTemplateControl;
+                        const formattedNumber = `${numberTextControl.prefix} ${controlValue} ${numberTextControl.suffix}`;
+                        sectionContent.push({
+                            text: `${numberTextControl.label}: ${formattedNumber}`,
+                        })
+                        break;
+                    case IPrescriptionControlTemplateType.SingleLineText:
+                        const singleLineTextControl = control as ISingleLineTextControlTemplate;
+                        sectionContent.push({
+                            text: `${singleLineTextControl.label}: ${controlValue}`,
+                        })
+                        break;
+                    case IPrescriptionControlTemplateType.Title:
+                        const titleControl = control as ITitleTemplateControl;
+                        sectionContent.push({
+                            text: titleControl.title,
+                        })
+                        break;
+                    case IPrescriptionControlTemplateType.NonEditableText:
+                        const nonEditableTextControl = control as INonEditableTextField;
+                        sectionContent.push({
+                            text: nonEditableTextControl.text,
+                        });
+                        break;
+                    default:
+                        break;
+                }
+            })
+
+            pdfContent.push(sectionContent);
+        })
+        return pdfContent;
+    }
+
+    private makeDeadlinePretty = (date: Date): string => {
+        const dateCalendarDay = date.getDate();
+        const dateCalendarMonth = date.getMonth() + 1;
+        const dateCalendarYear = date.getFullYear();
+
+        return `${dateCalendarMonth}/${dateCalendarDay}/${dateCalendarYear}`;
     }
 }
 
