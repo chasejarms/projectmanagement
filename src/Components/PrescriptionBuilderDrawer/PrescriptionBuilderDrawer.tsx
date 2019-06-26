@@ -30,6 +30,7 @@ class PrescriptionBuilderDrawerPresentation extends React.Component<
         const shouldDisable = this.props.disableEdits || !editMode;
         const caseDeadlineAlreadyExists = this.controlAlreadyExists(IPrescriptionControlTemplateType.CaseDeadline);
         const doctorInformationAlreadyExists = this.controlAlreadyExists(IPrescriptionControlTemplateType.DoctorInformation);
+        const patientNameAlreadyExists = this.controlAlreadyExists(IPrescriptionControlTemplateType.PatientName);
 
         return (
             <Drawer
@@ -65,6 +66,7 @@ class PrescriptionBuilderDrawerPresentation extends React.Component<
                             <DraggableFormElement controlType={IPrescriptionControlTemplateType.Title} disableDrag={shouldDisable}/>
                             <DraggableFormElement controlType={IPrescriptionControlTemplateType.CaseDeadline} disableDrag={shouldDisable || caseDeadlineAlreadyExists}/>
                             <DraggableFormElement controlType={IPrescriptionControlTemplateType.File} disableDrag={shouldDisable}/>
+                            <DraggableFormElement controlType={IPrescriptionControlTemplateType.PatientName} disableDrag={shouldDisable || patientNameAlreadyExists}/>
                             {/* <DraggableFormElement controlType={IPrescriptionControlTemplateType.UnitSelection} disableDrag={shouldDisable}/> */}
                         </div>
                     </div>

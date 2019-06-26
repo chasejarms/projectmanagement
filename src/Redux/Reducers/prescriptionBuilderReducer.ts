@@ -8,6 +8,7 @@ import { IMultilineTextControl } from 'src/Models/prescription/controls/multilin
 import { INonEditableTextField } from 'src/Models/prescription/controls/nonEditableTextField';
 import { INumberTemplateControl } from 'src/Models/prescription/controls/numberTemplateControl';
 import { IOption } from 'src/Models/prescription/controls/option';
+import { IPatientNameControl } from 'src/Models/prescription/controls/patientNameControl';
 import { IPrescriptionControlTemplate } from 'src/Models/prescription/controls/prescriptionControlTemplate';
 import { IPrescriptionControlTemplateType } from 'src/Models/prescription/controls/prescriptionControlTemplateType';
 import { ISingleLineTextControlTemplate } from 'src/Models/prescription/controls/singleLineTextControlTemplate';
@@ -370,6 +371,15 @@ const prescriptionFormTemplateFromNewControl = (state: IPrescriptionBuilderSlice
         }
 
         control = fileControl;
+    } else if (type === IPrescriptionControlTemplateType.PatientName) {
+        const singleLineText: IPatientNameControl = {
+            id,
+            type: IPrescriptionControlTemplateType.PatientName,
+            sectionId,
+            label: 'Patient Name',
+        }
+
+        control = singleLineText;
     }
 
     prescriptionFormTemplateCopy.controls[id] = control!;

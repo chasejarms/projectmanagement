@@ -35,6 +35,7 @@ import { FileEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditCompon
 import { MultilineTextEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/MultilineTextEdit/MultilineTextEdit';
 import { NonEditableText } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/NonEditableText/NonEditableText';
 import { NumberEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/NumberEdit/NumberEdit';
+import { PatientNameEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/PatientNameEdit/PatientNameEdit';
 import { SingleLineTextEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/SingleLineTextEdit/SingleLineTextEdit';
 import { TitleEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/TitleEdit/TitleEdit';
 import { ICaseDeadlineControl } from 'src/Models/prescription/controls/caseDeadlineControl';
@@ -338,7 +339,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                         {editMode ? (
                             <div className={savePrescriptionTemplateContainer}>
                                 <Tooltip
-                                    title="Doctor Information and Case Deadline are required fields"
+                                    title="Doctor Information, Case Deadline, and Patient Name are required fields"
                                     placement="left"
                                     disableFocusListener={!prescriptionTemplateIsInvalid}
                                     disableHoverListener={!prescriptionTemplateIsInvalid}
@@ -471,6 +472,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
     private checkPrescriptionTemplateIsInvalid = () => {
         let doctorInformationFieldExists: boolean = false;
         let caseDeadlineFieldExists: boolean = false;
+        let patientNameFieldExists: boolean = false;
 
         this.props.prescriptionBuilderState.prescriptionFormTemplate.sectionOrder.forEach((sectionId) => {
             const section = this.props.prescriptionBuilderState.prescriptionFormTemplate.sections[sectionId];
@@ -480,11 +482,13 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     doctorInformationFieldExists = true;
                 } else if (control.type === IPrescriptionControlTemplateType.CaseDeadline) {
                     caseDeadlineFieldExists = true;
+                } else if (control.type === IPrescriptionControlTemplateType.PatientName) {
+                    patientNameFieldExists = true;
                 }
             })
         });
 
-        return !doctorInformationFieldExists || !caseDeadlineFieldExists;
+        return !doctorInformationFieldExists || !caseDeadlineFieldExists || !patientNameFieldExists;
     }
 
     private correctFieldName = (controlId: string) => {
@@ -512,6 +516,8 @@ export class PrescriptionBuilderPresentation extends React.Component<
                 return 'Unit Selection';
             case IPrescriptionControlTemplateType.CaseDeadline:
                 return 'Case Deadline';
+            case IPrescriptionControlTemplateType.PatientName:
+                return 'Patient Name';
             default:
                 return '';
         }
@@ -629,6 +635,15 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     disabled={disabled}
                     updateControlValueActionCreator={updateControlValue}
                     caseId={'5'}
+                />
+            )
+        } else if (control.type === IPrescriptionControlTemplateType.PatientName) {
+            return (
+                <PatientNameEdit
+                    control={control}
+                    controlValue={controlValue}
+                    disabled={disabled}
+                    updateControlValueActionCreator={updateControlValue}
                 />
             )
         }
@@ -880,7 +895,7 @@ export class PrescriptionBuilderPresentation extends React.Component<
                     </div>
                 </div>
             )
-        } else if (control.type === IPrescriptionControlTemplateType.DoctorInformation) {
+        } else if (control.type === IPrescriptionControlTemplateType.DoctorInformation || control.type === IPrescriptionControlTemplateType.PatientName) {
             return (
                 <div className={threeColumns}>
                     <div>

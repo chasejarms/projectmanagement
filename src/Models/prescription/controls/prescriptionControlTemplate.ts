@@ -7,6 +7,7 @@ import { IFileControl } from './fileControl';
 import { IMultilineTextControl } from './multilineTextControlTemplate';
 import { INonEditableTextField } from './nonEditableTextField';
 import { INumberTemplateControl } from './numberTemplateControl';
+import { IPatientNameControl } from './patientNameControl';
 import { ISingleLineTextControlTemplate } from './singleLineTextControlTemplate';
 import { ITitleTemplateControl } from './titleTemplateControl';
 import { IUnitSelectionControlTemplate } from './unitSelectionControlTemplate';
@@ -22,4 +23,5 @@ export type IPrescriptionControlTemplate = IDoctorInformationTemplateControl |
     IUnitSelectionControlTemplate |
     IDateTemplateControl |
     ICaseDeadlineControl |
-    IFileControl;
+    IFileControl |
+    IPatientNameControl;

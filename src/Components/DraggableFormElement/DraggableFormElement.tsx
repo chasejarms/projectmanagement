@@ -8,6 +8,7 @@ import DescriptionIcon from '@material-ui/icons/Description';
 import NumberIcon from '@material-ui/icons/ExposurePlus1';
 import NotePadIcon from '@material-ui/icons/Notes';
 import PersonIcon from '@material-ui/icons/Person';
+import PatientIcon from '@material-ui/icons/SentimentSatisfied';
 import TextIcon from '@material-ui/icons/TextFields';
 import TitleIcon from '@material-ui/icons/Title';
 import SectionIcon from '@material-ui/icons/ViewAgenda';
@@ -95,6 +96,8 @@ export class DraggableFormElementPresentation extends React.Component<
                     return <DateIcon/>;
                 case IPrescriptionControlTemplateType.File:
                     return <AttachFileIcon/>;
+                case IPrescriptionControlTemplateType.PatientName:
+                    return <PatientIcon/>;
                 default:
                     throw new Error(invalidControlTypeError);
             }
@@ -139,6 +142,8 @@ export class DraggableFormElementPresentation extends React.Component<
                     return 'Case Deadline';
                 case IPrescriptionControlTemplateType.File:
                     return 'File Upload';
+                case IPrescriptionControlTemplateType.PatientName:
+                    return 'Patient Name';
                 default:
                     throw new Error(invalidControlTypeError);
             }
