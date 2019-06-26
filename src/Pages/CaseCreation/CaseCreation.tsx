@@ -19,6 +19,7 @@ import { FileEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditCompon
 import { MultilineTextEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/MultilineTextEdit/MultilineTextEdit';
 import { NonEditableText } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/NonEditableText/NonEditableText';
 import { NumberEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/NumberEdit/NumberEdit';
+import { PatientNameEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/PatientNameEdit/PatientNameEdit';
 import { SingleLineTextEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/SingleLineTextEdit/SingleLineTextEdit';
 import { TitleEdit } from 'src/Components/PrescriptionEdit/PrescriptionEditComponents/TitleEdit/TitleEdit';
 import { IPrescriptionControlTemplateType } from 'src/Models/prescription/controls/prescriptionControlTemplateType';
@@ -143,7 +144,7 @@ export class CaseCreationPresentation extends React.Component<
                     {!this.state.loadingPrescriptionTemplate && this.state.canCreateCases ? (
                         <div className={createCaseButtonContainer}>
                             <Tooltip
-                                title="Doctor Information and Case Deadline are required fields"
+                                title="Doctor Information, Case Deadline, and Patient Name are required fields"
                                 placement="left"
                                 disableFocusListener={!prescriptionTemplateIsInvalid}
                                 disableHoverListener={!prescriptionTemplateIsInvalid}
@@ -204,6 +205,7 @@ export class CaseCreationPresentation extends React.Component<
 
         let doctorInformationHasValue: boolean = false;
         let caseDeadlineHasValue: boolean = false;
+        let patientNameHasValue: boolean = false;
 
         this.state.prescriptionFormTemplate!.sectionOrder.forEach((sectionId) => {
             const section = this.state.prescriptionFormTemplate!.sections[sectionId];
@@ -214,11 +216,13 @@ export class CaseCreationPresentation extends React.Component<
                     doctorInformationHasValue = controlValueExists;
                 } else if (control.type === IPrescriptionControlTemplateType.CaseDeadline) {
                     caseDeadlineHasValue = controlValueExists;
+                } else if (control.type === IPrescriptionControlTemplateType.PatientName) {
+                    patientNameHasValue = controlValueExists;
                 }
             })
         });
 
-        return !doctorInformationHasValue || !caseDeadlineHasValue;
+        return !doctorInformationHasValue || !caseDeadlineHasValue || !patientNameHasValue;
     }
 
     private correctControlDisplay = (controlId: string) => {
@@ -313,6 +317,15 @@ export class CaseCreationPresentation extends React.Component<
                     disabled={false}
                     updateControlValueActionCreator={updateCaseCreationControlValue}
                     caseId={this.state.caseId}
+                />
+            )
+        } else if (control.type === IPrescriptionControlTemplateType.PatientName) {
+            return (
+                <PatientNameEdit
+                    control={control}
+                    controlValue={controlValue}
+                    disabled={false}
+                    updateControlValueActionCreator={updateCaseCreationControlValue}
                 />
             )
         }
