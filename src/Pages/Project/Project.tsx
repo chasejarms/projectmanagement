@@ -37,14 +37,12 @@ import { NonEditableText } from "src/Components/PrescriptionEdit/PrescriptionEdi
 import { NumberEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/NumberEdit/NumberEdit";
 import { SingleLineTextEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/SingleLineTextEdit/SingleLineTextEdit";
 import { TitleEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/TitleEdit/TitleEdit";
-import { QRCodeDisplay } from "src/Components/QRCodeDisplay/QRCodeDisplay";
 import { ICase } from "src/Models/case";
 import { ICaseCheckpoint } from "src/Models/caseCheckpoint";
 import { IDoctorUser } from "src/Models/doctorUser";
 import { INonEditableTextField } from "src/Models/prescription/controls/nonEditableTextField";
 import { INumberTemplateControl } from "src/Models/prescription/controls/numberTemplateControl";
 import { IPrescriptionControlTemplateType } from "src/Models/prescription/controls/prescriptionControlTemplateType";
-import { ISingleLineTextControlTemplate } from "src/Models/prescription/controls/singleLineTextControlTemplate";
 import { ITitleTemplateControl } from "src/Models/prescription/controls/titleTemplateControl";
 import { ShowNewInfoFromType } from "src/Models/showNewInfoFromTypes";
 import { UserType } from "src/Models/userTypes";
@@ -131,8 +129,6 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
 
         const controlValuesExist = Object.keys(this.props.existingCaseState.controlValues).length > 0;
         const dataIsReady = !this.state.loadingPrescriptionTemplate && controlValuesExist;
-        const showQRCodeDisplay = this.props.existingCaseState && this.state.prescriptionFormTemplate && this.state.doctorUser;
-        const caseId = this.props.match.params['projectId'];
 
         return (
             <div className={projectContainer}>
@@ -145,14 +141,6 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                 <div className={contentContainer}>
                     {tabIndex === 0 && (
                         <Paper className={prescriptionPaper}>
-                            {showQRCodeDisplay ? (
-                                <QRCodeDisplay
-                                    controlValues={this.props.existingCaseState.controlValues}
-                                    prescriptionFormTemplate={this.state.prescriptionFormTemplate!}
-                                    doctorUser={this.state.doctorUser!}
-                                    caseId={caseId}
-                                />
-                            ) : undefined}
                             {!dataIsReady ? (
                                 <div className={circularProgressContainer}>
                                     <CircularProgress
@@ -168,7 +156,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                                             <img src={this.state.companyLogoDownloadURL} className={companyLogoImage}/>
                                         </div>
                                     ) : undefined}
-                                     <div className={`${sectionsContainer} hide-on-print`}>
+                                     <div className={sectionsContainer}>
                                         {this.state.prescriptionFormTemplate!.sectionOrder.map((sectionId, sectionIndex) => {
                                             const sections = this.state.prescriptionFormTemplate!.sections;
                                             const currentSection = sections[sectionId];
@@ -221,7 +209,7 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                         </Paper>
                     )}
                     {tabIndex === 1 && (
-                        <Paper className={`${caseProgressPaper} hide-on-print`}>
+                        <Paper className={caseProgressPaper}>
                             {this.state.retrievingCheckpoints ? (
                                 <div className={loadingCheckpointsContainer}>
                                     <CircularProgress
@@ -526,6 +514,22 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         pdfMake.createPdf({
             content,
             pageOrientation: 'LANDSCAPE' as any,
+            styles: {
+                title: {
+                    fontSize: 14,
+                    bold: true,
+                },
+                label: {
+                    fontSize: 10,
+                    bold: false,
+                    color: 'black',
+                },
+                otherText: {
+                    fontSize: 10,
+                    bold: false,
+                    color: '#8E8E8E',
+                }
+            }
         }).print();
     }
 
@@ -537,14 +541,20 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
         pdfContent.push({
             columns: [
                 {
-                    qr: caseId,
-                    fit: '50'
-                },
-                {
                     width: '*',
                     text: '',
                 },
-            ]
+                {
+                    width: 100,
+                    text: '',
+                },
+                {
+                    qr: caseId,
+                    fit: '50',
+                    width: 'auto',
+                },
+            ],
+            margin: 0,
         })
         this.state.prescriptionFormTemplate!.sectionOrder.forEach((sectionId, sectionIndex) => {
             const sections = this.state.prescriptionFormTemplate!.sections;
@@ -563,42 +573,234 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                 const controlValue = controlValues[controlId];
                 switch (control.type) {
                     case IPrescriptionControlTemplateType.Checkbox:
+                        const selectedOptions = control.options.filter((option) => {
+                            return controlValue[option.id];
+                        }).map((option) => {
+                            return option.text;
+                        }).join(', ');
+                        if (selectedOptions.length > 0) {
+                            sectionContent.push({
+                                columns: [
+                                    {
+                                        text: `${control.label}:`,
+                                        style: ['label'],
+                                        width: 'auto',
+                                    },
+                                    {
+                                        text: selectedOptions,
+                                        style: ['otherText'],
+                                        width: 'auto',
+                                        margin: [8, 0, 0, 0],
+                                    }
+                                ],
+                                margin: [0, 0, 0, 4],
+                            });
+                        }
                         break;
                     case IPrescriptionControlTemplateType.Date:
                     case IPrescriptionControlTemplateType.CaseDeadline:
                         const prettyDeadline = this.makeDeadlinePretty(controlValue.toDate());
                         sectionContent.push({
-                            text: `${control.label}: ${prettyDeadline}`,
+                            columns: [
+                                {
+                                    text: `${control.label}:`,
+                                    style: ['label'],
+                                    width: 'auto',
+                                },
+                                {
+                                    text: prettyDeadline,
+                                    style: ['otherText'],
+                                    width: 'auto',
+                                    margin: [8, 0, 0, 0],
+                                }
+                            ],
+                            margin: [0, 0, 0, 4],
+                        })
+                        break;
+                    case IPrescriptionControlTemplateType.DoctorInformation:
+                        const doctorUser = this.state.doctorUser!;
+                        sectionContent.push({
+                            columns: [
+                                {
+                                    text: 'Doctor Name:',
+                                    style: ['label'],
+                                    width: 'auto',
+                                },
+                                {
+                                    text: doctorUser.name,
+                                    style: ['otherText'],
+                                    width: 'auto',
+                                    margin: [8, 0, 0, 0],
+                                }
+                            ],
+                            margin: [0, 0, 0, 4],
+                        });
+                        sectionContent.push({
+                            columns: [
+                                {
+                                    text: 'Street:',
+                                    style: ['label'],
+                                    width: 'auto',
+                                },
+                                {
+                                    text: doctorUser.address.street,
+                                    style: ['otherText'],
+                                    width: 'auto',
+                                    margin: [8, 0, 0, 0],
+                                }
+                            ],
+                            margin: [0, 0, 0, 4],
+                        });
+                        sectionContent.push({
+                            columns: [
+                                {
+                                    text: 'City:',
+                                    style: ['label'],
+                                    width: 'auto',
+                                },
+                                {
+                                    text: doctorUser.address.city,
+                                    style: ['otherText'],
+                                    width: 'auto',
+                                    margin: [8, 0, 0, 0],
+                                }
+                            ],
+                            margin: [0, 0, 0, 4],
+                        });
+                        sectionContent.push({
+                            columns: [
+                                {
+                                    text: 'State:',
+                                    style: ['label'],
+                                    width: 'auto',
+                                },
+                                {
+                                    text: doctorUser.address.state,
+                                    style: ['otherText'],
+                                    width: 'auto',
+                                    margin: [8, 0, 0, 0],
+                                }
+                            ],
+                            margin: [0, 0, 0, 4],
+                        });
+                        sectionContent.push({
+                            columns: [
+                                {
+                                    text: 'Telephone:',
+                                    style: ['label'],
+                                    width: 'auto',
+                                },
+                                {
+                                    text: doctorUser.telephone,
+                                    style: ['otherText'],
+                                    width: 'auto',
+                                    margin: [8, 0, 0, 0],
+                                }
+                            ],
+                            margin: [0, 0, 0, 4],
+                        });
+                        break;
+                    case IPrescriptionControlTemplateType.Dropdown:
+                        const selectedOption = control.options.find((option) => option.id === controlValue)!;
+                        if (selectedOption) {
+                            sectionContent.push({
+                                columns: [
+                                    {
+                                        text: `${control.label}:`,
+                                        style: ['label'],
+                                        width: 'auto',
+                                    },
+                                    {
+                                        text: selectedOption.text,
+                                        style: ['otherText'],
+                                        width: 'auto',
+                                        margin: [8, 0, 0, 0],
+                                    }
+                                ],
+                                margin: [0, 0, 0, 4],
+                            });
+                        }
+                        break;
+                    case IPrescriptionControlTemplateType.MultilineText:
+                        sectionContent.push({
+                            columns: [
+                                {
+                                    text: `${control.label}:`,
+                                    style: ['label'],
+                                    width: 'auto',
+                                },
+                                {
+                                    text: controlValue,
+                                    style: ['otherText'],
+                                    width: 'auto',
+                                    margin: [8, 0, 0, 0],
+                                }
+                            ],
+                            margin: [0, 0, 0, 4],
                         });
                         break;
                     case IPrescriptionControlTemplateType.Number:
                         const numberTextControl = control as INumberTemplateControl;
                         const formattedNumber = `${numberTextControl.prefix} ${controlValue} ${numberTextControl.suffix}`;
                         sectionContent.push({
-                            text: `${numberTextControl.label}: ${formattedNumber}`,
-                        })
+                            columns: [
+                                {
+                                    text: `${control.label}:`,
+                                    style: ['label'],
+                                    width: 'auto',
+                                },
+                                {
+                                    text: formattedNumber,
+                                    style: ['otherText'],
+                                    width: 'auto',
+                                    margin: [8, 0, 0, 0],
+                                }
+                            ],
+                            margin: [0, 0, 0, 4],
+                        });
                         break;
                     case IPrescriptionControlTemplateType.SingleLineText:
-                        const singleLineTextControl = control as ISingleLineTextControlTemplate;
                         sectionContent.push({
-                            text: `${singleLineTextControl.label}: ${controlValue}`,
-                        })
+                            columns: [
+                                {
+                                    text: `${control.label}:`,
+                                    style: ['label'],
+                                    width: 'auto',
+                                },
+                                {
+                                    text: controlValue,
+                                    style: ['otherText'],
+                                    width: 'auto',
+                                    margin: [8, 0, 0, 0],
+                                }
+                            ],
+                            margin: [0, 0, 0, 4],
+                        });
                         break;
                     case IPrescriptionControlTemplateType.Title:
                         const titleControl = control as ITitleTemplateControl;
                         sectionContent.push({
                             text: titleControl.title,
+                            style: ['title'],
+                            margin: [0, 0, 0, 8],
                         })
                         break;
                     case IPrescriptionControlTemplateType.NonEditableText:
                         const nonEditableTextControl = control as INonEditableTextField;
                         sectionContent.push({
                             text: nonEditableTextControl.text,
+                            style: 'label',
+                            margin: [0, 0, 0, 4],
                         });
                         break;
                     default:
                         break;
                 }
+            })
+
+            sectionContent.push({
+                text: '',
+                margin: [0, 0, 0, 16],
             })
 
             pdfContent.push(sectionContent);

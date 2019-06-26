@@ -1,9 +1,0 @@
-@media print {
-    body {
-        display: none !important;
-    }
-}
-
-p {
-    color: green !important;
-}

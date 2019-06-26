@@ -172,14 +172,14 @@ export class UserSettingsPresentation extends React.Component<
                                     vertical: 'bottom',
                                     horizontal: 'center',
                                 }}
-                                autoHideDuration={5000}
+                                autoHideDuration={this.state.updatingUserPasswordIsSuccess ? 5000 : 10000}
                                 message={
                                     (
                                         <span>
                                             {this.state.updatingUserPasswordIsSuccess ? (
                                                 'Success! Your password has been reset.'
                                             ): (
-                                                'Oops! It looks like there was an error.'
+                                                'Oops! It looks like there was an error. Log out and then log back in.'
                                             )}
                                         </span>
                                     )
