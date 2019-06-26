@@ -24,6 +24,7 @@ interface ICase {
     doctorName: string;
     currentDoctorCheckpointId: string;
     currentLabCheckpointId: string;
+    patientName: string;
 }
 
 export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https.onCall(async(data: IProjectCreateDataCloudFunctions, context) => {
@@ -92,6 +93,7 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
 
     let doctorCompanyUserId: string;
     let caseDeadline: admin.firestore.Timestamp;
+    let patientName: string;
 
     prescriptionFormTemplate.sectionOrder.forEach((sectionId) => {
         const section = prescriptionFormTemplate.sections[sectionId];
@@ -102,6 +104,8 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
             } else if (control.type === 'CaseDeadline') {
                 const caseDeadlineObject = data.controlValues[control.id];
                 caseDeadline = new admin.firestore.Timestamp(caseDeadlineObject.seconds, caseDeadlineObject.nanoseconds);
+            } else if (control.type === 'PatientName') {
+                patientName = data.controlValues[control.id];
             }
         })
     });
@@ -112,6 +116,10 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
 
     if (!caseDeadline) {
         throw new functions.https.HttpsError('invalid-argument', 'The case requires a case deadline field');
+    }
+
+    if (!patientName) {
+        throw new functions.https.HttpsError('invalid-argument', 'The case requires a patient name field');
     }
 
     const doctorSnapshot = await firestore.collection(Collections.CompanyUser).doc(doctorCompanyUserId).get();
@@ -155,6 +163,7 @@ export const createCaseLocal = (passedInAdmin: admin.app.App) => functions.https
         currentLabCheckpointName,
         currentLabCheckpointId,
         doctorName,
+        patientName,
     };
 
     await firestore.collection(Collections.Case).doc(data.id).set(caseToCreate);

@@ -21,6 +21,7 @@ export interface ICase {
     doctorName: string;
     currentDoctorCheckpointId: string;
     currentLabCheckpointId: string;
+    patientName: string;
 }
 
 export interface IAugmentedCase extends ICase {

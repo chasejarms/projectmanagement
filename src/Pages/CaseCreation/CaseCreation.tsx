@@ -176,7 +176,7 @@ export class CaseCreationPresentation extends React.Component<
                                         <Typography variant="subheading">At least one checkpoint is part of the company workflow.</Typography>
                                     </li>
                                     <li>
-                                        <Typography variant="subheading">The prescription template includes a case deadline field and a doctor information field.</Typography>
+                                        <Typography variant="subheading">The prescription template includes a case deadline field, a patient name field, and a doctor information field.</Typography>
                                     </li>
                                 </ul>
                             </div>

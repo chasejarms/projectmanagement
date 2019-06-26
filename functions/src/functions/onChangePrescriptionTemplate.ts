@@ -9,6 +9,7 @@ export const onChangePrescriptionTemplateLocal = (passedInAdmin: admin.app.App) 
 
         let doctorControlExists: boolean = false;
         let caseDeadlineExists: boolean = false;
+        let patientNameExists: boolean = false;
 
         prescriptionFormTemplate.sectionOrder.forEach((sectionId) => {
             const section = prescriptionFormTemplate.sections[sectionId];
@@ -18,11 +19,13 @@ export const onChangePrescriptionTemplateLocal = (passedInAdmin: admin.app.App) 
                     doctorControlExists = true;
                 } else if (control.type === 'CaseDeadline') {
                     caseDeadlineExists = true;
+                } else if (control.type === 'PatientName') {
+                    patientNameExists = true;
                 }
             })
         });
 
-        const prescriptionTemplateHasSufficientFields = doctorControlExists && caseDeadlineExists;
+        const prescriptionTemplateHasSufficientFields = doctorControlExists && caseDeadlineExists && patientNameExists;
 
         await passedInAdmin.firestore().collection(Collections.Company)
             .doc(prescriptionFormTemplate.companyId)

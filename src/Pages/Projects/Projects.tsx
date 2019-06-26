@@ -182,8 +182,8 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
             const currentCheckpointName = userIsDoctor ? caseObject.currentDoctorCheckpointName : caseObject.currentLabCheckpointName;
             return (
                 <TableRow key={caseObject.id} onClick={this.navigateToProject(caseObject.id)} className={rowStyling}>
+                    <TableCell>{caseObject.patientName}</TableCell>
                     <TableCell>{caseObject.doctorName}</TableCell>
-                    <TableCell>{caseObject.hasStarted ? <DoneIcon/> : undefined}</TableCell>
                     <TableCell>{prettyDeadline}</TableCell>
                     <TableCell>{caseObject.complete ? <DoneIcon/> : undefined}</TableCell>
                     <TableCell>{currentCheckpointName}</TableCell>
@@ -252,8 +252,8 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                         <Table>
                             <TableHead>
                                 <TableRow>
+                                    <TableCell>Patient Name</TableCell>
                                     <TableCell>Doctor</TableCell>
-                                    <TableCell>Started</TableCell>
                                     <TableCell>Case Deadline</TableCell>
                                     <TableCell>Complete</TableCell>
                                     <TableCell>Current Checkpoint</TableCell>
