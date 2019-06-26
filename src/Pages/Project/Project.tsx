@@ -35,6 +35,7 @@ import { FileEdit } from "src/Components/PrescriptionEdit/PrescriptionEditCompon
 import { MultilineTextEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/MultilineTextEdit/MultilineTextEdit";
 import { NonEditableText } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/NonEditableText/NonEditableText";
 import { NumberEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/NumberEdit/NumberEdit";
+import { PatientNameEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/PatientNameEdit/PatientNameEdit";
 import { SingleLineTextEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/SingleLineTextEdit/SingleLineTextEdit";
 import { TitleEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/TitleEdit/TitleEdit";
 import { ICase } from "src/Models/case";
@@ -473,6 +474,15 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                     disabled={false}
                     updateControlValueActionCreator={updateExistingCaseControlValue}
                     caseId={caseId}
+                />
+            )
+        } else if (control.type === IPrescriptionControlTemplateType.PatientName) {
+            return (
+                <PatientNameEdit
+                    control={control}
+                    controlValue={controlValue}
+                    disabled={true}
+                    updateControlValueActionCreator={updateExistingCaseControlValue}
                 />
             )
         }
