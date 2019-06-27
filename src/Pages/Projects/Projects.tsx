@@ -8,6 +8,7 @@ import {
     FormControlLabel,
     FormLabel,
     IconButton,
+    Input,
     InputLabel,
     ListItem,
     MenuItem,
@@ -54,6 +55,7 @@ import { StartedStatus } from '../../Models/caseFilter/startedStatus';
 import { createProjectsPresentationClasses, IProjectsPresentationProps, IProjectsPresentationState } from './Projects.ias';
 
 export class ProjectsPresentation extends React.Component<IProjectsPresentationProps, IProjectsPresentationState> {
+    public searchCasesTimeout: NodeJS.Timeout;
     public searchInputNode: any;
     public state: IProjectsPresentationState = {
         cases: [],
@@ -70,6 +72,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
             doctorFlag: DoctorFlag.All,
             checkpointFlag: CheckpointFlag.All,
             notificationFlag: NotificationFlag.All,
+            patientName: '',
         },
         dialogDisplayFilter: {
             completionStatus: CompletionStatus.Incomplete,
@@ -77,6 +80,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
             doctorFlag: DoctorFlag.All,
             checkpointFlag: CheckpointFlag.All,
             notificationFlag: NotificationFlag.All,
+            patientName: '',
         },
         doctorSearchValue: '',
         potentialDoctors: [],
@@ -161,6 +165,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
             checkpointOptionsAndSelectedOptionsContainer,
             allSelectedCheckpointsContainer,
             selectedCheckpointContainer,
+            patientNameFormControl,
         } = createProjectsPresentationClasses(this.props, this.state);
 
         const companyId = this.props.match.path.split('/')[2];
@@ -235,6 +240,15 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
                                     <FilterListIcon/>
                                 </IconButton>
                             </Tooltip>
+                            <FormControl className={patientNameFormControl}>
+                                {/* <InputLabel>Patient Name</InputLabel> */}
+                                <Input
+                                    placeholder="Patient Name"
+                                    name="patientName"
+                                    value={this.state.selectedFilter.patientName}
+                                    onChange={this.handlePatientNameChange}
+                                />
+                            </FormControl>
                         </div>
                         <div>
                             <Tooltip title="New Case" placement="left" disableFocusListener={true}>
@@ -391,6 +405,27 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         )
     }
 
+    private handlePatientNameChange = (event: any) => {
+        const value = event.target.value;
+        if (this._isMounted) {
+            const selectedFilterClone = cloneDeep(this.state.selectedFilter);
+            selectedFilterClone.patientName = value;
+            this.setState({
+                selectedFilter: selectedFilterClone,
+                dialogDisplayFilter: cloneDeep(selectedFilterClone),
+            });
+
+            if (this.searchCasesTimeout) {
+                clearTimeout(this.searchCasesTimeout);
+            }
+
+            // send off new api request in set timeout
+            this.searchCasesTimeout = setTimeout(() => {
+                this.applyCaseFilters();
+            }, 300);
+        }
+    }
+
     private applyCaseFilters = async() => {
         const clonedDialogDisplayFilter = cloneDeep(this.state.dialogDisplayFilter);
 
@@ -488,7 +523,7 @@ export class ProjectsPresentation extends React.Component<IProjectsPresentationP
         const eventValue = event.target.value;
 
         const caseFilterCopy = cloneDeep(this.state.dialogDisplayFilter);
-        caseFilterCopy[keyName] = eventValue;
+        caseFilterCopy[keyName as any] = eventValue;
 
         if (this._isMounted) {
             this.setState({

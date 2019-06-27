@@ -18,4 +18,5 @@ export interface ICaseFilter {
      */
     checkpointId?: string,
     notificationFlag: NotificationFlag,
+    patientName: string,
 }

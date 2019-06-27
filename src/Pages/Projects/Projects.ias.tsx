@@ -92,7 +92,7 @@ export const createProjectsPresentationClasses = (
 
     const nameAndFilterIconContainer = css({
         display: 'grid',
-        gridTemplateColumns: 'auto auto',
+        gridTemplateColumns: 'auto auto auto',
         gridGap: 16,
     });
 
@@ -160,6 +160,11 @@ export const createProjectsPresentationClasses = (
         marginTop: 28,
     });
 
+    const patientNameFormControl = css({
+        position: 'relative',
+        top: 3,
+    });
+
     return {
         rowStyling,
         projectsContainer,
@@ -184,5 +189,6 @@ export const createProjectsPresentationClasses = (
         selectedCheckpointsContainer,
         selectedCheckpointContainer,
         allSelectedCheckpointsContainer,
+        patientNameFormControl,
     };
 }

@@ -53,6 +53,10 @@ export class ProjectsApi implements ICaseApi {
             query = query.where(correctCaseKey, '==', slimCasesSearchRequest.checkpointId);
         }
 
+        if (slimCasesSearchRequest.patientName) {
+            query = query.where('patientNameSearchValues', 'array-contains', slimCasesSearchRequest.patientName.toLowerCase());
+        }
+
         const queryForSpecificDoctor = slimCasesSearchRequest.doctorFlag === DoctorFlag.Specific;
         if (queryForSpecificDoctor && slimCasesSearchRequest.doctorId) {
             query = query.where('doctorCompanyUserId', '==', slimCasesSearchRequest.doctorId);
