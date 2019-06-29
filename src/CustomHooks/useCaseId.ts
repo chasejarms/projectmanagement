@@ -1,7 +1,8 @@
-import { useRouter } from 'src/App';
+import { RouteComponentProps } from "react-router";
+import useRouter from "./useRouter";
 
-export const useCaseId = () => {
-    const router = useRouter();
-    // tslint:disable-next-line:no-console
-    console.log(router);
+export function useCaseId() {
+    const router: RouteComponentProps<any> = useRouter();
+    const caseId = router.location.pathname.split('/')[4];
+    return caseId;
 }

@@ -120,4 +120,4 @@ const mapDispatchToProps = (dispatch: React.Dispatch<any>) => ({
 
 
 const connectedComponent = connect(mapStateToProps, mapDispatchToProps)(PrescriptionBuilderDrawerPresentation);
-export const PrescriptionBuilderDrawer = withRouter(connectedComponent);
+export const PrescriptionBuilderDrawer = withRouter(connectedComponent) as any;

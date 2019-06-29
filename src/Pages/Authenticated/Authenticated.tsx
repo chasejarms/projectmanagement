@@ -258,5 +258,5 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => ({
     },
 })
 
-const connectedComponent = connect(mapStateToProps, mapDispatchToProps)(withRouter(AuthenticatedPresentation as any) as any);
+const connectedComponent = connect<any, any>(mapStateToProps, mapDispatchToProps)(withRouter(AuthenticatedPresentation as any) as any);
 export const Authenticated = withTheme() (connectedComponent as any) as any;

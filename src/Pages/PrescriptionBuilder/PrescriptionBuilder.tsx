@@ -1168,4 +1168,4 @@ const mapDispatchToProps = (dispatch: React.Dispatch<any>) => ({
 
 const connectedComponent = connect(mapStateToProps, mapDispatchToProps)(PrescriptionBuilderPresentation);
 const componentWithTheme = withTheme()(connectedComponent);
-export const PrescriptionBuilder = withRouter(componentWithTheme);
+export const PrescriptionBuilder = withRouter(componentWithTheme as any);

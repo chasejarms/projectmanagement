@@ -1,4 +1,5 @@
-import { Theme, WithTheme } from '@material-ui/core';
+import { WithTheme } from '@material-ui/core';
+import { useTheme } from '@material-ui/styles';
 import { css } from 'emotion';
 import { RouteComponentProps } from 'react-router';
 import { ICaseCheckpoint } from 'src/Models/caseCheckpoint';
@@ -47,10 +48,10 @@ export interface IProjectPresentationState {
 }
 
 export const createProjectPresentationClasses = (
-    props: IProjectPresentationProps,
-    state: IProjectPresentationState,
-    theme: Theme,
+    companyLogoDownloadURL: null | string,
 ) => {
+    const theme = useTheme<any>();
+
     const attachmentsContainer = css({
         width: '100%',
         boxSizing: 'border-box',
@@ -193,7 +194,7 @@ export const createProjectPresentationClasses = (
 
     imgContainer = 'something';
 
-    // if (state.srcUrls.length > 0) {
+    // if (companyLogoDownloadURL.srcUrls.length > 0) {
     //     imgContainer = css({
     //         display: 'grid',
     //         gridTemplateColumns: '1fr 1fr 1fr 1fr',
@@ -373,7 +374,7 @@ export const createProjectPresentationClasses = (
 
     let companyLogoImage: string = '';
 
-    if (!!state.companyLogoDownloadURL) {
+    if (!!companyLogoDownloadURL) {
         companyLogoImage = css({
             maxWidth: 400,
             maxHeight: 100,

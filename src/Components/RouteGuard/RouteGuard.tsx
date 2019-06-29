@@ -179,4 +179,4 @@ const mapDispatchToProps = (dispatch: React.Dispatch<any>) => ({
 });
 
 const connectedComponent = connect(mapStateToProps, mapDispatchToProps)(RouteGuardPresentation);
-export const RouteGuard = withRouter(connectedComponent);
+export const RouteGuard = withRouter(connectedComponent) as any;

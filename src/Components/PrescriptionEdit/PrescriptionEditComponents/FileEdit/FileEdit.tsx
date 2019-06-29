@@ -357,4 +357,4 @@ const mapDispatchToProps = (dispatch: React.Dispatch<any>, ownProps: IFileEditPr
 })
 
 const connectedComponent = connect(undefined, mapDispatchToProps)(FileEditPresentation);
-export const FileEdit = withRouter(connectedComponent);
+export const FileEdit = withRouter(connectedComponent) as any;
