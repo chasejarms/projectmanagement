@@ -583,6 +583,9 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                 const controlValue = controlValues[controlId];
                 switch (control.type) {
                     case IPrescriptionControlTemplateType.Checkbox:
+                        if (!controlValue) {
+                            return;
+                        }
                         const selectedOptions = control.options.filter((option) => {
                             return controlValue[option.id];
                         }).map((option) => {
@@ -609,6 +612,9 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                         break;
                     case IPrescriptionControlTemplateType.Date:
                     case IPrescriptionControlTemplateType.CaseDeadline:
+                        if (!controlValue) {
+                            return;
+                        }
                         const prettyDeadline = this.makeDeadlinePretty(controlValue.toDate());
                         sectionContent.push({
                             columns: [
@@ -732,6 +738,9 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                         }
                         break;
                     case IPrescriptionControlTemplateType.MultilineText:
+                        if (!controlValue) {
+                            return;
+                        }
                         sectionContent.push({
                             columns: [
                                 {
@@ -750,6 +759,9 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                         });
                         break;
                     case IPrescriptionControlTemplateType.Number:
+                        if (!controlValue) {
+                            return;
+                        }
                         const numberTextControl = control as INumberTemplateControl;
                         const formattedNumber = `${numberTextControl.prefix} ${controlValue} ${numberTextControl.suffix}`;
                         sectionContent.push({
@@ -770,6 +782,9 @@ class ProjectPresentation extends React.Component<IProjectPresentationProps, IPr
                         });
                         break;
                     case IPrescriptionControlTemplateType.SingleLineText:
+                        if (!controlValue) {
+                            return;
+                        }
                         sectionContent.push({
                             columns: [
                                 {
