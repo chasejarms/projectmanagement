@@ -20,11 +20,11 @@ import {
     Typography,
 } from "@material-ui/core";
 import * as firebase from 'firebase';
+import * as React from "react";
 import {
     useEffect,
     useState,
 } from "react";
-import * as React from "react";
 import { useDispatch } from 'react-redux';
 import { AsyncButton } from "src/Components/AsyncButton/AsyncButton";
 import { CaseDeadlineEdit } from "src/Components/PrescriptionEdit/PrescriptionEditComponents/CaseDeadlineEdit/CaseDeadlineEdit";
@@ -53,14 +53,21 @@ import { ITitleTemplateControl } from 'src/Models/prescription/controls/titleTem
 import { IPrescriptionFormTemplate } from "src/Models/prescription/prescriptionFormTemplate";
 import { ShowNewInfoFromType } from "src/Models/showNewInfoFromTypes";
 import { UserType } from "src/Models/userTypes";
-import { setCaseCreationControlValues, updateExistingCaseControlValue } from "src/Redux/ActionCreators/existingCaseActionCreators";
+import { clearExistingCaseState, setCaseCreationControlValues, updateExistingCaseControlValue } from "src/Redux/ActionCreators/existingCaseActionCreators";
 import Api from '../../Api/api';
 import { createProjectPresentationClasses } from './Project.ias';
 
 export const Project: React.SFC<any>= (props) => {
+    const [isMounted, setIsMounted] = useState(true);
+    useEffect(() => {
+        return () => setIsMounted(false);
+    }, []);
+
     const [tabIndex, setTabIndex] = useState(0);
     function handleTabChange(event: any, tabIndexFromChange: number) {
-        setTabIndex(tabIndexFromChange);
+        if (isMounted) {
+            setTabIndex(tabIndexFromChange);
+        }
     }
 
     const caseId = useCaseId();
@@ -99,7 +106,9 @@ export const Project: React.SFC<any>= (props) => {
             function createCompanyLogoDownloadURL(companyLogoURL: string): void {
                 const storageRef = firebase.storage().ref();
                 storageRef.child(companyLogoURL).getDownloadURL().then((actualCompanyLogoDownloadURL: string) => {
-                    setCompanyLogoDownloadURL(actualCompanyLogoDownloadURL);
+                    if (isMounted) {
+                        setCompanyLogoDownloadURL(actualCompanyLogoDownloadURL);
+                    }
                 });
             }
 
@@ -107,11 +116,13 @@ export const Project: React.SFC<any>= (props) => {
                     createCompanyLogoDownloadURL(prescriptionFormTemplateFromRequest.companyLogoURL);
                 }
 
-                setIsLoadingPrescriptionTemplate(false);
-                setIsLoadingCheckpoint(false);
-                setCaseCheckpoints(caseObject.caseCheckpoints);
-                setPrescriptionFormTemplate(prescriptionFormTemplateFromRequest);
-                setDoctorUser(doctorUserFromRequest as IDoctorUser);
+                if (isMounted) {
+                    setIsLoadingPrescriptionTemplate(false);
+                    setIsLoadingCheckpoint(false);
+                    setCaseCheckpoints(caseObject.caseCheckpoints);
+                    setPrescriptionFormTemplate(prescriptionFormTemplateFromRequest);
+                    setDoctorUser(doctorUserFromRequest as IDoctorUser);
+                }
 
                 const setControlValuesAction = setCaseCreationControlValues(caseObject.controlValues);
                 dispatch(setControlValuesAction);
@@ -122,7 +133,9 @@ export const Project: React.SFC<any>= (props) => {
     const [updateCaseInformationInProgress, setUpdateCaseInformationInProgress] = useState(false);
     const [snackbarIsOpen, setSnackbarIsOpen] = useState(false);
     async function updateCase () {
-        setUpdateCaseInformationInProgress(true);
+        if (isMounted) {
+            setUpdateCaseInformationInProgress(true);
+        }
 
         const showNewInfoFrom = userIsDoctor ? ShowNewInfoFromType.Doctor : ShowNewInfoFromType.Lab;
 
@@ -130,8 +143,10 @@ export const Project: React.SFC<any>= (props) => {
             controlValues: existingCaseState!.controlValues,
         }, showNewInfoFrom);
 
-        setUpdateCaseInformationInProgress(false);
-        setSnackbarIsOpen(true);
+        if (isMounted) {
+            setUpdateCaseInformationInProgress(false);
+            setSnackbarIsOpen(true);
+        }
     }
 
     function showQrCodeDialog(): void {
@@ -430,6 +445,13 @@ export const Project: React.SFC<any>= (props) => {
         return pdfContent;
     }
 
+    useEffect(() => {
+        return () => {
+            const clearExistingCaseStateAction = clearExistingCaseState();
+            dispatch(clearExistingCaseStateAction);
+        }
+    }, []);
+
     const existingCaseState = useExistingCaseSliceOfState();
     const controlValuesExist = Object.keys(existingCaseState.controlValues).length > 0;
     const dataIsReady = !isLoadingPrescriptionTemplate && controlValuesExist;
@@ -572,14 +594,18 @@ export const Project: React.SFC<any>= (props) => {
                 }
             });
 
-            setCaseCheckpoints(checkpoints);
+            if (isMounted) {
+                setCaseCheckpoints(checkpoints);
+            }
 
             await Api.projectsApi.updateCaseCheckpoints(caseId, checkpoints);
         }
     }
 
     function onCloseSnackbar(): void {
-        setSnackbarIsOpen(false);
+        if (isMounted) {
+            setSnackbarIsOpen(false);
+        }
     }
 
     const {

@@ -32,6 +32,7 @@ export const existingCaseReducer = (
                 controlValues: setControlStateAction.controlValues,
             };
         case CLEAR_EXISTING_CASE_STATE:
+            return initialState;
         default:
             return state;
     }
